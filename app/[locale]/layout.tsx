@@ -84,23 +84,35 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      {gaId && (
-        <>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${gaId}');
-            `}
-          </Script>
-        </>
-      )}
       <body className="antialiased">
+        {/* Cookiebot - Loads before page interactive */}
+        <Script
+          id="Cookiebot"
+          src="https://consent.cookiebot.com/uc.js"
+          data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
+          data-blockingmode="auto"
+          type="text/javascript"
+          strategy="beforeInteractive"
+        />
+
+        {/* Google Analytics - Loads after interaction */}
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
+
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
