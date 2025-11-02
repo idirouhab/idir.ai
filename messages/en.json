@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "about": "ABOUT",
+    "speaking": "SPEAKING",
+    "podcast": "PODCAST",
+    "contact": "CONTACT"
+  },
+  "hero": {
+    "name": "IDIR",
+    "lastName": "OUHAB MESKINE",
+    "role": "Solutions Engineer",
+    "descriptionStart": "Transforming businesses with ",
+    "descriptionAI": "AI",
+    "descriptionAnd": " and ",
+    "descriptionAutomation": "automation",
+    "descriptionAt": " at ",
+    "descriptionN8n": "n8n",
+    "cta": "LET'S TALK",
+    "explore": "EXPLORE"
+  },
+  "about": {
+    "label": "About",
+    "title1": "BUILDING THE",
+    "title2": "FUTURE OF WORK",
+    "descriptionStart": "As a Solutions Engineer at ",
+    "descriptionN8n": "n8n",
+    "descriptionEnd": ", I specialize in designing and implementing workflow automation solutions that help organizations harness the power of AI and automation.",
+    "expertise": {
+      "automation": {
+        "title": "Workflow Automation",
+        "description": "Design and implementation of sophisticated automation solutions."
+      },
+      "ai": {
+        "title": "AI Integration",
+        "description": "Implementing LLMs and AI capabilities into production systems."
+      },
+      "architecture": {
+        "title": "Solution Architecture",
+        "description": "Building scalable, maintainable systems."
+      },
+      "speaking": {
+        "title": "Technical Speaking",
+        "description": "Presenting at conferences and educating developers."
+      }
+    },
+    "mission": {
+      "title": "My Mission",
+      "description": "Making complex technology accessible and helping teams leverage automation to focus on what matters most. Bridging the gap between cutting-edge capabilities and practical business solutions.",
+      "focus1": "LLM Integration",
+      "focus2": "Scalable Architecture",
+      "focus3": "Global Speaking"
+    }
+  },
+  "speaking": {
+    "label": "Speaking",
+    "title1": "SHARING",
+    "title2": "KNOWLEDGE",
+    "description": "I speak at conferences and events about AI, automation, and developer tools. Available for keynotes, technical talks, and workshops.",
+    "topics": {
+      "ai": {
+        "title": "AI & Workflow Automation",
+        "description": "How to leverage AI to transform business processes",
+        "tags": ["AI", "Automation", "Integration"]
+      },
+      "llm": {
+        "title": "LLM Integration",
+        "description": "Best practices for production LLM implementations",
+        "tags": ["LLMs", "API Design", "Scalability"]
+      },
+      "dx": {
+        "title": "Developer Experience",
+        "description": "Building tools developers love to use",
+        "tags": ["DX", "Tooling", "Productivity"]
+      }
+    },
+    "cta": {
+      "title": "Book Me for Your Event",
+      "description": "Looking for a speaker on AI, automation, or developer tools?",
+      "button": "Let's Talk →"
+    }
+  },
+  "podcast": {
+    "label": "Podcast en Español",
+    "title": "Prompt&Play",
+    "description": "A Spanish-language podcast exploring AI, automation, and the future of technology. Weekly episodes featuring insights, practical tips, and conversations about emerging tech.",
+    "topicsLabel": "Topics Covered:",
+    "topics": ["AI & Machine Learning", "Workflow Automation", "LLMs & Prompt Engineering", "Tech Trends"],
+    "platforms": {
+      "spotify": "Spotify",
+      "youtube": "YouTube",
+      "podimo": "Podimo"
+    },
+    "status": "Live on all platforms"
+  },
+  "contact": {
+    "label": "Contact",
+    "title1": "LET'S",
+    "title2": "CONNECT",
+    "description": "Interested in collaboration, speaking opportunities, or consulting?",
+    "platforms": {
+      "linkedin": "LinkedIn",
+      "x": "X",
+      "instagram": "Instagram",
+      "github": "GitHub"
+    }
+  },
+  "footer": {
+    "descriptionStart": "Solutions Engineer at ",
+    "descriptionN8n": "n8n",
+    "descriptionMiddle": ". Speaker on AI and automation. Host of ",
+    "descriptionPodcast": "Prompt&Play",
+    "descriptionEnd": " podcast in Spanish.",
+    "nav": "Navigation",
+    "connect": "Connect",
+    "copyright": "All rights reserved.",
+    "builtStart": "Built with ",
+    "builtNextjs": "Next.js",
+    "builtComma1": ", ",
+    "builtTypescript": "TypeScript",
+    "builtAnd": " & ",
+    "builtTailwind": "Tailwind"
+  },
+  "metadata": {
+    "title": "Idir Ouhabmeskine | Solutions Engineer at n8n | AI & Automation Speaker",
+    "description": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "ogTitle": "Idir Ouhabmeskine | Solutions Engineer at n8n | AI & Automation Speaker",
+    "ogDescription": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "twitterTitle": "Idir Ouhabmeskine | Solutions Engineer at n8n | AI & Automation Speaker",
+    "twitterDescription": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish."
+  },
+  "structuredData": {
+    "jobTitle": "Solutions Engineer",
+    "description": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "knowsAbout": ["Artificial Intelligence", "Automation", "Workflow Automation", "Machine Learning", "Software Engineering", "Developer Tools"],
+    "podcastDescription": "A Spanish-language podcast exploring the intersection of AI, automation, and technology.",
+    "podcastGenre": ["Technology", "Artificial Intelligence", "Automation"]
+  }
+}

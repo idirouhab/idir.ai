@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "about": "SOBRE MÍ",
+    "speaking": "CHARLAS",
+    "podcast": "PODCAST",
+    "contact": "CONTACTO"
+  },
+  "hero": {
+    "name": "IDIR",
+    "lastName": "OUHAB MESKINE",
+    "role": "Ingeniero de Soluciones",
+    "descriptionStart": "Transformando negocios con ",
+    "descriptionAI": "IA",
+    "descriptionAnd": " y ",
+    "descriptionAutomation": "automatización",
+    "descriptionAt": " en ",
+    "descriptionN8n": "n8n",
+    "cta": "HABLEMOS",
+    "explore": "EXPLORAR"
+  },
+  "about": {
+    "label": "Sobre mí",
+    "title1": "CONSTRUYENDO EL",
+    "title2": "FUTURO DEL TRABAJO",
+    "descriptionStart": "Como Ingeniero de Soluciones en ",
+    "descriptionN8n": "n8n",
+    "descriptionEnd": ", me especializo en diseñar e implementar soluciones de automatización de flujos de trabajo que ayudan a las organizaciones a aprovechar el poder de la IA y la automatización.",
+    "expertise": {
+      "automation": {
+        "title": "Automatización de Flujos",
+        "description": "Diseño e implementación de soluciones de automatización sofisticadas."
+      },
+      "ai": {
+        "title": "Integración de IA",
+        "description": "Implementación de LLMs y capacidades de IA en sistemas de producción."
+      },
+      "architecture": {
+        "title": "Arquitectura de Soluciones",
+        "description": "Construcción de sistemas escalables y mantenibles."
+      },
+      "speaking": {
+        "title": "Charlas Técnicas",
+        "description": "Presentaciones en conferencias y educación de desarrolladores."
+      }
+    },
+    "mission": {
+      "title": "Mi Misión",
+      "description": "Hacer la tecnología compleja accesible y ayudar a los equipos a aprovechar la automatización para enfocarse en lo que realmente importa. Cerrar la brecha entre las capacidades de vanguardia y las soluciones empresariales prácticas.",
+      "focus1": "Integración de LLMs",
+      "focus2": "Arquitectura Escalable",
+      "focus3": "Charlas Globales"
+    }
+  },
+  "speaking": {
+    "label": "Charlas",
+    "title1": "COMPARTIENDO",
+    "title2": "CONOCIMIENTO",
+    "description": "Doy charlas en conferencias y eventos sobre IA, automatización y herramientas para desarrolladores. Disponible para keynotes, charlas técnicas y talleres.",
+    "topics": {
+      "ai": {
+        "title": "IA y Automatización",
+        "description": "Cómo aprovechar la IA para transformar procesos empresariales",
+        "tags": ["IA", "Automatización", "Integración"]
+      },
+      "llm": {
+        "title": "Integración de LLMs",
+        "description": "Mejores prácticas para implementaciones de LLMs en producción",
+        "tags": ["LLMs", "Diseño de APIs", "Escalabilidad"]
+      },
+      "dx": {
+        "title": "Experiencia del Desarrollador",
+        "description": "Construyendo herramientas que los desarrolladores aman usar",
+        "tags": ["DX", "Herramientas", "Productividad"]
+      }
+    },
+    "cta": {
+      "title": "Contrátame para tu Evento",
+      "description": "¿Buscas un ponente sobre IA, automatización o herramientas de desarrollo?",
+      "button": "Hablemos →"
+    }
+  },
+  "podcast": {
+    "label": "Podcast en Español",
+    "title": "Prompt&Play",
+    "description": "Un podcast en español que explora la IA, automatización y el futuro de la tecnología. Episodios semanales con insights, consejos prácticos y conversaciones sobre tecnologías emergentes.",
+    "topicsLabel": "Temas Cubiertos:",
+    "topics": ["IA y Machine Learning", "Automatización de Flujos", "LLMs e Ingeniería de Prompts", "Tendencias Tech"],
+    "platforms": {
+      "spotify": "Spotify",
+      "youtube": "YouTube",
+      "podimo": "Podimo"
+    },
+    "status": "En vivo en todas las plataformas"
+  },
+  "contact": {
+    "label": "Contacto",
+    "title1": "CONECTEMOS",
+    "title2": "JUNTOS",
+    "description": "¿Interesado en colaboración, oportunidades para charlas o consultoría?",
+    "platforms": {
+      "linkedin": "LinkedIn",
+      "x": "X",
+      "instagram": "Instagram",
+      "github": "GitHub"
+    }
+  },
+  "footer": {
+    "descriptionStart": "Ingeniero de Soluciones en ",
+    "descriptionN8n": "n8n",
+    "descriptionMiddle": ". Ponente sobre IA y automatización. Host del podcast ",
+    "descriptionPodcast": "Prompt&Play",
+    "descriptionEnd": " en español.",
+    "nav": "Navegación",
+    "connect": "Conectar",
+    "copyright": "Todos los derechos reservados.",
+    "builtStart": "Construido con ",
+    "builtNextjs": "Next.js",
+    "builtComma1": ", ",
+    "builtTypescript": "TypeScript",
+    "builtAnd": " y ",
+    "builtTailwind": "Tailwind"
+  },
+  "metadata": {
+    "title": "Idir Ouhabmeskine | Ingeniero de Soluciones en n8n | Ponente de IA y Automatización",
+    "description": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
+    "ogTitle": "Idir Ouhabmeskine | Ingeniero de Soluciones en n8n | Ponente de IA y Automatización",
+    "ogDescription": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
+    "twitterTitle": "Idir Ouhabmeskine | Ingeniero de Soluciones en n8n | Ponente de IA y Automatización",
+    "twitterDescription": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español."
+  },
+  "structuredData": {
+    "jobTitle": "Ingeniero de Soluciones",
+    "description": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
+    "knowsAbout": ["Inteligencia Artificial", "Automatización", "Automatización de Flujos de Trabajo", "Aprendizaje Automático", "Ingeniería de Software", "Herramientas para Desarrolladores"],
+    "podcastDescription": "Un podcast en español que explora la intersección de la IA, la automatización y la tecnología.",
+    "podcastGenre": ["Tecnología", "Inteligencia Artificial", "Automatización"]
+  }
+}
