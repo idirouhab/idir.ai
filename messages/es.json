@@ -8,7 +8,7 @@
   "hero": {
     "name": "IDIR",
     "lastName": "OUHAB MESKINE",
-    "role": "Ingeniero de Soluciones",
+    "role": "Solutions Engineer",
     "descriptionStart": "Transformando negocios con ",
     "descriptionAI": "IA",
     "descriptionAnd": " y ",
@@ -91,6 +91,16 @@
       "podimo": "Podimo"
     },
     "status": "En vivo en todas las plataformas"
+  },
+  "liveEvent": {
+    "badge": "EN VIVO",
+    "upcoming": "Próximo Evento",
+    "title": "IA y Automatización en Profundidad - Sesión en Vivo",
+    "date": "15 de Diciembre, 2024",
+    "time": "18:00 CET",
+    "platform": "YouTube Live",
+    "platformUrl": "https://www.youtube.com/@Prompt_and_Play",
+    "cta": "Únete en Vivo"
   },
   "contact": {
     "label": "Contacto",

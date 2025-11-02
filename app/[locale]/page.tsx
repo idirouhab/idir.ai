@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
+import LiveEvent from "@/components/LiveEvent";
 import About from "@/components/About";
 import Speaking from "@/components/Speaking";
 import Podcast from "@/components/Podcast";
@@ -39,6 +40,7 @@ export default async function Home({ params: { locale } }: Props) {
       <Navigation />
       <main>
         <Hero />
+        <LiveEvent />
         <About />
         <Speaking />
         <Podcast />

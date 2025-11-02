@@ -54,7 +54,7 @@ export default function Podcast() {
 
             <div className="flex flex-wrap gap-4">
               <a
-                href="https://open.spotify.com/show/4mBYH3MN9CgPUyHAUCM7Au"
+                href="https://open.spotify.com/show/6q4QWGY41LcM3LRhtaWDvF?si=6babdcd148e345f6"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 px-6 py-3 bg-[#1DB954] text-white font-bold uppercase tracking-wide hover:scale-105 transition-transform"
