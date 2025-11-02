@@ -2,59 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-type LiveEventData = {
+type LiveEvent = {
+  id: number;
   isActive: boolean;
-  en: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
-  es: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
+  title: string;
+  eventLanguage: string;
+  eventDatetime: string;
+  timezone: string;
+  platform: string;
+  platformUrl: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
-export default function AdminPanel() {
+export default function AdminDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [events, setEvents] = useState<LiveEvent[]>([]);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  const [eventData, setEventData] = useState<LiveEventData>({
-    isActive: false,
-    en: {
-      title: '',
-      date: '',
-      time: '',
-      platform: '',
-      platformUrl: '',
-    },
-    es: {
-      title: '',
-      date: '',
-      time: '',
-      platform: '',
-      platformUrl: '',
-    },
-  });
 
   useEffect(() => {
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
-    // Check if session cookie exists by trying to fetch data
     try {
       const response = await fetch('/api/live-event');
       if (response.ok) {
-        fetchEventData();
+        fetchEvents();
       } else {
         router.push('/admin/login');
       }
@@ -63,44 +40,38 @@ export default function AdminPanel() {
     }
   };
 
-  const fetchEventData = async () => {
+  const fetchEvents = async () => {
     try {
       const response = await fetch('/api/live-event');
       const data = await response.json();
-      setEventData(data);
+      setEvents(data.events || []);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching event data:', error);
-      setMessage({ type: 'error', text: 'Failed to load event data' });
+      console.error('Error fetching events:', error);
+      setMessage({ type: 'error', text: 'Failed to load events' });
       setLoading(false);
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    setMessage(null);
+  const handleDelete = async (id: number, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) {
+      return;
+    }
 
     try {
-      const response = await fetch('/api/live-event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(eventData),
+      const response = await fetch(`/api/live-event/${id}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Event data saved successfully!' });
-        // Trigger page revalidation
-        router.refresh();
+        setMessage({ type: 'success', text: 'Event deleted successfully' });
+        fetchEvents(); // Refresh the list
       } else {
-        setMessage({ type: 'error', text: 'Failed to save event data' });
+        setMessage({ type: 'error', text: 'Failed to delete event' });
       }
     } catch (error) {
-      console.error('Error saving event data:', error);
-      setMessage({ type: 'error', text: 'Failed to save event data' });
-    } finally {
-      setSaving(false);
+      console.error('Error deleting event:', error);
+      setMessage({ type: 'error', text: 'Failed to delete event' });
     }
   };
 
@@ -110,6 +81,19 @@ export default function AdminPanel() {
       router.push('/admin/login');
     } catch (error) {
       console.error('Logout error:', error);
+    }
+  };
+
+  const formatEventDateTime = (datetime: string, timezone: string) => {
+    try {
+      const date = new Date(datetime);
+      return new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: timezone,
+      }).format(date);
+    } catch {
+      return datetime;
     }
   };
 
@@ -123,18 +107,27 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen py-12 px-6 lg:px-8" style={{ background: '#0a0a0a' }}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
         <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-4xl font-black text-white mb-4">Live Event Admin Panel</h1>
-            <p className="text-gray-400">Manage your upcoming live event announcement</p>
+            <h1 className="text-4xl font-black text-white mb-4">Live Events Admin</h1>
+            <p className="text-gray-400">Manage your live event announcements</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-6 py-3 border-2 border-[#ff0055] text-[#ff0055] font-bold uppercase hover:bg-[#ff0055] hover:text-white transition-all"
-          >
-            Logout
-          </button>
+          <div className="flex gap-4">
+            <Link
+              href="/"
+              className="px-6 py-3 border-2 border-white text-white font-bold uppercase hover:bg-white hover:text-black transition-all"
+            >
+              View Site
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="px-6 py-3 border-2 border-[#ff0055] text-[#ff0055] font-bold uppercase hover:bg-[#ff0055] hover:text-white transition-all"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {message && (
@@ -149,227 +142,99 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* Active Toggle */}
-        <div className="mb-8 p-6 border-2 border-[#00cfff] bg-black">
-          <label className="flex items-center gap-4 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={eventData.isActive}
-              onChange={(e) =>
-                setEventData({ ...eventData, isActive: e.target.checked })
-              }
-              className="w-6 h-6"
-            />
-            <div>
-              <div className="text-xl font-bold text-white">
-                Event Active
-              </div>
-              <div className="text-sm text-gray-400">
-                Toggle to show/hide the live event banner on your website
-              </div>
-            </div>
-          </label>
-        </div>
-
-        {/* English Version */}
-        <div className="mb-8 p-6 border-2 border-[#00ff88] bg-black">
-          <h2 className="text-2xl font-black text-[#00ff88] mb-6">
-            English Version
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-white font-bold mb-2">Event Title</label>
-              <input
-                type="text"
-                value={eventData.en.title}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    en: { ...eventData.en, title: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none"
-                placeholder="AI & Automation Deep Dive - Live Session"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white font-bold mb-2">Date</label>
-                <input
-                  type="text"
-                  value={eventData.en.date}
-                  onChange={(e) =>
-                    setEventData({
-                      ...eventData,
-                      en: { ...eventData.en, date: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none"
-                  placeholder="December 15, 2024"
-                />
-              </div>
-
-              <div>
-                <label className="block text-white font-bold mb-2">Time</label>
-                <input
-                  type="text"
-                  value={eventData.en.time}
-                  onChange={(e) =>
-                    setEventData({
-                      ...eventData,
-                      en: { ...eventData.en, time: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none"
-                  placeholder="6:00 PM CET"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-white font-bold mb-2">Platform</label>
-              <input
-                type="text"
-                value={eventData.en.platform}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    en: { ...eventData.en, platform: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none"
-                placeholder="YouTube Live"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white font-bold mb-2">Platform URL</label>
-              <input
-                type="url"
-                value={eventData.en.platformUrl}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    en: { ...eventData.en, platformUrl: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none"
-                placeholder="https://www.youtube.com/@Prompt_and_Play"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Spanish Version */}
-        <div className="mb-8 p-6 border-2 border-[#ff0055] bg-black">
-          <h2 className="text-2xl font-black text-[#ff0055] mb-6">
-            Spanish Version
-          </h2>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-white font-bold mb-2">Event Title</label>
-              <input
-                type="text"
-                value={eventData.es.title}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    es: { ...eventData.es, title: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#ff0055] focus:outline-none"
-                placeholder="IA y Automatización en Profundidad - Sesión en Vivo"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white font-bold mb-2">Fecha</label>
-                <input
-                  type="text"
-                  value={eventData.es.date}
-                  onChange={(e) =>
-                    setEventData({
-                      ...eventData,
-                      es: { ...eventData.es, date: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#ff0055] focus:outline-none"
-                  placeholder="15 de Diciembre, 2024"
-                />
-              </div>
-
-              <div>
-                <label className="block text-white font-bold mb-2">Hora</label>
-                <input
-                  type="text"
-                  value={eventData.es.time}
-                  onChange={(e) =>
-                    setEventData({
-                      ...eventData,
-                      es: { ...eventData.es, time: e.target.value },
-                    })
-                  }
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#ff0055] focus:outline-none"
-                  placeholder="18:00 CET"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-white font-bold mb-2">Plataforma</label>
-              <input
-                type="text"
-                value={eventData.es.platform}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    es: { ...eventData.es, platform: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#ff0055] focus:outline-none"
-                placeholder="YouTube Live"
-              />
-            </div>
-
-            <div>
-              <label className="block text-white font-bold mb-2">URL de la Plataforma</label>
-              <input
-                type="url"
-                value={eventData.es.platformUrl}
-                onChange={(e) =>
-                  setEventData({
-                    ...eventData,
-                    es: { ...eventData.es, platformUrl: e.target.value },
-                  })
-                }
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#ff0055] focus:outline-none"
-                placeholder="https://www.youtube.com/@Prompt_and_Play"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-4">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="flex-1 px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Create New Event Button */}
+        <div className="mb-8">
+          <Link
+            href="/admin/events/new"
+            className="inline-block px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
           >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-
-          <button
-            onClick={() => router.push('/')}
-            className="px-8 py-4 border-2 border-white text-white font-bold uppercase hover:bg-white hover:text-black transition-all"
-          >
-            Back to Site
-          </button>
+            + Create New Event
+          </Link>
         </div>
+
+        {/* Events List */}
+        {events.length === 0 ? (
+          <div className="border-2 border-[#00cfff] bg-black p-12 text-center">
+            <p className="text-2xl text-gray-400 mb-4">No events found</p>
+            <p className="text-gray-500 mb-6">Create your first live event to get started</p>
+            <Link
+              href="/admin/events/new"
+              className="inline-block px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+            >
+              Create Your First Event
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {events.map((event) => (
+              <div
+                key={event.id}
+                className="border-2 bg-black p-6"
+                style={{
+                  borderColor: event.isActive ? '#00ff88' : '#666',
+                }}
+              >
+                <div className="flex justify-between items-start gap-6">
+                  <div className="flex-1">
+                    {/* Active Badge */}
+                    {event.isActive && (
+                      <div className="inline-block px-3 py-1 mb-3 text-sm font-bold uppercase bg-[#00ff88] text-black">
+                        ● Active (Showing on site)
+                      </div>
+                    )}
+
+                    {/* Event Title */}
+                    <h2 className="text-2xl font-black text-white mb-3">
+                      {event.title}
+                    </h2>
+
+                    {/* Event Details */}
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-[#00cfff]">
+                        <span>📅</span>
+                        <span className="font-bold">
+                          {formatEventDateTime(event.eventDatetime, event.timezone)}
+                        </span>
+                        <span className="text-gray-500">({event.timezone})</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-[#ff0055]">
+                        <span>🌍</span>
+                        <span className="font-bold">{event.eventLanguage}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-[#00ff88]">
+                        <span>📺</span>
+                        <span className="font-bold">{event.platform}</span>
+                      </div>
+                    </div>
+
+                    {/* Last Updated */}
+                    <div className="mt-3 text-xs text-gray-500">
+                      Last updated: {new Date(event.updatedAt).toLocaleString()}
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href={`/admin/events/${event.id}/edit`}
+                      className="px-6 py-2 border-2 border-[#00cfff] text-[#00cfff] font-bold uppercase hover:bg-[#00cfff] hover:text-black transition-all text-center"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(event.id, event.title)}
+                      className="px-6 py-2 border-2 border-[#ff0055] text-[#ff0055] font-bold uppercase hover:bg-[#ff0055] hover:text-white transition-all"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

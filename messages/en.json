@@ -134,5 +134,18 @@
     "knowsAbout": ["Artificial Intelligence", "Automation", "Workflow Automation", "Machine Learning", "Software Engineering", "Developer Tools"],
     "podcastDescription": "A Spanish-language podcast exploring the intersection of AI, automation, and technology.",
     "podcastGenre": ["Technology", "Artificial Intelligence", "Automation"]
+  },
+  "liveEvent": {
+    "badge": "LIVE EVENT",
+    "dateTime": "Date & Time",
+    "language": "Language",
+    "watchOn": "Watch on",
+    "languages": {
+      "English": "English",
+      "Spanish": "Spanish",
+      "English & Spanish": "English & Spanish",
+      "Portuguese": "Portuguese",
+      "Other": "Other"
+    }
   }
 }

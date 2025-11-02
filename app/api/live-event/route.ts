@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 import { supabase } from '@/lib/supabase';
 
-// GET: Read the live event data
+// GET: Read live event data (all events for admin)
 export async function GET() {
   // Check authentication
   const sessionCookie = cookies().get('admin-session');
@@ -24,12 +24,11 @@ export async function GET() {
   }
 
   try {
-    // Get the first (and only) row from live_events table
+    // Get all live events, ordered by event datetime
     const { data, error } = await supabase
       .from('live_events')
       .select('*')
-      .limit(1)
-      .single();
+      .order('event_datetime', { ascending: false });
 
     if (error) {
       console.error('Error reading live event data:', error);
@@ -39,26 +38,26 @@ export async function GET() {
       );
     }
 
-    // Transform database format to frontend format
-    const responseData = {
-      isActive: data.is_active,
-      en: {
-        title: data.en_title,
-        date: data.en_date,
-        time: data.en_time,
-        platform: data.en_platform,
-        platformUrl: data.en_platform_url,
-      },
-      es: {
-        title: data.es_title,
-        date: data.es_date,
-        time: data.es_time,
-        platform: data.es_platform,
-        platformUrl: data.es_platform_url,
-      },
-    };
+    // Return empty array if no data exists
+    if (!data || data.length === 0) {
+      return NextResponse.json({ events: [] });
+    }
 
-    return NextResponse.json(responseData);
+    // Transform database format to frontend format
+    const events = data.map(row => ({
+      id: row.id,
+      isActive: row.is_active,
+      title: row.title,
+      eventLanguage: row.event_language,
+      eventDatetime: row.event_datetime,
+      timezone: row.timezone,
+      platform: row.platform,
+      platformUrl: row.platform_url,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }));
+
+    return NextResponse.json({ events });
   } catch (error) {
     console.error('Error reading live event data:', error);
     return NextResponse.json(
@@ -68,7 +67,7 @@ export async function GET() {
   }
 }
 
-// POST: Update the live event data
+// POST: Create or update live event data
 export async function POST(request: Request) {
   // Check authentication
   const sessionCookie = cookies().get('admin-session');
@@ -92,7 +91,15 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Validate the data structure
-    if (typeof body.isActive !== 'boolean' || !body.en || !body.es) {
+    if (
+      typeof body.isActive !== 'boolean' ||
+      !body.title ||
+      !body.eventLanguage ||
+      !body.eventDatetime ||
+      !body.timezone ||
+      !body.platform ||
+      !body.platformUrl
+    ) {
       return NextResponse.json(
         { error: 'Invalid data structure' },
         { status: 400 }
@@ -100,55 +107,54 @@ export async function POST(request: Request) {
     }
 
     // Transform frontend format to database format
-    const updateData = {
+    const eventData = {
       is_active: body.isActive,
-      en_title: body.en.title,
-      en_date: body.en.date,
-      en_time: body.en.time,
-      en_platform: body.en.platform,
-      en_platform_url: body.en.platformUrl,
-      es_title: body.es.title,
-      es_date: body.es.date,
-      es_time: body.es.time,
-      es_platform: body.es.platform,
-      es_platform_url: body.es.platformUrl,
+      title: body.title,
+      event_language: body.eventLanguage,
+      event_datetime: body.eventDatetime,
+      timezone: body.timezone,
+      platform: body.platform,
+      platform_url: body.platformUrl,
       updated_at: new Date().toISOString(),
     };
 
-    // Get the first row's ID
-    const { data: existingData, error: selectError } = await supabase
-      .from('live_events')
-      .select('id')
-      .limit(1)
-      .single();
+    // If ID is provided, update existing event; otherwise, create new
+    if (body.id) {
+      // Update existing event
+      const { error: updateError } = await supabase
+        .from('live_events')
+        .update(eventData)
+        .eq('id', body.id);
 
-    if (selectError) {
-      console.error('Error finding live event:', selectError);
-      return NextResponse.json(
-        { error: 'Failed to find live event' },
-        { status: 500 }
-      );
+      if (updateError) {
+        console.error('Error updating live event data:', updateError);
+        return NextResponse.json(
+          { error: 'Failed to update live event data' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ success: true, message: 'Event updated successfully' });
+    } else {
+      // Create new event
+      const { error: insertError } = await supabase
+        .from('live_events')
+        .insert([eventData]);
+
+      if (insertError) {
+        console.error('Error creating live event data:', insertError);
+        return NextResponse.json(
+          { error: 'Failed to create live event data' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({ success: true, message: 'Event created successfully' });
     }
-
-    // Update the row
-    const { error: updateError } = await supabase
-      .from('live_events')
-      .update(updateData)
-      .eq('id', existingData.id);
-
-    if (updateError) {
-      console.error('Error updating live event data:', updateError);
-      return NextResponse.json(
-        { error: 'Failed to update live event data' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, data: body });
   } catch (error) {
-    console.error('Error updating live event data:', error);
+    console.error('Error saving live event data:', error);
     return NextResponse.json(
-      { error: 'Failed to update live event data' },
+      { error: 'Failed to save live event data' },
       { status: 500 }
     );
   }

@@ -9,19 +9,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Type definitions for the live event data
+// Type definitions for the live event data (v3 schema - single title + language)
 export type LiveEventData = {
   id?: number;
   is_active: boolean;
-  en_title: string;
-  en_date: string;
-  en_time: string;
-  en_platform: string;
-  en_platform_url: string;
-  es_title: string;
-  es_date: string;
-  es_time: string;
-  es_platform: string;
-  es_platform_url: string;
+  title: string;
+  event_language: string;
+  event_datetime: string;
+  timezone: string;
+  platform: string;
+  platform_url: string;
+  created_at?: string;
   updated_at?: string;
 };

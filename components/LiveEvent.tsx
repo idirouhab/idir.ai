@@ -1,21 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import { getTranslations } from 'next-intl/server';
 
 type LiveEventData = {
   isActive: boolean;
-  en: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
-  es: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
+  title: string;
+  eventLanguage: string;
+  eventDatetime: string;
+  timezone: string;
+  platform: string;
+  platformUrl: string;
 };
 
 async function getLiveEventData(): Promise<LiveEventData | null> {
@@ -30,34 +23,34 @@ async function getLiveEventData(): Promise<LiveEventData | null> {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+    // Get the active event (only one can be active)
     const { data, error } = await supabase
       .from('live_events')
       .select('*')
-      .limit(1)
-      .single();
+      .eq('is_active', true)
+      .limit(1);
 
     if (error) {
       console.error('Error fetching live event:', error);
       return null;
     }
 
+    // Return null if no active event
+    if (!data || data.length === 0) {
+      return null;
+    }
+
+    const row = data[0];
+
     // Transform database format to component format
     return {
-      isActive: data.is_active,
-      en: {
-        title: data.en_title,
-        date: data.en_date,
-        time: data.en_time,
-        platform: data.en_platform,
-        platformUrl: data.en_platform_url,
-      },
-      es: {
-        title: data.es_title,
-        date: data.es_date,
-        time: data.es_time,
-        platform: data.es_platform,
-        platformUrl: data.es_platform_url,
-      },
+      isActive: row.is_active,
+      title: row.title,
+      eventLanguage: row.event_language,
+      eventDatetime: row.event_datetime,
+      timezone: row.timezone,
+      platform: row.platform,
+      platformUrl: row.platform_url,
     };
   } catch (error) {
     console.error('Error in getLiveEventData:', error);
@@ -65,117 +58,101 @@ async function getLiveEventData(): Promise<LiveEventData | null> {
   }
 }
 
+function formatEventDateTime(datetime: string, timezone: string, locale: string): { date: string; time: string; timezoneDisplay: string } {
+  try {
+    const date = new Date(datetime);
+
+    // Format date
+    const dateStr = new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+      dateStyle: 'long',
+      timeZone: timezone,
+    }).format(date);
+
+    // Format time
+    const timeStr = new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+      timeStyle: 'short',
+      timeZone: timezone,
+    }).format(date);
+
+    // Get timezone abbreviation (e.g., "CET", "EST", "PST")
+    const timezoneDisplay = new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+      timeZone: timezone,
+      timeZoneName: 'short',
+    }).formatToParts(date).find(part => part.type === 'timeZoneName')?.value || timezone;
+
+    return { date: dateStr, time: timeStr, timezoneDisplay };
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return { date: datetime, time: '', timezoneDisplay: timezone };
+  }
+}
+
 export default async function LiveEvent({ locale }: { locale: string }) {
   const data = await getLiveEventData();
 
-  // Don't render if data couldn't be fetched
-  if (!data) return null;
+  // Don't render if data couldn't be fetched or event is not active
+  if (!data || !data.isActive) return null;
 
-  // Don't render anything if event is not active
-  if (!data.isActive) return null;
+  // Format the event date and time
+  const { date, time, timezoneDisplay } = formatEventDateTime(data.eventDatetime, data.timezone, locale);
 
-  // Get event details for the current locale
-  const eventDetails = data[locale as 'en' | 'es'] || data.en;
-
-  // Get labels based on locale
-  const labels = locale === 'es'
-    ? { badge: 'EN VIVO', upcoming: 'Próximo Evento', cta: 'Únete en Vivo' }
-    : { badge: 'LIVE', upcoming: 'Upcoming Event', cta: 'Join Live' };
+  // Get translations
+  const t = await getTranslations('liveEvent');
 
   return (
-    <section className="relative py-16 px-6 lg:px-8 overflow-hidden" style={{ background: '#0a0a0a' }}>
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 animate-pulse" style={{
-          backgroundImage: 'radial-gradient(circle, #ff0055 1px, transparent 1px)',
-          backgroundSize: '30px 30px'
-        }}></div>
-      </div>
-
-      {/* Glowing effects */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 animate-pulse" style={{ background: '#ff0055' }}></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 animate-pulse" style={{ background: '#00ff88', animationDelay: '1s' }}></div>
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="border-4 p-8 md:p-12 relative" style={{
-          borderColor: '#ff0055',
-          boxShadow: '0 0 50px #ff005550, inset 0 0 30px #ff005520'
+    <section className="relative py-12 px-6 lg:px-8" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)' }}>
+      <div className="max-w-5xl mx-auto">
+        <div className="border-4 border-[#ff0055] bg-black p-8 md:p-10 relative" style={{
+          boxShadow: '0 0 40px rgba(255, 0, 85, 0.3)'
         }}>
-          {/* Pulsing corner markers */}
-          <div className="absolute top-3 left-3 w-6 h-6 animate-pulse" style={{ background: '#ff0055' }}></div>
-          <div className="absolute top-3 right-3 w-6 h-6 animate-pulse" style={{ background: '#00ff88', animationDelay: '0.3s' }}></div>
-          <div className="absolute bottom-3 left-3 w-6 h-6 animate-pulse" style={{ background: '#00cfff', animationDelay: '0.6s' }}></div>
-          <div className="absolute bottom-3 right-3 w-6 h-6 animate-pulse" style={{ background: '#ff0055', animationDelay: '0.9s' }}></div>
+          {/* Live Badge */}
+          <div className="absolute -top-4 left-8 bg-[#ff0055] px-6 py-2 flex items-center gap-2">
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            <span className="text-white font-black text-sm uppercase tracking-wider">{t('badge')}</span>
+          </div>
 
-          <div className="grid lg:grid-cols-[auto,1fr] gap-8 items-center">
-            {/* Live indicator */}
-            <div className="flex items-center justify-center lg:justify-start gap-4">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center border-4 animate-pulse" style={{
-                  borderColor: '#ff0055',
-                  background: 'radial-gradient(circle, #ff0055 0%, transparent 70%)'
-                }}>
-                  <div className="text-4xl">🔴</div>
+          <div className="space-y-6">
+            {/* Event Title */}
+            <h2 className="text-3xl md:text-4xl font-black text-white leading-tight pt-4">
+              {data.title}
+            </h2>
+
+            {/* Event Info Grid */}
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Date & Time */}
+              <div className="flex items-start gap-3 text-white">
+                <span className="text-2xl mt-1">📅</span>
+                <div>
+                  <div className="text-sm text-gray-400 uppercase tracking-wide">{t('dateTime')}</div>
+                  <div className="font-bold text-lg">{date}</div>
+                  <div className="font-bold text-xl text-[#00ff88]">{time} <span className="text-lg">({timezoneDisplay})</span></div>
                 </div>
-                <div className="absolute inset-0 rounded-full animate-ping" style={{
-                  background: '#ff0055',
-                  opacity: 0.3
-                }}></div>
               </div>
-              <div className="text-left">
-                <div className="text-2xl sm:text-3xl font-black text-[#ff0055] uppercase tracking-tight">
-                  {labels.badge}
-                </div>
-                <div className="text-sm text-gray-400 font-bold uppercase">
-                  {labels.upcoming}
+
+              {/* Language */}
+              <div className="flex items-start gap-3 text-white">
+                <span className="text-2xl mt-1">🌍</span>
+                <div>
+                  <div className="text-sm text-gray-400 uppercase tracking-wide">{t('language')}</div>
+                  <div className="font-bold text-xl text-[#00cfff]">{t(`languages.${data.eventLanguage}`)}</div>
                 </div>
               </div>
             </div>
 
-            {/* Event details */}
-            <div className="space-y-4">
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight">
-                {eventDetails.title}
-              </h3>
-
-              <div className="flex flex-wrap gap-4 text-base sm:text-lg">
-                {/* Date & Time */}
-                <div className="flex items-center gap-2 text-[#00ff88]">
-                  <span className="text-2xl">📅</span>
-                  <span className="font-bold">{eventDetails.date}</span>
-                  <span className="text-gray-500">•</span>
-                  <span className="font-bold">{eventDetails.time}</span>
-                </div>
-
-                {/* Platform */}
-                <div className="flex items-center gap-2 text-[#00cfff]">
-                  <span className="text-2xl">📺</span>
-                  <a
-                    href={eventDetails.platformUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-bold hover:underline"
-                  >
-                    {eventDetails.platform}
-                  </a>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="pt-2">
-                <a
-                  href={eventDetails.platformUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff0055] text-white font-black uppercase tracking-wide hover:scale-105 transition-transform"
-                  style={{
-                    boxShadow: '0 0 30px #ff005550'
-                  }}
-                >
-                  <span>{labels.cta}</span>
-                  <span className="text-xl">→</span>
-                </a>
-              </div>
+            {/* CTA Button */}
+            <div className="pt-2">
+              <a
+                href={data.platformUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff0055] text-white font-black text-lg uppercase tracking-wide hover:bg-[#ff1166] transition-all"
+                style={{
+                  boxShadow: '0 4px 20px rgba(255, 0, 85, 0.4)'
+                }}
+              >
+                <span>{t('watchOn')} {data.platform}</span>
+                <span className="text-2xl">→</span>
+              </a>
             </div>
           </div>
         </div>
