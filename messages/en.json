@@ -92,16 +92,6 @@
     },
     "status": "Live on all platforms"
   },
-  "liveEvent": {
-    "badge": "LIVE",
-    "upcoming": "Upcoming Event",
-    "title": "AI & Automation Deep Dive - Live Session",
-    "date": "December 15, 2024",
-    "time": "6:00 PM CET",
-    "platform": "YouTube Live",
-    "platformUrl": "https://www.youtube.com/@Prompt_and_Play",
-    "cta": "Join Live"
-  },
   "contact": {
     "label": "Contact",
     "title1": "LET'S",

@@ -40,7 +40,7 @@ export default async function Home({ params: { locale } }: Props) {
       <Navigation />
       <main>
         <Hero />
-        <LiveEvent />
+        <LiveEvent locale={locale} />
         <About />
         <Speaking />
         <Podcast />

@@ -1,24 +1,43 @@
-'use client';
+import { promises as fs } from 'fs';
+import path from 'path';
 
-import { useTranslations } from "next-intl";
-
-export default function LiveEvent() {
-  const t = useTranslations('liveEvent');
-
-  // TOGGLE THIS: Set to true to show the live event banner, false to hide it
-  const isEventActive = true;
-
-  // EVENT DETAILS - Update these when you have a new live event
-  const eventDetails = {
-    title: t('title'),
-    date: t('date'),
-    time: t('time'),
-    platform: t('platform'),
-    platformUrl: t('platformUrl'),
+type LiveEventData = {
+  isActive: boolean;
+  en: {
+    title: string;
+    date: string;
+    time: string;
+    platform: string;
+    platformUrl: string;
   };
+  es: {
+    title: string;
+    date: string;
+    time: string;
+    platform: string;
+    platformUrl: string;
+  };
+};
+
+async function getLiveEventData(): Promise<LiveEventData> {
+  const dataFilePath = path.join(process.cwd(), 'data', 'liveEvent.json');
+  const fileContents = await fs.readFile(dataFilePath, 'utf8');
+  return JSON.parse(fileContents);
+}
+
+export default async function LiveEvent({ locale }: { locale: string }) {
+  const data = await getLiveEventData();
 
   // Don't render anything if event is not active
-  if (!isEventActive) return null;
+  if (!data.isActive) return null;
+
+  // Get event details for the current locale
+  const eventDetails = data[locale as 'en' | 'es'] || data.en;
+
+  // Get labels based on locale
+  const labels = locale === 'es'
+    ? { badge: 'EN VIVO', upcoming: 'Próximo Evento', cta: 'Únete en Vivo' }
+    : { badge: 'LIVE', upcoming: 'Upcoming Event', cta: 'Join Live' };
 
   return (
     <section className="relative py-16 px-6 lg:px-8 overflow-hidden" style={{ background: '#0a0a0a' }}>
@@ -62,10 +81,10 @@ export default function LiveEvent() {
               </div>
               <div className="text-left">
                 <div className="text-2xl sm:text-3xl font-black text-[#ff0055] uppercase tracking-tight">
-                  {t('badge')}
+                  {labels.badge}
                 </div>
                 <div className="text-sm text-gray-400 font-bold uppercase">
-                  {t('upcoming')}
+                  {labels.upcoming}
                 </div>
               </div>
             </div>
@@ -110,7 +129,7 @@ export default function LiveEvent() {
                     boxShadow: '0 0 30px #ff005550'
                   }}
                 >
-                  <span>{t('cta')}</span>
+                  <span>{labels.cta}</span>
                   <span className="text-xl">→</span>
                 </a>
               </div>
