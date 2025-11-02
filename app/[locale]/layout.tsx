@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from 'next/script';
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
@@ -23,8 +24,8 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
     metadataBase: new URL(baseUrl),
     title: t('title'),
     description: t('description'),
-    keywords: ["Idir Ouhabmeskine", "n8n", "Solutions Engineer", "AI", "Automation", "Speaker", "Prompt&Play", "Podcast"],
-    authors: [{ name: "Idir Ouhabmeskine" }],
+    keywords: ["Idir Ouhab Meskine", "n8n", "Solutions Engineer", "AI", "Automation", "Speaker", "Prompt&Play", "Podcast"],
+    authors: [{ name: "Idir Ouhab Meskine" }],
     alternates: {
       canonical: canonicalUrl,
       languages: {
@@ -37,7 +38,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       locale: ogLocale,
       alternateLocale: [alternateLocale],
       url: canonicalUrl,
-      siteName: "Idir Ouhabmeskine",
+      siteName: "Idir Ouhab Meskine",
       title: t('ogTitle'),
       description: t('ogDescription'),
     },
@@ -78,8 +79,27 @@ export default async function RootLayout({
   // Providing all messages to the client
   const messages = await getMessages();
 
+  // Get Google Analytics ID from environment variable
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
   return (
     <html lang={locale}>
+      {gaId && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${gaId}');
+            `}
+          </Script>
+        </>
+      )}
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           {children}

@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'Idir Ouhabmeskine - Solutions Engineer at n8n';
+export const alt = 'Idir Ouhab Meskine - Solutions Engineer at n8n';
 export const size = {
   width: 1200,
   height: 630,

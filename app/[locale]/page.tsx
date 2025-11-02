@@ -55,7 +55,7 @@ export default async function Home({ params: { locale } }: Props) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            name: "Idir Ouhabmeskine",
+            name: "Idir Ouhab Meskine",
             url: `https://idir.ai/${locale}`,
             jobTitle: t('jobTitle'),
             worksFor: {
@@ -65,7 +65,7 @@ export default async function Home({ params: { locale } }: Props) {
             },
             knowsAbout,
             sameAs: [
-              "https://linkedin.com/in/idir-ouhabmeskine",
+              "https://linkedin.com/in/idir-Ouhab Meskine",
               "https://twitter.com/idir",
               "https://github.com/idir",
             ],
@@ -94,7 +94,7 @@ export default async function Home({ params: { locale } }: Props) {
             inLanguage: locale,
             author: {
               "@type": "Person",
-              name: "Idir Ouhabmeskine",
+              name: "Idir Ouhab Meskine",
             },
             genre: podcastGenre,
           }),
