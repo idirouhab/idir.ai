@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
 const dataFilePath = path.join(process.cwd(), 'data', 'liveEvent.json');
 
@@ -10,6 +11,15 @@ export async function GET() {
   // Check authentication
   const sessionCookie = cookies().get('admin-session');
   if (!sessionCookie) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  // Verify JWT token
+  const payload = await verifyToken(sessionCookie.value);
+  if (!payload) {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
@@ -34,6 +44,15 @@ export async function POST(request: Request) {
   // Check authentication
   const sessionCookie = cookies().get('admin-session');
   if (!sessionCookie) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  // Verify JWT token
+  const payload = await verifyToken(sessionCookie.value);
+  if (!payload) {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }

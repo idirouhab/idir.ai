@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { signToken } from '@/lib/jwt';
 
 export async function POST(request: Request) {
   try {
@@ -22,12 +23,10 @@ export async function POST(request: Request) {
     }
 
     if (password === adminPassword) {
-      // Create a simple session token
-      const sessionToken = Buffer.from(
-        `${Date.now()}-${Math.random()}`
-      ).toString('base64');
+      // Create a signed JWT token
+      const sessionToken = await signToken({ userId: 'admin' });
 
-      // Set cookie
+      // Set cookie with JWT token
       cookies().set('admin-session', sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

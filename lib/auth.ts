@@ -1,12 +1,23 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
+import { verifyToken } from './jwt';
 
-export function checkAuth(request: NextRequest): boolean {
+export async function checkAuth(request: NextRequest): Promise<boolean> {
   const sessionCookie = request.cookies.get('admin-session');
-  return !!sessionCookie;
+  if (!sessionCookie) {
+    return false;
+  }
+
+  const payload = await verifyToken(sessionCookie.value);
+  return !!payload;
 }
 
-export function checkAuthFromCookies(): boolean {
+export async function checkAuthFromCookies(): Promise<boolean> {
   const sessionCookie = cookies().get('admin-session');
-  return !!sessionCookie;
+  if (!sessionCookie) {
+    return false;
+  }
+
+  const payload = await verifyToken(sessionCookie.value);
+  return !!payload;
 }
