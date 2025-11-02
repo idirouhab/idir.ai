@@ -7,3 +7,4 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  NETLIFY_SECRETS_SCANNING = "false"
