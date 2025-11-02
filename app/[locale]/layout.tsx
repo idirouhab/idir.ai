@@ -20,6 +20,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
   const alternateLocale = locale === 'es' ? 'en_US' : 'es_ES';
 
   return {
+    metadataBase: new URL(baseUrl),
     title: t('title'),
     description: t('description'),
     keywords: ["Idir Ouhabmeskine", "n8n", "Solutions Engineer", "AI", "Automation", "Speaker", "Prompt&Play", "Podcast"],

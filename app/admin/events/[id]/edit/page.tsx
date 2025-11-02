@@ -7,20 +7,12 @@ import EventForm from '@/components/admin/EventForm';
 type LiveEventData = {
   id: number;
   isActive: boolean;
-  en: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
-  es: {
-    title: string;
-    date: string;
-    time: string;
-    platform: string;
-    platformUrl: string;
-  };
+  title: string;
+  eventLanguage: string;
+  eventDatetime: string;
+  timezone: string;
+  platform: string;
+  platformUrl: string;
 };
 
 export default function EditEventPage() {

@@ -11,22 +11,27 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'GPTBot',
         allow: '/',
+        disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'ChatGPT-User',
         allow: '/',
+        disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'Google-Extended',
         allow: '/',
+        disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'anthropic-ai',
         allow: '/',
+        disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'ClaudeBot',
         allow: '/',
+        disallow: ['/api/', '/admin/'],
       },
     ],
     sitemap: 'https://idir.ai/sitemap.xml',
