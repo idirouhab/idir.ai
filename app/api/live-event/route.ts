@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
-
-const dataFilePath = path.join(process.cwd(), 'data', 'liveEvent.json');
+import { supabase } from '@/lib/supabase';
 
 // GET: Read the live event data
 export async function GET() {
@@ -27,9 +24,41 @@ export async function GET() {
   }
 
   try {
-    const fileContents = await fs.readFile(dataFilePath, 'utf8');
-    const data = JSON.parse(fileContents);
-    return NextResponse.json(data);
+    // Get the first (and only) row from live_events table
+    const { data, error } = await supabase
+      .from('live_events')
+      .select('*')
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('Error reading live event data:', error);
+      return NextResponse.json(
+        { error: 'Failed to read live event data' },
+        { status: 500 }
+      );
+    }
+
+    // Transform database format to frontend format
+    const responseData = {
+      isActive: data.is_active,
+      en: {
+        title: data.en_title,
+        date: data.en_date,
+        time: data.en_time,
+        platform: data.en_platform,
+        platformUrl: data.en_platform_url,
+      },
+      es: {
+        title: data.es_title,
+        date: data.es_date,
+        time: data.es_time,
+        platform: data.es_platform,
+        platformUrl: data.es_platform_url,
+      },
+    };
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Error reading live event data:', error);
     return NextResponse.json(
@@ -70,12 +99,50 @@ export async function POST(request: Request) {
       );
     }
 
-    // Write to file
-    await fs.writeFile(
-      dataFilePath,
-      JSON.stringify(body, null, 2),
-      'utf8'
-    );
+    // Transform frontend format to database format
+    const updateData = {
+      is_active: body.isActive,
+      en_title: body.en.title,
+      en_date: body.en.date,
+      en_time: body.en.time,
+      en_platform: body.en.platform,
+      en_platform_url: body.en.platformUrl,
+      es_title: body.es.title,
+      es_date: body.es.date,
+      es_time: body.es.time,
+      es_platform: body.es.platform,
+      es_platform_url: body.es.platformUrl,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Get the first row's ID
+    const { data: existingData, error: selectError } = await supabase
+      .from('live_events')
+      .select('id')
+      .limit(1)
+      .single();
+
+    if (selectError) {
+      console.error('Error finding live event:', selectError);
+      return NextResponse.json(
+        { error: 'Failed to find live event' },
+        { status: 500 }
+      );
+    }
+
+    // Update the row
+    const { error: updateError } = await supabase
+      .from('live_events')
+      .update(updateData)
+      .eq('id', existingData.id);
+
+    if (updateError) {
+      console.error('Error updating live event data:', updateError);
+      return NextResponse.json(
+        { error: 'Failed to update live event data' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ success: true, data: body });
   } catch (error) {

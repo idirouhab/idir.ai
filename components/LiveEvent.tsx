@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 
 type LiveEventData = {
   isActive: boolean;
@@ -19,14 +18,58 @@ type LiveEventData = {
   };
 };
 
-async function getLiveEventData(): Promise<LiveEventData> {
-  const dataFilePath = path.join(process.cwd(), 'data', 'liveEvent.json');
-  const fileContents = await fs.readFile(dataFilePath, 'utf8');
-  return JSON.parse(fileContents);
+async function getLiveEventData(): Promise<LiveEventData | null> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase environment variables');
+      return null;
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    const { data, error } = await supabase
+      .from('live_events')
+      .select('*')
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('Error fetching live event:', error);
+      return null;
+    }
+
+    // Transform database format to component format
+    return {
+      isActive: data.is_active,
+      en: {
+        title: data.en_title,
+        date: data.en_date,
+        time: data.en_time,
+        platform: data.en_platform,
+        platformUrl: data.en_platform_url,
+      },
+      es: {
+        title: data.es_title,
+        date: data.es_date,
+        time: data.es_time,
+        platform: data.es_platform,
+        platformUrl: data.es_platform_url,
+      },
+    };
+  } catch (error) {
+    console.error('Error in getLiveEventData:', error);
+    return null;
+  }
 }
 
 export default async function LiveEvent({ locale }: { locale: string }) {
   const data = await getLiveEventData();
+
+  // Don't render if data couldn't be fetched
+  if (!data) return null;
 
   // Don't render anything if event is not active
   if (!data.isActive) return null;
