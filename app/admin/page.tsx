@@ -24,21 +24,22 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch('/api/live-event');
-      if (response.ok) {
-        fetchEvents();
-      } else {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/live-event');
+        if (response.ok) {
+          fetchEvents();
+        } else {
+          router.push('/admin/login');
+        }
+      } catch (error) {
         router.push('/admin/login');
       }
-    } catch (error) {
-      router.push('/admin/login');
-    }
-  };
+    };
+
+    checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchEvents = async () => {
     try {

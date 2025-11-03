@@ -21,7 +21,6 @@ const nextConfig = {
 
   // Experimental optimizations
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['next-intl'],
   },
 

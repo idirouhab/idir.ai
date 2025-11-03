@@ -23,33 +23,34 @@ export default function EditEventPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const checkAuthAndFetchEvent = async () => {
+      try {
+        // Check authentication first
+        const authResponse = await fetch('/api/live-event');
+        if (!authResponse.ok) {
+          router.push('/admin/login');
+          return;
+        }
+
+        // Fetch the specific event
+        const eventResponse = await fetch(`/api/live-event/${params.id}`);
+        if (eventResponse.ok) {
+          const data = await eventResponse.json();
+          setEventData(data);
+        } else {
+          setError('Event not found');
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching event:', error);
+        setError('Failed to load event');
+        setLoading(false);
+      }
+    };
+
     checkAuthAndFetchEvent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkAuthAndFetchEvent = async () => {
-    try {
-      // Check authentication first
-      const authResponse = await fetch('/api/live-event');
-      if (!authResponse.ok) {
-        router.push('/admin/login');
-        return;
-      }
-
-      // Fetch the specific event
-      const eventResponse = await fetch(`/api/live-event/${params.id}`);
-      if (eventResponse.ok) {
-        const data = await eventResponse.json();
-        setEventData(data);
-      } else {
-        setError('Event not found');
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching event:', error);
-      setError('Failed to load event');
-      setLoading(false);
-    }
-  };
 
   const handleLogout = async () => {
     try {

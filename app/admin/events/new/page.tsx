@@ -8,19 +8,20 @@ export default function NewEventPage() {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch('/api/live-event');
-      if (!response.ok) {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/live-event');
+        if (!response.ok) {
+          router.push('/admin/login');
+        }
+      } catch (error) {
         router.push('/admin/login');
       }
-    } catch (error) {
-      router.push('/admin/login');
-    }
-  };
+    };
+
+    checkAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogout = async () => {
     try {
