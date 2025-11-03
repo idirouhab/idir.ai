@@ -17,7 +17,7 @@ export default function Footer() {
     ],
     social: [
       { label: contact('platforms.linkedin'), href: "https://www.linkedin.com/in/idirouhab/" },
-      { label: contact('platforms.x'), href: "https://x.com/PromptAndPlay" },
+      { label: contact('platforms.x'), href: "https://x.com/idir_ouhab" },
       { label: contact('platforms.github'), href: "https://www.github.com/idirouhab" },
       { label: "Email", href: "mailto:hello@idir.ai" },
     ],
