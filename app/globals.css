@@ -41,14 +41,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #00ff88 0%, #00cfff 50%, #ff0055 100%);
+    /* Improved gradient with better contrast */
+    background: linear-gradient(135deg, #00ff88 0%, #00e5ff 50%, #ff0055 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Add subtle shadow for better legibility */
+    filter: drop-shadow(0 2px 8px rgba(0, 255, 136, 0.3));
   }
 
   .glow-text {
-    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5), 0 0 40px rgba(0, 255, 136, 0.3);
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.4), 0 0 40px rgba(0, 255, 136, 0.2);
   }
 
   .border-glow {
@@ -129,4 +132,21 @@ html {
 
 .animate-scale-in {
   animation: scaleIn 0.5s ease-out forwards;
+}
+
+/* Keyboard navigation focus states */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #00ff88;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Remove default outline but keep focus-visible */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
 }

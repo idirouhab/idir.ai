@@ -57,15 +57,38 @@ export default function About() {
           </h2>
 
           {/* Personal intro - first person */}
-          <p className="text-base sm:text-lg md:text-xl text-white leading-relaxed max-w-4xl mb-4 font-medium">
+          <p className="text-lg sm:text-xl md:text-2xl text-white leading-relaxed max-w-4xl mb-4 font-bold">
             {t('personalIntro')}
           </p>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed max-w-3xl">
-            {t('descriptionStart')}
-            <strong className="text-[#ff0055] font-bold">{t('descriptionN8n')}</strong>
-            {t('descriptionEnd')}
+          <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed max-w-3xl mb-8">
+            {t('mission')}
           </p>
+
+          {/* By the Numbers - Proof Section */}
+          <div className="bg-black border-2 border-[#00ff88] p-6 sm:p-8 mb-8">
+            <h3 className="text-xl sm:text-2xl font-black text-[#00ff88] mb-6 uppercase">
+              {t('proofTitle')}
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">🎤</span>
+                <p className="text-sm sm:text-base text-gray-300">{t('proofConferences')}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">🎓</span>
+                <p className="text-sm sm:text-base text-gray-300">{t('proofStudents')}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">🎙️</span>
+                <p className="text-sm sm:text-base text-gray-300">{t('proofPodcast')}</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">⚡</span>
+                <p className="text-sm sm:text-base text-gray-300">{t('proofWorkflows')}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Expertise Grid - Asymmetric */}

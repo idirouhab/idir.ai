@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 export default function Contact() {
   const t = useTranslations('contact');
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', intent: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -17,7 +17,7 @@ export default function Contact() {
       // Simulated submission - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', intent: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
       setStatus('error');
@@ -90,7 +90,8 @@ export default function Contact() {
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
           {/* Contact Form */}
           <div className="bg-black border-2 border-[#00ff88] p-8">
-            <h3 className="text-2xl font-black text-white mb-6 uppercase">{t('form.title')}</h3>
+            <h3 className="text-2xl font-black text-white mb-3 uppercase">{t('form.title')}</h3>
+            <p className="text-sm text-gray-400 mb-6 leading-relaxed">{t('form.microcopy')}</p>
 
             {status === 'success' && (
               <div className="mb-6 p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]">
@@ -105,6 +106,25 @@ export default function Contact() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="intent" className="block text-white font-bold mb-2 uppercase text-sm">
+                  {t('form.intent')}
+                </label>
+                <select
+                  id="intent"
+                  required
+                  value={formData.intent}
+                  onChange={(e) => setFormData({...formData, intent: e.target.value})}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                >
+                  <option value="" disabled>{t('form.intent')}</option>
+                  <option value="speaking">{t('form.intentSpeaking')}</option>
+                  <option value="consulting">{t('form.intentConsulting')}</option>
+                  <option value="podcast">{t('form.intentPodcast')}</option>
+                  <option value="hello">{t('form.intentHello')}</option>
+                </select>
+              </div>
+
               <div>
                 <label htmlFor="name" className="block text-white font-bold mb-2 uppercase text-sm">
                   {t('form.name')}

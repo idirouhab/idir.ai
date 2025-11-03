@@ -28,26 +28,16 @@ export default function Hero() {
 
             {/* Giant name */}
             <div>
+              <p className="text-sm sm:text-base md:text-lg font-bold text-[#00ff88] mb-3 uppercase tracking-wide">
+                {t('role')}
+              </p>
+
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 tracking-tight">
-                <span className="text-white">{t('name')}</span>
-                <br />
-                <span className="gradient-text glow-text">{t('lastName')}</span>
+                <span className="text-white">{t('headline')}</span>
               </h1>
 
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-1 w-12 sm:w-16 bg-gradient-to-r from-[#00ff88] to-transparent"></div>
-                <p className="text-base sm:text-lg md:text-xl font-bold text-white">
-                  {t('role')}
-                </p>
-              </div>
-
-              <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed max-w-xl mb-4">
-                {t('descriptionStart')}
-                <span className="text-[#00ff88] font-semibold">{t('descriptionAI')}</span>
-                {t('descriptionAnd')}
-                <span className="text-[#00cfff] font-semibold">{t('descriptionAutomation')}</span>
-                {t('descriptionAt')}
-                <a href="https://n8n.io" target="_blank" rel="noopener noreferrer" className="text-[#ff0055] font-bold hover:underline">{t('descriptionN8n')}</a>
+              <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl mb-6">
+                {t('subheadline')}
               </p>
 
               <div className="flex flex-wrap gap-3">
@@ -63,20 +53,20 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* CTA buttons */}
+            {/* CTA buttons - Clear hierarchy */}
             <div className="flex flex-wrap gap-4 pt-4">
               <a
                 href="#contact"
-                className="group relative px-8 py-4 bg-[#00ff88] text-black font-bold rounded-lg overflow-hidden transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#00ff88]/50"
+                className="group relative px-8 py-4 bg-[#00ff88] text-black font-black rounded-lg overflow-hidden transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#00ff88]/50 text-base uppercase tracking-wide"
               >
                 <span className="relative z-10">{t('cta')}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88] to-[#00cfff] opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </a>
               <a
-                href="#about"
-                className="px-8 py-4 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-black transition-all"
+                href="#speaking"
+                className="px-6 py-3 border-2 border-gray-700 text-gray-300 font-bold rounded-lg hover:border-[#00ff88] hover:text-[#00ff88] transition-all text-sm"
               >
-                {t('explore')}
+                {t('ctaSecondary')}
               </a>
             </div>
           </div>
