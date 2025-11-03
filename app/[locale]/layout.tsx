@@ -4,7 +4,33 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
+import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
 import "../globals.css";
+
+// Optimize font loading
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
+  display: 'swap',
+  preload: true,
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+  preload: true,
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['600', '700', '800', '900'],
+  variable: '--font-montserrat',
+  display: 'swap',
+  preload: false, // Only used for podcast title
+});
 
 type Props = {
   params: { locale: string };
@@ -80,7 +106,7 @@ export default async function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
       <body className="antialiased">
         {/* Cookiebot - Loads before page interactive */}
         <Script

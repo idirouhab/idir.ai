@@ -67,22 +67,22 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }}>
+    <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }}>
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-20">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-1 w-16 bg-[#ff0055]"></div>
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="h-1 w-12 bg-[#ff0055]"></div>
             <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
-            <div className="h-1 w-16 bg-[#ff0055]"></div>
+            <div className="h-1 w-12 bg-[#ff0055]"></div>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4">
             {t('title1')}
             <br />
             <span className="gradient-text glow-text">{t('title2')}</span>
           </h2>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
             {t('description')}
           </p>
         </div>

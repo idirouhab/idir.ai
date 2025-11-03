@@ -7,7 +7,7 @@ export default function Podcast() {
   const t = useTranslations('podcast');
 
   return (
-    <section id="podcast" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section id="podcast" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
       {/* Background effect - responsive */}
       <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 md:w-[600px] md:h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#00CFFF' }}></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-96 sm:h-96 md:w-[600px] md:h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#FF6B6B' }}></div>
@@ -26,7 +26,7 @@ export default function Podcast() {
               </span>
             </div>
 
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-none" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4 leading-tight font-[family-name:var(--font-montserrat)]">
               <span className="italic" style={{
                 background: 'linear-gradient(135deg, #00CFFF 0%, #FF6B6B 100%)',
                 WebkitBackgroundClip: 'text',
@@ -37,7 +37,7 @@ export default function Podcast() {
               </span>
             </h2>
 
-            <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed mb-8">
+            <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed mb-6">
               {t('description')}
             </p>
 
@@ -104,7 +104,7 @@ export default function Podcast() {
                 className="object-contain"
               />
               <div>
-                <h3 className="text-2xl font-black text-white italic" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                <h3 className="text-2xl font-black text-white italic font-[family-name:var(--font-montserrat)]">
                   Prompt&Play
                 </h3>
                 <div className="flex items-center gap-2 mt-1">

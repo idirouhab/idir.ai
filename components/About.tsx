@@ -33,7 +33,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section id="about" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -50,18 +50,18 @@ export default function About() {
             <span className="text-[#00ff88] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-8 leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
             {t('title1')}
             <br />
             <span className="gradient-text">{t('title2')}</span>
           </h2>
 
           {/* Personal intro - first person */}
-          <p className="text-xl sm:text-2xl md:text-3xl text-white leading-relaxed max-w-4xl mb-6 font-medium">
+          <p className="text-base sm:text-lg md:text-xl text-white leading-relaxed max-w-4xl mb-4 font-medium">
             {t('personalIntro')}
           </p>
 
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-400 leading-relaxed max-w-3xl">
+          <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed max-w-3xl">
             {t('descriptionStart')}
             <strong className="text-[#ff0055] font-bold">{t('descriptionN8n')}</strong>
             {t('descriptionEnd')}
@@ -83,11 +83,11 @@ export default function About() {
               <div className="absolute top-0 left-0 w-4 h-4" style={{ background: item.color }}></div>
               <div className="absolute bottom-0 right-0 w-4 h-4" style={{ background: item.color }}></div>
 
-              <div className="text-5xl mb-4">{item.icon}</div>
-              <h3 className="text-2xl font-black text-white mb-3 uppercase tracking-tight">
+              <div className="text-4xl mb-3">{item.icon}</div>
+              <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">
                 {item.title}
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 {item.description}
               </p>
             </div>
@@ -97,11 +97,11 @@ export default function About() {
         {/* Mission Statement - Bold Box */}
         <div className="relative">
           <div className="absolute -inset-1 bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055] opacity-30 blur"></div>
-          <div className="relative bg-black border-2 border-[#00ff88] p-12">
-            <h3 className="text-3xl font-black text-white mb-6 uppercase">
+          <div className="relative bg-black border-2 border-[#00ff88] p-6 sm:p-8">
+            <h3 className="text-xl sm:text-2xl font-black text-white mb-4 uppercase">
               {t('mission.title')}
             </h3>
-            <p className="text-xl text-gray-300 leading-relaxed mb-6">
+            <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-4">
               {t('mission.description')}
             </p>
             <div className="flex flex-wrap gap-3">

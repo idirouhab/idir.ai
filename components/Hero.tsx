@@ -21,27 +21,27 @@ export default function Hero() {
       <div className="absolute top-10 sm:top-20 right-10 sm:right-20 w-48 h-48 sm:w-96 sm:h-96 rounded-full blur-3xl opacity-20" style={{ background: '#00ff88' }}></div>
       <div className="absolute bottom-10 sm:bottom-20 left-10 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 rounded-full blur-3xl opacity-20" style={{ background: '#ff0055' }}></div>
 
-      <div className="max-w-7xl mx-auto w-full py-20 relative z-10">
+      <div className="max-w-7xl mx-auto w-full py-12 sm:py-16 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <div className="space-y-8">
 
             {/* Giant name */}
             <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-none mb-6 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 tracking-tight">
                 <span className="text-white">{t('name')}</span>
                 <br />
                 <span className="gradient-text glow-text">{t('lastName')}</span>
               </h1>
 
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-1 w-12 sm:w-20 bg-gradient-to-r from-[#00ff88] to-transparent"></div>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-1 w-12 sm:w-16 bg-gradient-to-r from-[#00ff88] to-transparent"></div>
+                <p className="text-base sm:text-lg md:text-xl font-bold text-white">
                   {t('role')}
                 </p>
               </div>
 
-              <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl mb-4">
+              <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed max-w-xl mb-4">
                 {t('descriptionStart')}
                 <span className="text-[#00ff88] font-semibold">{t('descriptionAI')}</span>
                 {t('descriptionAnd')}
