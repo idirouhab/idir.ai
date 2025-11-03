@@ -58,9 +58,6 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
         'max-snippet': -1,
       },
     },
-    verification: {
-      google: "your-google-verification-code",
-    },
   };
 }
 

@@ -33,7 +33,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="py-24 px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -55,6 +55,11 @@ export default function About() {
             <br />
             <span className="gradient-text">{t('title2')}</span>
           </h2>
+
+          {/* Personal intro - first person */}
+          <p className="text-xl sm:text-2xl md:text-3xl text-white leading-relaxed max-w-4xl mb-6 font-medium">
+            {t('personalIntro')}
+          </p>
 
           <p className="text-lg sm:text-xl md:text-2xl text-gray-400 leading-relaxed max-w-3xl">
             {t('descriptionStart')}

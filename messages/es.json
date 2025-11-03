@@ -22,6 +22,7 @@
     "label": "Sobre mí",
     "title1": "CONSTRUYENDO EL",
     "title2": "FUTURO DEL TRABAJO",
+    "personalIntro": "Ayudo a equipos a optimizar procesos con n8n, IA y automatización—transformando flujos de trabajo complejos en soluciones simples y potentes que ahorran tiempo e impulsan la innovación.",
     "descriptionStart": "Como Ingeniero de Soluciones en ",
     "descriptionN8n": "n8n",
     "descriptionEnd": ", me especializo en diseñar e implementar soluciones de automatización de flujos de trabajo que ayudan a las organizaciones a aprovechar el poder de la IA y la automatización.",
@@ -111,6 +112,19 @@
     "title1": "CONECTEMOS",
     "title2": "JUNTOS",
     "description": "¿Interesado en colaboración, oportunidades para charlas o consultoría?",
+    "form": {
+      "title": "Enviar Mensaje",
+      "name": "Nombre",
+      "namePlaceholder": "Tu nombre",
+      "email": "Email",
+      "emailPlaceholder": "tu@email.com",
+      "message": "Mensaje",
+      "messagePlaceholder": "Cuéntame sobre tu proyecto o consulta...",
+      "submit": "Enviar Mensaje",
+      "sending": "Enviando...",
+      "success": "¡Mensaje enviado! Te responderé pronto.",
+      "error": "Error al enviar. Por favor usa email directo."
+    },
     "platforms": {
       "linkedin": "LinkedIn",
       "x": "X",

@@ -6,7 +6,7 @@ export default function Speaking() {
   const t = useTranslations('speaking');
 
   return (
-    <section id="speaking" className="py-24 px-6 lg:px-8 relative" style={{ background: '#050505' }}>
+    <section id="speaking" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
           <div className="flex items-center gap-4 mb-6">

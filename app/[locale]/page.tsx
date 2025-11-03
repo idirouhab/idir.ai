@@ -91,12 +91,28 @@ export default async function Home({ params: { locale } }: Props) {
             "@type": "PodcastSeries",
             name: "Prompt&Play",
             description: t('podcastDescription'),
-            inLanguage: locale,
+            inLanguage: "es",
             author: {
               "@type": "Person",
               name: "Idir Ouhab Meskine",
             },
             genre: podcastGenre,
+            url: "https://idir.ai/podcast",
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: {
+              "@type": "Person",
+              name: "Idir Ouhab Meskine",
+              description: t('description'),
+              knowsAbout,
+            },
           }),
         }}
       />

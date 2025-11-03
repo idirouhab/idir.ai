@@ -1,9 +1,29 @@
 'use client';
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 
 export default function Contact() {
   const t = useTranslations('contact');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+
+    // Simple form submission (you can replace this with actual email service)
+    try {
+      // Simulated submission - replace with actual API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
+  };
 
   const socialLinks = [
     {
@@ -47,7 +67,7 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-24 px-6 lg:px-8 relative" style={{ background: '#050505' }}>
+    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }}>
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <div className="flex items-center justify-center gap-4 mb-8">
@@ -67,35 +87,108 @@ export default function Contact() {
           </p>
         </div>
 
-        {/* Social Links - Bold Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-          {socialLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              target={link.href.startsWith("http") ? "_blank" : undefined}
-              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="group relative p-8 bg-black border-2 hover:scale-110 transition-all duration-300"
-              style={{
-                borderColor: link.color,
-                boxShadow: `0 0 30px ${link.color}20`
-              }}
-            >
-              {/* Corner markers */}
-              <div className="absolute top-2 left-2 w-3 h-3" style={{ background: link.color }}></div>
-              <div className="absolute bottom-2 right-2 w-3 h-3" style={{ background: link.color }}></div>
+        <div className="grid lg:grid-cols-2 gap-12 mb-20">
+          {/* Contact Form */}
+          <div className="bg-black border-2 border-[#00ff88] p-8">
+            <h3 className="text-2xl font-black text-white mb-6 uppercase">{t('form.title')}</h3>
 
-              <div className="mb-4 group-hover:scale-125 transition-transform duration-300">
-                {link.svg}
+            {status === 'success' && (
+              <div className="mb-6 p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]">
+                {t('form.success')}
               </div>
-              <div className="font-black text-xl text-white uppercase tracking-tight">
-                {link.name}
+            )}
+
+            {status === 'error' && (
+              <div className="mb-6 p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
+                {t('form.error')}
               </div>
-            </a>
-          ))}
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-white font-bold mb-2 uppercase text-sm">
+                  {t('form.name')}
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder={t('form.namePlaceholder')}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
+                  {t('form.email')}
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  placeholder={t('form.emailPlaceholder')}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-white font-bold mb-2 uppercase text-sm">
+                  {t('form.message')}
+                </label>
+                <textarea
+                  id="message"
+                  required
+                  rows={6}
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  placeholder={t('form.messagePlaceholder')}
+                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status === 'sending'}
+                className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {status === 'sending' ? t('form.sending') : t('form.submit')}
+              </button>
+            </form>
+          </div>
+
+          {/* Social Links Grid */}
+          <div className="grid grid-cols-2 gap-6">
+            {socialLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                aria-label={`Connect with Idir on ${link.name}`}
+                className="group relative p-8 bg-black border-2 hover:scale-110 transition-all duration-300"
+                style={{
+                  borderColor: link.color,
+                  boxShadow: `0 0 30px ${link.color}20`
+                }}
+              >
+                {/* Corner markers */}
+                <div className="absolute top-2 left-2 w-3 h-3" style={{ background: link.color }}></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3" style={{ background: link.color }}></div>
+
+                <div className="mb-4 group-hover:scale-125 transition-transform duration-300">
+                  {link.svg}
+                </div>
+                <div className="font-black text-xl text-white uppercase tracking-tight">
+                  {link.name}
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
-
-
       </div>
     </section>
   );

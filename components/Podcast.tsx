@@ -1,15 +1,16 @@
 'use client';
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 export default function Podcast() {
   const t = useTranslations('podcast');
 
   return (
-    <section id="podcast" className="py-24 px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
-      {/* Background effect */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#00CFFF' }}></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#FF6B6B' }}></div>
+    <section id="podcast" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }}>
+      {/* Background effect - responsive */}
+      <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 md:w-[600px] md:h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#00CFFF' }}></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-96 sm:h-96 md:w-[600px] md:h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#FF6B6B' }}></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -91,36 +92,42 @@ export default function Podcast() {
             </div>
           </div>
 
-          {/* Podcast Visual - Bold Design */}
-          <div className="relative">
-            {/* Glowing frame */}
-            <div className="absolute -inset-1 opacity-50 blur" style={{
-              background: 'linear-gradient(135deg, #00CFFF 0%, #FF6B6B 100%)'
-            }}></div>
-
-            <div className="relative border-4 aspect-square flex items-center justify-center p-12 overflow-hidden" style={{
-              background: '#0B1222',
-              borderColor: '#00CFFF'
-            }}>
-              {/* Decorative corner boxes */}
-              <div className="absolute top-4 left-4 w-8 h-8" style={{ background: '#00CFFF' }}></div>
-              <div className="absolute top-4 right-4 w-8 h-8" style={{ background: '#FF6B6B' }}></div>
-              <div className="absolute bottom-4 left-4 w-8 h-8" style={{ background: '#FF6B6B' }}></div>
-              <div className="absolute bottom-4 right-4 w-8 h-8" style={{ background: '#00CFFF' }}></div>
-
-              <div className="relative text-center z-10">
-                <img
-                  src="/logo.png"
-                  alt="Prompt&Play Logo"
-                  className="w-64 h-64 mx-auto object-contain mb-6"
-                />
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: '#00CFFF' }}></div>
-                  <span className="text-white/90 text-sm font-bold uppercase tracking-wide" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+          {/* Podcast Player */}
+          <div className="relative space-y-6">
+            {/* Logo - Compact version */}
+            <div className="flex items-center justify-center gap-4 p-6 border-2 border-[#00CFFF] bg-black">
+              <Image
+                src="/logo.png"
+                alt="Prompt&Play Podcast Logo"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
+              <div>
+                <h3 className="text-2xl font-black text-white italic" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                  Prompt&Play
+                </h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#00CFFF' }}></div>
+                  <span className="text-white/70 text-xs font-bold uppercase tracking-wide">
                     {t('status')}
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Spotify Player Embed */}
+            <div className="relative border-2 border-[#00CFFF] p-4 bg-black">
+              <iframe
+                style={{ borderRadius: '12px' }}
+                src="https://open.spotify.com/embed/show/6q4QWGY41LcM3LRhtaWDvF?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                title="Prompt&Play Podcast on Spotify"
+              />
             </div>
           </div>
         </div>

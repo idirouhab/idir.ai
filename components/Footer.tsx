@@ -23,10 +23,23 @@ export default function Footer() {
     ],
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <footer className="relative py-16 px-6 lg:px-8" style={{ background: '#000000' }}>
+    <footer className="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: '#000000' }}>
       {/* Top border accent */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055]"></div>
+
+      {/* Back to top button */}
+      <button
+        onClick={scrollToTop}
+        className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 bg-[#00ff88] text-black font-black hover:scale-110 transition-transform"
+        aria-label="Back to top"
+      >
+        ↑
+      </button>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-12 mb-12">

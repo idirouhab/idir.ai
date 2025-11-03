@@ -1,12 +1,13 @@
 'use client';
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 export default function Hero() {
   const t = useTranslations('hero');
 
   return (
-    <section className="relative min-h-screen flex items-center px-6 lg:px-8 pt-16 overflow-hidden" style={{ background: '#0a0a0a' }}>
+    <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-16 overflow-hidden" style={{ background: '#0a0a0a' }}>
       {/* Animated background grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0" style={{
@@ -16,9 +17,9 @@ export default function Hero() {
         }}></div>
       </div>
 
-      {/* Glowing orbs */}
-      <div className="absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl opacity-20" style={{ background: '#00ff88' }}></div>
-      <div className="absolute bottom-20 left-20 w-96 h-96 rounded-full blur-3xl opacity-20" style={{ background: '#ff0055' }}></div>
+      {/* Glowing orbs - contained */}
+      <div className="absolute top-10 sm:top-20 right-10 sm:right-20 w-48 h-48 sm:w-96 sm:h-96 rounded-full blur-3xl opacity-20" style={{ background: '#00ff88' }}></div>
+      <div className="absolute bottom-10 sm:bottom-20 left-10 sm:left-20 w-48 h-48 sm:w-96 sm:h-96 rounded-full blur-3xl opacity-20" style={{ background: '#ff0055' }}></div>
 
       <div className="max-w-7xl mx-auto w-full py-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -88,10 +89,13 @@ export default function Hero() {
 
               {/* Headshot container */}
               <div className="relative bg-black rounded-3xl aspect-square overflow-hidden border-4 border-[#00ff88]">
-                <img
+                <Image
                   src="/headshot.jpg"
                   alt="Idir Ouhab Meskine"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
                 />
               </div>
             </div>
