@@ -1,3 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><defs><linearGradient id="a" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" stop-color="#00e0ff"/><stop offset="100%" stop-color="#ff007f"/></linearGradient></defs><path d="M0 0h1024v1024H0z"/><text dominant-baseline="middle" font-size="260" letter-spacing="2" style="font-family:&quot;Poppins&quot;,&quot;Montserrat&quot;,&quot;Inter&quot;,&quot;Arial&quot;,sans-serif;font-weight:700;text-transform:lowercase" text-anchor="middle" transform="translate(512 512)">
-      <tspan fill="#00ffb3">idir</tspan><tspan fill="url(#a)">.ai</tspan>
-    </text></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" version="1.2" baseProfile="tiny-ps">
+  <defs>
+    <linearGradient id="a" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#00e0ff"/>
+      <stop offset="100%" stop-color="#ff007f"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 0h1024v1024H0z"/>
+  <text dominant-baseline="middle" font-size="260" letter-spacing="2" style="font-family:&quot;Poppins&quot;,&quot;Montserrat&quot;,&quot;Inter&quot;,&quot;Arial&quot;,sans-serif;font-weight:700;text-transform:lowercase" text-anchor="middle" transform="translate(512 512)">
+    <tspan fill="#00ffb3">idir</tspan>
+    <tspan fill="url(#a)">.ai</tspan>
+  </text>
+<title>Title</title></svg>

@@ -55,7 +55,21 @@
     "label": "Charlas",
     "title1": "COMPARTIENDO",
     "title2": "CONOCIMIENTO",
-    "description": "Doy charlas en conferencias y eventos sobre IA, automatización y herramientas para desarrolladores. Disponible para keynotes, charlas técnicas y talleres.",
+    "description": "Ponente internacional en las principales conferencias tecnológicas y profesor en Platzi enseñando automatización con n8n. Disponible para keynotes, charlas técnicas y talleres.",
+    "conferences": {
+      "title": "Conferencias Destacadas",
+      "events": [
+        "WeAreDevelopers",
+        "DevOpsCon",
+        "Serverless Architecture Conference",
+        "Tech Show Madrid",
+        "AI Brazil Experience"
+      ]
+    },
+    "education": {
+      "title": "Educación",
+      "platzi": "Profesor en Platzi - Automatización con n8n"
+    },
     "topics": {
       "ai": {
         "title": "IA y Automatización",

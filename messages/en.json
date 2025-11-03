@@ -55,7 +55,21 @@
     "label": "Speaking",
     "title1": "SHARING",
     "title2": "KNOWLEDGE",
-    "description": "I speak at conferences and events about AI, automation, and developer tools. Available for keynotes, technical talks, and workshops.",
+    "description": "International speaker at major tech conferences and educator at Platzi teaching automation with n8n. Available for keynotes, technical talks, and workshops.",
+    "conferences": {
+      "title": "Featured Speaking Engagements",
+      "events": [
+        "WeAreDevelopers",
+        "DevOpsCon",
+        "Serverless Architecture Conference",
+        "Tech Show Madrid",
+        "AI Brazil Experience"
+      ]
+    },
+    "education": {
+      "title": "Education",
+      "platzi": "Teacher at Platzi - Automation with n8n"
+    },
     "topics": {
       "ai": {
         "title": "AI & Workflow Automation",

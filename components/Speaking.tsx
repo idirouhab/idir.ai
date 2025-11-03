@@ -5,27 +5,6 @@ import { useTranslations } from "next-intl";
 export default function Speaking() {
   const t = useTranslations('speaking');
 
-  const topics = [
-    {
-      title: t('topics.ai.title'),
-      description: t('topics.ai.description'),
-      tags: [t('topics.ai.tags.0'), t('topics.ai.tags.1'), t('topics.ai.tags.2')],
-      color: "#00ff88",
-    },
-    {
-      title: t('topics.llm.title'),
-      description: t('topics.llm.description'),
-      tags: [t('topics.llm.tags.0'), t('topics.llm.tags.1'), t('topics.llm.tags.2')],
-      color: "#00cfff",
-    },
-    {
-      title: t('topics.dx.title'),
-      description: t('topics.dx.description'),
-      tags: [t('topics.dx.tags.0'), t('topics.dx.tags.1'), t('topics.dx.tags.2')],
-      color: "#ff0055",
-    },
-  ];
-
   return (
     <section id="speaking" className="py-24 px-6 lg:px-8 relative" style={{ background: '#050505' }}>
       <div className="max-w-7xl mx-auto">
@@ -46,40 +25,40 @@ export default function Speaking() {
           </p>
         </div>
 
-        {/* Topics - Staggered layout */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {topics.map((topic, index) => (
-            <div
-              key={index}
-              className="group bg-black border-2 p-8 hover:translate-y-[-8px] transition-all duration-300"
-              style={{
-                borderColor: topic.color,
-                marginTop: index % 2 === 0 ? '0' : '3rem'
-              }}
-            >
-              <h3 className="text-2xl font-black text-white mb-4 uppercase leading-tight">
-                {topic.title}
-              </h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                {topic.description}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {topic.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 text-xs font-bold uppercase tracking-wide"
-                    style={{
-                      background: `${topic.color}20`,
-                      color: topic.color,
-                      border: `1px solid ${topic.color}40`
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
+        {/* Featured Conferences & Education */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Conferences */}
+          <div className="bg-black border-2 border-[#ff0055] p-8">
+            <h3 className="text-2xl font-black text-white mb-6 uppercase">
+              {t('conferences.title')}
+            </h3>
+            <ul className="space-y-3">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <li key={i} className="flex items-center gap-3 text-gray-300">
+                  <span className="text-[#ff0055] text-xl">▸</span>
+                  <span className="font-bold">{t(`conferences.events.${i}`)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Education */}
+          <div className="bg-black border-2 border-[#00ff88] p-8">
+            <h3 className="text-2xl font-black text-white mb-6 uppercase">
+              {t('education.title')}
+            </h3>
+            <div className="flex items-start gap-4">
+              <span className="text-4xl">🎓</span>
+              <div>
+                <p className="text-xl font-bold text-[#00ff88] mb-2">
+                  {t('education.platzi')}
+                </p>
+                <p className="text-gray-400">
+                  Teaching thousands of students how to build powerful automation workflows
+                </p>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
