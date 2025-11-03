@@ -3,6 +3,7 @@
     "about": "SOBRE MÍ",
     "speaking": "CHARLAS",
     "podcast": "PODCAST",
+    "newsletter": "NEWSLETTER",
     "contact": "CONTACTO"
   },
   "hero": {
@@ -11,8 +12,9 @@
     "role": "Solutions Engineer en n8n",
     "headline": "Convierto el Caos en Flujos de Trabajo",
     "subheadline": "Ayudando a equipos a automatizar lo aburrido para que se enfoquen en construir lo que realmente importa",
-    "cta": "AGENDA UNA LLAMADA",
-    "ctaSecondary": "VER MIS CHARLAS"
+    "cta": "HABLEMOS",
+    "ctaSecondary": "VER MIS CHARLAS",
+    "ctaNewsletter": "NOTICIAS IA DIARIAS"
   },
   "transitions": {
     "aboutIntro": "Te cuento →",
@@ -74,7 +76,8 @@
     },
     "education": {
       "title": "Educación",
-      "platzi": "Profesor en Platzi - Automatización con n8n"
+      "platzi": "Profesor en Platzi - Automatización con n8n",
+      "description": "Enseñando a miles de estudiantes a construir flujos de automatización poderosos"
     },
     "topics": {
       "ai": {
@@ -118,23 +121,17 @@
     "title2": "JUNTOS",
     "description": "¿Interesado en colaboración, oportunidades para charlas o consultoría?",
     "form": {
-      "title": "Construyamos Algo",
-      "microcopy": "¿Tienes un problema que está consumiendo el tiempo de tu equipo? Arreglémoslo. O simplemente saluda—no muerdo.",
-      "intent": "¿Qué te trae por aquí?",
-      "intentSpeaking": "🎤 Contrátame para una charla",
-      "intentConsulting": "💼 Necesito ayuda con automatización",
-      "intentPodcast": "🎙️ Colaboremos en contenido",
-      "intentHello": "👋 Solo saludando",
+      "title": "Enviar Mensaje",
       "name": "Nombre",
       "namePlaceholder": "Tu nombre",
       "email": "Email",
       "emailPlaceholder": "tu@email.com",
-      "message": "Cuéntame qué pasa",
-      "messagePlaceholder": "Dame los detalles...",
+      "message": "Mensaje",
+      "messagePlaceholder": "Tu mensaje...",
       "submit": "Enviar Mensaje",
       "sending": "Enviando...",
-      "success": "¡Mensaje recibido! Te responderé más rápido que un webhook de n8n.",
-      "error": "Error al enviar. Por favor usa email directo."
+      "success": "¡Mensaje enviado! Te responderé pronto.",
+      "error": "Error al enviar. Por favor intenta de nuevo."
     },
     "platforms": {
       "linkedin": "LinkedIn",
@@ -186,5 +183,29 @@
       "Portuguese": "Portugués",
       "Other": "Otro"
     }
+  },
+  "subscribe": {
+    "label": "Newsletter",
+    "title1": "Noticias IA",
+    "title2": "Diarias",
+    "description": "Lo más destacado de IA en tu inbox. Cancela cuando quieras.",
+    "form": {
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "language": "Idioma",
+      "languageEn": "English",
+      "languageEs": "Español",
+      "submit": "Suscribirse",
+      "sending": "Enviando...",
+      "success": "¡Suscrito! Revisa tu inbox para confirmar.",
+      "error": "Error al suscribirse. Por favor intenta de nuevo."
+    },
+    "whatYouGet": "Qué recibirás:",
+    "benefits": {
+      "daily": "Email diario con las últimas noticias y desarrollos de IA",
+      "language": "En tu idioma preferido (Inglés o Español)",
+      "unsubscribe": "Cancela cuando quieras"
+    },
+    "backLink": "← Volver a idir.ai"
   }
 }

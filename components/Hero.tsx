@@ -54,7 +54,7 @@ export default function Hero() {
             </div>
 
             {/* CTA buttons - Clear hierarchy */}
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 pt-4">
               <a
                 href="#contact"
                 className="group relative px-8 py-4 bg-[#00ff88] text-black font-black rounded-lg overflow-hidden transition-all hover:scale-105 hover:shadow-lg hover:shadow-[#00ff88]/50 text-base uppercase tracking-wide"
@@ -62,11 +62,17 @@ export default function Hero() {
                 <span className="relative z-10">{t('cta')}</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88] to-[#00cfff] opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </a>
+            </div>
+
+            {/* Newsletter CTA - Prominent */}
+            <div className="mt-6 pt-6 border-t border-gray-800">
               <a
-                href="#speaking"
-                className="px-6 py-3 border-2 border-gray-700 text-gray-300 font-bold rounded-lg hover:border-[#00ff88] hover:text-[#00ff88] transition-all text-sm"
+                href="/subscribe"
+                className="group inline-flex items-center gap-3 px-6 py-3 bg-black border-2 border-[#ff0055] text-[#ff0055] font-black uppercase tracking-wide hover:bg-[#ff0055] hover:text-black transition-all text-sm"
               >
-                {t('ctaSecondary')}
+                <span className="text-xl">📬</span>
+                <span>{t('ctaNewsletter')}</span>
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </a>
             </div>
           </div>

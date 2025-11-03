@@ -54,7 +54,7 @@ export default function Speaking() {
                   {t('education.platzi')}
                 </p>
                 <p className="text-gray-400">
-                  Teaching thousands of students how to build powerful automation workflows
+                  {t('education.description')}
                 </p>
               </div>
             </div>

@@ -3,6 +3,7 @@
     "about": "ABOUT",
     "speaking": "SPEAKING",
     "podcast": "PODCAST",
+    "newsletter": "NEWSLETTER",
     "contact": "CONTACT"
   },
   "hero": {
@@ -11,8 +12,9 @@
     "role": "Solutions Engineer at n8n",
     "headline": "I Turn Chaos Into Workflows",
     "subheadline": "Helping teams automate the boring stuff so they can focus on building what actually matters",
-    "cta": "BOOK A CALL",
-    "ctaSecondary": "SEE MY TALKS"
+    "cta": "LET'S TALK",
+    "ctaSecondary": "SEE MY TALKS",
+    "ctaNewsletter": "AI NEWS DAILY"
   },
   "transitions": {
     "aboutIntro": "Here's the deal →",
@@ -74,7 +76,8 @@
     },
     "education": {
       "title": "Education",
-      "platzi": "Teacher at Platzi - Automation with n8n"
+      "platzi": "Teacher at Platzi - Automation with n8n",
+      "description": "Teaching thousands of students how to build powerful automation workflows"
     },
     "topics": {
       "ai": {
@@ -118,23 +121,17 @@
     "title2": "CONNECT",
     "description": "Interested in collaboration, speaking opportunities, or consulting?",
     "form": {
-      "title": "Let's Build Something",
-      "microcopy": "Got a problem that's eating your team's time? Let's fix it. Or just say hi—I don't bite.",
-      "intent": "What brings you here?",
-      "intentSpeaking": "🎤 Book me for a speaking gig",
-      "intentConsulting": "💼 I need help with automation",
-      "intentPodcast": "🎙️ Let's collaborate on content",
-      "intentHello": "👋 Just saying hi",
+      "title": "Send a Message",
       "name": "Name",
       "namePlaceholder": "Your name",
       "email": "Email",
       "emailPlaceholder": "your@email.com",
-      "message": "Tell me what's up",
-      "messagePlaceholder": "Give me the details...",
+      "message": "Message",
+      "messagePlaceholder": "Your message...",
       "submit": "Send Message",
       "sending": "Sending...",
-      "success": "Message received! I'll get back to you faster than an n8n webhook trigger.",
-      "error": "Failed to send. Please try email instead."
+      "success": "Message sent! I'll get back to you soon.",
+      "error": "Failed to send. Please try again."
     },
     "platforms": {
       "linkedin": "LinkedIn",
@@ -186,5 +183,29 @@
       "Portuguese": "Portuguese",
       "Other": "Other"
     }
+  },
+  "subscribe": {
+    "label": "Newsletter",
+    "title1": "AI News",
+    "title2": "Daily",
+    "description": "Daily AI highlights in your inbox. Unsubscribe anytime.",
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "language": "Language",
+      "languageEn": "English",
+      "languageEs": "Español",
+      "submit": "Subscribe",
+      "sending": "Sending...",
+      "success": "Subscribed! Check your inbox for confirmation.",
+      "error": "Failed to subscribe. Please try again."
+    },
+    "whatYouGet": "What you'll get:",
+    "benefits": {
+      "daily": "Daily email with top AI news and developments",
+      "language": "Your chosen language (English or Spanish)",
+      "unsubscribe": "Unsubscribe anytime"
+    },
+    "backLink": "← Back to idir.ai"
   }
 }
