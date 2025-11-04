@@ -228,5 +228,26 @@
       "unsubscribe": "Unsubscribe anytime"
     },
     "backLink": "← Back to idir.ai"
+  },
+  "unsubscribe": {
+    "label": "Unsubscribe",
+    "title": "Sorry to See You Go",
+    "description": "We're sad to see you leave, but we respect your decision. Enter your email below to unsubscribe from our newsletter.",
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "submit": "Unsubscribe",
+      "sending": "Processing...",
+      "error": "Failed to unsubscribe. Please try again.",
+      "invalidEmail": "Please enter a valid email address."
+    },
+    "success": {
+      "title": "You're Unsubscribed",
+      "message": "You've been successfully removed from our newsletter. We're sorry to see you go, but we hope to see you again in the future.",
+      "feedback": "Changed your mind? You can always resubscribe.",
+      "backHome": "Back to Home"
+    },
+    "footer": "You will no longer receive emails from us.",
+    "backLink": "← Back to idir.ai"
   }
 }
