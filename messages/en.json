@@ -27,7 +27,7 @@
     "title1": "BUILDING THE",
     "title2": "FUTURE OF WORK",
     "personalIntro": "I've helped hundreds of teams cut manual work by 70%+ using n8n, AI agents, and workflows that actually make sense.",
-    "mission": "My job? Taking the 'it's complicated' out of automation. Whether you're a startup drowning in spreadsheets or an enterprise with 50 disconnected tools, I build systems that just work.",
+    "intro": "My job? Taking the 'it's complicated' out of automation. Whether you're a startup drowning in spreadsheets or an enterprise with 50 disconnected tools, I build systems that just work.",
     "proofTitle": "By the Numbers",
     "proofConferences": "Spoken at 5+ major tech conferences",
     "proofStudents": "Teaching 10,000+ students on Platzi",
@@ -195,10 +195,31 @@
       "language": "Language",
       "languageEn": "English",
       "languageEs": "Español",
+      "consentShort": "I agree to the",
+      "consentLink": "privacy policy",
       "submit": "Subscribe",
       "sending": "Sending...",
       "success": "Subscribed! Check your inbox for confirmation.",
       "error": "Failed to subscribe. Please try again."
+    },
+    "modal": {
+      "title": "How we use your email",
+      "intro": "We take your privacy seriously. Here's exactly what happens with your email address:",
+      "section1": {
+        "title": "What we send",
+        "content": "You'll receive a daily email with AI news highlights and one welcome email when you sign up. That's it."
+      },
+      "section2": {
+        "title": "What we don't do",
+        "content": "We will never sell, share, or use your email for anything else. No spam, no marketing emails, no third parties."
+      },
+      "section3": {
+        "title": "Your control",
+        "content": "You can unsubscribe anytime with one click. No questions asked, no hoops to jump through."
+      },
+      "footer": "Your email is stored securely and used exclusively for this newsletter.",
+      "accept": "I Accept",
+      "cancel": "Cancel"
     },
     "whatYouGet": "What you'll get:",
     "benefits": {

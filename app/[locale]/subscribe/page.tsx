@@ -7,7 +7,19 @@ export default function Subscribe() {
   const t = useTranslations('subscribe');
   const [email, setEmail] = useState('');
   const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [consent, setConsent] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleAcceptConsent = () => {
+    setConsent(true);
+    setShowModal(false);
+  };
+
+  const handleCancelConsent = () => {
+    setConsent(false);
+    setShowModal(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +128,36 @@ export default function Subscribe() {
                 </div>
               </div>
 
+              {/* Consent Checkbox */}
+              <div className="border-2 border-gray-800 p-4 bg-[#0a0a0a]">
+                <label className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setShowModal(true);
+                        e.preventDefault();
+                      } else {
+                        setConsent(false);
+                      }
+                    }}
+                    required
+                    className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                  />
+                  <span className="text-sm text-gray-400 leading-relaxed">
+                    {t('form.consentShort')}{' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowModal(true)}
+                      className="text-[#00ff88] underline hover:text-[#00cfff] transition-colors"
+                    >
+                      {t('form.consentLink')}
+                    </button>
+                  </span>
+                </label>
+              </div>
+
               {/* Status Messages */}
               {status === 'success' && (
                 <div className="p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]">
@@ -131,7 +173,7 @@ export default function Subscribe() {
 
               <button
                 type="submit"
-                disabled={status === 'sending'}
+                disabled={status === 'sending' || !consent}
                 className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 {status === 'sending' ? t('form.sending') : t('form.submit')}
@@ -169,6 +211,74 @@ export default function Subscribe() {
           </a>
         </div>
       </div>
+
+      {/* Privacy Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
+          <div className="bg-black border-2 border-[#00ff88] max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
+            {/* Corner markers */}
+            <div className="absolute top-3 left-3 w-4 h-4 bg-[#00ff88]"></div>
+            <div className="absolute top-3 right-3 w-4 h-4 bg-[#ff0055]"></div>
+            <div className="absolute bottom-3 left-3 w-4 h-4 bg-[#ff0055]"></div>
+            <div className="absolute bottom-3 right-3 w-4 h-4 bg-[#00ff88]"></div>
+
+            <div className="p-8 relative z-10">
+              {/* Header */}
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-6 uppercase">
+                {t('modal.title')}
+              </h2>
+
+              {/* Content */}
+              <div className="space-y-4 text-gray-300 text-sm leading-relaxed mb-8">
+                <p className="text-base font-bold text-white">
+                  {t('modal.intro')}
+                </p>
+
+                <div className="border-l-3 border-[#00ff88] pl-4 bg-[#0a0a0a] p-4">
+                  <h3 className="text-[#00ff88] font-bold mb-2 uppercase text-xs tracking-wider">
+                    {t('modal.section1.title')}
+                  </h3>
+                  <p>{t('modal.section1.content')}</p>
+                </div>
+
+                <div className="border-l-3 border-[#00cfff] pl-4 bg-[#0a0a0a] p-4">
+                  <h3 className="text-[#00cfff] font-bold mb-2 uppercase text-xs tracking-wider">
+                    {t('modal.section2.title')}
+                  </h3>
+                  <p>{t('modal.section2.content')}</p>
+                </div>
+
+                <div className="border-l-3 border-[#ff0055] pl-4 bg-[#0a0a0a] p-4">
+                  <h3 className="text-[#ff0055] font-bold mb-2 uppercase text-xs tracking-wider">
+                    {t('modal.section3.title')}
+                  </h3>
+                  <p>{t('modal.section3.content')}</p>
+                </div>
+
+                <p className="text-xs text-gray-500 italic pt-4">
+                  {t('modal.footer')}
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={handleAcceptConsent}
+                  className="flex-1 px-6 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+                >
+                  {t('modal.accept')}
+                </button>
+                <button
+                  onClick={handleCancelConsent}
+                  className="flex-1 px-6 py-3 border-2 border-gray-700 text-gray-300 font-bold uppercase tracking-wide hover:border-[#ff0055] hover:text-[#ff0055] transition-colors"
+                >
+                  {t('modal.cancel')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

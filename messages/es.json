@@ -27,7 +27,7 @@
     "title1": "CONSTRUYENDO EL",
     "title2": "FUTURO DEL TRABAJO",
     "personalIntro": "He ayudado a cientos de equipos a reducir el trabajo manual en más del 70% usando n8n, agentes de IA y flujos de trabajo que realmente tienen sentido.",
-    "mission": "¿Mi trabajo? Sacar lo 'complicado' de la automatización. Ya seas una startup ahogándose en hojas de cálculo o una empresa con 50 herramientas desconectadas, construyo sistemas que simplemente funcionan.",
+    "intro": "¿Mi trabajo? Sacar lo 'complicado' de la automatización. Ya seas una startup ahogándose en hojas de cálculo o una empresa con 50 herramientas desconectadas, construyo sistemas que simplemente funcionan.",
     "proofTitle": "En Números",
     "proofConferences": "He hablado en más de 5 conferencias tech importantes",
     "proofStudents": "Enseñando a más de 10,000 estudiantes en Platzi",
@@ -195,10 +195,31 @@
       "language": "Idioma",
       "languageEn": "English",
       "languageEs": "Español",
+      "consentShort": "Acepto la",
+      "consentLink": "política de privacidad",
       "submit": "Suscribirse",
       "sending": "Enviando...",
       "success": "¡Suscrito! Revisa tu inbox para confirmar.",
       "error": "Error al suscribirse. Por favor intenta de nuevo."
+    },
+    "modal": {
+      "title": "Cómo usamos tu email",
+      "intro": "Nos tomamos tu privacidad en serio. Esto es exactamente lo que pasa con tu correo:",
+      "section1": {
+        "title": "Qué enviamos",
+        "content": "Recibirás un email diario con noticias destacadas de IA y un email de bienvenida al suscribirte. Eso es todo."
+      },
+      "section2": {
+        "title": "Qué no hacemos",
+        "content": "Nunca venderemos, compartiremos o usaremos tu email para otra cosa. Sin spam, sin emails de marketing, sin terceros."
+      },
+      "section3": {
+        "title": "Tu control",
+        "content": "Puedes cancelar cuando quieras con un clic. Sin preguntas, sin complicaciones."
+      },
+      "footer": "Tu email se almacena de forma segura y se usa exclusivamente para este newsletter.",
+      "accept": "Acepto",
+      "cancel": "Cancelar"
     },
     "whatYouGet": "Qué recibirás:",
     "benefits": {

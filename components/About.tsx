@@ -62,7 +62,7 @@ export default function About() {
           </p>
 
           <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed max-w-3xl mb-8">
-            {t('mission')}
+            {t('intro')}
           </p>
 
           {/* By the Numbers - Proof Section */}
