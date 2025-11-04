@@ -5,21 +5,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const locales = ['en', 'es']
   const lastModified = new Date()
 
-  // Generate entries for each locale
-  const localeEntries: MetadataRoute.Sitemap = locales.flatMap(locale => [
-    {
-      url: `${baseUrl}/${locale}`,
-      lastModified,
-      changeFrequency: 'monthly' as const,
-      priority: 1,
-      alternates: {
-        languages: {
-          en: `${baseUrl}/en`,
-          es: `${baseUrl}/es`,
-        },
+  // Generate homepage entries for each locale
+  const homepageEntries: MetadataRoute.Sitemap = locales.map(locale => ({
+    url: `${baseUrl}/${locale}`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 1,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/en`,
+        es: `${baseUrl}/es`,
       },
     },
-  ])
+  }))
+
+  // Generate subscribe page entries for each locale
+  const subscribeEntries: MetadataRoute.Sitemap = locales.map(locale => ({
+    url: `${baseUrl}/${locale}/subscribe`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/en/subscribe`,
+        es: `${baseUrl}/es/subscribe`,
+      },
+    },
+  }))
 
   return [
     // Root URL (will redirect based on browser language)
@@ -29,6 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.9,
     },
-    ...localeEntries,
+    ...homepageEntries,
+    ...subscribeEntries,
   ]
 }
