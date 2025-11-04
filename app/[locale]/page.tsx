@@ -8,6 +8,7 @@ import Podcast from "@/components/Podcast";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import {getTranslations} from 'next-intl/server';
+import { createClient } from '@supabase/supabase-js';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
@@ -17,8 +18,37 @@ type Props = {
   params: { locale: string };
 };
 
+async function getActiveEvent() {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return null;
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    const { data, error } = await supabase
+      .from('live_events')
+      .select('*')
+      .eq('is_active', true)
+      .limit(1);
+
+    if (error || !data || data.length === 0) {
+      return null;
+    }
+
+    return data[0];
+  } catch (error) {
+    console.error('Error fetching active event:', error);
+    return null;
+  }
+}
+
 export default async function Home({ params: { locale } }: Props) {
   const t = await getTranslations({ locale, namespace: 'structuredData' });
+  const activeEvent = await getActiveEvent();
 
   // Get structured data arrays
   const knowsAbout = [
@@ -121,6 +151,39 @@ export default async function Home({ params: { locale } }: Props) {
           }),
         }}
       />
+      {/* Event Structured Data - Only when active event exists */}
+      {activeEvent && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Event",
+              name: activeEvent.title,
+              description: `Live ${activeEvent.platform} event with Idir Ouhab Meskine`,
+              startDate: activeEvent.event_datetime,
+              eventStatus: "https://schema.org/EventScheduled",
+              eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+              location: {
+                "@type": "VirtualLocation",
+                url: activeEvent.platform_url,
+              },
+              organizer: {
+                "@type": "Person",
+                name: "Idir Ouhab Meskine",
+                url: `https://idir.ai/${locale}`,
+              },
+              performer: {
+                "@type": "Person",
+                name: "Idir Ouhab Meskine",
+              },
+              inLanguage: activeEvent.event_language,
+              isAccessibleForFree: true,
+              image: `https://idir.ai/${locale}/opengraph-image`,
+            }),
+          }}
+        />
+      )}
     </>
   );
 }

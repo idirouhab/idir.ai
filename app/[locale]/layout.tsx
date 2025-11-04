@@ -70,10 +70,11 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at DevOpsCon & WeAreDevelopers.",
       images: [
         {
-          url: `${baseUrl}/og-image.jpg`,
+          url: `${baseUrl}/${locale}/opengraph-image`,
           width: 1200,
           height: 630,
           alt: "Idir Ouhab Meskine - Solutions Engineer at n8n",
+          type: "image/png",
         },
       ],
     },
@@ -83,7 +84,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       creator: "@idir_ouhab",
       title: "Idir Ouhab Meskine — Automation Expert & Speaker",
       description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at major tech conferences.",
-      images: [`${baseUrl}/og-image.jpg`],
+      images: [`${baseUrl}/${locale}/opengraph-image`],
     },
     robots: {
       index: true,

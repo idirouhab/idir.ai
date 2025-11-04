@@ -102,6 +102,7 @@ export default function Podcast() {
                 width={64}
                 height={64}
                 className="object-contain"
+                loading="lazy"
               />
               <div>
                 <h3 className="text-2xl font-black text-white italic font-[family-name:var(--font-montserrat)]">

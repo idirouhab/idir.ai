@@ -8,12 +8,22 @@ type Props = {
 export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'unsubscribe' });
 
+  const baseUrl = 'https://idir.ai';
+  const canonicalUrl = `${baseUrl}/${locale}/unsubscribe`;
   const title = `${t('title')} | Idir Ouhab`;
   const description = t('description');
 
   return {
+    metadataBase: new URL(baseUrl),
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        'en': `${baseUrl}/en/unsubscribe`,
+        'es': `${baseUrl}/es/unsubscribe`,
+      },
+    },
     robots: {
       index: false,
       follow: false,
@@ -22,6 +32,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       title,
       description,
       type: 'website',
+      url: canonicalUrl,
     },
     twitter: {
       card: 'summary',
