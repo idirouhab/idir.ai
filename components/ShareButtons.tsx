@@ -137,65 +137,6 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
           </button>
         </div>
       </div>
-
-      {/* Viral Tips */}
-      <details className="group">
-        <summary className="cursor-pointer text-sm text-gray-400 hover:text-[#00cfff] font-bold uppercase tracking-wide flex items-center gap-2">
-          <svg className="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          {t.viralTips}
-        </summary>
-        <div className="mt-4 p-4 bg-black border-2 border-gray-800 space-y-2 text-sm text-gray-300">
-          {locale === 'en' ? (
-            <>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">1.</span>
-                <span><strong>Post timing:</strong> Share on Tuesday-Thursday, 8-10 AM or 12-1 PM (your audience timezone)</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">2.</span>
-                <span><strong>Engage immediately:</strong> Respond to the first 3 comments within 5 minutes</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">3.</span>
-                <span><strong>Thread it:</strong> Create a 3-5 tweet thread with key takeaways for X/Twitter</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">4.</span>
-                <span><strong>Tag wisely:</strong> Mention 1-2 relevant accounts who might be interested</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">5.</span>
-                <span><strong>Visual boost:</strong> Add a custom image or infographic for 2.3x more engagement</span>
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">1.</span>
-                <span><strong>Horario:</strong> Comparte martes-jueves, 8-10 AM o 12-1 PM (zona horaria de tu audiencia)</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">2.</span>
-                <span><strong>Engagement inmediato:</strong> Responde a los primeros 3 comentarios en 5 minutos</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">3.</span>
-                <span><strong>Haz un hilo:</strong> Crea un hilo de 3-5 tweets con puntos clave para X/Twitter</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">4.</span>
-                <span><strong>Etiqueta con cuidado:</strong> Menciona 1-2 cuentas relevantes que puedan estar interesadas</span>
-              </p>
-              <p className="flex items-start gap-2">
-                <span className="text-[#00ff88] font-bold">5.</span>
-                <span><strong>Impulso visual:</strong> Añade una imagen o infografía personalizada para 2.3x más engagement</span>
-              </p>
-            </>
-          )}
-        </div>
-      </details>
     </div>
   );
 }
