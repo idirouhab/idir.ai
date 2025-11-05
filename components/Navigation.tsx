@@ -41,6 +41,7 @@ export default function Navigation() {
     { href: "#about", label: t('about'), id: "about" },
     { href: "#speaking", label: t('speaking'), id: "speaking" },
     { href: "#podcast", label: t('podcast'), id: "podcast" },
+    { href: "/blog", label: t('blog'), id: "blog", isExternal: true },
     { href: "/subscribe", label: t('newsletter'), id: "newsletter", isExternal: true },
     { href: "#contact", label: t('contact'), id: "contact" },
   ];

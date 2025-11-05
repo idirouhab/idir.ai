@@ -112,8 +112,8 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-4xl font-black text-white mb-4">Live Events Admin</h1>
-            <p className="text-gray-400">Manage your live event announcements</p>
+            <h1 className="text-4xl font-black text-white mb-4">Admin Dashboard</h1>
+            <p className="text-gray-400">Manage your site content</p>
           </div>
           <div className="flex gap-4">
             <Link
@@ -129,6 +129,36 @@ export default function AdminDashboard() {
               Logout
             </button>
           </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-12 grid md:grid-cols-2 gap-6">
+          <Link
+            href="/admin/blog"
+            className="group p-8 bg-black border-2 border-[#00ff88] hover:scale-105 transition-all"
+          >
+            <div className="text-4xl mb-4">📝</div>
+            <h2 className="text-2xl font-black text-white mb-2 group-hover:text-[#00ff88] transition-colors">
+              Blog Management
+            </h2>
+            <p className="text-gray-400">Create and manage blog posts</p>
+          </Link>
+
+          <Link
+            href="/admin/events/new"
+            className="group p-8 bg-black border-2 border-[#ff0055] hover:scale-105 transition-all"
+          >
+            <div className="text-4xl mb-4">🎥</div>
+            <h2 className="text-2xl font-black text-white mb-2 group-hover:text-[#ff0055] transition-colors">
+              Live Events
+            </h2>
+            <p className="text-gray-400">Manage live event announcements</p>
+          </Link>
+        </div>
+
+        {/* Section Title */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-black text-white">Active Live Events</h2>
         </div>
 
         {message && (

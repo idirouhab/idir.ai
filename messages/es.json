@@ -3,6 +3,7 @@
     "about": "SOBRE MÍ",
     "speaking": "CHARLAS",
     "podcast": "PODCAST",
+    "blog": "BLOG",
     "newsletter": "NEWSLETTER",
     "contact": "CONTACTO"
   },
@@ -249,5 +250,26 @@
     },
     "footer": "Ya no recibirás emails de nosotros.",
     "backLink": "← Volver a idir.ai"
+  },
+  "blog": {
+    "title": "BLOG",
+    "subtitle": "Reflexiones sobre IA, automatización y el futuro del trabajo",
+    "allPosts": "Todos los Artículos",
+    "latestPosts": "Últimos Artículos",
+    "readMore": "Leer Más",
+    "readTime": "{minutes} min de lectura",
+    "publishedOn": "Publicado el",
+    "category": "Categoría",
+    "tags": "Etiquetas",
+    "relatedPosts": "Artículos Relacionados",
+    "backToBlog": "← Volver al Blog",
+    "noPosts": "Aún no hay artículos. ¡Vuelve pronto!",
+    "categories": {
+      "insights": "Perspectivas",
+      "learnings": "Aprendizajes",
+      "opinion": "Opinión"
+    },
+    "filterByCategory": "Filtrar por categoría",
+    "allCategories": "Todas las Categorías"
   }
 }

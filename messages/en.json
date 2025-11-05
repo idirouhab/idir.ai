@@ -3,6 +3,7 @@
     "about": "ABOUT",
     "speaking": "SPEAKING",
     "podcast": "PODCAST",
+    "blog": "BLOG",
     "newsletter": "NEWSLETTER",
     "contact": "CONTACT"
   },
@@ -249,5 +250,26 @@
     },
     "footer": "You will no longer receive emails from us.",
     "backLink": "← Back to idir.ai"
+  },
+  "blog": {
+    "title": "BLOG",
+    "subtitle": "Thoughts on AI, automation, and the future of work",
+    "allPosts": "All Posts",
+    "latestPosts": "Latest Posts",
+    "readMore": "Read More",
+    "readTime": "{minutes} min read",
+    "publishedOn": "Published on",
+    "category": "Category",
+    "tags": "Tags",
+    "relatedPosts": "Related Posts",
+    "backToBlog": "← Back to Blog",
+    "noPosts": "No posts yet. Check back soon!",
+    "categories": {
+      "insights": "Insights",
+      "learnings": "Learnings",
+      "opinion": "Opinion"
+    },
+    "filterByCategory": "Filter by category",
+    "allCategories": "All Categories"
   }
 }
