@@ -187,7 +187,13 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
 
           {/* Share Buttons */}
           <div className="mt-12">
-            <ShareButtons url={postUrl} title={post.title} locale={locale as 'en' | 'es'} />
+            <ShareButtons
+              url={postUrl}
+              title={post.title}
+              locale={locale as 'en' | 'es'}
+              excerpt={post.excerpt}
+              tags={post.tags || []}
+            />
           </div>
 
           {/* Tags */}
