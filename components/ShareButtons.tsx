@@ -65,10 +65,10 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
 
     const hook = hooks[locale][Math.floor(Math.random() * hooks[locale].length)];
     const hashtags = tags && tags.length > 0
-      ? ' ' + tags.slice(0, 3).map(tag => `#${tag.replace(/\s+/g, '')}`).join(' ')
+      ? '\n\n' + tags.slice(0, 3).map(tag => `#${tag.replace(/\s+/g, '')}`).join(' ')
       : '';
 
-    return `${hook} ${title}${hashtags} ${url}`;
+    return `${hook}\n\n${title}${hashtags}\n\n${url}`;
   };
 
   const shareLinks = {
