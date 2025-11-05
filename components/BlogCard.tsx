@@ -53,7 +53,7 @@ export default function BlogCard({ post, locale }: Props) {
               {categoryName}
             </span>
             <span className="text-xs text-gray-500">
-              {t('readTime').replace('{minutes}', readTime.toString())}
+              {t('readTime', { minutes: readTime })}
             </span>
           </div>
 

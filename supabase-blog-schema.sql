@@ -94,6 +94,19 @@ CREATE POLICY "Authenticated users can manage posts"
   USING (true)
   WITH CHECK (true);
 
+-- Function to increment post view count
+CREATE OR REPLACE FUNCTION increment_post_views(post_id UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE blog_posts
+  SET view_count = view_count + 1
+  WHERE id = post_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute permission to anon users (public can view posts)
+GRANT EXECUTE ON FUNCTION increment_post_views(UUID) TO anon;
+
 -- Comments for documentation
 COMMENT ON TABLE blog_posts IS 'Blog posts with markdown content, categories: insights, learnings, opinion';
 COMMENT ON COLUMN blog_posts.slug IS 'URL-friendly identifier, e.g., why-ai-browsers-matter';

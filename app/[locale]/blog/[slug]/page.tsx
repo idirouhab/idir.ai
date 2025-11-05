@@ -6,9 +6,13 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MarkdownContent from '@/components/MarkdownContent';
 import BlogCard from '@/components/BlogCard';
+import ViewTracker from '@/components/ViewTracker';
+import ShareButtons from '@/components/ShareButtons';
+import PostNavigation from '@/components/PostNavigation';
 import {
   getPublishedPostBySlug,
   getRelatedPosts,
+  getAdjacentPosts,
   formatDate,
   categoryColors,
   categoryNames,
@@ -86,6 +90,15 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
     locale as 'en' | 'es'
   );
 
+  const { previous, next } = await getAdjacentPosts(
+    post.id,
+    post.published_at || post.created_at,
+    locale as 'en' | 'es'
+  );
+
+  const baseUrl = 'https://idir.ai';
+  const postUrl = `${baseUrl}/${locale}/blog/${slug}`;
+
   const categoryColor = categoryColors[post.category];
   const categoryName = categoryNames[post.category][locale as 'en' | 'es'];
   const formattedDate = formatDate(post.published_at || post.created_at, locale as 'en' | 'es');
@@ -93,6 +106,7 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
 
   return (
     <>
+      <ViewTracker postId={post.id} />
       <Navigation />
       <main className="min-h-screen pt-28 pb-20" style={{ background: '#0a0a0a' }}>
         {/* Article Header */}
@@ -118,7 +132,7 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
               {categoryName}
             </span>
             <span className="text-sm text-gray-500">
-              {t('readTime').replace('{minutes}', readTime.toString())}
+              {t('readTime', { minutes: readTime })}
             </span>
           </div>
 
@@ -156,6 +170,11 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
             <MarkdownContent content={post.content} />
           </div>
 
+          {/* Share Buttons */}
+          <div className="mt-12">
+            <ShareButtons url={postUrl} title={post.title} locale={locale as 'en' | 'es'} />
+          </div>
+
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
             <div className="mt-12 pt-8 border-t-2 border-gray-800">
@@ -174,6 +193,9 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
               </div>
             </div>
           )}
+
+          {/* Post Navigation */}
+          <PostNavigation previous={previous} next={next} locale={locale as 'en' | 'es'} />
         </article>
 
         {/* Related Posts */}

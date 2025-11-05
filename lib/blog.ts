@@ -203,3 +203,39 @@ export function formatDate(date: string, locale: 'en' | 'es'): string {
     day: 'numeric',
   }).format(new Date(date));
 }
+
+// Get adjacent posts (previous and next)
+export async function getAdjacentPosts(
+  currentPostId: string,
+  currentPublishedAt: string,
+  language: 'en' | 'es'
+): Promise<{ previous: BlogPost | null; next: BlogPost | null }> {
+  const supabase = getBlogClient();
+
+  // Get previous post (older)
+  const { data: previousPost } = await supabase
+    .from('blog_posts')
+    .select('id, slug, title, category, published_at')
+    .eq('status', 'published')
+    .eq('language', language)
+    .lt('published_at', currentPublishedAt)
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  // Get next post (newer)
+  const { data: nextPost } = await supabase
+    .from('blog_posts')
+    .select('id, slug, title, category, published_at')
+    .eq('status', 'published')
+    .eq('language', language)
+    .gt('published_at', currentPublishedAt)
+    .order('published_at', { ascending: true })
+    .limit(1)
+    .single();
+
+  return {
+    previous: previousPost as BlogPost | null,
+    next: nextPost as BlogPost | null,
+  };
+}
