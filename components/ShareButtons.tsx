@@ -45,9 +45,35 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
     return `${hook} ${title}${ctas[locale]} ${url}${hashtags}`;
   };
 
+  const createLinkedInMessage = () => {
+    const hooks = {
+      en: [
+        '🚀 Just published:',
+        '💡 New insights:',
+        '🔥 Hot take:',
+        '⚡ Breaking down:',
+        '🎯 Deep dive:',
+      ],
+      es: [
+        '🚀 Acabo de publicar:',
+        '💡 Nuevos insights:',
+        '🔥 Opinión caliente:',
+        '⚡ Desglosando:',
+        '🎯 Análisis profundo:',
+      ],
+    };
+
+    const hook = hooks[locale][Math.floor(Math.random() * hooks[locale].length)];
+    const hashtags = tags && tags.length > 0
+      ? ' ' + tags.slice(0, 3).map(tag => `#${tag.replace(/\s+/g, '')}`).join(' ')
+      : '';
+
+    return `${hook} ${title}${hashtags} ${url}`;
+  };
+
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(createTwitterMessage())}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    linkedin: `https://www.linkedin.com/feed/?shareActive&mini=true&text=${encodeURIComponent(createLinkedInMessage())}`,
   };
 
   const handleCopyLink = async () => {
