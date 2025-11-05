@@ -9,6 +9,7 @@ export default function AdminBlogPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
@@ -31,6 +32,33 @@ export default function AdminBlogPage() {
     checkAuthAndFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleDelete = async (postId: string, postTitle: string) => {
+    if (!confirm(`Are you sure you want to delete "${postTitle}"?\n\nThis action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingId(postId);
+
+    try {
+      const response = await fetch(`/api/blog/${postId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete post');
+      }
+
+      // Remove post from state
+      setPosts(posts.filter(p => p.id !== postId));
+      alert('Post deleted successfully');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      alert('Failed to delete post. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -131,12 +159,21 @@ export default function AdminBlogPage() {
                         <span className="text-sm text-gray-400">{post.view_count}</span>
                       </td>
                       <td className="p-4 text-right">
-                        <Link
-                          href={`/admin/blog/${post.id}/edit`}
-                          className="px-4 py-2 bg-[#00cfff] text-black font-bold text-sm uppercase hover:scale-105 transition-transform inline-block"
-                        >
-                          Edit
-                        </Link>
+                        <div className="flex gap-2 justify-end">
+                          <Link
+                            href={`/admin/blog/${post.id}/edit`}
+                            className="px-4 py-2 bg-[#00cfff] text-black font-bold text-sm uppercase hover:scale-105 transition-transform inline-block"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(post.id, post.title)}
+                            disabled={deletingId === post.id}
+                            className="px-4 py-2 bg-[#ff0055] text-white font-bold text-sm uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {deletingId === post.id ? 'Deleting...' : 'Delete'}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
