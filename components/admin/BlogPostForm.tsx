@@ -119,6 +119,9 @@ export default function BlogPostForm({ post }: Props) {
     setError('');
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const response = await fetch('https://idir-test.app.n8n.cloud/webhook/blog-seo-generator', {
         method: 'POST',
         headers: {
@@ -129,7 +132,10 @@ export default function BlogPostForm({ post }: Props) {
           content_en: formData.content_en,
           content_es: formData.content_es,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error('Failed to generate metadata');
@@ -177,7 +183,11 @@ export default function BlogPostForm({ post }: Props) {
         setSeoSuccess(false);
       }, 5000);
     } catch (err: any) {
-      setError(err.message || 'Failed to generate metadata');
+      if (err.name === 'AbortError') {
+        setError('Request timed out. The AI service took too long to respond. Please try again.');
+      } else {
+        setError(err.message || 'Failed to generate metadata');
+      }
       setGeneratingSEO(false);
     }
   };

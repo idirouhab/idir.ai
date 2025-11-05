@@ -1,29 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
 import { verifyToken } from '@/lib/jwt';
 import { getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
 
-type BilingualPostPayload = {
-  title_en: string;
-  content_en: string;
-  content_es: string;
-  cover_image: string;
-  category: string;
-  status: 'draft' | 'published';
-  en: {
-    excerpt: string;
-    tags: string;
-    meta_description: string;
-    meta_keywords: string;
-  };
-  es: {
-    title: string;
-    excerpt: string;
-    tags: string;
-    meta_description: string;
-    meta_keywords: string;
-  };
-};
+// Zod schema for input validation
+const BilingualPostSchema = z.object({
+  title_en: z.string().min(1, 'English title is required').max(200, 'Title too long'),
+  content_en: z.string().min(10, 'English content too short').max(100000, 'English content too long'),
+  content_es: z.string().min(10, 'Spanish content too short').max(100000, 'Spanish content too long'),
+  cover_image: z.string().url('Invalid URL').optional().or(z.literal('')),
+  category: z.enum(['insights', 'learnings', 'opinion']),
+  status: z.enum(['draft', 'published']),
+  en: z.object({
+    excerpt: z.string().max(500, 'Excerpt too long'),
+    tags: z.string().max(200, 'Tags too long'),
+    meta_description: z.string().max(160, 'Meta description too long'),
+    meta_keywords: z.string().max(500, 'Meta keywords too long'),
+  }),
+  es: z.object({
+    title: z.string().min(1, 'Spanish title is required').max(200, 'Title too long'),
+    excerpt: z.string().max(500, 'Excerpt too long'),
+    tags: z.string().max(200, 'Tags too long'),
+    meta_description: z.string().max(160, 'Meta description too long'),
+    meta_keywords: z.string().max(500, 'Meta keywords too long'),
+  }),
+});
+
+type BilingualPostPayload = z.infer<typeof BilingualPostSchema>;
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +43,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body: BilingualPostPayload = await request.json();
+    // Parse and validate request body
+    const rawBody = await request.json();
+    const validationResult = BilingualPostSchema.safeParse(rawBody);
+
+    if (!validationResult.success) {
+      return NextResponse.json({
+        error: 'Invalid input data',
+        details: validationResult.error.issues.map(issue => ({
+          field: issue.path.join('.'),
+          message: issue.message,
+        })),
+      }, { status: 400 });
+    }
+
+    const body = validationResult.data;
 
     // Generate slugs
     const slug_en = generateSlug(body.title_en);
@@ -102,7 +120,9 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error creating bilingual blog posts:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({
+        error: 'Failed to create blog posts'
+      }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -112,6 +132,8 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/blog/bilingual:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({
+      error: 'An unexpected error occurred'
+    }, { status: 500 });
   }
 }

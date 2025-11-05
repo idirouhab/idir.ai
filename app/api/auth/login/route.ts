@@ -30,8 +30,9 @@ export async function POST(request: Request) {
       cookies().set('admin-session', sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict', // CSRF protection
         maxAge: 60 * 60 * 24, // 24 hours
+        path: '/',
       });
 
       return NextResponse.json({ success: true });
