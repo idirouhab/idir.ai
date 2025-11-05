@@ -203,7 +203,7 @@ export default function BlogPostForm({ post }: Props) {
           <li>Write your post title in English</li>
           <li>Write your post content in English</li>
           <li>Write your post content in Spanish</li>
-          <li>Click "Generate Metadata with AI" to auto-generate SEO data for both languages</li>
+          <li>Click &quot;Generate Metadata with AI&quot; to auto-generate SEO data for both languages</li>
           <li>Review and publish both posts simultaneously</li>
         </ol>
       </div>
