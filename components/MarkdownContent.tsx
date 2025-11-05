@@ -2,6 +2,8 @@
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 type Props = {
   content: string;
@@ -13,21 +15,69 @@ export default function MarkdownContent({ content }: Props) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h1: ({ children }) => (
-            <h1 className="text-4xl font-black text-white mb-6 mt-12 leading-tight">
-              {children}
-            </h1>
-          ),
-          h2: ({ children }) => (
-            <h2 className="text-3xl font-black text-white mb-5 mt-10 leading-tight">
-              {children}
-            </h2>
-          ),
-          h3: ({ children }) => (
-            <h3 className="text-2xl font-bold text-white mb-4 mt-8 leading-tight">
-              {children}
-            </h3>
-          ),
+          code({ node, inline, className, children, ...props }: any) {
+            const match = /language-(\w+)/.exec(className || '');
+            const language = match ? match[1] : '';
+
+            return !inline && language ? (
+              <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-700">
+                <div className="bg-gray-900 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    {language}
+                  </span>
+                  <span className="text-xs text-gray-600">Code</span>
+                </div>
+                <SyntaxHighlighter
+                  style={vscDarkPlus}
+                  language={language}
+                  PreTag="div"
+                  customStyle={{
+                    margin: 0,
+                    padding: '1.5rem',
+                    background: '#000',
+                    fontSize: '0.875rem',
+                  }}
+                  {...props}
+                >
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              </div>
+            ) : (
+              <code
+                className="px-2 py-1 bg-gray-900 text-[#00ff88] rounded text-sm font-mono border border-gray-700"
+                {...props}
+              >
+                {children}
+              </code>
+            );
+          },
+          h1: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+            return (
+              <h1 id={id} className="text-4xl font-black text-white mb-6 mt-12 leading-tight scroll-mt-24">
+                {children}
+              </h1>
+            );
+          },
+          h2: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+            return (
+              <h2 id={id} className="text-3xl font-black text-white mb-5 mt-10 leading-tight scroll-mt-24">
+                {children}
+              </h2>
+            );
+          },
+          h3: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
+            return (
+              <h3 id={id} className="text-2xl font-bold text-white mb-4 mt-8 leading-tight scroll-mt-24">
+                {children}
+              </h3>
+            );
+          },
           h4: ({ children }) => (
             <h4 className="text-xl font-bold text-white mb-3 mt-6">
               {children}

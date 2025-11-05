@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { getPublishedPosts, categoryColors, BlogCategory } from '@/lib/blog';
 import BlogCard from '@/components/BlogCard';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -67,11 +68,19 @@ export default async function BlogPage({ params: { locale }, searchParams }: Pro
 
   const categories: BlogCategory[] = ['insights', 'learnings', 'opinion'];
 
+  const breadcrumbs = [
+    { label: locale === 'es' ? 'Inicio' : 'Home', href: `/${locale}` },
+    { label: t('title') },
+  ];
+
   return (
     <>
       <Navigation />
       <main className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#0a0a0a' }}>
         <div className="max-w-7xl mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={breadcrumbs} />
+
           {/* Header */}
           <div className="mb-16">
             <div className="flex items-center gap-4 mb-6">

@@ -9,6 +9,8 @@ import BlogCard from '@/components/BlogCard';
 import ViewTracker from '@/components/ViewTracker';
 import ShareButtons from '@/components/ShareButtons';
 import PostNavigation from '@/components/PostNavigation';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import TableOfContents from '@/components/TableOfContents';
 import {
   getPublishedPostBySlug,
   getRelatedPosts,
@@ -104,6 +106,13 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
   const formattedDate = formatDate(post.published_at || post.created_at, locale as 'en' | 'es');
   const readTime = post.read_time_minutes || 5;
 
+  const breadcrumbs = [
+    { label: locale === 'es' ? 'Inicio' : 'Home', href: `/${locale}` },
+    { label: t('title'), href: `/${locale}/blog` },
+    { label: categoryName, href: `/${locale}/blog?category=${post.category}` },
+    { label: post.title },
+  ];
+
   return (
     <>
       <ViewTracker postId={post.id} />
@@ -111,6 +120,9 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
       <main className="min-h-screen pt-28 pb-20" style={{ background: '#0a0a0a' }}>
         {/* Article Header */}
         <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumbs */}
+          <Breadcrumbs items={breadcrumbs} />
+
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
@@ -153,6 +165,9 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
               </div>
             </div>
           </div>
+
+          {/* Table of Contents */}
+          <TableOfContents content={post.content} locale={locale as 'en' | 'es'} />
 
           {/* Cover Image */}
           {post.cover_image && (
