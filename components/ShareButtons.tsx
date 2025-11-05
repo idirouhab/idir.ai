@@ -45,45 +45,10 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
     return `${hook} ${title}${ctas[locale]} ${url}${hashtags}`;
   };
 
-  const createLinkedInMessage = () => {
-    const intros = {
-      en: [
-        '💭 I\'ve been thinking a lot about this lately...',
-        '🎯 Here\'s something that\'s been on my mind:',
-        '💡 Want to share some insights on:',
-        '🚀 Excited to share my latest thoughts on:',
-        '⚡ Quick thread on something important:',
-      ],
-      es: [
-        '💭 He estado pensando mucho en esto últimamente...',
-        '🎯 Algo que ha estado en mi mente:',
-        '💡 Quiero compartir algunos insights sobre:',
-        '🚀 Emocionado de compartir mis últimos pensamientos sobre:',
-        '⚡ Hilo rápido sobre algo importante:',
-      ],
-    };
-
-    const outros = {
-      en: '\n\n📖 Full article in comments 👇\n\nWhat\'s your take on this? Let me know in the comments!',
-      es: '\n\n📖 Artículo completo en comentarios 👇\n\n¿Cuál es tu opinión? ¡Déjamelo saber en los comentarios!',
-    };
-
-    const intro = intros[locale][Math.floor(Math.random() * intros[locale].length)];
-    const description = excerpt ? `\n\n${excerpt}` : '';
-    const hashtags = tags && tags.length > 0
-      ? '\n\n' + tags.slice(0, 5).map(tag => `#${tag.replace(/\s+/g, '')}`).join(' ')
-      : '';
-
-    return `${intro}\n\n"${title}"${description}${outros[locale]}${hashtags}`;
-  };
-
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(createTwitterMessage())}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
   };
-
-  const [copiedTweet, setCopiedTweet] = useState(false);
-  const [showLinkedInPreview, setShowLinkedInPreview] = useState(false);
 
   const handleCopyLink = async () => {
     try {
@@ -95,31 +60,17 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
     }
   };
 
-  const handleCopyTweet = async () => {
-    try {
-      await navigator.clipboard.writeText(createTwitterMessage());
-      setCopiedTweet(true);
-      setTimeout(() => setCopiedTweet(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
   const labels = {
     en: {
       share: 'Share this post',
       copied: 'Copied!',
       copy: 'Copy link',
-      copyTweet: 'Copy viral tweet',
-      linkedInPreview: 'LinkedIn preview',
       viralTips: 'Viral sharing tips',
     },
     es: {
       share: 'Compartir este post',
       copied: '¡Copiado!',
       copy: 'Copiar link',
-      copyTweet: 'Copiar tweet viral',
-      linkedInPreview: 'Preview LinkedIn',
       viralTips: 'Tips para viralizar',
     },
   };
@@ -148,29 +99,6 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
             X
           </a>
 
-          {/* Copy Viral Tweet */}
-          <button
-            onClick={handleCopyTweet}
-            className="px-6 py-3 bg-[#00cfff] text-black font-bold uppercase text-sm hover:scale-105 transition-transform flex items-center gap-2"
-            aria-label="Copy viral tweet"
-          >
-            {copiedTweet ? (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                {t.copied}
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                {t.copyTweet}
-              </>
-            )}
-          </button>
-
           {/* LinkedIn */}
           <a
             href={shareLinks.linkedin}
@@ -184,18 +112,6 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
             </svg>
             LinkedIn
           </a>
-
-          {/* LinkedIn Preview Toggle */}
-          <button
-            onClick={() => setShowLinkedInPreview(!showLinkedInPreview)}
-            className="px-6 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase text-sm hover:border-[#00ff88] transition-colors flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {t.linkedInPreview}
-          </button>
 
           {/* Copy Link */}
           <button
@@ -221,34 +137,6 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
           </button>
         </div>
       </div>
-
-      {/* LinkedIn Message Preview */}
-      {showLinkedInPreview && (
-        <div className="p-6 bg-black border-2 border-[#00ff88]">
-          <p className="text-xs text-[#00ff88] uppercase font-bold mb-3 flex items-center gap-2">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-            </svg>
-            {locale === 'en' ? 'Suggested LinkedIn Post' : 'Post sugerido para LinkedIn'}
-          </p>
-          <p className="text-sm text-gray-300 whitespace-pre-wrap font-mono leading-relaxed">
-            {createLinkedInMessage()}
-          </p>
-          <button
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(createLinkedInMessage());
-                alert(locale === 'en' ? 'LinkedIn message copied!' : '¡Mensaje de LinkedIn copiado!');
-              } catch (err) {
-                console.error('Failed to copy:', err);
-              }
-            }}
-            className="mt-4 px-4 py-2 bg-[#00ff88] text-black font-bold uppercase text-xs hover:scale-105 transition-transform"
-          >
-            {locale === 'en' ? 'Copy this message' : 'Copiar este mensaje'}
-          </button>
-        </div>
-      )}
 
       {/* Viral Tips */}
       <details className="group">
