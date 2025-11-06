@@ -143,18 +143,32 @@ export default function BlogPostForm({ post }: Props) {
 
       const data = await response.json();
 
+      // Validate webhook response structure
+      if (!data || !data.languages || !data.languages.en || !data.languages.es) {
+        throw new Error('Invalid response structure from webhook');
+      }
+
+      // Sanitize strings to prevent XSS
+      const sanitize = (str: string) => {
+        if (typeof str !== 'string') return '';
+        return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                  .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+                  .trim()
+                  .slice(0, 1000); // Max 1000 chars
+      };
+
       // Update form with generated data - now editable
       setFormData((prev) => ({
         ...prev,
-        title_es: data.languages.es.title,
-        excerpt_en: data.languages.en.excerpt,
-        excerpt_es: data.languages.es.excerpt,
-        tags_en: data.languages.en.tags,
-        tags_es: data.languages.es.tags,
-        meta_description_en: data.languages.en.metaDescription,
-        meta_description_es: data.languages.es.metaDescription,
-        meta_keywords_en: data.languages.en.metaKeywords,
-        meta_keywords_es: data.languages.es.metaKeywords,
+        title_es: sanitize(data.languages.es.title),
+        excerpt_en: sanitize(data.languages.en.excerpt),
+        excerpt_es: sanitize(data.languages.es.excerpt),
+        tags_en: sanitize(data.languages.en.tags),
+        tags_es: sanitize(data.languages.es.tags),
+        meta_description_en: sanitize(data.languages.en.metaDescription),
+        meta_description_es: sanitize(data.languages.es.metaDescription),
+        meta_keywords_en: sanitize(data.languages.en.metaKeywords),
+        meta_keywords_es: sanitize(data.languages.es.metaKeywords),
       }));
 
       // Also store in generatedData for reference
