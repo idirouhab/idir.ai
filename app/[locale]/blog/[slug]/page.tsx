@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import Image from 'next/image';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MarkdownContent from '@/components/MarkdownContent';
@@ -126,7 +127,7 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#00ff88] transition-colors mb-8 font-bold uppercase tracking-wide"
+            className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-[#00ff88] transition-colors mb-8 font-bold uppercase tracking-wide"
           >
             ← {t('backToBlog')}
           </Link>
@@ -172,10 +173,13 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
           {/* Cover Image */}
           {post.cover_image && (
             <div className="relative w-full aspect-video mb-12 border-4 overflow-hidden" style={{ borderColor: categoryColor }}>
-              <img
+              <Image
                 src={post.cover_image}
                 alt={post.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                priority
               />
             </div>
           )}

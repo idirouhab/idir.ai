@@ -89,7 +89,7 @@ export default function TableOfContents({ content, locale }: Props) {
               className={`text-sm transition-colors block py-1 ${
                 activeId === heading.id
                   ? 'text-[#00ff88] font-bold'
-                  : 'text-gray-400 hover:text-[#00cfff]'
+                  : 'text-gray-300 hover:text-[#00cfff]'
               }`}
             >
               {heading.text}

@@ -75,7 +75,7 @@ export default function AdminBlogPage() {
         <div className="flex items-center justify-between mb-12">
           <div>
             <h1 className="text-4xl font-black text-white mb-2">Blog Management</h1>
-            <p className="text-gray-400">Create and manage your blog posts</p>
+            <p className="text-gray-300">Create and manage your blog posts</p>
           </div>
           <div className="flex gap-4">
             <Link
@@ -99,13 +99,13 @@ export default function AdminBlogPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-gray-800">
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Title</th>
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Category</th>
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Status</th>
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Language</th>
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Published</th>
-                  <th className="text-left p-4 text-gray-400 font-bold uppercase text-sm">Views</th>
-                  <th className="text-right p-4 text-gray-400 font-bold uppercase text-sm">Actions</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Title</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Category</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Status</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Language</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Published</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Views</th>
+                  <th className="text-right p-4 text-gray-300 font-bold uppercase text-sm">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -149,14 +149,14 @@ export default function AdminBlogPage() {
                         <span className="text-sm text-gray-300 uppercase">{post.language}</span>
                       </td>
                       <td className="p-4">
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-gray-300">
                           {post.published_at
                             ? new Date(post.published_at).toLocaleDateString()
                             : '-'}
                         </span>
                       </td>
                       <td className="p-4">
-                        <span className="text-sm text-gray-400">{post.view_count}</span>
+                        <span className="text-sm text-gray-300">{post.view_count}</span>
                       </td>
                       <td className="p-4 text-right">
                         <div className="flex gap-2 justify-end">
@@ -185,7 +185,7 @@ export default function AdminBlogPage() {
           <div className="text-center py-20 bg-black border-2 border-gray-800">
             <div className="text-6xl mb-6">📝</div>
             <h2 className="text-2xl font-black text-white mb-4">No Posts Yet</h2>
-            <p className="text-gray-400 mb-8">Create your first blog post to get started</p>
+            <p className="text-gray-300 mb-8">Create your first blog post to get started</p>
             <Link
               href="/admin/blog/new"
               className="inline-block px-8 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"

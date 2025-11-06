@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { BlogPost, categoryColors, formatDate } from '@/lib/blog';
 
@@ -29,11 +30,12 @@ export default function BlogCard({ post, locale }: Props) {
         {/* Cover Image */}
         {post.cover_image && (
           <div className="relative w-full h-48 overflow-hidden">
-            <img
+            <Image
               src={post.cover_image}
               alt={post.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
         )}
@@ -63,7 +65,7 @@ export default function BlogCard({ post, locale }: Props) {
           </h3>
 
           {/* Excerpt */}
-          <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
+          <p className="text-sm text-gray-300 leading-relaxed mb-4 flex-1">
             {post.excerpt}
           </p>
 

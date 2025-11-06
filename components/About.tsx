@@ -110,7 +110,7 @@ export default function About() {
               <h3 className="text-xl font-black text-white mb-2 uppercase tracking-tight">
                 {item.title}
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-300 leading-relaxed">
                 {item.description}
               </p>
             </div>

@@ -36,7 +36,7 @@ export default function Hero() {
                 <span className="text-white">{t('headline')}</span>
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl mb-6">
+              <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed max-w-xl mb-6">
                 {t('subheadline')}
               </p>
 

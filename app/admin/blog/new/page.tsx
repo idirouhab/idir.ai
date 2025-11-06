@@ -42,13 +42,13 @@ export default function NewBlogPostPage() {
         <div className="mb-12">
           <Link
             href="/admin/blog"
-            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#00ff88] transition-colors mb-6 font-bold uppercase tracking-wide"
+            className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-[#00ff88] transition-colors mb-6 font-bold uppercase tracking-wide"
           >
             ← Back to Blog Management
           </Link>
 
           <h1 className="text-4xl font-black text-white mb-2">Create New Post</h1>
-          <p className="text-gray-400">Write a new blog post</p>
+          <p className="text-gray-300">Write a new blog post</p>
         </div>
 
         {/* Form */}

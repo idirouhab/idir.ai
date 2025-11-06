@@ -39,7 +39,7 @@ export default function NewEventPage() {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-black text-white mb-2">Create New Event</h1>
-            <p className="text-gray-400">Fill in the event details</p>
+            <p className="text-gray-300">Fill in the event details</p>
           </div>
           <button
             onClick={handleLogout}

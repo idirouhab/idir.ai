@@ -20,7 +20,7 @@ export default function Speaking() {
             <span className="text-[#00cfff]">{t('title2')}</span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed max-w-3xl">
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed max-w-3xl">
             {t('description')}
           </p>
         </div>
@@ -53,7 +53,7 @@ export default function Speaking() {
                 <p className="text-xl font-bold text-[#00ff88] mb-2">
                   {t('education.platzi')}
                 </p>
-                <p className="text-gray-400">
+                <p className="text-gray-300">
                   {t('education.description')}
                 </p>
               </div>

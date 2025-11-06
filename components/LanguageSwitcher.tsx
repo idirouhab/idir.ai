@@ -18,13 +18,13 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="w-4 h-4 text-gray-400" />
+      <Globe className="w-4 h-4 text-gray-300" />
       <button
         onClick={() => handleLanguageChange('en')}
         className={`text-sm font-medium transition-colors ${
           locale === 'en'
             ? 'text-white'
-            : 'text-gray-400 hover:text-white'
+            : 'text-gray-300 hover:text-white'
         }`}
         aria-label="Switch to English"
       >
@@ -36,7 +36,7 @@ export function LanguageSwitcher() {
         className={`text-sm font-medium transition-colors ${
           locale === 'es'
             ? 'text-white'
-            : 'text-gray-400 hover:text-white'
+            : 'text-gray-300 hover:text-white'
         }`}
         aria-label="Cambiar a Español"
       >

@@ -285,6 +285,7 @@ Tu contenido va aquí...
           onClick={handleGenerateMetadata}
           disabled={generatingSEO || !formData.title_en || !formData.content_en || !formData.content_es}
           className="px-8 py-3 bg-[#00cfff] text-black font-bold uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          aria-label="Generate metadata with AI"
         >
           {generatingSEO ? (
             <>

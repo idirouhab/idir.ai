@@ -86,7 +86,7 @@ export default function Unsubscribe() {
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
                     {t('success.title')}
                   </h1>
-                  <p className="text-lg text-gray-400 leading-relaxed max-w-xl mx-auto">
+                  <p className="text-lg text-gray-300 leading-relaxed max-w-xl mx-auto">
                     {t('success.message')}
                   </p>
                 </div>
@@ -118,7 +118,7 @@ export default function Unsubscribe() {
                     {t('title')}
                   </h1>
 
-                  <p className="text-base text-gray-400 leading-relaxed max-w-xl">
+                  <p className="text-base text-gray-300 leading-relaxed max-w-xl">
                     {t('description')}
                   </p>
                 </div>

@@ -92,7 +92,7 @@ export default function EditEventPage() {
         <div className="mb-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-black text-white mb-2">Edit Event</h1>
-            <p className="text-gray-400">Update the event details</p>
+            <p className="text-gray-300">Update the event details</p>
           </div>
           <button
             onClick={handleLogout}

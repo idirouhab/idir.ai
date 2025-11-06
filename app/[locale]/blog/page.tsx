@@ -94,7 +94,7 @@ export default async function BlogPage({ params: { locale }, searchParams }: Pro
               {t('title')}
             </h1>
 
-            <p className="text-lg sm:text-xl text-gray-400 leading-relaxed max-w-3xl">
+            <p className="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-3xl">
               {t('subtitle')}
             </p>
           </div>
@@ -152,7 +152,7 @@ export default async function BlogPage({ params: { locale }, searchParams }: Pro
                 <h2 className="text-2xl font-black text-white mb-4">
                   {t('noPosts')}
                 </h2>
-                <p className="text-gray-400 mb-8">
+                <p className="text-gray-300 mb-8">
                   Check back soon for insights on AI, automation, and the future of work.
                 </p>
                 <Link

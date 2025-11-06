@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import Image from 'next/image';
 
 type Props = {
   content: string;
@@ -22,7 +23,7 @@ export default function MarkdownContent({ content }: Props) {
             return !inline && language ? (
               <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-700">
                 <div className="bg-gray-900 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">
                     {language}
                   </span>
                   <span className="text-xs text-gray-600">Code</span>
@@ -133,12 +134,16 @@ export default function MarkdownContent({ content }: Props) {
             <hr className="border-t-2 border-gray-800 my-12" />
           ),
           img: ({ src, alt }) => (
-            <img
-              src={src}
-              alt={alt || ''}
-              className="w-full rounded-lg my-8 border-2 border-[#00ff88]"
-              loading="lazy"
-            />
+            <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#00ff88]">
+              <Image
+                src={src || ''}
+                alt={alt || ''}
+                width={1200}
+                height={675}
+                className="w-full h-auto"
+                sizes="(max-width: 1024px) 100vw, 1024px"
+              />
+            </div>
           ),
         }}
       >

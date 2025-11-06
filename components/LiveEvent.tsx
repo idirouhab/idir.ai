@@ -123,7 +123,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
               <div className="flex items-start gap-3 text-white">
                 <span className="text-2xl mt-1">📅</span>
                 <div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wide">{t('dateTime')}</div>
+                  <div className="text-sm text-gray-300 uppercase tracking-wide">{t('dateTime')}</div>
                   <div className="font-bold text-lg">{date}</div>
                   <div className="font-bold text-xl text-[#00ff88]">{time} <span className="text-lg">({timezoneDisplay})</span></div>
                 </div>
@@ -133,7 +133,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
               <div className="flex items-start gap-3 text-white">
                 <span className="text-2xl mt-1">🌍</span>
                 <div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wide">{t('language')}</div>
+                  <div className="text-sm text-gray-300 uppercase tracking-wide">{t('language')}</div>
                   <div className="font-bold text-xl text-[#00cfff]">{t(`languages.${data.eventLanguage}`)}</div>
                 </div>
               </div>

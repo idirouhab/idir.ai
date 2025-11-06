@@ -113,7 +113,7 @@ export default function AdminDashboard() {
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-black text-white mb-4">Admin Dashboard</h1>
-            <p className="text-gray-400">Manage your site content</p>
+            <p className="text-gray-300">Manage your site content</p>
           </div>
           <div className="flex gap-4">
             <Link
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-black text-white mb-2 group-hover:text-[#00ff88] transition-colors">
               Blog Management
             </h2>
-            <p className="text-gray-400">Create and manage blog posts</p>
+            <p className="text-gray-300">Create and manage blog posts</p>
           </Link>
 
           <Link
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-black text-white mb-2 group-hover:text-[#ff0055] transition-colors">
               Live Events
             </h2>
-            <p className="text-gray-400">Manage live event announcements</p>
+            <p className="text-gray-300">Manage live event announcements</p>
           </Link>
         </div>
 
@@ -186,7 +186,7 @@ export default function AdminDashboard() {
         {/* Events List */}
         {events.length === 0 ? (
           <div className="border-2 border-[#00cfff] bg-black p-12 text-center">
-            <p className="text-2xl text-gray-400 mb-4">No events found</p>
+            <p className="text-2xl text-gray-300 mb-4">No events found</p>
             <p className="text-gray-500 mb-6">Create your first live event to get started</p>
             <Link
               href="/admin/events/new"

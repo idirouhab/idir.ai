@@ -58,7 +58,7 @@ export default function LoginPage() {
 
           <div className="text-center mb-8">
             <h1 className="text-4xl font-black text-white mb-2 uppercase">Admin Login</h1>
-            <p className="text-gray-400">Enter password to access the admin panel</p>
+            <p className="text-gray-300">Enter password to access the admin panel</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -99,7 +99,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <a
               href="/"
-              className="text-gray-400 hover:text-[#00ff88] transition-colors text-sm"
+              className="text-gray-300 hover:text-[#00ff88] transition-colors text-sm"
             >
               ← Back to site
             </a>

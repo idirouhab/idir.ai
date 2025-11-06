@@ -37,7 +37,7 @@ export default function Podcast() {
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed mb-6">
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed mb-6">
               {t('description')}
             </p>
 

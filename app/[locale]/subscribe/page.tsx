@@ -75,7 +75,7 @@ export default function Subscribe() {
                 <span className="gradient-text glow-text">{t('title2')}</span>
               </h1>
 
-              <p className="text-base text-gray-400 leading-relaxed max-w-2xl">
+              <p className="text-base text-gray-300 leading-relaxed max-w-2xl">
                 {t('description')}
               </p>
             </div>
@@ -109,7 +109,7 @@ export default function Subscribe() {
                     className={`px-4 py-3 border-2 font-bold uppercase text-sm transition-all ${
                       language === 'en'
                         ? 'bg-[#00ff88] text-black border-[#00ff88]'
-                        : 'bg-[#0a0a0a] text-gray-400 border-gray-700 hover:border-gray-600'
+                        : 'bg-[#0a0a0a] text-gray-300 border-gray-700 hover:border-gray-600'
                     }`}
                   >
                     {t('form.languageEn')}
@@ -120,7 +120,7 @@ export default function Subscribe() {
                     className={`px-4 py-3 border-2 font-bold uppercase text-sm transition-all ${
                       language === 'es'
                         ? 'bg-[#00ff88] text-black border-[#00ff88]'
-                        : 'bg-[#0a0a0a] text-gray-400 border-gray-700 hover:border-gray-600'
+                        : 'bg-[#0a0a0a] text-gray-300 border-gray-700 hover:border-gray-600'
                     }`}
                   >
                     {t('form.languageEs')}
@@ -145,7 +145,7 @@ export default function Subscribe() {
                     required
                     className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
                   />
-                  <span className="text-sm text-gray-400 leading-relaxed">
+                  <span className="text-sm text-gray-300 leading-relaxed">
                     {t('form.consentShort')}{' '}
                     <button
                       type="button"
@@ -183,7 +183,7 @@ export default function Subscribe() {
             {/* What you'll get */}
             <div className="border-t-2 border-gray-800 pt-8">
               <p className="text-sm text-gray-500 uppercase tracking-wider font-bold mb-4">{t('whatYouGet')}</p>
-              <ul className="space-y-3 text-gray-400 text-sm">
+              <ul className="space-y-3 text-gray-300 text-sm">
                 <li className="flex items-start gap-3">
                   <span className="text-[#00ff88] mt-1">→</span>
                   <span>{t('benefits.daily')}</span>

@@ -96,7 +96,7 @@ export default function Contact() {
             <span className="gradient-text glow-text">{t('title2')}</span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
             {t('description')}
           </p>
         </div>

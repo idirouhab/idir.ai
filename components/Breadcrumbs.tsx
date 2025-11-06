@@ -28,7 +28,7 @@ export default function Breadcrumbs({ items }: Props) {
                 <>
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-[#00ff88] transition-colors uppercase font-bold tracking-wide"
+                    className="text-gray-300 hover:text-[#00ff88] transition-colors uppercase font-bold tracking-wide"
                     itemProp="item"
                   >
                     <span itemProp="name">{item.label}</span>

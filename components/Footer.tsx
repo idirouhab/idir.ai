@@ -48,7 +48,7 @@ export default function Footer() {
             <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tight">
               Idir Ouhab Meskine
             </h3>
-            <p className="text-gray-400 leading-relaxed mb-6">
+            <p className="text-gray-300 leading-relaxed mb-6">
               {t('descriptionStart')}
               <span className="text-[#ff0055] font-bold">{t('descriptionN8n')}</span>
               {t('descriptionMiddle')}
@@ -76,7 +76,7 @@ export default function Footer() {
                 <li key={i}>
                   <a
                     href={link.href}
-                    className="text-gray-400 hover:text-[#00ff88] transition-colors font-medium"
+                    className="text-gray-300 hover:text-[#00ff88] transition-colors font-medium"
                   >
                     → {link.label}
                   </a>
@@ -95,7 +95,7 @@ export default function Footer() {
                     href={link.href}
                     target={link.href.startsWith("http") ? "_blank" : undefined}
                     rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="text-gray-400 hover:text-[#00cfff] transition-colors font-medium"
+                    className="text-gray-300 hover:text-[#00cfff] transition-colors font-medium"
                   >
                     → {link.label}
                   </a>
