@@ -94,7 +94,7 @@ export async function getPublishedPosts(
 
   let query = supabase
     .from('blog_posts')
-    .select('*')
+    .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count')
     .eq('status', 'published')
     .eq('language', language)
     .order('published_at', { ascending: false });

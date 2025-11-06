@@ -11,29 +11,38 @@ export default function Navigation() {
   const t = useTranslations('nav');
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
 
-      // Scroll-spy: detect which section is in view
-      const sections = ["about", "speaking", "podcast", "contact"];
-      const scrollPosition = window.scrollY + 100; // offset for navbar
+          // Scroll-spy: detect which section is in view
+          const sections = ["about", "speaking", "podcast", "contact"];
+          const scrollPosition = window.scrollY + 100; // offset for navbar
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetBottom = offsetTop + element.offsetHeight;
+          for (const section of sections) {
+            const element = document.getElementById(section);
+            if (element) {
+              const offsetTop = element.offsetTop;
+              const offsetBottom = offsetTop + element.offsetHeight;
 
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-            setActiveSection(section);
-            break;
+              if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+                setActiveSection(section);
+                break;
+              }
+            }
           }
-        }
+
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
     handleScroll(); // Initial check
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
