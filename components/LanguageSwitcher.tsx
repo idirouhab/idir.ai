@@ -12,7 +12,16 @@ export function LanguageSwitcher() {
   const handleLanguageChange = (newLocale: string) => {
     // Remove the current locale from the pathname
     const pathWithoutLocale = pathname.replace(`/${locale}`, '');
-    // Navigate to the new locale
+
+    // SPECIAL HANDLING: If on a blog post page (/blog/[slug]), redirect to blog list
+    // Blog posts are language-specific and may not exist in the other language
+    if (pathWithoutLocale.match(/^\/blog\/[^/]+$/)) {
+      // On a blog post page, redirect to the blog list page instead
+      router.push(`/${newLocale}/blog`);
+      return;
+    }
+
+    // For all other pages, maintain the same path
     router.push(`/${newLocale}${pathWithoutLocale}`);
   };
 

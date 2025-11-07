@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth, canPublish } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Update a blog post
@@ -12,6 +12,29 @@ export async function PUT(
     const user = await requireAuth(request);
 
     const body: Partial<BlogPostInput> = await request.json();
+
+    // SECURITY: Verify ownership - first fetch the existing post
+    const supabase = getAdminBlogClient();
+    const { data: existingPost, error: fetchError } = await supabase
+      .from('blog_posts')
+      .select('author_id')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError || !existingPost) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      );
+    }
+
+    // SECURITY: Only the author or owner role can update the post
+    if (existingPost.author_id !== user.userId && user.role !== 'owner') {
+      return NextResponse.json(
+        { error: 'Forbidden: You can only update your own posts' },
+        { status: 403 }
+      );
+    }
 
     // ROLE-BASED PERMISSION: Only owners and admins can publish
     if (!canPublish(user) && body.status === 'published') {
@@ -37,7 +60,6 @@ export async function PUT(
       body.published_at = new Date().toISOString();
     }
 
-    const supabase = getAdminBlogClient();
     const { data, error } = await supabase
       .from('blog_posts')
       .update(body)
@@ -85,7 +107,30 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
+    // SECURITY: Verify ownership - first fetch the existing post
     const supabase = getAdminBlogClient();
+    const { data: existingPost, error: fetchError } = await supabase
+      .from('blog_posts')
+      .select('author_id')
+      .eq('id', params.id)
+      .single();
+
+    if (fetchError || !existingPost) {
+      return NextResponse.json(
+        { error: 'Blog post not found' },
+        { status: 404 }
+      );
+    }
+
+    // SECURITY: Even owners can only delete their own posts
+    // If you need to allow owners to delete any post, remove this check and add audit logging
+    if (existingPost.author_id !== user.userId) {
+      return NextResponse.json(
+        { error: 'Forbidden: You can only delete your own posts' },
+        { status: 403 }
+      );
+    }
+
     const { error } = await supabase.from('blog_posts').delete().eq('id', params.id);
 
     if (error) {

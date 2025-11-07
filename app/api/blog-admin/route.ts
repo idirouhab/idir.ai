@@ -18,6 +18,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // SECURITY: Only owners and admins can access all blog posts
+    if (payload.role !== 'owner' && payload.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Forbidden: Only owners and admins can access this endpoint' },
+        { status: 403 }
+      );
+    }
+
     const supabase = getAdminBlogClient();
     const { data, error } = await supabase
       .from('blog_posts')

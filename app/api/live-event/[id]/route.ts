@@ -88,6 +88,14 @@ export async function DELETE(
     );
   }
 
+  // SECURITY: Only owners and admins can delete live events
+  if (payload.role !== 'owner' && payload.role !== 'admin') {
+    return NextResponse.json(
+      { error: 'Forbidden: Only owners and admins can delete live events' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { error } = await supabase
       .from('live_events')

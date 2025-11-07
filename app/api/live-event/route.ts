@@ -87,6 +87,14 @@ export async function POST(request: Request) {
     );
   }
 
+  // SECURITY: Only owners and admins can create/update live events
+  if (payload.role !== 'owner' && payload.role !== 'admin') {
+    return NextResponse.json(
+      { error: 'Forbidden: Only owners and admins can manage live events' },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await request.json();
 

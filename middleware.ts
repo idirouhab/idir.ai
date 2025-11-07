@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
+import { isTokenBlacklisted } from './lib/session-blacklist';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -12,7 +13,18 @@ async function verifySession(token: string): Promise<boolean> {
       return false;
     }
     const secretKey = new TextEncoder().encode(secret);
-    await jwtVerify(token, secretKey);
+    const { payload } = await jwtVerify(token, secretKey);
+
+    // SECURITY: Check if token is blacklisted (revoked)
+    const jti = payload.jti as string | undefined;
+    if (jti) {
+      const blacklisted = await isTokenBlacklisted(jti);
+      if (blacklisted) {
+        console.log('Token is blacklisted:', jti);
+        return false;
+      }
+    }
+
     return true;
   } catch {
     return false;
