@@ -1,62 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
 import { getTranslations } from 'next-intl/server';
 
-type LiveEventData = {
-  isActive: boolean;
+export type LiveEventData = {
+  isActive?: boolean;
+  is_active?: boolean;
   title: string;
-  eventLanguage: string;
-  eventDatetime: string;
+  eventLanguage?: string;
+  event_language?: string;
+  eventDatetime?: string;
+  event_datetime?: string;
   timezone: string;
   platform: string;
-  platformUrl: string;
+  platformUrl?: string;
+  platform_url?: string;
 };
-
-async function getLiveEventData(): Promise<LiveEventData | null> {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Missing Supabase environment variables');
-      return null;
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-    // Get the active event (only one can be active)
-    const { data, error } = await supabase
-      .from('live_events')
-      .select('*')
-      .eq('is_active', true)
-      .limit(1);
-
-    if (error) {
-      console.error('Error fetching live event:', error);
-      return null;
-    }
-
-    // Return null if no active event
-    if (!data || data.length === 0) {
-      return null;
-    }
-
-    const row = data[0];
-
-    // Transform database format to component format
-    return {
-      isActive: row.is_active,
-      title: row.title,
-      eventLanguage: row.event_language,
-      eventDatetime: row.event_datetime,
-      timezone: row.timezone,
-      platform: row.platform,
-      platformUrl: row.platform_url,
-    };
-  } catch (error) {
-    console.error('Error in getLiveEventData:', error);
-    return null;
-  }
-}
 
 function formatEventDateTime(datetime: string, timezone: string, locale: string): { date: string; time: string; timezoneDisplay: string } {
   try {
@@ -87,14 +43,28 @@ function formatEventDateTime(datetime: string, timezone: string, locale: string)
   }
 }
 
-export default async function LiveEvent({ locale }: { locale: string }) {
-  const data = await getLiveEventData();
+type LiveEventProps = {
+  locale: string;
+  eventData?: LiveEventData | null;
+};
 
-  // Don't render if data couldn't be fetched or event is not active
-  if (!data || !data.isActive) return null;
+export default async function LiveEvent({ locale, eventData }: LiveEventProps) {
+  // Don't render if no event data or event is not active
+  if (!eventData) return null;
+
+  // Normalize data (handle both camelCase and snake_case from different sources)
+  const isActive = eventData.isActive ?? eventData.is_active ?? false;
+  const title = eventData.title;
+  const eventLanguage = eventData.eventLanguage ?? eventData.event_language ?? 'en';
+  const eventDatetime = eventData.eventDatetime ?? eventData.event_datetime ?? '';
+  const timezone = eventData.timezone;
+  const platform = eventData.platform;
+  const platformUrl = eventData.platformUrl ?? eventData.platform_url ?? '';
+
+  if (!isActive) return null;
 
   // Format the event date and time
-  const { date, time, timezoneDisplay } = formatEventDateTime(data.eventDatetime, data.timezone, locale);
+  const { date, time, timezoneDisplay } = formatEventDateTime(eventDatetime, timezone, locale);
 
   // Get translations
   const t = await getTranslations('liveEvent');
@@ -114,7 +84,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
           <div className="space-y-6">
             {/* Event Title */}
             <h2 className="text-3xl md:text-4xl font-black text-white leading-tight pt-4">
-              {data.title}
+              {title}
             </h2>
 
             {/* Event Info Grid */}
@@ -134,7 +104,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
                 <span className="text-2xl mt-1">🌍</span>
                 <div>
                   <div className="text-sm text-gray-300 uppercase tracking-wide">{t('language')}</div>
-                  <div className="font-bold text-xl text-[#00cfff]">{t(`languages.${data.eventLanguage}`)}</div>
+                  <div className="font-bold text-xl text-[#00cfff]">{t(`languages.${eventLanguage}`)}</div>
                 </div>
               </div>
             </div>
@@ -142,7 +112,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
             {/* CTA Button */}
             <div className="pt-2">
               <a
-                href={data.platformUrl}
+                href={platformUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff0055] text-white font-black text-lg uppercase tracking-wide hover:bg-[#ff1166] transition-all"
@@ -150,7 +120,7 @@ export default async function LiveEvent({ locale }: { locale: string }) {
                   boxShadow: '0 4px 20px rgba(255, 0, 85, 0.4)'
                 }}
               >
-                <span>{t('watchOn')} {data.platform}</span>
+                <span>{t('watchOn')} {platform}</span>
                 <span className="text-2xl">→</span>
               </a>
             </div>

@@ -6,7 +6,7 @@ import { isTokenBlacklisted } from './lib/session-blacklist';
 
 const intlMiddleware = createMiddleware(routing);
 
-async function verifySession(token: string): Promise<boolean> {
+async function verifySession(token: string, checkBlacklist: boolean = true): Promise<boolean> {
   try {
     const secret = process.env.SESSION_SECRET;
     if (!secret) {
@@ -15,13 +15,16 @@ async function verifySession(token: string): Promise<boolean> {
     const secretKey = new TextEncoder().encode(secret);
     const { payload } = await jwtVerify(token, secretKey);
 
-    // SECURITY: Check if token is blacklisted (revoked)
-    const jti = payload.jti as string | undefined;
-    if (jti) {
-      const blacklisted = await isTokenBlacklisted(jti);
-      if (blacklisted) {
-        console.log('Token is blacklisted:', jti);
-        return false;
+    // PERFORMANCE OPTIMIZATION: Only check blacklist for critical operations
+    // Skip blacklist check for regular page views to improve performance
+    if (checkBlacklist) {
+      const jti = payload.jti as string | undefined;
+      if (jti) {
+        const blacklisted = await isTokenBlacklisted(jti);
+        if (blacklisted) {
+          console.log('Token is blacklisted:', jti);
+          return false;
+        }
       }
     }
 
@@ -48,8 +51,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
-    // Verify JWT token
-    const isValid = await verifySession(sessionCookie.value);
+    // PERFORMANCE: Skip blacklist check for regular page views
+    // Blacklist will still be checked in API routes via requireAuth()
+    const isValid = await verifySession(sessionCookie.value, false);
     if (!isValid) {
       // Redirect to login if token is invalid
       return NextResponse.redirect(new URL('/admin/login', request.url));

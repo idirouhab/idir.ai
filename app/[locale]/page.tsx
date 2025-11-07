@@ -9,6 +9,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import {getTranslations} from 'next-intl/server';
 import { createClient } from '@supabase/supabase-js';
+import { cache } from 'react';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
@@ -18,7 +19,8 @@ type Props = {
   params: { locale: string };
 };
 
-async function getActiveEvent() {
+// PERFORMANCE: Use React cache to prevent duplicate queries
+const getActiveEvent = cache(async () => {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -44,7 +46,7 @@ async function getActiveEvent() {
     console.error('Error fetching active event:', error);
     return null;
   }
-}
+});
 
 export default async function Home({ params: { locale } }: Props) {
   const t = await getTranslations({ locale, namespace: 'structuredData' });
@@ -71,7 +73,7 @@ export default async function Home({ params: { locale } }: Props) {
       <Navigation />
       <main>
         <Hero />
-        <LiveEvent locale={locale} />
+        <LiveEvent locale={locale} eventData={activeEvent} />
         <Transition textKey="aboutIntro" />
         <About />
         <Transition textKey="speakingIntro" />

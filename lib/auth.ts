@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import { verifyToken, JWTPayload, UserRole } from './jwt';
+import { isTokenBlacklisted } from './session-blacklist';
 
 export async function checkAuth(request: NextRequest): Promise<JWTPayload | null> {
   const sessionCookie = request.cookies.get('admin-session');
@@ -9,6 +10,18 @@ export async function checkAuth(request: NextRequest): Promise<JWTPayload | null
   }
 
   const payload = await verifyToken(sessionCookie.value);
+  if (!payload) {
+    return null;
+  }
+
+  // SECURITY: Check if token is blacklisted (API routes only)
+  if (payload.jti) {
+    const blacklisted = await isTokenBlacklisted(payload.jti);
+    if (blacklisted) {
+      return null;
+    }
+  }
+
   return payload;
 }
 
@@ -19,6 +32,18 @@ export async function checkAuthFromCookies(): Promise<JWTPayload | null> {
   }
 
   const payload = await verifyToken(sessionCookie.value);
+  if (!payload) {
+    return null;
+  }
+
+  // SECURITY: Check if token is blacklisted (API routes only)
+  if (payload.jti) {
+    const blacklisted = await isTokenBlacklisted(payload.jti);
+    if (blacklisted) {
+      return null;
+    }
+  }
+
   return payload;
 }
 

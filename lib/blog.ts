@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { cache } from 'react';
 
 export type BlogCategory = 'insights' | 'learnings' | 'opinion';
 
@@ -84,12 +85,13 @@ export function generateSlug(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+// PERFORMANCE: Cache blog posts to prevent duplicate queries
 // Fetch published blog posts (public)
-export async function getPublishedPosts(
+export const getPublishedPosts = cache(async (
   language: 'en' | 'es',
   limit?: number,
   category?: BlogCategory
-) {
+) => {
   const supabase = getBlogClient();
 
   let query = supabase
@@ -115,13 +117,14 @@ export async function getPublishedPosts(
   }
 
   return data as BlogPost[];
-}
+});
 
+// PERFORMANCE: Cache individual blog posts
 // Fetch a single published post by slug
-export async function getPublishedPostBySlug(
+export const getPublishedPostBySlug = cache(async (
   slug: string,
   language: 'en' | 'es'
-): Promise<BlogPost | null> {
+): Promise<BlogPost | null> => {
   const supabase = getBlogClient();
 
   const { data, error } = await supabase
@@ -138,7 +141,7 @@ export async function getPublishedPostBySlug(
   }
 
   return data as BlogPost;
-}
+});
 
 // Increment view count
 export async function incrementViewCount(postId: string) {
