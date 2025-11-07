@@ -2,7 +2,6 @@
 
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
-import { Globe } from 'lucide-react';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -27,7 +26,12 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="w-4 h-4 text-gray-300" />
+      {/* Inline SVG instead of lucide-react to save ~50KB */}
+      <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" x2="22" y1="12" y2="12" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
       <button
         onClick={() => handleLanguageChange('en')}
         className={`text-sm font-medium transition-colors ${

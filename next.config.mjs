@@ -1,6 +1,11 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import bundleAnalyzer from '@next/bundle-analyzer';
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -10,6 +15,13 @@ const nextConfig = {
   // Optimize CSS
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // PERFORMANCE: Modularize imports to reduce bundle size
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
+    },
   },
 
   // Image optimization
@@ -25,9 +37,14 @@ const nextConfig = {
     ],
   },
 
-  // Experimental optimizations
+  // PERFORMANCE: Experimental optimizations for package imports
   experimental: {
-    optimizePackageImports: ['next-intl'],
+    optimizePackageImports: [
+      'next-intl',
+      'react-markdown',
+      'react-syntax-highlighter',
+      'lucide-react',
+    ],
   },
 
   // Headers for better caching and security
@@ -76,4 +93,4 @@ const nextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withBundleAnalyzer(withNextIntl(nextConfig));

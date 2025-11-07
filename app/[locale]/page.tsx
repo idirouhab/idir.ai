@@ -2,14 +2,29 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import LiveEvent from "@/components/LiveEvent";
 import Transition from "@/components/Transition";
-import About from "@/components/About";
-import Speaking from "@/components/Speaking";
-import Podcast from "@/components/Podcast";
-import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import {getTranslations} from 'next-intl/server';
 import { createClient } from '@supabase/supabase-js';
 import { cache } from 'react';
+import dynamic from 'next/dynamic';
+
+// PERFORMANCE: Lazy load below-the-fold components (not visible on initial load)
+// This reduces initial JavaScript bundle by ~200KB
+const About = dynamic(() => import('@/components/About'), {
+  loading: () => <div className="min-h-[400px]" />,
+});
+
+const Speaking = dynamic(() => import('@/components/Speaking'), {
+  loading: () => <div className="min-h-[400px]" />,
+});
+
+const Podcast = dynamic(() => import('@/components/Podcast'), {
+  loading: () => <div className="min-h-[400px]" />,
+});
+
+const Contact = dynamic(() => import('@/components/Contact'), {
+  loading: () => <div className="min-h-[400px]" />,
+});
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
