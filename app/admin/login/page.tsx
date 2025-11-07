@@ -120,7 +120,7 @@ export default function LoginPage() {
                 href="/admin/signup"
                 className="text-[#00cfff] hover:text-[#00ff88] transition-colors text-sm font-bold"
               >
-                Don't have an account? Sign up →
+                Don&apos;t have an account? Sign up →
               </Link>
             </div>
             <div>
