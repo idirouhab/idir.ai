@@ -114,7 +114,9 @@
       "youtube": "YouTube",
       "podimo": "Podimo"
     },
-    "status": "En vivo en todas las plataformas"
+    "status": "En vivo en todas las plataformas",
+    "loadPlayer": "Clic para Cargar Reproductor de Spotify",
+    "privacyNotice": "Cargar este contenido puede establecer cookies de terceros"
   },
   "contact": {
     "label": "Contacto",

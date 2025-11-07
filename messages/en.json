@@ -114,7 +114,9 @@
       "youtube": "YouTube",
       "podimo": "Podimo"
     },
-    "status": "Live on all platforms"
+    "status": "Live on all platforms",
+    "loadPlayer": "Click to Load Spotify Player",
+    "privacyNotice": "Loading this content may set third-party cookies"
   },
   "contact": {
     "label": "Contact",
