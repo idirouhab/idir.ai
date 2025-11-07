@@ -132,7 +132,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-12 grid md:grid-cols-2 gap-6">
+        <div className="mb-12 grid md:grid-cols-3 gap-6">
           <Link
             href="/admin/blog"
             className="group p-8 bg-black border-2 border-[#00ff88] hover:scale-105 transition-all"
@@ -153,6 +153,17 @@ export default function AdminDashboard() {
               Live Events
             </h2>
             <p className="text-gray-300">Manage live event announcements</p>
+          </Link>
+
+          <Link
+            href="/admin/users"
+            className="group p-8 bg-black border-2 border-[#00cfff] hover:scale-105 transition-all"
+          >
+            <div className="text-4xl mb-4">👥</div>
+            <h2 className="text-2xl font-black text-white mb-2 group-hover:text-[#00cfff] transition-colors">
+              User Management
+            </h2>
+            <p className="text-gray-300">Manage blogger accounts</p>
           </Link>
         </div>
 

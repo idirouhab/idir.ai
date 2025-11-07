@@ -22,8 +22,12 @@ async function verifySession(token: string): Promise<boolean> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if it's an admin route (but not login or API)
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/api')) {
+  // Public admin routes (no authentication required)
+  const publicAdminRoutes = ['/admin/login', '/admin/signup'];
+  const isPublicAdminRoute = publicAdminRoutes.some(route => pathname.startsWith(route));
+
+  // Check if it's an admin route (but not login, signup, or API)
+  if (pathname.startsWith('/admin') && !isPublicAdminRoute && !pathname.startsWith('/api')) {
     // Check for session cookie
     const sessionCookie = request.cookies.get('admin-session');
 

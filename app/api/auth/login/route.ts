@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { signToken } from '@/lib/jwt';
 import { rateLimit, rateLimitConfigs, getClientIdentifier } from '@/lib/rate-limit';
+import { authenticateUser } from '@/lib/users';
 
 export async function POST(request: Request) {
   try {
@@ -26,50 +27,59 @@ export async function POST(request: Request) {
       );
     }
 
-    const { password } = await request.json();
+    const body = await request.json();
+    const { email, password } = body;
 
-    if (!password) {
+    // Validate required fields
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Password is required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
 
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    // Authenticate user with email/password
+    const user = await authenticateUser(email, password);
 
-    if (!adminPassword) {
+    if (!user) {
       return NextResponse.json(
-        { error: 'Admin password not configured' },
-        { status: 500 }
-      );
-    }
-
-    // Validate password strength (only at startup/configuration time)
-    // This is to ensure ADMIN_PASSWORD in .env meets minimum requirements
-    if (adminPassword.length < 12) {
-      console.error('SECURITY WARNING: ADMIN_PASSWORD should be at least 12 characters');
-    }
-
-    if (password === adminPassword) {
-      // Create a signed JWT token
-      const sessionToken = await signToken({ userId: 'admin' });
-
-      // Set cookie with JWT token
-      cookies().set('admin-session', sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict', // CSRF protection
-        maxAge: 60 * 60 * 24, // 24 hours
-        path: '/',
-      });
-
-      return NextResponse.json({ success: true });
-    } else {
-      return NextResponse.json(
-        { error: 'Invalid password' },
+        { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
+
+    if (!user.is_active) {
+      return NextResponse.json(
+        { error: 'Your account is pending approval. Please contact the administrator.' },
+        { status: 403 }
+      );
+    }
+
+    // Create a signed JWT token
+    const sessionToken = await signToken({
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+    });
+
+    // Set cookie with JWT token
+    cookies().set('admin-session', sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict', // CSRF protection
+      maxAge: 60 * 60 * 24, // 24 hours
+      path: '/',
+    });
+
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json(

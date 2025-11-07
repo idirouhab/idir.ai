@@ -21,7 +21,7 @@ export async function GET() {
     const supabase = getAdminBlogClient();
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, category, status, language, published_at, view_count, created_at')
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {

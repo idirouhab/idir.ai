@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Update a blog post
@@ -9,26 +8,31 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Check authentication and get user
+    const user = await requireAuth(request);
 
     const body: Partial<BlogPostInput> = await request.json();
+
+    // ROLE-BASED PERMISSION: Only owners and admins can publish
+    if (!canPublish(user) && body.status === 'published') {
+      return NextResponse.json(
+        { error: 'Forbidden: Only owners and admins can publish posts. Your changes have been saved as draft.' },
+        { status: 403 }
+      );
+    }
+
+    // Force draft status for non-publishers if they try to publish
+    if (!canPublish(user)) {
+      body.status = 'draft';
+      body.published_at = null;
+    }
 
     // Calculate read time if content changed
     if (body.content && !body.read_time_minutes) {
       body.read_time_minutes = calculateReadTime(body.content);
     }
 
-    // Set published_at if changing to published
+    // Set published_at if changing to published (only for owners)
     if (body.status === 'published' && !body.published_at) {
       body.published_at = new Date().toISOString();
     }
@@ -47,8 +51,13 @@ export async function PUT(
     }
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in PUT /api/blog/[id]:', error);
+
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -59,16 +68,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('admin-session');
+    // Check authentication and get user
+    const user = await requireAuth(request);
 
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // ROLE-BASED PERMISSION: Only owners can delete posts
+    if (user.role !== 'owner') {
+      return NextResponse.json(
+        { error: 'Forbidden: Only owners can delete posts' },
+        { status: 403 }
+      );
     }
 
     // Validate UUID format
@@ -86,8 +94,13 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in DELETE /api/blog/[id]:', error);
+
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

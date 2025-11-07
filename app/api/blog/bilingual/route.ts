@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { z } from 'zod';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth, canPublish } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
 
 // Zod schema for input validation
@@ -31,17 +30,8 @@ type BilingualPostPayload = z.infer<typeof BilingualPostSchema>;
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Check authentication
+    const user = await requireAuth(request);
 
     // Parse and validate request body
     const rawBody = await request.json();
@@ -59,6 +49,12 @@ export async function POST(request: NextRequest) {
 
     const body = validationResult.data;
 
+    // ROLE-BASED PERMISSION: Only owners and admins can publish
+    let finalStatus = body.status;
+    if (!canPublish(user)) {
+      finalStatus = 'draft';
+    }
+
     // Generate slugs
     const slug_en = generateSlug(body.title_en);
     const slug_es = generateSlug(body.es.title);
@@ -67,8 +63,8 @@ export async function POST(request: NextRequest) {
     const read_time_en = calculateReadTime(body.content_en);
     const read_time_es = calculateReadTime(body.content_es);
 
-    // Set published_at if publishing
-    const published_at = body.status === 'published' ? new Date().toISOString() : null;
+    // Set published_at if publishing (only for owners and admins)
+    const published_at = finalStatus === 'published' ? new Date().toISOString() : null;
 
     // Parse tags and keywords
     const tags_en = body.en.tags ? body.en.tags.split(',').map((t) => t.trim()) : [];
@@ -88,9 +84,11 @@ export async function POST(request: NextRequest) {
       category: body.category,
       tags: tags_en,
       language: 'en',
-      status: body.status,
+      status: finalStatus,
       read_time_minutes: read_time_en,
       published_at,
+      author_id: user.userId,
+      author_name: user.email,
     };
 
     // Create Spanish post
@@ -105,9 +103,11 @@ export async function POST(request: NextRequest) {
       category: body.category,
       tags: tags_es,
       language: 'es',
-      status: body.status,
+      status: finalStatus,
       read_time_minutes: read_time_es,
       published_at,
+      author_id: user.userId,
+      author_name: user.email,
     };
 
     const supabase = getAdminBlogClient();

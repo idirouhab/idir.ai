@@ -33,15 +33,16 @@ export default function BlogPostForm({ post }: Props) {
   const [generatingSEO, setGeneratingSEO] = useState(false);
   const [seoSuccess, setSeoSuccess] = useState(false);
   const [generatedData, setGeneratedData] = useState<BilingualData | null>(null);
+  const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
+  const [canUserPublish, setCanUserPublish] = useState(false);
 
   const [formData, setFormData] = useState({
-    title_en: post?.language === 'en' ? post?.title || '' : '',
-    content_en: post?.language === 'en' ? post?.content || '' : '',
-    content_es: post?.language === 'es' ? post?.content || '' : '',
-    cover_image: post?.cover_image || '',
-    category: post?.category || ('insights' as BlogCategory),
-    status: post?.status || ('draft' as 'draft' | 'published'),
-    // Editable generated data
+    title_en: '',
+    content_en: '',
+    content_es: '',
+    cover_image: '',
+    category: 'insights' as BlogCategory,
+    status: 'draft' as 'draft' | 'published',
     title_es: '',
     excerpt_en: '',
     excerpt_es: '',
@@ -53,19 +54,133 @@ export default function BlogPostForm({ post }: Props) {
     meta_keywords_es: '',
   });
 
+  // Fetch current user role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setUserRole(data.role);
+          // Check if user can publish (owner or admin)
+          setCanUserPublish(data.role === 'owner' || data.role === 'admin');
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+    fetchUserRole();
+  }, []);
+
+  // Load post data into form when editing
+  useEffect(() => {
+    if (post) {
+      const isEnglish = post.language === 'en';
+      setFormData({
+        title_en: isEnglish ? post.title : '',
+        content_en: isEnglish ? post.content : '',
+        content_es: !isEnglish ? post.content : '',
+        cover_image: post.cover_image || '',
+        category: post.category,
+        status: post.status,
+        title_es: !isEnglish ? post.title : '',
+        excerpt_en: isEnglish ? post.excerpt : '',
+        excerpt_es: !isEnglish ? post.excerpt : '',
+        tags_en: isEnglish && post.tags ? post.tags.join(', ') : '',
+        tags_es: !isEnglish && post.tags ? post.tags.join(', ') : '',
+        meta_description_en: isEnglish && post.meta_description ? post.meta_description : '',
+        meta_description_es: !isEnglish && post.meta_description ? post.meta_description : '',
+        meta_keywords_en: isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
+        meta_keywords_es: !isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
+      });
+
+      // Set generatedData to show metadata fields in edit mode
+      setGeneratedData({
+        en: {
+          title: isEnglish ? post.title : '',
+          excerpt: isEnglish ? post.excerpt : '',
+          tags: isEnglish && post.tags ? post.tags.join(', ') : '',
+          metaDescription: isEnglish && post.meta_description ? post.meta_description : '',
+          metaKeywords: isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
+        },
+        es: {
+          title: !isEnglish ? post.title : '',
+          excerpt: !isEnglish ? post.excerpt : '',
+          tags: !isEnglish && post.tags ? post.tags.join(', ') : '',
+          metaDescription: !isEnglish && post.meta_description ? post.meta_description : '',
+          metaKeywords: !isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
+        },
+      });
+    }
+  }, [post]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.title_es || !formData.excerpt_en || !formData.excerpt_es) {
-      setError('Please generate metadata with AI first');
-      return;
-    }
-
     setLoading(true);
     setError('');
 
     try {
-      // Create payload for both language posts
+      // EDIT MODE: Update existing post
+      if (post) {
+        const isEnglish = post.language === 'en';
+
+        // Prepare update payload based on post language
+        const updatePayload: any = {
+          title: isEnglish ? formData.title_en : formData.title_es,
+          content: isEnglish ? formData.content_en : formData.content_es,
+          excerpt: isEnglish ? formData.excerpt_en : formData.excerpt_es,
+          cover_image: formData.cover_image,
+          category: formData.category,
+          status: formData.status,
+        };
+
+        // Add tags if provided
+        if (isEnglish && formData.tags_en) {
+          updatePayload.tags = formData.tags_en.split(',').map((t: string) => t.trim());
+        } else if (!isEnglish && formData.tags_es) {
+          updatePayload.tags = formData.tags_es.split(',').map((t: string) => t.trim());
+        }
+
+        // Add meta fields if provided
+        if (isEnglish) {
+          if (formData.meta_description_en) {
+            updatePayload.meta_description = formData.meta_description_en;
+          }
+          if (formData.meta_keywords_en) {
+            updatePayload.meta_keywords = formData.meta_keywords_en.split(',').map((k: string) => k.trim());
+          }
+        } else {
+          if (formData.meta_description_es) {
+            updatePayload.meta_description = formData.meta_description_es;
+          }
+          if (formData.meta_keywords_es) {
+            updatePayload.meta_keywords = formData.meta_keywords_es.split(',').map((k: string) => k.trim());
+          }
+        }
+
+        const response = await fetch(`/api/blog/${post.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatePayload),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to update post');
+        }
+
+        router.push('/admin/blog');
+        router.refresh();
+        return;
+      }
+
+      // CREATE MODE: Create new bilingual posts
+      if (!formData.title_es || !formData.excerpt_en || !formData.excerpt_es) {
+        setError('Please generate metadata with AI first');
+        setLoading(false);
+        return;
+      }
+
       const payload = {
         title_en: formData.title_en,
         content_en: formData.content_en,
@@ -73,14 +188,12 @@ export default function BlogPostForm({ post }: Props) {
         cover_image: formData.cover_image,
         category: formData.category,
         status: formData.status,
-        // English post data
         en: {
           excerpt: formData.excerpt_en,
           tags: formData.tags_en,
           meta_description: formData.meta_description_en,
           meta_keywords: formData.meta_keywords_en,
         },
-        // Spanish post data
         es: {
           title: formData.title_es,
           excerpt: formData.excerpt_es,
@@ -220,42 +333,85 @@ export default function BlogPostForm({ post }: Props) {
         </div>
       )}
 
-      {/* Instructions */}
-      <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
-        <p className="text-[#00cfff] font-bold mb-2">📝 Bilingual Post Creation</p>
-        <ol className="text-gray-300 text-sm space-y-1 list-decimal list-inside">
-          <li>Write your post title in English</li>
-          <li>Write your post content in English</li>
-          <li>Write your post content in Spanish</li>
-          <li>Click &quot;Generate Metadata with AI&quot; to auto-generate SEO data for both languages</li>
-          <li>Review and publish both posts simultaneously</li>
-        </ol>
-      </div>
+      {/* Instructions - Only show for new posts */}
+      {!post && (
+        <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
+          <p className="text-[#00cfff] font-bold mb-2">📝 Bilingual Post Creation</p>
+          <ol className="text-gray-300 text-sm space-y-1 list-decimal list-inside">
+            <li>Write your post title in English</li>
+            <li>Write your post content in English</li>
+            <li>Write your post content in Spanish</li>
+            <li>Click &quot;Generate Metadata with AI&quot; to auto-generate SEO data for both languages</li>
+            <li>Review and publish both posts simultaneously</li>
+          </ol>
+        </div>
+      )}
 
-      {/* Title (English) */}
-      <div>
-        <label className="block text-white font-bold mb-2 uppercase text-sm">Title (English) *</label>
-        <input
-          type="text"
-          required
-          value={formData.title_en}
-          onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
-          className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
-          placeholder="Why AI Browsers Matter"
-        />
-        <p className="text-xs text-gray-500 mt-1">Spanish title will be auto-generated by AI</p>
-      </div>
+      {/* Edit mode notice */}
+      {post && (
+        <div className="p-4 bg-[#00ff8820] border-2 border-[#00ff88]">
+          <p className="text-[#00ff88] font-bold mb-1">✏️ Editing {post.language === 'en' ? 'English' : 'Spanish'} Post</p>
+          <p className="text-gray-300 text-sm">
+            You are editing the {post.language === 'en' ? 'English' : 'Spanish'} version of this post.
+          </p>
+        </div>
+      )}
 
-      {/* Content (English) */}
-      <div>
-        <label className="block text-white font-bold mb-2 uppercase text-sm">Content - English (Markdown) *</label>
-        <textarea
-          required
-          value={formData.content_en}
-          onChange={(e) => setFormData({ ...formData, content_en: e.target.value })}
-          rows={15}
-          className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none font-mono text-sm resize-y"
-          placeholder="# Your heading
+      {/* Non-publisher notice */}
+      {!canUserPublish && userRole && (
+        <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
+          <p className="text-[#00cfff] font-bold mb-1">📝 {userRole.charAt(0).toUpperCase() + userRole.slice(1)} Role</p>
+          <p className="text-gray-300 text-sm">
+            You can create and edit posts, but only owners and admins can publish them. Your posts will be saved as drafts for review.
+          </p>
+        </div>
+      )}
+
+      {/* Title - Show appropriate language based on mode */}
+      {(!post || post.language === 'en') && (
+        <div>
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            Title {post ? '' : '(English)'} *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.title_en}
+            onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            placeholder="Why AI Browsers Matter"
+          />
+          {!post && <p className="text-xs text-gray-500 mt-1">Spanish title will be auto-generated by AI</p>}
+        </div>
+      )}
+
+      {(!post || post.language === 'es') && post && (
+        <div>
+          <label className="block text-white font-bold mb-2 uppercase text-sm">Título *</label>
+          <input
+            type="text"
+            required
+            value={formData.title_es}
+            onChange={(e) => setFormData({ ...formData, title_es: e.target.value })}
+            className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none"
+            placeholder="Por Qué Importan los Navegadores de IA"
+          />
+        </div>
+      )}
+
+      {/* Content - Show appropriate language based on mode */}
+      {(!post || post.language === 'en') && (
+        <div>
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            Content {post ? '' : '- English'} (Markdown) *
+          </label>
+          <textarea
+            required
+            value={formData.content_en}
+            onChange={(e) => setFormData({ ...formData, content_en: e.target.value })}
+            rows={15}
+            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none font-mono text-sm resize-y"
+            placeholder="# Your heading
 
 Your content goes here...
 
@@ -263,22 +419,25 @@ Your content goes here...
 
 - List item 1
 - List item 2"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Supports Markdown: **bold**, *italic*, [links](url), lists, headings, etc.
-        </p>
-      </div>
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Supports Markdown: **bold**, *italic*, [links](url), lists, headings, etc.
+          </p>
+        </div>
+      )}
 
-      {/* Content (Spanish) */}
-      <div>
-        <label className="block text-white font-bold mb-2 uppercase text-sm">Content - Spanish (Markdown) *</label>
-        <textarea
-          required
-          value={formData.content_es}
-          onChange={(e) => setFormData({ ...formData, content_es: e.target.value })}
-          rows={15}
-          className="w-full px-4 py-3 bg-black text-white border-2 border-[#00ff88] focus:border-[#00cfff] focus:outline-none font-mono text-sm resize-y"
-          placeholder="# Tu encabezado
+      {(!post || post.language === 'es') && (
+        <div>
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
+          </label>
+          <textarea
+            required={!post || post.language === 'es'}
+            value={formData.content_es}
+            onChange={(e) => setFormData({ ...formData, content_es: e.target.value })}
+            rows={15}
+            className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none font-mono text-sm resize-y"
+            placeholder="# Tu encabezado
 
 Tu contenido va aquí...
 
@@ -286,51 +445,59 @@ Tu contenido va aquí...
 
 - Elemento de lista 1
 - Elemento de lista 2"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Soporta Markdown: **negrita**, *cursiva*, [enlaces](url), listas, encabezados, etc.
-        </p>
-      </div>
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Soporta Markdown: **negrita**, *cursiva*, [enlaces](url), listas, encabezados, etc.
+          </p>
+        </div>
+      )}
 
-      {/* AI Generate Button */}
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          onClick={handleGenerateMetadata}
-          disabled={generatingSEO || !formData.title_en || !formData.content_en || !formData.content_es}
-          className="px-8 py-3 bg-[#00cfff] text-black font-bold uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          aria-label="Generate metadata with AI"
-        >
-          {generatingSEO ? (
-            <>
-              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Generating...
-            </>
-          ) : (
-            <>🤖 Generate Metadata with AI</>
-          )}
-        </button>
-      </div>
+      {/* AI Generate Button - Only for new posts */}
+      {!post && (
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={handleGenerateMetadata}
+            disabled={generatingSEO || !formData.title_en || !formData.content_en || !formData.content_es}
+            className="px-8 py-3 bg-[#00cfff] text-black font-bold uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            aria-label="Generate metadata with AI"
+          >
+            {generatingSEO ? (
+              <>
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating...
+              </>
+            ) : (
+              <>🤖 Generate Metadata with AI</>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Generated Metadata - Editable Fields */}
       {generatedData && (
         <div className="space-y-6 p-6 bg-black border-2 border-[#00ff88]">
           <h3 className="text-[#00ff88] font-bold uppercase text-sm">
-            ✨ AI-Generated Metadata (Review & Edit)
+            {post ? '✏️ Post Metadata' : '✨ AI-Generated Metadata (Review & Edit)'}
           </h3>
 
           {/* English Metadata */}
+          {(!post || post.language === 'en') && (
           <div className="space-y-4">
-            <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
-              <span className="text-[#00ff88]">🇬🇧</span> English Metadata
-            </h4>
+            {!post && (
+              <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
+                <span className="text-[#00ff88]">🇬🇧</span> English Metadata
+              </h4>
+            )}
 
             {/* English Excerpt */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Excerpt (EN) *</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                Excerpt {post ? '' : '(EN)'} *
+              </label>
               <textarea
                 required
                 value={formData.excerpt_en}
@@ -342,7 +509,9 @@ Tu contenido va aquí...
 
             {/* English Tags */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Tags (EN) *</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                Tags {post ? '' : '(EN)'} *
+              </label>
               <input
                 type="text"
                 required
@@ -356,7 +525,9 @@ Tu contenido va aquí...
 
             {/* English Meta Description */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Meta Description (EN)</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                Meta Description {post ? '' : '(EN)'}
+              </label>
               <textarea
                 value={formData.meta_description_en}
                 onChange={(e) => setFormData({ ...formData, meta_description_en: e.target.value })}
@@ -369,7 +540,9 @@ Tu contenido va aquí...
 
             {/* English Meta Keywords */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Meta Keywords (EN)</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                Meta Keywords {post ? '' : '(EN)'}
+              </label>
               <input
                 type="text"
                 value={formData.meta_keywords_en}
@@ -378,14 +551,19 @@ Tu contenido va aquí...
               />
             </div>
           </div>
+          )}
 
           {/* Spanish Metadata */}
-          <div className="space-y-4 pt-6 border-t-2 border-gray-800">
-            <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
-              <span className="text-[#00cfff]">🇪🇸</span> Spanish Metadata
-            </h4>
+          {(!post || post.language === 'es') && (
+          <div className={`space-y-4 ${!post ? 'pt-6 border-t-2 border-gray-800' : ''}`}>
+            {!post && (
+              <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
+                <span className="text-[#00cfff]">🇪🇸</span> Spanish Metadata
+              </h4>
+            )}
 
-            {/* Spanish Title */}
+            {/* Spanish Title - Only show in create mode */}
+            {!post && (
             <div>
               <label className="block text-white font-bold mb-2 uppercase text-xs">Título (ES) *</label>
               <input
@@ -396,10 +574,13 @@ Tu contenido va aquí...
                 className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none text-sm"
               />
             </div>
+            )}
 
             {/* Spanish Excerpt */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Extracto (ES) *</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                {post && post.language === 'es' ? 'Extracto *' : 'Extracto (ES) *'}
+              </label>
               <textarea
                 required
                 value={formData.excerpt_es}
@@ -411,7 +592,9 @@ Tu contenido va aquí...
 
             {/* Spanish Tags */}
             <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Etiquetas (ES) *</label>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                {post && post.language === 'es' ? 'Etiquetas *' : 'Etiquetas (ES) *'}
+              </label>
               <input
                 type="text"
                 required
@@ -447,6 +630,7 @@ Tu contenido va aquí...
               />
             </div>
           </div>
+          )}
         </div>
       )}
 
@@ -473,10 +657,14 @@ Tu contenido va aquí...
             value={formData.status}
             onChange={(e) => setFormData({ ...formData, status: e.target.value as 'draft' | 'published' })}
             className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            disabled={!canUserPublish && formData.status === 'draft'}
           >
             <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            {canUserPublish && <option value="published">Published</option>}
           </select>
+          {!canUserPublish && (
+            <p className="text-xs text-[#00cfff] mt-1">Only owners and admins can publish posts</p>
+          )}
         </div>
       </div>
 
@@ -497,10 +685,16 @@ Tu contenido va aquí...
       <div className="flex gap-4 pt-6">
         <button
           type="submit"
-          disabled={loading || !formData.title_es || !formData.excerpt_en || !formData.excerpt_es}
+          disabled={loading || (!post && (!formData.title_es || !formData.excerpt_en || !formData.excerpt_es))}
           className="px-8 py-3 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Publishing Both Posts...' : '🌍 Publish Both Languages'}
+          {loading
+            ? (post ? 'Saving...' : (!canUserPublish ? 'Saving Draft...' : 'Publishing Both Posts...'))
+            : (post
+                ? '💾 Save Changes'
+                : (!canUserPublish ? '📝 Save as Draft' : '🌍 Publish Both Languages')
+              )
+          }
         </button>
 
         <button

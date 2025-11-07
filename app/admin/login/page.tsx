@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,7 +22,7 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
@@ -28,7 +30,7 @@ export default function LoginPage() {
         router.refresh();
       } else {
         const data = await response.json();
-        setError(data.error || 'Invalid password');
+        setError(data.error || 'Invalid email or password');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -58,10 +60,26 @@ export default function LoginPage() {
 
           <div className="text-center mb-8">
             <h1 className="text-4xl font-black text-white mb-2 uppercase">Admin Login</h1>
-            <p className="text-gray-300">Enter password to access the admin panel</p>
+            <p className="text-gray-300">Sign in to access the admin panel</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none focus:border-[#00cfff] transition-colors"
+                placeholder="your@email.com"
+                required
+                disabled={loading}
+              />
+            </div>
+
             <div>
               <label htmlFor="password" className="block text-white font-bold mb-2 uppercase text-sm">
                 Password
@@ -72,7 +90,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none focus:border-[#00cfff] transition-colors"
-                placeholder="Enter admin password"
+                placeholder="Enter your password"
                 required
                 disabled={loading}
               />
@@ -96,13 +114,23 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <a
-              href="/"
-              className="text-gray-300 hover:text-[#00ff88] transition-colors text-sm"
-            >
-              ← Back to site
-            </a>
+          <div className="mt-6 text-center space-y-3">
+            <div>
+              <Link
+                href="/admin/signup"
+                className="text-[#00cfff] hover:text-[#00ff88] transition-colors text-sm font-bold"
+              >
+                Don't have an account? Sign up →
+              </Link>
+            </div>
+            <div>
+              <a
+                href="/"
+                className="text-gray-300 hover:text-[#00ff88] transition-colors text-sm"
+              >
+                ← Back to site
+              </a>
+            </div>
           </div>
         </div>
       </div>

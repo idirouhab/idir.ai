@@ -1,22 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth, canPublish } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Create a new blog post
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // Check authentication
+    const user = await requireAuth(request);
 
     const body: BlogPostInput = await request.json();
 
@@ -25,15 +15,29 @@ export async function POST(request: NextRequest) {
       body.read_time_minutes = calculateReadTime(body.content);
     }
 
-    // Set published_at if publishing
-    if (body.status === 'published' && !body.published_at) {
-      body.published_at = new Date().toISOString();
+    // ROLE-BASED PERMISSION: Only owners and admins can publish
+    if (!canPublish(user)) {
+      // Force status to draft for non-publishers
+      body.status = 'draft';
+      body.published_at = null;
+    } else {
+      // Owners and admins can publish directly
+      if (body.status === 'published' && !body.published_at) {
+        body.published_at = new Date().toISOString();
+      }
     }
+
+    // Add author information
+    const postData = {
+      ...body,
+      author_id: user.userId,
+      author_name: user.email,
+    };
 
     const supabase = getAdminBlogClient();
     const { data, error } = await supabase
       .from('blog_posts')
-      .insert([body])
+      .insert([postData])
       .select()
       .single();
 
@@ -43,8 +47,13 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in POST /api/blog:', error);
+
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
