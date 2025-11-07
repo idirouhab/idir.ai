@@ -10,6 +10,29 @@ export default function Navigation() {
   const [activeSection, setActiveSection] = useState("");
   const t = useTranslations('nav');
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
+
   useEffect(() => {
     let ticking = false;
 
@@ -135,7 +158,7 @@ export default function Navigation() {
       {/* Mobile menu backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] md:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -143,14 +166,17 @@ export default function Navigation() {
 
       {/* Mobile menu - off-canvas slide-in */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#00ff88] z-50 md:hidden transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#00ff88] z-[70] md:hidden transform transition-transform duration-300 ease-in-out overflow-y-auto ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
-        style={{ background: 'rgba(0, 0, 0, 0.98)' }}
+        style={{
+          background: 'rgba(0, 0, 0, 0.98)',
+          WebkitOverflowScrolling: 'touch'
+        }}
       >
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col min-h-0">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-800">
+          <div className="flex items-center justify-between p-6 border-b border-gray-800 flex-shrink-0">
             <span className="text-2xl font-black text-white uppercase">Menu</span>
             <button
               onClick={() => setIsOpen(false)}
@@ -164,7 +190,7 @@ export default function Navigation() {
           </div>
 
           {/* Nav items */}
-          <nav className="flex-1 overflow-y-auto py-6">
+          <nav className="flex-1 overflow-y-auto py-6 overscroll-contain">
             <div className="space-y-2 px-4">
               {navItems.map((item) => (
                 <a
