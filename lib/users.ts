@@ -224,3 +224,48 @@ export async function updateUserPassword(userId: string, newPassword: string): P
     throw new Error(error.message);
   }
 }
+
+// Update user role (owner only)
+export async function updateUserRole(userId: string, newRole: UserRole): Promise<User> {
+  const supabase = getAdminClient();
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({ role: newRole })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating user role:', error);
+    throw new Error(error.message);
+  }
+
+  return data as User;
+}
+
+// Update user details (name, email)
+export async function updateUserDetails(
+  userId: string,
+  updates: { name?: string; email?: string }
+): Promise<User> {
+  const supabase = getAdminClient();
+
+  const updateData: any = {};
+  if (updates.name) updateData.name = updates.name;
+  if (updates.email) updateData.email = updates.email.toLowerCase().trim();
+
+  const { data, error } = await supabase
+    .from('users')
+    .update(updateData)
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating user details:', error);
+    throw new Error(error.message);
+  }
+
+  return data as User;
+}

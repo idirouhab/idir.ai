@@ -8,9 +8,16 @@ type User = {
   id: string;
   email: string;
   name: string;
-  role: 'owner' | 'blogger';
+  role: 'owner' | 'admin' | 'blogger';
   is_active: boolean;
   created_at: string;
+};
+
+type EditingUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'owner' | 'admin' | 'blogger';
 };
 
 export default function UsersManagement() {
@@ -19,6 +26,8 @@ export default function UsersManagement() {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
+  const [showRoleInfo, setShowRoleInfo] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -71,6 +80,81 @@ export default function UsersManagement() {
           type: 'success',
           text: `User ${!currentStatus ? 'activated' : 'deactivated'} successfully`,
         });
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        setMessage({ type: 'error', text: data.error || 'Failed to update user' });
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      setMessage({ type: 'error', text: 'Failed to update user' });
+    }
+  };
+
+  const handleRoleChange = async (userId: string, newRole: 'owner' | 'admin' | 'blogger') => {
+    if (!confirm(`Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          role: newRole,
+        }),
+      });
+
+      if (response.ok) {
+        setMessage({
+          type: 'success',
+          text: `User role changed to ${newRole} successfully`,
+        });
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        setMessage({ type: 'error', text: data.error || 'Failed to change role' });
+      }
+    } catch (error) {
+      console.error('Error changing role:', error);
+      setMessage({ type: 'error', text: 'Failed to change role' });
+    }
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+  };
+
+  const handleSaveUser = async () => {
+    if (!editingUser) return;
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: editingUser.id,
+          name: editingUser.name,
+          email: editingUser.email,
+        }),
+      });
+
+      if (response.ok) {
+        setMessage({
+          type: 'success',
+          text: 'User details updated successfully',
+        });
+        setEditingUser(null);
         fetchUsers();
       } else {
         const data = await response.json();
@@ -139,15 +223,85 @@ export default function UsersManagement() {
           </div>
         )}
 
-        {/* Info Box */}
-        <div className="mb-6 p-4 bg-[#00cfff10] border border-[#00cfff]">
-          <p className="text-[#00cfff] font-bold text-sm mb-2">How Blogger Accounts Work</p>
-          <ul className="text-gray-400 text-xs space-y-1 list-disc list-inside">
-            <li>New blogger signups are inactive by default</li>
-            <li>Activate accounts to allow bloggers to create draft posts</li>
-            <li>Bloggers cannot publish posts - only owners can publish</li>
-            <li>Review and publish blogger drafts from the Blog Management page</li>
-          </ul>
+        {/* Role Permissions Info */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowRoleInfo(!showRoleInfo)}
+            className="w-full p-4 bg-[#00cfff10] border border-[#00cfff] text-left flex justify-between items-center hover:bg-[#00cfff15] transition-colors"
+          >
+            <div>
+              <p className="text-[#00cfff] font-bold text-sm">Role Permissions & Guidelines</p>
+              <p className="text-gray-500 text-xs mt-1">Click to {showRoleInfo ? 'hide' : 'view'} detailed role information</p>
+            </div>
+            <span className="text-[#00cfff] text-xl">{showRoleInfo ? '−' : '+'}</span>
+          </button>
+
+          {showRoleInfo && (
+            <div className="border border-gray-800 border-t-0 p-4 bg-black">
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Owner Role */}
+                <div className="p-4 border border-[#ff0055] bg-[#ff005510]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#ff0055] text-white">
+                      OWNER
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-300 mb-3 font-bold">Full system access</p>
+                  <ul className="text-xs text-gray-400 space-y-1">
+                    <li>✓ Manage all users</li>
+                    <li>✓ Change user roles</li>
+                    <li>✓ Create, edit, publish posts</li>
+                    <li>✓ Delete any post</li>
+                    <li>✓ Manage live events</li>
+                    <li>✓ All admin capabilities</li>
+                  </ul>
+                </div>
+
+                {/* Admin Role */}
+                <div className="p-4 border border-[#00cfff] bg-[#00cfff10]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00cfff] text-black">
+                      ADMIN
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-300 mb-3 font-bold">Content management</p>
+                  <ul className="text-xs text-gray-400 space-y-1">
+                    <li>✓ Create, edit, publish posts</li>
+                    <li>✓ Manage live events</li>
+                    <li>✓ View all users</li>
+                    <li>✗ Cannot change roles</li>
+                    <li>✗ Cannot delete posts</li>
+                    <li>✗ Cannot manage users</li>
+                  </ul>
+                </div>
+
+                {/* Blogger Role */}
+                <div className="p-4 border border-[#00ff88] bg-[#00ff8810]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black">
+                      BLOGGER
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-300 mb-3 font-bold">Content creation only</p>
+                  <ul className="text-xs text-gray-400 space-y-1">
+                    <li>✓ Create draft posts</li>
+                    <li>✓ Edit own posts</li>
+                    <li>✗ Cannot publish</li>
+                    <li>✗ Cannot delete</li>
+                    <li>✗ No admin access</li>
+                    <li>✗ Requires activation</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-gray-900 border border-gray-800">
+                <p className="text-xs text-gray-400">
+                  <span className="font-bold text-gray-300">Note:</span> New signups are automatically assigned the <span className="text-[#00ff88]">Blogger</span> role and require owner activation.
+                  Only <span className="text-[#ff0055]">Owner</span> can change user roles. You cannot change your own role.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Users List */}
@@ -169,7 +323,7 @@ export default function UsersManagement() {
               >
                 <div className="flex justify-between items-start gap-6">
                   <div className="flex-1">
-                    {/* Status Badges */}
+                    {/* Status Badge */}
                     <div className="flex items-center gap-2 mb-3">
                       <span
                         className={`px-2 py-1 text-xs font-bold uppercase ${
@@ -180,20 +334,28 @@ export default function UsersManagement() {
                       >
                         {user.is_active ? '● Active' : '○ Inactive'}
                       </span>
-                      <span
-                        className={`px-2 py-1 text-xs font-bold uppercase ${
-                          user.role === 'owner'
-                            ? 'bg-[#ff0055] text-white'
-                            : 'bg-[#00cfff] text-black'
-                        }`}
-                      >
-                        {user.role.toUpperCase()}
-                      </span>
                     </div>
 
                     {/* User Info */}
                     <h3 className="text-lg font-black text-white mb-2">{user.name}</h3>
-                    <p className="text-sm text-gray-400 mb-3">{user.email}</p>
+                    <p className="text-sm text-gray-400 mb-2">{user.email}</p>
+
+                    {/* Role Selector */}
+                    <div className="mb-3">
+                      <label className="block text-xs text-gray-500 mb-1 uppercase font-bold">Role</label>
+                      <select
+                        value={user.role}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value as 'owner' | 'admin' | 'blogger')}
+                        className="px-3 py-1 text-xs border border-gray-700 bg-black font-bold uppercase"
+                        style={{
+                          color: user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88'
+                        }}
+                      >
+                        <option value="owner" style={{ color: '#ff0055' }}>OWNER</option>
+                        <option value="admin" style={{ color: '#00cfff' }}>ADMIN</option>
+                        <option value="blogger" style={{ color: '#00ff88' }}>BLOGGER</option>
+                      </select>
+                    </div>
 
                     {/* Metadata */}
                     <div className="text-xs text-gray-600">
@@ -202,8 +364,14 @@ export default function UsersManagement() {
                   </div>
 
                   {/* Action Buttons */}
-                  {user.role === 'blogger' && (
-                    <div className="flex gap-2">
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => handleEditUser(user)}
+                      className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#00cfff] hover:text-[#00cfff] transition-all"
+                    >
+                      Edit Details
+                    </button>
+                    {user.role !== 'owner' && (
                       <button
                         onClick={() => handleToggleStatus(user.id, user.is_active)}
                         className={`px-4 py-2 text-xs border font-bold uppercase transition-all ${
@@ -214,11 +382,65 @@ export default function UsersManagement() {
                       >
                         {user.is_active ? 'Deactivate' : 'Activate'}
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Edit User Modal */}
+        {editingUser && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-black border-2 border-[#00cfff] max-w-md w-full p-6">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="text-xl font-black text-white uppercase">Edit User</h3>
+                <button
+                  onClick={() => setEditingUser(null)}
+                  className="text-gray-400 hover:text-white text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">Name</label>
+                  <input
+                    type="text"
+                    value={editingUser.name}
+                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">Email</label>
+                  <input
+                    type="email"
+                    value={editingUser.email}
+                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                  />
+                </div>
+
+                <div className="pt-4 flex gap-3">
+                  <button
+                    onClick={handleSaveUser}
+                    className="flex-1 px-4 py-2 bg-[#00cfff] text-black font-bold text-sm uppercase hover:opacity-90 transition-opacity"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={() => setEditingUser(null)}
+                    className="px-4 py-2 border border-gray-700 text-gray-300 font-bold text-sm uppercase hover:border-white hover:text-white transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
