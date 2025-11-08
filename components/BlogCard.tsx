@@ -71,7 +71,14 @@ export default function BlogCard({ post, locale }: Props) {
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-800">
-            <span className="text-xs text-gray-500">{formattedDate}</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-gray-500">{formattedDate}</span>
+              {post.author_name && (
+                <span className="text-xs text-gray-400">
+                  {t('by')} {post.author_name}
+                </span>
+              )}
+            </div>
             <span className="text-sm font-bold uppercase tracking-wide group-hover:translate-x-1 transition-transform"
               style={{ color: categoryColor }}>
               {t('readMore')} →

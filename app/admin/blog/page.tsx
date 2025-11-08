@@ -100,6 +100,7 @@ export default function AdminBlogPage() {
               <thead>
                 <tr className="border-b-2 border-gray-800">
                   <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Title</th>
+                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Author</th>
                   <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Category</th>
                   <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Status</th>
                   <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Language</th>
@@ -122,6 +123,11 @@ export default function AdminBlogPage() {
                           {post.title}
                         </Link>
                         <p className="text-xs text-gray-500 mt-1">/{post.slug}</p>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-sm text-gray-300">
+                          {post.author_name || 'Unknown'}
+                        </span>
                       </td>
                       <td className="p-4">
                         <span

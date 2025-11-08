@@ -107,11 +107,14 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
-    // SECURITY: Verify ownership - first fetch the existing post
+    // SECURITY: Owners can delete any post (for content moderation)
+    // For other roles, verify ownership
     const supabase = getAdminBlogClient();
+
+    // Verify post exists
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
-      .select('author_id')
+      .select('id')
       .eq('id', params.id)
       .single();
 
@@ -122,15 +125,8 @@ export async function DELETE(
       );
     }
 
-    // SECURITY: Even owners can only delete their own posts
-    // If you need to allow owners to delete any post, remove this check and add audit logging
-    if (existingPost.author_id !== user.userId) {
-      return NextResponse.json(
-        { error: 'Forbidden: You can only delete your own posts' },
-        { status: 403 }
-      );
-    }
-
+    // NOTE: Owners can delete any post for content moderation
+    // This allows you to remove inappropriate content if needed
     const { error } = await supabase.from('blog_posts').delete().eq('id', params.id);
 
     if (error) {

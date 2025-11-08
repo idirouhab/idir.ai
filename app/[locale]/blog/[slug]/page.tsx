@@ -56,7 +56,7 @@ export async function generateMetadata({ params: { locale, slug } }: Props): Pro
       url: canonicalUrl,
       publishedTime: post.published_at || undefined,
       modifiedTime: post.updated_at,
-      authors: ['Idir Ouhab Meskine'],
+      authors: [post.author_name || 'Idir Ouhab Meskine'],
       tags: post.tags || undefined,
       images: post.cover_image
         ? [
@@ -158,10 +158,10 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
           <div className="flex items-center gap-6 mb-8 pb-8 border-b-2 border-gray-800">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88] to-[#00cfff] rounded-full flex items-center justify-center font-black text-black">
-                IO
+                {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
               </div>
               <div>
-                <p className="text-sm font-bold text-white">Idir Ouhab Meskine</p>
+                <p className="text-sm font-bold text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
                 <p className="text-xs text-gray-500">{formattedDate}</p>
               </div>
             </div>
@@ -256,12 +256,12 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
             dateModified: post.updated_at,
             author: {
               '@type': 'Person',
-              name: 'Idir Ouhab Meskine',
+              name: post.author_name || 'Idir Ouhab Meskine',
               url: `https://idir.ai/${locale}`,
             },
             publisher: {
               '@type': 'Person',
-              name: 'Idir Ouhab Meskine',
+              name: post.author_name || 'Idir Ouhab Meskine',
             },
             articleSection: categoryName,
             keywords: post.tags?.join(', '),

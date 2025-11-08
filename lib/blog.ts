@@ -21,6 +21,8 @@ export type BlogPost = {
   read_time_minutes: number | null;
   created_at: string;
   updated_at: string;
+  author_id: string;
+  author_name?: string | null;
 };
 
 export type BlogPostInput = {
@@ -96,7 +98,7 @@ export const getPublishedPosts = cache(async (
 
   let query = supabase
     .from('blog_posts')
-    .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count')
+    .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, author_id, users!blog_posts_author_id_fkey(name)')
     .eq('status', 'published')
     .eq('language', language)
     .order('published_at', { ascending: false });
@@ -116,7 +118,11 @@ export const getPublishedPosts = cache(async (
     return [];
   }
 
-  return data as BlogPost[];
+  return (data || []).map((post: any) => ({
+    ...post,
+    author_name: post.users?.name || null,
+    users: undefined, // Remove the nested users object
+  })) as BlogPost[];
 });
 
 // PERFORMANCE: Cache individual blog posts
@@ -129,7 +135,7 @@ export const getPublishedPostBySlug = cache(async (
 
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('*')
+    .select('*, users!blog_posts_author_id_fkey(name)')
     .eq('slug', slug)
     .eq('language', language)
     .eq('status', 'published')
@@ -140,7 +146,12 @@ export const getPublishedPostBySlug = cache(async (
     return null;
   }
 
-  return data as BlogPost;
+  // Extract author name from the joined users object
+  return {
+    ...data,
+    author_name: (data as any).users?.name || null,
+    users: undefined,
+  } as BlogPost;
 });
 
 // Increment view count
