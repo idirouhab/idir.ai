@@ -69,113 +69,134 @@ export default function AdminBlogPage() {
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ background: '#0a0a0a' }}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
+    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+      {/* Header Bar */}
+      <div className="border-b border-gray-800 bg-black">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-8">
+            <h1 className="text-xl font-black text-white">ADMIN</h1>
+            <nav className="hidden md:flex gap-6">
+              <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Dashboard
+              </Link>
+              <Link href="/admin/blog" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Blog
+              </Link>
+              <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Users
+              </Link>
+            </nav>
+          </div>
+          <div className="flex gap-3">
+            <Link
+              href="/"
+              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
+            >
+              View Site
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-8 flex justify-between items-start">
           <div>
-            <h1 className="text-4xl font-black text-white mb-2">Blog Management</h1>
-            <p className="text-gray-300">Create and manage your blog posts</p>
+            <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
+            <p className="text-gray-400 text-sm">Create and manage your blog content</p>
           </div>
-          <div className="flex gap-4">
-            <Link
-              href="/admin"
-              className="px-6 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase hover:border-white transition-colors"
-            >
-              ← Back to Admin
-            </Link>
-            <Link
-              href="/admin/blog/new"
-              className="px-6 py-3 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform"
-            >
-              + New Post
-            </Link>
-          </div>
+          <Link
+            href="/admin/blog/new"
+            className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
+          >
+            + New Post
+          </Link>
         </div>
 
         {/* Posts Table */}
         {posts.length > 0 ? (
-          <div className="bg-black border-2 border-gray-800">
+          <div className="bg-black border border-gray-800">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-gray-800">
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Title</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Author</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Category</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Status</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Language</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Published</th>
-                  <th className="text-left p-4 text-gray-300 font-bold uppercase text-sm">Views</th>
-                  <th className="text-right p-4 text-gray-300 font-bold uppercase text-sm">Actions</th>
+                <tr className="border-b border-gray-800">
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Title</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Author</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Category</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Status</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Lang</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Published</th>
+                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Views</th>
+                  <th className="text-right p-3 text-gray-500 font-bold uppercase text-xs">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {posts.map((post) => {
                   const categoryColor = categoryColors[post.category];
                   return (
-                    <tr key={post.id} className="border-b border-gray-800 hover:bg-gray-900">
-                      <td className="p-4">
+                    <tr key={post.id} className="border-b border-gray-800 hover:bg-[#0a0a0a] transition-colors">
+                      <td className="p-3">
                         <Link
                           href={`/${post.language}/blog/${post.slug}`}
                           target="_blank"
-                          className="text-white font-bold hover:text-[#00ff88] transition-colors"
+                          className="text-white font-bold text-sm hover:text-[#00ff88] transition-colors"
                         >
                           {post.title}
                         </Link>
-                        <p className="text-xs text-gray-500 mt-1">/{post.slug}</p>
+                        <p className="text-xs text-gray-600 mt-1">/{post.slug}</p>
                       </td>
-                      <td className="p-4">
-                        <span className="text-sm text-gray-300">
+                      <td className="p-3">
+                        <span className="text-sm text-gray-400">
                           {post.author_name || 'Unknown'}
                         </span>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3">
                         <span
-                          className="px-3 py-1 text-xs font-bold uppercase rounded"
+                          className="px-2 py-1 text-xs font-bold uppercase"
                           style={{
                             background: `${categoryColor}20`,
                             color: categoryColor,
+                            border: `1px solid ${categoryColor}`,
                           }}
                         >
                           {post.category}
                         </span>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3">
                         {post.status === 'published' ? (
-                          <span className="px-3 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black rounded">
+                          <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black">
                             Published
                           </span>
                         ) : (
-                          <span className="px-3 py-1 text-xs font-bold uppercase bg-gray-700 text-gray-300 rounded">
+                          <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
                             Draft
                           </span>
                         )}
                       </td>
-                      <td className="p-4">
-                        <span className="text-sm text-gray-300 uppercase">{post.language}</span>
+                      <td className="p-3">
+                        <span className="text-xs text-gray-400 uppercase">{post.language}</span>
                       </td>
-                      <td className="p-4">
-                        <span className="text-sm text-gray-300">
+                      <td className="p-3">
+                        <span className="text-xs text-gray-400">
                           {post.published_at
                             ? new Date(post.published_at).toLocaleDateString()
                             : '-'}
                         </span>
                       </td>
-                      <td className="p-4">
-                        <span className="text-sm text-gray-300">{post.view_count}</span>
+                      <td className="p-3">
+                        <span className="text-xs text-gray-400">{post.view_count}</span>
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-3 text-right">
                         <div className="flex gap-2 justify-end">
                           <Link
                             href={`/admin/blog/${post.id}/edit`}
-                            className="px-4 py-2 bg-[#00cfff] text-black font-bold text-sm uppercase hover:scale-105 transition-transform inline-block"
+                            className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#00cfff] hover:text-[#00cfff] transition-all inline-block"
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => handleDelete(post.id, post.title)}
                             disabled={deletingId === post.id}
-                            className="px-4 py-2 bg-[#ff0055] text-white font-bold text-sm uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-3 py-1 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#ff0055] hover:text-[#ff0055] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {deletingId === post.id ? 'Deleting...' : 'Delete'}
                           </button>
@@ -188,13 +209,13 @@ export default function AdminBlogPage() {
             </table>
           </div>
         ) : (
-          <div className="text-center py-20 bg-black border-2 border-gray-800">
-            <div className="text-6xl mb-6">📝</div>
-            <h2 className="text-2xl font-black text-white mb-4">No Posts Yet</h2>
-            <p className="text-gray-300 mb-8">Create your first blog post to get started</p>
+          <div className="text-center py-20 bg-black border border-gray-800">
+            <div className="text-4xl mb-4 opacity-50">📝</div>
+            <h2 className="text-lg font-black text-white mb-2">No Posts Yet</h2>
+            <p className="text-sm text-gray-500 mb-6">Create your first blog post to get started</p>
             <Link
               href="/admin/blog/new"
-              className="inline-block px-8 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+              className="inline-block px-6 py-2 text-sm bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
             >
               + Create First Post
             </Link>

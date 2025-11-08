@@ -91,28 +91,48 @@ export default function UsersManagement() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-6 lg:px-8" style={{ background: '#0a0a0a' }}>
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-black text-white mb-4">User Management</h1>
-            <p className="text-gray-300">Manage blogger accounts and permissions</p>
+    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+      {/* Header Bar */}
+      <div className="border-b border-gray-800 bg-black">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-8">
+            <h1 className="text-xl font-black text-white">ADMIN</h1>
+            <nav className="hidden md:flex gap-6">
+              <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Dashboard
+              </Link>
+              <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Blog
+              </Link>
+              <Link href="/admin/users" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Users
+              </Link>
+            </nav>
           </div>
-          <Link
-            href="/admin"
-            className="px-6 py-3 border-2 border-white text-white font-bold uppercase hover:bg-white hover:text-black transition-all"
-          >
-            Back to Dashboard
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              href="/"
+              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
+            >
+              View Site
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-black text-white mb-2">User Management</h2>
+          <p className="text-gray-400 text-sm">Manage blogger accounts and permissions</p>
         </div>
 
         {message && (
           <div
-            className={`mb-6 p-4 border-2 ${
+            className={`mb-4 p-3 text-sm border ${
               message.type === 'success'
-                ? 'border-[#00ff88] bg-[#00ff8820] text-[#00ff88]'
-                : 'border-[#ff0055] bg-[#ff005520] text-[#ff0055]'
+                ? 'border-[#00ff88] bg-[#00ff8810] text-[#00ff88]'
+                : 'border-[#ff0055] bg-[#ff005510] text-[#ff0055]'
             }`}
           >
             {message.text}
@@ -120,9 +140,9 @@ export default function UsersManagement() {
         )}
 
         {/* Info Box */}
-        <div className="mb-8 p-6 bg-[#00cfff20] border-2 border-[#00cfff]">
-          <p className="text-[#00cfff] font-bold mb-2">How Blogger Accounts Work</p>
-          <ul className="text-gray-300 text-sm space-y-1 list-disc list-inside">
+        <div className="mb-6 p-4 bg-[#00cfff10] border border-[#00cfff]">
+          <p className="text-[#00cfff] font-bold text-sm mb-2">How Blogger Accounts Work</p>
+          <ul className="text-gray-400 text-xs space-y-1 list-disc list-inside">
             <li>New blogger signups are inactive by default</li>
             <li>Activate accounts to allow bloggers to create draft posts</li>
             <li>Bloggers cannot publish posts - only owners can publish</li>
@@ -132,63 +152,64 @@ export default function UsersManagement() {
 
         {/* Users List */}
         {users.length === 0 ? (
-          <div className="border-2 border-[#00cfff] bg-black p-12 text-center">
-            <p className="text-2xl text-gray-300 mb-4">No users found</p>
-            <p className="text-gray-500">Users will appear here when they sign up</p>
+          <div className="border border-gray-800 bg-black p-12 text-center">
+            <div className="text-4xl mb-4 opacity-50">👥</div>
+            <p className="text-lg text-gray-300 mb-2">No users found</p>
+            <p className="text-sm text-gray-500">Users will appear here when they sign up</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {users.map((user) => (
               <div
                 key={user.id}
-                className="border-2 bg-black p-6"
+                className="border bg-black p-5 hover:border-gray-700 transition-colors"
                 style={{
-                  borderColor: user.is_active ? '#00ff88' : '#666',
+                  borderColor: user.is_active ? '#00ff88' : '#333',
                 }}
               >
                 <div className="flex justify-between items-start gap-6">
                   <div className="flex-1">
-                    {/* Status Badge */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div
-                        className={`inline-block px-3 py-1 text-xs font-bold uppercase ${
+                    {/* Status Badges */}
+                    <div className="flex items-center gap-2 mb-3">
+                      <span
+                        className={`px-2 py-1 text-xs font-bold uppercase ${
                           user.is_active
                             ? 'bg-[#00ff88] text-black'
-                            : 'bg-gray-700 text-gray-300'
+                            : 'bg-gray-800 text-gray-400'
                         }`}
                       >
                         {user.is_active ? '● Active' : '○ Inactive'}
-                      </div>
-                      <div
-                        className={`inline-block px-3 py-1 text-xs font-bold uppercase ${
+                      </span>
+                      <span
+                        className={`px-2 py-1 text-xs font-bold uppercase ${
                           user.role === 'owner'
                             ? 'bg-[#ff0055] text-white'
                             : 'bg-[#00cfff] text-black'
                         }`}
                       >
                         {user.role.toUpperCase()}
-                      </div>
+                      </span>
                     </div>
 
                     {/* User Info */}
-                    <h2 className="text-2xl font-black text-white mb-2">{user.name}</h2>
-                    <p className="text-[#00cfff] mb-3">{user.email}</p>
+                    <h3 className="text-lg font-black text-white mb-2">{user.name}</h3>
+                    <p className="text-sm text-gray-400 mb-3">{user.email}</p>
 
                     {/* Metadata */}
-                    <div className="text-xs text-gray-500">
-                      Joined: {new Date(user.created_at).toLocaleDateString()}
+                    <div className="text-xs text-gray-600">
+                      Joined {new Date(user.created_at).toLocaleDateString()}
                     </div>
                   </div>
 
                   {/* Action Buttons */}
                   {user.role === 'blogger' && (
-                    <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
                       <button
                         onClick={() => handleToggleStatus(user.id, user.is_active)}
-                        className={`px-6 py-2 border-2 font-bold uppercase transition-all ${
+                        className={`px-4 py-2 text-xs border font-bold uppercase transition-all ${
                           user.is_active
-                            ? 'border-[#ff0055] text-[#ff0055] hover:bg-[#ff0055] hover:text-white'
-                            : 'border-[#00ff88] text-[#00ff88] hover:bg-[#00ff88] hover:text-black'
+                            ? 'border-gray-700 text-gray-400 hover:border-[#ff0055] hover:text-[#ff0055]'
+                            : 'border-gray-700 text-gray-300 hover:border-[#00ff88] hover:text-[#00ff88]'
                         }`}
                       >
                         {user.is_active ? 'Deactivate' : 'Activate'}
