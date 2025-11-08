@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
   const t = useTranslations('nav');
+
+  // Extract locale from pathname (e.g., /en/blog -> en)
+  const locale = pathname?.split('/')[1] || 'en';
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -70,12 +75,12 @@ export default function Navigation() {
   }, []);
 
   const navItems = [
-    { href: "#about", label: t('about'), id: "about" },
-    { href: "#speaking", label: t('speaking'), id: "speaking" },
-    { href: "#podcast", label: t('podcast'), id: "podcast" },
-    { href: "/blog", label: t('blog'), id: "blog", isExternal: true },
-    { href: "/subscribe", label: t('newsletter'), id: "newsletter", isExternal: true },
-    { href: "#contact", label: t('contact'), id: "contact" },
+    { href: `/${locale}/#about`, label: t('about'), id: "about" },
+    { href: `/${locale}/#speaking`, label: t('speaking'), id: "speaking" },
+    { href: `/${locale}/#podcast`, label: t('podcast'), id: "podcast" },
+    { href: `/${locale}/blog`, label: t('blog'), id: "blog", isExternal: true },
+    { href: `/${locale}/subscribe`, label: t('newsletter'), id: "newsletter", isExternal: true },
+    { href: `/${locale}/#contact`, label: t('contact'), id: "contact" },
   ];
 
   return (
@@ -93,7 +98,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-20">
           <div className="flex-shrink-0">
             <a
-              href="#"
+              href={`/${locale}`}
               className="text-2xl font-black text-white hover:text-[#00ff88] transition-colors uppercase tracking-tight"
             >
               IO
