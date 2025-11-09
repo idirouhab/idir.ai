@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { trackContactSubmit, trackSocialLink } from "@/lib/analytics";
 
 export default function Contact() {
   const t = useTranslations('contact');
@@ -28,6 +29,7 @@ export default function Contact() {
 
       if (response.ok) {
         setStatus('success');
+        trackContactSubmit('contact_form');
         setFormData({ name: '', email: '', message: '' });
         setTimeout(() => setStatus('idle'), 5000);
       } else {
@@ -197,6 +199,7 @@ export default function Contact() {
                     boxShadow: `0 0 30px ${link.color}20`
                   }}
                   role="listitem"
+                  onClick={() => trackSocialLink(link.name)}
                 >
                   {/* Corner markers - decorative */}
                   <div className="absolute top-2 left-2 w-3 h-3" style={{ background: link.color }} aria-hidden="true"></div>

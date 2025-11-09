@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { trackCTAClick } from "@/lib/analytics";
 
 export default function Hero() {
   const t = useTranslations('hero');
@@ -78,6 +79,7 @@ export default function Hero() {
                   href="#contact"
                   className="group relative px-8 py-4 bg-[#00ff88] text-black font-black rounded-lg overflow-hidden transition-all hover:scale-105 hover:shadow-xl hover:shadow-[#00ff88]/50 text-base sm:text-lg uppercase tracking-wide text-center"
                   aria-label="Get in touch"
+                  onClick={() => trackCTAClick('Get in Touch', 'hero')}
                 >
                   <span className="relative z-10">{t('cta')}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#00ff88] to-[#00cfff] opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -90,6 +92,7 @@ export default function Hero() {
                   href="/subscribe"
                   className="group inline-flex items-center gap-3 px-6 py-4 bg-black border-2 border-[#ff0055] text-[#ff0055] font-black uppercase tracking-wide hover:bg-[#ff0055] hover:text-black transition-all text-sm sm:text-base rounded-lg"
                   aria-label="Subscribe to AI news daily"
+                  onClick={() => trackCTAClick('Subscribe Newsletter', 'hero')}
                 >
                   <span className="text-2xl" aria-hidden="true">📬</span>
                   <span>{t('ctaNewsletter')}</span>

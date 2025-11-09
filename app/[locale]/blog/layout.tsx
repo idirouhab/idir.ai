@@ -21,6 +21,9 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
         'en': `${baseUrl}/en/blog`,
         'es': `${baseUrl}/es/blog`,
       },
+      types: {
+        'application/rss+xml': `${baseUrl}/${locale}/blog/rss.xml`,
+      },
     },
     openGraph: {
       title: `${t('title')} | Idir Ouhab Meskine`,

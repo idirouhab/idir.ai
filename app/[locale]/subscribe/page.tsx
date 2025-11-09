@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { trackNewsletterSubmit } from '@/lib/analytics';
 
 export default function Subscribe() {
   const t = useTranslations('subscribe');
@@ -40,6 +41,7 @@ export default function Subscribe() {
 
       if (response.ok) {
         setStatus('success');
+        trackNewsletterSubmit(email, language, 'subscribe_page');
         setEmail('');
       } else {
         throw new Error('Subscription failed');
