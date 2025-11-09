@@ -11,6 +11,8 @@ export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [sharingId, setSharingId] = useState<string | null>(null);
+  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
+  const [shareMenuOpen, setShareMenuOpen] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
@@ -121,72 +123,62 @@ export default function AdminBlogPage() {
     <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
       {/* Header Bar */}
       <div className="border-b border-gray-800 bg-black">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-black text-white">ADMIN</h1>
-            <nav className="hidden md:flex gap-6">
-              <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin/blog" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Blog
-              </Link>
-              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Subscribers
-              </Link>
-              <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Users
-              </Link>
-            </nav>
-          </div>
-          <div className="flex gap-3">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex justify-between items-center mb-3">
+            <h1 className="text-lg font-black text-white">ADMIN</h1>
             <Link
               href="/"
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
+              className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
             >
               View Site
             </Link>
           </div>
+          <nav className="flex gap-3 overflow-x-auto pb-1">
+            <Link href="/admin" className="text-xs text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors whitespace-nowrap">
+              Dashboard
+            </Link>
+            <Link href="/admin/blog" className="text-xs text-white font-bold uppercase hover:text-[#00ff88] transition-colors whitespace-nowrap">
+              Blog
+            </Link>
+            <Link href="/admin/subscribers" className="text-xs text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors whitespace-nowrap">
+              Subscribers
+            </Link>
+            <Link href="/admin/users" className="text-xs text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors whitespace-nowrap">
+              Users
+            </Link>
+          </nav>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Page Header */}
-        <div className="mb-8 flex justify-between items-start">
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
-            <p className="text-gray-400 text-sm">Create and manage your blog content</p>
+            <h2 className="text-2xl font-black text-white mb-1">Blog Posts</h2>
+            <p className="text-gray-400 text-xs">Manage your blog content</p>
           </div>
           <Link
             href="/admin/blog/new"
-            className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
+            className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
           >
             + New Post
           </Link>
         </div>
 
-        {/* Posts Table */}
+        {/* Posts List */}
         {posts.length > 0 ? (
           <div className="bg-black border border-gray-800">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Title</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Author</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Category</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Status</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Lang</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Published</th>
-                  <th className="text-left p-3 text-gray-500 font-bold uppercase text-xs">Views</th>
-                  <th className="text-right p-3 text-gray-500 font-bold uppercase text-xs">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {posts.map((post) => {
-                  const categoryColor = categoryColors[post.category];
-                  return (
-                    <tr key={post.id} className="border-b border-gray-800 hover:bg-[#0a0a0a] transition-colors">
-                      <td className="p-3">
+            {posts.map((post, index) => {
+              const categoryColor = categoryColors[post.category];
+              return (
+                <div
+                  key={post.id}
+                  className={`p-3 hover:bg-[#0a0a0a] transition-colors ${index !== posts.length - 1 ? 'border-b border-gray-800' : ''}`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    {/* Title and metadata */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
                         <Link
                           href={`/${post.language}/blog/${post.slug}`}
                           target="_blank"
@@ -194,16 +186,15 @@ export default function AdminBlogPage() {
                         >
                           {post.title}
                         </Link>
-                        <p className="text-xs text-gray-600 mt-1">/{post.slug}</p>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-sm text-gray-400">
-                          {post.author_name || 'Unknown'}
-                        </span>
-                      </td>
-                      <td className="p-3">
+                        {post.status === 'published' ? (
+                          <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-[#00ff88] text-black">PUB</span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-gray-800 text-gray-400">DRAFT</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
                         <span
-                          className="px-2 py-1 text-xs font-bold uppercase"
+                          className="px-1.5 py-0.5 font-bold uppercase"
                           style={{
                             background: `${categoryColor}20`,
                             color: categoryColor,
@@ -212,76 +203,114 @@ export default function AdminBlogPage() {
                         >
                           {post.category}
                         </span>
-                      </td>
-                      <td className="p-3">
-                        {post.status === 'published' ? (
-                          <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black">
-                            Published
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
-                            Draft
-                          </span>
+                        <span className="uppercase">{post.language}</span>
+                        <span>•</span>
+                        <span>{post.view_count} views</span>
+                        {post.published_at && (
+                          <>
+                            <span>•</span>
+                            <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                          </>
                         )}
-                      </td>
-                      <td className="p-3">
-                        <span className="text-xs text-gray-400 uppercase">{post.language}</span>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-xs text-gray-400">
-                          {post.published_at
-                            ? new Date(post.published_at).toLocaleDateString()
-                            : '-'}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <span className="text-xs text-gray-400">{post.view_count}</span>
-                      </td>
-                      <td className="p-3 text-right">
-                        <div className="flex gap-2 justify-end">
-                          <Link
-                            href={`/admin/blog/${post.id}/edit`}
-                            className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#00cfff] hover:text-[#00cfff] transition-all inline-block"
-                          >
-                            Edit
-                          </Link>
+                      </div>
+                    </div>
 
-                          {/* Share buttons (only for published posts) */}
-                          {post.status === 'published' && (
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Actions Dropdown */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setActionMenuOpen(actionMenuOpen === post.id ? null : post.id)}
+                          disabled={deletingId === post.id}
+                          className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-gray-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        >
+                          {deletingId === post.id ? '...' : (
                             <>
-                              <button
-                                onClick={() => handleShare(post, 'linkedin')}
-                                disabled={sharingId === `${post.id}-linkedin`}
-                                className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#0077b5] hover:text-[#0077b5] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="Share on LinkedIn"
-                              >
-                                {sharingId === `${post.id}-linkedin` ? 'Generating...' : 'LinkedIn'}
-                              </button>
-                              <button
-                                onClick={() => handleShare(post, 'twitter')}
-                                disabled={sharingId === `${post.id}-twitter`}
-                                className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#1da1f2] hover:text-[#1da1f2] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="Share on Twitter"
-                              >
-                                {sharingId === `${post.id}-twitter` ? 'Generating...' : 'Twitter'}
-                              </button>
+                              Actions
+                              <span className="text-[10px]">▼</span>
                             </>
                           )}
+                        </button>
 
+                        {actionMenuOpen === post.id && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setActionMenuOpen(null)}
+                            />
+                            <div className="absolute right-0 top-full mt-1 bg-black border border-gray-700 z-20 min-w-[120px]">
+                              <Link
+                                href={`/admin/blog/${post.id}/edit`}
+                                className="block w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#00cfff] transition-all"
+                                onClick={() => setActionMenuOpen(null)}
+                              >
+                                Edit
+                              </Link>
+                              <button
+                                onClick={() => {
+                                  setActionMenuOpen(null);
+                                  handleDelete(post.id, post.title);
+                                }}
+                                className="w-full px-3 py-2 text-xs text-left text-gray-400 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#ff0055] transition-all border-t border-gray-800"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Share Dropdown (only for published posts) */}
+                      {post.status === 'published' && (
+                        <div className="relative">
                           <button
-                            onClick={() => handleDelete(post.id, post.title)}
-                            disabled={deletingId === post.id}
-                            className="px-3 py-1 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#ff0055] hover:text-[#ff0055] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => setShareMenuOpen(shareMenuOpen === post.id ? null : post.id)}
+                            disabled={sharingId?.startsWith(post.id)}
+                            className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-gray-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                           >
-                            {deletingId === post.id ? 'Deleting...' : 'Delete'}
+                            {sharingId?.startsWith(post.id) ? '...' : (
+                              <>
+                                Share
+                                <span className="text-[10px]">▼</span>
+                              </>
+                            )}
                           </button>
+
+                          {shareMenuOpen === post.id && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setShareMenuOpen(null)}
+                              />
+                              <div className="absolute right-0 top-full mt-1 bg-black border border-gray-700 z-20 min-w-[120px]">
+                                <button
+                                  onClick={() => {
+                                    setShareMenuOpen(null);
+                                    handleShare(post, 'linkedin');
+                                  }}
+                                  className="w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#0077b5] transition-all"
+                                >
+                                  LinkedIn
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setShareMenuOpen(null);
+                                    handleShare(post, 'twitter');
+                                  }}
+                                  className="w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#1da1f2] transition-all border-t border-gray-800"
+                                >
+                                  Twitter
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-20 bg-black border border-gray-800">
