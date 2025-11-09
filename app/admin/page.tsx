@@ -120,6 +120,9 @@ export default function AdminDashboard() {
               <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Blog
               </Link>
+              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Subscribers
+              </Link>
               <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Users
               </Link>
@@ -150,7 +153,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-12 grid md:grid-cols-3 gap-4">
+        <div className="mb-12 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             href="/admin/blog"
             className="group p-6 bg-black border border-gray-800 hover:border-[#00ff88] transition-all"
@@ -179,6 +182,21 @@ export default function AdminDashboard() {
               </h3>
             </div>
             <p className="text-sm text-gray-400">Manage live event announcements</p>
+          </Link>
+
+          <Link
+            href="/admin/subscribers"
+            className="group p-6 bg-black border border-gray-800 hover:border-[#ffaa00] transition-all"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 bg-[#ffaa0020] border border-[#ffaa00] flex items-center justify-center text-xl">
+                📬
+              </div>
+              <h3 className="text-lg font-black text-white group-hover:text-[#ffaa00] transition-colors">
+                Subscribers
+              </h3>
+            </div>
+            <p className="text-sm text-gray-400">View and manage newsletter subscribers</p>
           </Link>
 
           <Link

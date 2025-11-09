@@ -10,6 +10,8 @@ type User = {
   name: string;
   role: 'owner' | 'admin' | 'blogger';
   is_active: boolean;
+  linkedin_url?: string;
+  twitter_url?: string;
   created_at: string;
 };
 
@@ -18,6 +20,8 @@ type EditingUser = {
   name: string;
   email: string;
   role: 'owner' | 'admin' | 'blogger';
+  linkedin_url?: string;
+  twitter_url?: string;
 };
 
 export default function UsersManagement() {
@@ -130,6 +134,8 @@ export default function UsersManagement() {
       name: user.name,
       email: user.email,
       role: user.role,
+      linkedin_url: user.linkedin_url,
+      twitter_url: user.twitter_url,
     });
   };
 
@@ -146,6 +152,8 @@ export default function UsersManagement() {
           userId: editingUser.id,
           name: editingUser.name,
           email: editingUser.email,
+          linkedin_url: editingUser.linkedin_url,
+          twitter_url: editingUser.twitter_url,
         }),
       });
 
@@ -187,6 +195,9 @@ export default function UsersManagement() {
               </Link>
               <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Blog
+              </Link>
+              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Subscribers
               </Link>
               <Link href="/admin/users" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Users
@@ -423,6 +434,34 @@ export default function UsersManagement() {
                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                     className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
                   />
+                </div>
+
+                <div className="border-t border-gray-800 pt-4">
+                  <p className="text-xs text-gray-500 mb-3 uppercase font-bold">Social Media Profiles (for blog sharing)</p>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">LinkedIn URL</label>
+                      <input
+                        type="url"
+                        value={editingUser.linkedin_url || ''}
+                        onChange={(e) => setEditingUser({ ...editingUser, linkedin_url: e.target.value })}
+                        placeholder="https://www.linkedin.com/in/your-profile/"
+                        className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">Twitter URL</label>
+                      <input
+                        type="url"
+                        value={editingUser.twitter_url || ''}
+                        onChange={(e) => setEditingUser({ ...editingUser, twitter_url: e.target.value })}
+                        placeholder="https://twitter.com/your-handle"
+                        className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-4 flex gap-3">

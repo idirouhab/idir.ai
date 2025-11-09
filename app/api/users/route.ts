@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { userId, role, name, email } = body;
+    const { userId, role, name, email, linkedin_url, twitter_url } = body;
 
     if (!userId) {
       return NextResponse.json(
@@ -120,10 +120,12 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update details if provided
-    if (name || email) {
-      const updates: { name?: string; email?: string } = {};
+    if (name || email || linkedin_url !== undefined || twitter_url !== undefined) {
+      const updates: { name?: string; email?: string; linkedin_url?: string; twitter_url?: string } = {};
       if (name) updates.name = name;
       if (email) updates.email = email;
+      if (linkedin_url !== undefined) updates.linkedin_url = linkedin_url;
+      if (twitter_url !== undefined) updates.twitter_url = twitter_url;
       user = await updateUserDetails(userId, updates);
     }
 

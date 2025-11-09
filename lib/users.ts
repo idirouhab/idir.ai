@@ -9,6 +9,8 @@ export type User = {
   name: string;
   role: UserRole;
   is_active: boolean;
+  linkedin_url?: string;
+  twitter_url?: string;
   created_at: string;
   updated_at: string;
 };
@@ -244,16 +246,18 @@ export async function updateUserRole(userId: string, newRole: UserRole): Promise
   return data as User;
 }
 
-// Update user details (name, email)
+// Update user details (name, email, social profiles)
 export async function updateUserDetails(
   userId: string,
-  updates: { name?: string; email?: string }
+  updates: { name?: string; email?: string; linkedin_url?: string; twitter_url?: string }
 ): Promise<User> {
   const supabase = getAdminClient();
 
   const updateData: any = {};
   if (updates.name) updateData.name = updates.name;
   if (updates.email) updateData.email = updates.email.toLowerCase().trim();
+  if (updates.linkedin_url !== undefined) updateData.linkedin_url = updates.linkedin_url || null;
+  if (updates.twitter_url !== undefined) updateData.twitter_url = updates.twitter_url || null;
 
   const { data, error } = await supabase
     .from('users')

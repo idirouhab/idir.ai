@@ -10,6 +10,7 @@ export default function AdminBlogPage() {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [sharingId, setSharingId] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
@@ -60,6 +61,54 @@ export default function AdminBlogPage() {
     }
   };
 
+  const handleShare = async (post: BlogPost, platform: 'linkedin' | 'twitter') => {
+    const shareId = `${post.id}-${platform}`;
+    setSharingId(shareId);
+
+    try {
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+      const postUrl = `${baseUrl}/${post.language}/blog/${post.slug}`;
+
+      // Call n8n to generate optimized content
+      const response = await fetch('/api/blog/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          platform,
+          title: post.title,
+          excerpt: post.excerpt,
+          postUrl,
+          language: post.language,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate share content');
+      }
+
+      const data = await response.json();
+      const generatedContent = data.content;
+
+      // Open native share dialog with generated content
+      if (platform === 'linkedin') {
+        // LinkedIn sharing with pre-filled text
+        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(generatedContent)}`;
+        window.open(linkedInUrl, 'linkedin-share', 'width=600,height=600');
+      } else if (platform === 'twitter') {
+        // Twitter accepts pre-filled text
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(generatedContent)}`;
+        window.open(twitterUrl, 'twitter-share', 'width=600,height=600');
+      }
+    } catch (error) {
+      console.error('Error sharing post:', error);
+      alert('Failed to generate share content. Please try again.');
+    } finally {
+      setSharingId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
@@ -81,6 +130,9 @@ export default function AdminBlogPage() {
               </Link>
               <Link href="/admin/blog" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Blog
+              </Link>
+              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Subscribers
               </Link>
               <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Users
@@ -193,6 +245,29 @@ export default function AdminBlogPage() {
                           >
                             Edit
                           </Link>
+
+                          {/* Share buttons (only for published posts) */}
+                          {post.status === 'published' && (
+                            <>
+                              <button
+                                onClick={() => handleShare(post, 'linkedin')}
+                                disabled={sharingId === `${post.id}-linkedin`}
+                                className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#0077b5] hover:text-[#0077b5] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Share on LinkedIn"
+                              >
+                                {sharingId === `${post.id}-linkedin` ? 'Generating...' : 'LinkedIn'}
+                              </button>
+                              <button
+                                onClick={() => handleShare(post, 'twitter')}
+                                disabled={sharingId === `${post.id}-twitter`}
+                                className="px-3 py-1 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#1da1f2] hover:text-[#1da1f2] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Share on Twitter"
+                              >
+                                {sharingId === `${post.id}-twitter` ? 'Generating...' : 'Twitter'}
+                              </button>
+                            </>
+                          )}
+
                           <button
                             onClick={() => handleDelete(post.id, post.title)}
                             disabled={deletingId === post.id}
