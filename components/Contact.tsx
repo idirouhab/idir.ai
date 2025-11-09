@@ -81,127 +81,137 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }}>
+    <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#050505' }} aria-labelledby="contact-heading">
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-12">
+        <header className="text-center mb-12">
           <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="h-1 w-12 bg-[#ff0055]"></div>
-            <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
-            <div className="h-1 w-12 bg-[#ff0055]"></div>
+            <div className="h-1 w-12 bg-[#ff0055]" aria-hidden="true"></div>
+            <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm sm:text-base">{t('label')}</span>
+            <div className="h-1 w-12 bg-[#ff0055]" aria-hidden="true"></div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4">
+          <h2 id="contact-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4">
             {t('title1')}
             <br />
             <span className="gradient-text glow-text">{t('title2')}</span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-200 max-w-2xl mx-auto">
             {t('description')}
           </p>
-        </div>
+        </header>
 
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
           {/* Contact Form */}
-          <div className="bg-black border-2 border-[#00ff88] p-8">
-            <h3 className="text-2xl font-black text-white mb-6 uppercase">{t('form.title')}</h3>
+          <section className="bg-black border-2 border-[#00ff88] p-8" aria-labelledby="contact-form-heading">
+            <h3 id="contact-form-heading" className="text-xl sm:text-2xl font-black text-white mb-6 uppercase">{t('form.title')}</h3>
 
             {status === 'success' && (
-              <div className="mb-6 p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]">
+              <div className="mb-6 p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]" role="alert" aria-live="polite">
                 {t('form.success')}
               </div>
             )}
 
             {status === 'error' && (
-              <div className="mb-6 p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
+              <div className="mb-6 p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]" role="alert" aria-live="assertive">
                 {t('form.error')}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" aria-describedby="contact-form-heading">
               <div>
-                <label htmlFor="name" className="block text-white font-bold mb-2 uppercase text-sm">
+                <label htmlFor="name" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
                   {t('form.name')}
                 </label>
                 <input
                   id="name"
+                  name="name"
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   placeholder={t('form.namePlaceholder')}
                   className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                  aria-required="true"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
+                <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
                   {t('form.email')}
                 </label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                   placeholder={t('form.emailPlaceholder')}
                   className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                  aria-required="true"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-white font-bold mb-2 uppercase text-sm">
+                <label htmlFor="message" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
                   {t('form.message')}
                 </label>
                 <textarea
                   id="message"
+                  name="message"
                   required
                   rows={6}
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                   placeholder={t('form.messagePlaceholder')}
                   className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors resize-none"
+                  aria-required="true"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                aria-busy={status === 'sending'}
               >
                 {status === 'sending' ? t('form.sending') : t('form.submit')}
               </button>
             </form>
-          </div>
+          </section>
 
           {/* Social Links Grid */}
-          <div className="grid grid-cols-2 gap-6">
-            {socialLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.href}
-                target={link.href.startsWith("http") ? "_blank" : undefined}
-                rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                aria-label={`Connect with Idir on ${link.name}`}
-                className="group relative p-8 bg-black border-2 hover:scale-110 transition-all duration-300"
-                style={{
-                  borderColor: link.color,
-                  boxShadow: `0 0 30px ${link.color}20`
-                }}
-              >
-                {/* Corner markers */}
-                <div className="absolute top-2 left-2 w-3 h-3" style={{ background: link.color }}></div>
-                <div className="absolute bottom-2 right-2 w-3 h-3" style={{ background: link.color }}></div>
+          <nav aria-label="Social media links">
+            <div className="grid grid-cols-2 gap-6" role="list">
+              {socialLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  aria-label={`Connect with Idir on ${link.name}`}
+                  className="group relative p-6 sm:p-8 bg-black border-2 hover:scale-110 transition-all duration-300"
+                  style={{
+                    borderColor: link.color,
+                    boxShadow: `0 0 30px ${link.color}20`
+                  }}
+                  role="listitem"
+                >
+                  {/* Corner markers - decorative */}
+                  <div className="absolute top-2 left-2 w-3 h-3" style={{ background: link.color }} aria-hidden="true"></div>
+                  <div className="absolute bottom-2 right-2 w-3 h-3" style={{ background: link.color }} aria-hidden="true"></div>
 
-                <div className="mb-4 group-hover:scale-125 transition-transform duration-300">
-                  {link.svg}
-                </div>
-                <div className="font-black text-xl text-white uppercase tracking-tight">
-                  {link.name}
-                </div>
-              </a>
-            ))}
-          </div>
+                  <div className="mb-4 group-hover:scale-125 transition-transform duration-300" aria-hidden="true">
+                    {link.svg}
+                  </div>
+                  <div className="font-black text-lg sm:text-xl text-white uppercase tracking-tight">
+                    {link.name}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </nav>
         </div>
       </div>
     </section>

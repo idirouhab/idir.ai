@@ -85,8 +85,13 @@ export default async function Home({ params: { locale } }: Props) {
 
   return (
     <>
+      {/* Skip to content link for keyboard navigation */}
+      <a href="#main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <Navigation />
-      <main>
+      <main id="main-content" role="main">
         <Hero />
         <LiveEvent locale={locale} eventData={activeEvent} />
         <Transition textKey="aboutIntro" />

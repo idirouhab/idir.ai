@@ -9,11 +9,23 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('nav');
 
   // Extract locale from pathname (e.g., /en/blog -> en)
   const locale = pathname?.split('/')[1] || 'en';
+
+  // Detect if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -83,87 +95,97 @@ export default function Navigation() {
     { href: `/${locale}/#contact`, label: t('contact'), id: "contact" },
   ];
 
-  return (
-    <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "backdrop-blur-xl border-b-2 border-[#00ff88]"
-          : "bg-transparent"
-      }`}
-      style={{
-        background: scrolled ? 'rgba(0, 0, 0, 0.9)' : 'transparent'
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <div className="flex-shrink-0">
-            <a
-              href={`/${locale}`}
-              className="text-2xl font-black text-white hover:text-[#00ff88] transition-colors uppercase tracking-tight"
-            >
-              IO
-            </a>
-          </div>
+  // Always show background on mobile, or when scrolled on desktop
+  const showBackground = isMobile || scrolled;
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
+  return (
+    <>
+      <nav
+        className={`fixed w-full z-50 transition-all duration-300 ${
+          showBackground
+            ? "backdrop-blur-xl border-b-2 border-[#00ff88]"
+            : "bg-transparent"
+        }`}
+        style={{
+          background: showBackground ? 'rgba(0, 0, 0, 0.9)' : 'transparent'
+        }}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex-shrink-0">
               <a
-                key={item.href}
-                href={item.href}
-                className={`px-4 py-2 text-sm font-bold transition-all uppercase tracking-wide ${
-                  activeSection === item.id
-                    ? "text-[#00ff88] border-b-2 border-[#00ff88]"
-                    : "text-gray-300 hover:text-[#00ff88]"
-                }`}
+                href={`/${locale}`}
+                className="text-2xl font-black text-white hover:text-[#00ff88] transition-colors uppercase tracking-tight"
+                aria-label="Home - Idir Ouhab Meskine"
               >
-                {item.label}
+                IO
               </a>
-            ))}
-            <div className="ml-6">
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-1" role="menubar">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className={`px-4 py-2 text-sm font-bold transition-all uppercase tracking-wide ${
+                    activeSection === item.id
+                      ? "text-[#00ff88] border-b-2 border-[#00ff88]"
+                      : "text-gray-300 hover:text-[#00ff88]"
+                  }`}
+                  role="menuitem"
+                  aria-current={activeSection === item.id ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              ))}
+              <div className="ml-6">
+                <LanguageSwitcher />
+              </div>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center gap-4">
               <LanguageSwitcher />
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 text-white hover:text-[#00ff88] transition-colors"
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+              >
+                <svg
+                  className="h-8 w-8"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={3}
+                >
+                  {isOpen ? (
+                    <path
+                      strokeLinecap="square"
+                      strokeLinejoin="miter"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="square"
+                      strokeLinejoin="miter"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+                <span className="sr-only">{isOpen ? "Close" : "Menu"}</span>
+              </button>
             </div>
           </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-4">
-            <LanguageSwitcher />
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-white hover:text-[#00ff88] transition-colors"
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-            >
-              <svg
-                className="h-8 w-8"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={3}
-              >
-                {isOpen ? (
-                  <path
-                    strokeLinecap="square"
-                    strokeLinejoin="miter"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="square"
-                    strokeLinejoin="miter"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
-              <span className="sr-only">{isOpen ? "Close" : "Menu"}</span>
-            </button>
-          </div>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile menu backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] md:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[998] md:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -171,15 +193,14 @@ export default function Navigation() {
 
       {/* Mobile menu - off-canvas slide-in */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#00ff88] z-[70] md:hidden transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#00ff88] z-[999] md:hidden transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
           background: 'rgba(0, 0, 0, 0.98)',
-          WebkitOverflowScrolling: 'touch'
         }}
       >
-        <div className="h-full flex flex-col min-h-0">
+        <div className="h-full flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-800 flex-shrink-0">
             <span className="text-2xl font-black text-white uppercase">Menu</span>
@@ -195,7 +216,7 @@ export default function Navigation() {
           </div>
 
           {/* Nav items */}
-          <nav className="flex-1 overflow-y-auto py-6 overscroll-contain">
+          <div className="flex-1 overflow-y-auto py-6">
             <div className="space-y-2 px-4">
               {navItems.map((item) => (
                 <a
@@ -212,9 +233,9 @@ export default function Navigation() {
                 </a>
               ))}
             </div>
-          </nav>
+          </div>
         </div>
       </div>
-    </nav>
+    </>
   );
 }
