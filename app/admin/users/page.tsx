@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Pencil, Check, Ban } from 'lucide-react';
+import { MoreVertical, Pencil, Check, Ban } from 'lucide-react';
 
 type User = {
   id: string;
@@ -31,6 +31,7 @@ export default function UsersManagement() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [editingUser, setEditingUser] = useState<EditingUser | null>(null);
   const [showRoleInfo, setShowRoleInfo] = useState(false);
+  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -367,27 +368,59 @@ export default function UsersManagement() {
                       <option value="blogger">BLOGGER</option>
                     </select>
 
-                    <button
-                      onClick={() => handleEditUser(user)}
-                      className="px-2.5 py-1.5 border border-gray-700 text-gray-300 hover:border-[#00cfff] hover:text-[#00cfff] transition-all"
-                      title="Edit User"
-                    >
-                      <Pencil size={16} />
-                    </button>
-
-                    {user.role !== 'owner' && (
+                    <div className="relative">
                       <button
-                        onClick={() => handleToggleStatus(user.id, user.is_active)}
-                        className={`px-2.5 py-1.5 border transition-all ${
-                          user.is_active
-                            ? 'border-gray-700 text-gray-400 hover:border-[#ff0055] hover:text-[#ff0055]'
-                            : 'border-gray-700 text-gray-300 hover:border-[#00ff88] hover:text-[#00ff88]'
-                        }`}
-                        title={user.is_active ? 'Deactivate User' : 'Activate User'}
+                        onClick={() => setActionMenuOpen(actionMenuOpen === user.id ? null : user.id)}
+                        className="px-2.5 py-1.5 border border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition-all"
+                        title="Actions"
                       >
-                        {user.is_active ? <Ban size={16} /> : <Check size={16} />}
+                        <MoreVertical size={16} />
                       </button>
-                    )}
+
+                      {actionMenuOpen === user.id && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setActionMenuOpen(null)}
+                          />
+                          <div className="absolute right-0 top-full mt-1 bg-black border border-gray-700 z-20 min-w-[140px]">
+                            <button
+                              onClick={() => {
+                                setActionMenuOpen(null);
+                                handleEditUser(user);
+                              }}
+                              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#00cfff] transition-all"
+                            >
+                              <Pencil size={14} /> Edit
+                            </button>
+
+                            {user.role !== 'owner' && (
+                              <button
+                                onClick={() => {
+                                  setActionMenuOpen(null);
+                                  handleToggleStatus(user.id, user.is_active);
+                                }}
+                                className={`flex items-center gap-2 w-full px-3 py-2 text-xs text-left font-bold uppercase hover:bg-[#0a0a0a] transition-all border-t border-gray-800 ${
+                                  user.is_active
+                                    ? 'text-gray-400 hover:text-[#ff0055]'
+                                    : 'text-gray-300 hover:text-[#00ff88]'
+                                }`}
+                              >
+                                {user.is_active ? (
+                                  <>
+                                    <Ban size={14} /> Deactivate
+                                  </>
+                                ) : (
+                                  <>
+                                    <Check size={14} /> Activate
+                                  </>
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
