@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Pencil, Check, Ban } from 'lucide-react';
 
 type User = {
   id: string;
@@ -20,8 +21,6 @@ type EditingUser = {
   name: string;
   email: string;
   role: 'owner' | 'admin' | 'blogger';
-  linkedin_url?: string;
-  twitter_url?: string;
 };
 
 export default function UsersManagement() {
@@ -134,8 +133,6 @@ export default function UsersManagement() {
       name: user.name,
       email: user.email,
       role: user.role,
-      linkedin_url: user.linkedin_url,
-      twitter_url: user.twitter_url,
     });
   };
 
@@ -152,8 +149,6 @@ export default function UsersManagement() {
           userId: editingUser.id,
           name: editingUser.name,
           email: editingUser.email,
-          linkedin_url: editingUser.linkedin_url,
-          twitter_url: editingUser.twitter_url,
         }),
       });
 
@@ -323,75 +318,74 @@ export default function UsersManagement() {
             <p className="text-sm text-gray-500">Users will appear here when they sign up</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {users.map((user) => (
+          <div className="bg-black border border-gray-800">
+            {users.map((user, index) => (
               <div
                 key={user.id}
-                className="border bg-black p-5 hover:border-gray-700 transition-colors"
-                style={{
-                  borderColor: user.is_active ? '#00ff88' : '#333',
-                }}
+                className={`p-3 hover:bg-[#0a0a0a] transition-colors ${index !== users.length - 1 ? 'border-b border-gray-800' : ''}`}
               >
-                <div className="flex justify-between items-start gap-6">
-                  <div className="flex-1">
-                    {/* Status Badge */}
-                    <div className="flex items-center gap-2 mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  {/* User info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="text-white font-bold text-sm">{user.name}</span>
                       <span
-                        className={`px-2 py-1 text-xs font-bold uppercase ${
-                          user.is_active
-                            ? 'bg-[#00ff88] text-black'
-                            : 'bg-gray-800 text-gray-400'
+                        className={`px-1.5 py-0.5 text-xs font-bold uppercase ${
+                          user.is_active ? 'bg-[#00ff88] text-black' : 'bg-gray-800 text-gray-400'
                         }`}
                       >
-                        {user.is_active ? '● Active' : '○ Inactive'}
+                        {user.is_active ? 'ACTIVE' : 'INACTIVE'}
                       </span>
-                    </div>
-
-                    {/* User Info */}
-                    <h3 className="text-lg font-black text-white mb-2">{user.name}</h3>
-                    <p className="text-sm text-gray-400 mb-2">{user.email}</p>
-
-                    {/* Role Selector */}
-                    <div className="mb-3">
-                      <label className="block text-xs text-gray-500 mb-1 uppercase font-bold">Role</label>
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value as 'owner' | 'admin' | 'blogger')}
-                        className="px-3 py-1 text-xs border border-gray-700 bg-black font-bold uppercase"
+                      <span
+                        className="px-1.5 py-0.5 text-xs font-bold uppercase"
                         style={{
-                          color: user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88'
+                          backgroundColor: user.role === 'owner' ? '#ff005520' : user.role === 'admin' ? '#00cfff20' : '#00ff8820',
+                          color: user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88',
+                          border: `1px solid ${user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88'}`
                         }}
                       >
-                        <option value="owner" style={{ color: '#ff0055' }}>OWNER</option>
-                        <option value="admin" style={{ color: '#00cfff' }}>ADMIN</option>
-                        <option value="blogger" style={{ color: '#00ff88' }}>BLOGGER</option>
-                      </select>
+                        {user.role}
+                      </span>
                     </div>
-
-                    {/* Metadata */}
-                    <div className="text-xs text-gray-600">
-                      Joined {new Date(user.created_at).toLocaleDateString()}
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span>{user.email}</span>
+                      <span>•</span>
+                      <span>Joined {new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col gap-2">
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value as 'owner' | 'admin' | 'blogger')}
+                      className="px-3 py-1 text-xs border border-gray-700 bg-black text-gray-300 font-bold uppercase hover:border-gray-500 focus:border-gray-500 focus:outline-none"
+                      title="Change Role"
+                    >
+                      <option value="owner">OWNER</option>
+                      <option value="admin">ADMIN</option>
+                      <option value="blogger">BLOGGER</option>
+                    </select>
+
                     <button
                       onClick={() => handleEditUser(user)}
-                      className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#00cfff] hover:text-[#00cfff] transition-all"
+                      className="px-2.5 py-1.5 border border-gray-700 text-gray-300 hover:border-[#00cfff] hover:text-[#00cfff] transition-all"
+                      title="Edit User"
                     >
-                      Edit Details
+                      <Pencil size={16} />
                     </button>
+
                     {user.role !== 'owner' && (
                       <button
                         onClick={() => handleToggleStatus(user.id, user.is_active)}
-                        className={`px-4 py-2 text-xs border font-bold uppercase transition-all ${
+                        className={`px-2.5 py-1.5 border transition-all ${
                           user.is_active
                             ? 'border-gray-700 text-gray-400 hover:border-[#ff0055] hover:text-[#ff0055]'
                             : 'border-gray-700 text-gray-300 hover:border-[#00ff88] hover:text-[#00ff88]'
                         }`}
+                        title={user.is_active ? 'Deactivate User' : 'Activate User'}
                       >
-                        {user.is_active ? 'Deactivate' : 'Activate'}
+                        {user.is_active ? <Ban size={16} /> : <Check size={16} />}
                       </button>
                     )}
                   </div>
@@ -434,34 +428,6 @@ export default function UsersManagement() {
                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                     className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
                   />
-                </div>
-
-                <div className="border-t border-gray-800 pt-4">
-                  <p className="text-xs text-gray-500 mb-3 uppercase font-bold">Social Media Profiles (for blog sharing)</p>
-
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">LinkedIn URL</label>
-                      <input
-                        type="url"
-                        value={editingUser.linkedin_url || ''}
-                        onChange={(e) => setEditingUser({ ...editingUser, linkedin_url: e.target.value })}
-                        placeholder="https://www.linkedin.com/in/your-profile/"
-                        className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">Twitter URL</label>
-                      <input
-                        type="url"
-                        value={editingUser.twitter_url || ''}
-                        onChange={(e) => setEditingUser({ ...editingUser, twitter_url: e.target.value })}
-                        placeholder="https://twitter.com/your-handle"
-                        className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className="pt-4 flex gap-3">
