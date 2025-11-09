@@ -133,7 +133,7 @@
       "messagePlaceholder": "Your message...",
       "submit": "Send Message",
       "sending": "Sending...",
-      "success": "Message sent! I'll get back to you soon.",
+      "success": "Thanks! I've received your contact and will get back to you soon.",
       "error": "Failed to send. Please try again."
     },
     "platforms": {

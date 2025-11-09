@@ -14,7 +14,7 @@ export default function Contact() {
     setStatus('sending');
 
     try {
-      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,7 +23,6 @@ export default function Contact() {
           name: formData.name,
           email: formData.email,
           message: formData.message,
-          action: 'contact'
         }),
       });
 
