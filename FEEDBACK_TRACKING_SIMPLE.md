@@ -68,3 +68,4 @@ Result: Only users who NEVER received feedback
 - **Resend capability**: Same user can receive feedback multiple times
 - **Time-based control**: You decide minimum days between sends
 - **Never lose track**: See exactly when each user last received feedback
+- **Safety first**: Unsubscribed users are automatically excluded (double-checked before sending)

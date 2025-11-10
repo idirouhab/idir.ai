@@ -116,6 +116,22 @@ export async function POST(request: NextRequest) {
 
     for (const subscriber of subscribers) {
       try {
+        // Double-check subscription status (safety check)
+        if (!testEmail) {
+          const { data: subCheck } = await supabase
+            .from('newsletter_subscribers')
+            .select('is_subscribed')
+            .eq('email', subscriber.email)
+            .single();
+
+          if (!subCheck?.is_subscribed) {
+            console.log(`Skipping ${subscriber.email} - not subscribed`);
+            results.failed++;
+            results.errors.push(`${subscriber.email}: User is unsubscribed`);
+            continue;
+          }
+        }
+
         // Generate feedback token
         const token = await generateFeedbackToken({
           email: subscriber.email,

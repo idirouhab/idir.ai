@@ -456,6 +456,7 @@ export default function SubscribersPage() {
             <button
               onClick={() => setShowSendFeedbackModal(true)}
               className="ml-auto px-6 py-2 bg-[#cc00ff] text-white text-xs font-bold uppercase hover:opacity-90 transition-opacity"
+              title="Only sends to subscribed users"
             >
               📧 Send Feedback Survey
             </button>
@@ -625,8 +626,11 @@ export default function SubscribersPage() {
                   <p className="text-sm text-gray-300 mb-2">
                     Send a feedback survey email to your subscribers.
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 mb-2">
                     Each subscriber will receive the email in their preferred language (EN/ES) with one-click buttons to rate the newsletter.
+                  </p>
+                  <p className="text-xs text-[#00ff88] font-bold">
+                    ✓ Only sends to active subscribers (unsubscribed users are automatically excluded)
                   </p>
                 </div>
 

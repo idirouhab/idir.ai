@@ -7,9 +7,9 @@ import Link from 'next/link';
 type Feedback = {
   id: string;
   subscriber_email: string;
-  feedback_type: 'very_useful' | 'useful' | 'not_useful';
+  feedback_type: 'very_useful' | 'useful' | 'not_useful' | null;
   campaign_date: string;
-  responded_at: string;
+  responded_at: string | null;
   answered_at: string | null;
   ip_address: string | null;
   user_agent: string | null;
@@ -101,7 +101,8 @@ export default function FeedbackPage() {
     return matchesSearch;
   });
 
-  const getFeedbackIcon = (type: string) => {
+  const getFeedbackIcon = (type: string | null) => {
+    if (!type) return '○';
     switch (type) {
       case 'very_useful': return '😍';
       case 'useful': return '👍';
@@ -110,7 +111,8 @@ export default function FeedbackPage() {
     }
   };
 
-  const getFeedbackLabel = (type: string) => {
+  const getFeedbackLabel = (type: string | null) => {
+    if (!type) return 'No response yet';
     switch (type) {
       case 'very_useful': return 'Very Useful';
       case 'useful': return 'Useful';
@@ -119,7 +121,8 @@ export default function FeedbackPage() {
     }
   };
 
-  const getFeedbackColor = (type: string) => {
+  const getFeedbackColor = (type: string | null) => {
+    if (!type) return 'text-gray-600';
     switch (type) {
       case 'very_useful': return 'text-[#00ff88]';
       case 'useful': return 'text-[#00cfff]';
@@ -371,7 +374,9 @@ export default function FeedbackPage() {
                         {formatDate(item.campaign_date)}
                       </td>
                       <td className="px-4 py-3 text-gray-400 text-sm">
-                        {formatDateTime(item.responded_at)}
+                        {item.responded_at ? formatDateTime(item.responded_at) : (
+                          <span className="text-gray-600">Not responded</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         {item.answered_at ? (
