@@ -179,8 +179,8 @@ export async function POST(request: NextRequest) {
           : '→ Your input = Better content';
 
         const footerSubtext = isSpanish
-          ? '¿Ideas para optimizar? <a href="mailto:contact@idir.ai" style="color: #00cfff; text-decoration: none; font-weight: 700;">Envía tu feedback aquí</a>'
-          : 'Ideas to optimize? <a href="mailto:contact@idir.ai" style="color: #00cfff; text-decoration: none; font-weight: 700;">Send your feedback here</a>';
+          ? '¿Ideas para optimizar? <a href="mailto:content@idir.ai?subject=Feedback%20sobre%20newsletter%20de%20IA" style="color: #00cfff; text-decoration: none; font-weight: 700;">Envía tu feedback aquí</a>'
+          : 'Ideas to optimize? <a href="mailto:content@idir.ai?subject=Newsletter%20Feedback" style="color: #00cfff; text-decoration: none; font-weight: 700;">Send your feedback here</a>';
 
         const footerText = isSpanish
           ? 'Recibes este correo porque te suscribiste a Noticias IA Diarias.'
