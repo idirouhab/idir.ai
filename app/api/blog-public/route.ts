@@ -31,11 +31,15 @@ export async function GET(request: NextRequest) {
     const sortOrder = sortParam === 'asc' ? 'asc' : 'desc';
     const ascending = sortOrder === 'asc';
 
+    // Debug logging
+    console.log('[blog-public] Query params:', { limitParam, languageParam, sortParam, limit, language });
+
     const supabase = getBlogClient();
     const baseUrl = 'https://idir.ai';
 
     // If specific language requested, return only that language
     if (language) {
+      console.log(`[blog-public] Fetching posts for language: ${language}, limit: ${limit}`);
       const { data, error } = await supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, author_name, meta_description')
@@ -71,7 +75,7 @@ export async function GET(request: NextRequest) {
         },
       }, {
         headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
         },
       });
     }
@@ -128,7 +132,7 @@ export async function GET(request: NextRequest) {
       },
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   } catch (error) {

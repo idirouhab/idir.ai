@@ -155,82 +155,106 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Manage your site content and settings</p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-12 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            href="/admin/blog"
-            className="group p-6 bg-black border border-gray-800 hover:border-[#00ff88] transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 bg-[#00ff8820] border border-[#00ff88] flex items-center justify-center text-xl">
-                📝
-              </div>
-              <h3 className="text-lg font-black text-white group-hover:text-[#00ff88] transition-colors">
-                Blog
-              </h3>
+        {/* Quick Actions - Organized by Section */}
+        <div className="mb-12 space-y-8">
+          {/* Content Management Section */}
+          <div>
+            <div className="mb-4 pb-2 border-b border-gray-800">
+              <h3 className="text-sm font-black text-gray-500 uppercase tracking-wider">Content Management</h3>
             </div>
-            <p className="text-sm text-gray-400">Create and manage blog posts</p>
-          </Link>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Link
+                href="/admin/blog"
+                className="group p-6 bg-black border border-gray-800 hover:border-[#00ff88] transition-all"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 bg-[#00ff8820] border border-[#00ff88] flex items-center justify-center text-xl">
+                    📝
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-[#00ff88] transition-colors">
+                    Blog
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400">Create and manage blog posts</p>
+              </Link>
 
-          <Link
-            href="/admin/events/new"
-            className="group p-6 bg-black border border-gray-800 hover:border-[#ff0055] transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 bg-[#ff005520] border border-[#ff0055] flex items-center justify-center text-xl">
-                🎥
-              </div>
-              <h3 className="text-lg font-black text-white group-hover:text-[#ff0055] transition-colors">
-                Live Events
-              </h3>
+              <Link
+                href="/admin/events/new"
+                className="group p-6 bg-black border border-gray-800 hover:border-[#ff0055] transition-all"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 bg-[#ff005520] border border-[#ff0055] flex items-center justify-center text-xl">
+                    🎥
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-[#ff0055] transition-colors">
+                    Live Events
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400">Manage live event announcements</p>
+              </Link>
             </div>
-            <p className="text-sm text-gray-400">Manage live event announcements</p>
-          </Link>
+          </div>
 
-          <Link
-            href="/admin/subscribers"
-            className="group p-6 bg-black border border-gray-800 hover:border-[#ffaa00] transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 bg-[#ffaa0020] border border-[#ffaa00] flex items-center justify-center text-xl">
-                📬
-              </div>
-              <h3 className="text-lg font-black text-white group-hover:text-[#ffaa00] transition-colors">
-                Subscribers
-              </h3>
+          {/* Newsletter Section */}
+          <div>
+            <div className="mb-4 pb-2 border-b border-gray-800">
+              <h3 className="text-sm font-black text-gray-500 uppercase tracking-wider">Newsletter</h3>
             </div>
-            <p className="text-sm text-gray-400">View and manage newsletter subscribers</p>
-          </Link>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Link
+                href="/admin/subscribers"
+                className="group p-6 bg-black border border-gray-800 hover:border-[#00cfff] transition-all"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 bg-[#00cfff20] border border-[#00cfff] flex items-center justify-center text-xl">
+                    📬
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-[#00cfff] transition-colors">
+                    Subscribers
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400">View and manage newsletter subscribers</p>
+              </Link>
 
-          <Link
-            href="/admin/feedback"
-            className="group p-6 bg-black border border-gray-800 hover:border-[#cc00ff] transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 bg-[#cc00ff20] border border-[#cc00ff] flex items-center justify-center text-xl">
-                💬
-              </div>
-              <h3 className="text-lg font-black text-white group-hover:text-[#cc00ff] transition-colors">
-                Feedback
-              </h3>
+              <Link
+                href="/admin/feedback"
+                className="group p-6 bg-black border border-gray-800 hover:border-[#cc00ff] transition-all"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 bg-[#cc00ff20] border border-[#cc00ff] flex items-center justify-center text-xl">
+                    💬
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-[#cc00ff] transition-colors">
+                    Feedback
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400">Track newsletter response rates</p>
+              </Link>
             </div>
-            <p className="text-sm text-gray-400">Track newsletter response rates</p>
-          </Link>
+          </div>
 
-          <Link
-            href="/admin/users"
-            className="group p-6 bg-black border border-gray-800 hover:border-[#00cfff] transition-all"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-10 h-10 bg-[#00cfff20] border border-[#00cfff] flex items-center justify-center text-xl">
-                👥
-              </div>
-              <h3 className="text-lg font-black text-white group-hover:text-[#00cfff] transition-colors">
-                Users
-              </h3>
+          {/* System Section */}
+          <div>
+            <div className="mb-4 pb-2 border-b border-gray-800">
+              <h3 className="text-sm font-black text-gray-500 uppercase tracking-wider">System</h3>
             </div>
-            <p className="text-sm text-gray-400">Manage blogger accounts</p>
-          </Link>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Link
+                href="/admin/users"
+                className="group p-6 bg-black border border-gray-800 hover:border-[#ffaa00] transition-all"
+              >
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="w-10 h-10 bg-[#ffaa0020] border border-[#ffaa00] flex items-center justify-center text-xl">
+                    👥
+                  </div>
+                  <h3 className="text-lg font-black text-white group-hover:text-[#ffaa00] transition-colors">
+                    Users
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-400">Manage blogger accounts</p>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Section Header */}
