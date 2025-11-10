@@ -32,3 +32,4 @@ CREATE POLICY "No public access to feedback"
 COMMENT ON TABLE newsletter_feedback IS 'Stores feedback responses from newsletter subscribers';
 COMMENT ON COLUMN newsletter_feedback.feedback_type IS 'Type of feedback: very_useful, useful, not_useful';
 COMMENT ON COLUMN newsletter_feedback.campaign_date IS 'Date of the newsletter campaign this feedback is for';
+COMMENT ON COLUMN newsletter_feedback.responded_at IS 'Timestamp when the subscriber submitted the feedback';
