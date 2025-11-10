@@ -196,40 +196,56 @@ export async function POST(request: NextRequest) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>${subject}</title>
     <!--[if mso]>
     <style type="text/css">
         body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
     </style>
     <![endif]-->
+    <style type="text/css">
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                min-width: 100% !important;
+            }
+            .mobile-padding {
+                padding: 15px !important;
+            }
+            .mobile-font-small {
+                font-size: 11px !important;
+            }
+            .mobile-font-medium {
+                font-size: 14px !important;
+            }
+            .signal-bar {
+                font-size: 18px !important;
+            }
+        }
+    </style>
 </head>
 <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
 
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a;">
     <tr>
-        <td style="padding: 20px 0;">
-            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #000000; border: 2px solid #00ff88;">
+        <td style="padding: 10px;">
+            <table role="presentation" class="email-container" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; max-width: 600px; background-color: #000000; border: 2px solid #00ff88;">
 
                 <!-- Header -->
                 <tr>
-                    <td style="padding: 30px 30px 20px 30px; background-color: #000000;">
+                    <td class="mobile-padding" style="padding: 30px; background-color: #000000; text-align: center;">
+                        <h1 style="margin: 0; padding: 10px 15px; color: #ffffff; font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border: 1px solid #333333; display: inline-block;">
+                            ${title}
+                        </h1>
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                                <td style="text-align: center; padding-bottom: 10px;">
-                                    <div style="display: inline-block; position: relative;">
-                                        <div style="position: absolute; top: -5px; left: -5px; width: 8px; height: 8px; background-color: #00ff88;"></div>
-                                        <div style="position: absolute; top: -5px; right: -5px; width: 8px; height: 8px; background-color: #ff0055;"></div>
-                                        <h1 style="margin: 0; padding: 15px 30px; color: #ffffff; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; border: 1px solid #333333;">
-                                            ${title}
-                                        </h1>
-                                        <div style="position: absolute; bottom: -5px; left: -5px; width: 8px; height: 8px; background-color: #ff0055;"></div>
-                                        <div style="position: absolute; bottom: -5px; right: -5px; width: 8px; height: 8px; background-color: #00ff88;"></div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding-top: 10px;">
-                                    <div style="height: 2px; width: 60px; background: linear-gradient(90deg, #00ff88, #ff0055); margin: 0 auto;"></div>
+                                <td style="text-align: center; padding-top: 15px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+                                        <tr>
+                                            <td style="width: 30px; height: 2px; background-color: #00ff88;"></td>
+                                            <td style="width: 30px; height: 2px; background-color: #ff0055;"></td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                         </table>
@@ -238,16 +254,16 @@ export async function POST(request: NextRequest) {
 
                 <!-- System Status -->
                 <tr>
-                    <td style="padding: 0 30px 20px 30px;">
+                    <td class="mobile-padding" style="padding: 0 30px 20px 30px;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border: 1px solid #222222;">
                             <tr>
-                                <td style="padding: 12px 20px;">
+                                <td style="padding: 12px 15px;">
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tr>
-                                            <td style="color: #666666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+                                            <td class="mobile-font-small" style="color: #666666; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; width: 50%;">
                                                 ${systemStatusLabel}
                                             </td>
-                                            <td style="text-align: right; color: #00ff88; font-size: 11px; font-family: 'Courier New', monospace;">
+                                            <td class="mobile-font-small" style="text-align: right; color: #00ff88; font-size: 10px; font-family: 'Courier New', monospace; width: 50%;">
                                                 ${systemStatusOnline}
                                             </td>
                                         </tr>
@@ -260,60 +276,81 @@ export async function POST(request: NextRequest) {
 
                 <!-- Calibration Content -->
                 <tr>
-                    <td style="padding: 0 30px 30px 30px;">
+                    <td class="mobile-padding" style="padding: 0 30px 30px 30px;">
 
                         <!-- Terminal-style intro -->
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border-left: 3px solid #00ff88; margin-bottom: 25px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border-left: 3px solid #00ff88;">
                             <tr>
-                                <td style="padding: 20px;">
-                                    <p style="margin: 0 0 8px 0; color: #00ff88; font-family: 'Courier New', monospace; font-size: 12px;">
+                                <td style="padding: 15px;">
+                                    <p class="mobile-font-small" style="margin: 0 0 5px 0; color: #00ff88; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4;">
                                         ${terminalLine1}
                                     </p>
-                                    <p style="margin: 0 0 15px 0; color: #666666; font-family: 'Courier New', monospace; font-size: 12px;">
+                                    <p class="mobile-font-small" style="margin: 0 0 12px 0; color: #666666; font-family: 'Courier New', monospace; font-size: 11px; line-height: 1.4;">
                                         ${terminalLine2}
                                     </p>
-                                    <p style="margin: 0; color: #cccccc; font-size: 14px; line-height: 1.6;">
+                                    <p class="mobile-font-medium" style="margin: 0; color: #cccccc; font-size: 13px; line-height: 1.5;">
                                         ${introText}
                                     </p>
                                 </td>
                             </tr>
                         </table>
 
-                        <!-- Calibration Interface -->
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000; border: 2px solid #333333; margin-bottom: 25px;">
+                        <!-- Spacing -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <tr>
-                                <td style="padding: 30px 25px;">
+                                <td style="height: 20px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                            </tr>
+                        </table>
+
+                        <!-- Calibration Interface -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #000000; border: 2px solid #333333;">
+                            <tr>
+                                <td style="padding: 20px 15px;">
 
                                     <!-- Title -->
-                                    <div style="text-align: center; margin-bottom: 25px;">
-                                        <p style="margin: 0 0 8px 0; color: #00ff88; font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 2px;">
-                                            ${calibrationModuleLabel}
-                                        </p>
-                                        <h2 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 700; line-height: 1.3;">
-                                            ${question}
-                                        </h2>
-                                    </div>
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="text-align: center; padding-bottom: 20px;">
+                                                <p class="mobile-font-small" style="margin: 0 0 8px 0; color: #00ff88; font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 1px;">
+                                                    ${calibrationModuleLabel}
+                                                </p>
+                                                <h2 class="mobile-font-medium" style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; line-height: 1.3;">
+                                                    ${question}
+                                                </h2>
+                                            </td>
+                                        </tr>
+                                    </table>
 
                                     <!-- Signal Meter Visualization -->
-                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tr>
-                                            <td style="text-align: center;">
+                                            <td style="text-align: center; padding-bottom: 25px;">
                                                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                                                     <tr>
-                                                        <td style="padding: 0 3px; vertical-align: bottom;">
-                                                            <div style="width: 20px; height: 15px; background-color: #ff0055;"></div>
+                                                        <td style="padding: 0 2px; vertical-align: bottom;">
+                                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                                <tr><td style="width: 15px; height: 12px; background-color: #ff0055; font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
+                                                            </table>
                                                         </td>
-                                                        <td style="padding: 0 3px; vertical-align: bottom;">
-                                                            <div style="width: 20px; height: 30px; background-color: #ff6600;"></div>
+                                                        <td style="padding: 0 2px; vertical-align: bottom;">
+                                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                                <tr><td style="width: 15px; height: 25px; background-color: #ff6600; font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
+                                                            </table>
                                                         </td>
-                                                        <td style="padding: 0 3px; vertical-align: bottom;">
-                                                            <div style="width: 20px; height: 45px; background-color: #ffaa00;"></div>
+                                                        <td style="padding: 0 2px; vertical-align: bottom;">
+                                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                                <tr><td style="width: 15px; height: 38px; background-color: #ffaa00; font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
+                                                            </table>
                                                         </td>
-                                                        <td style="padding: 0 3px; vertical-align: bottom;">
-                                                            <div style="width: 20px; height: 60px; background-color: #00cfff;"></div>
+                                                        <td style="padding: 0 2px; vertical-align: bottom;">
+                                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                                <tr><td style="width: 15px; height: 50px; background-color: #00cfff; font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
+                                                            </table>
                                                         </td>
-                                                        <td style="padding: 0 3px; vertical-align: bottom;">
-                                                            <div style="width: 20px; height: 75px; background-color: #00ff88;"></div>
+                                                        <td style="padding: 0 2px; vertical-align: bottom;">
+                                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                                <tr><td style="width: 15px; height: 63px; background-color: #00ff88; font-size: 1px; line-height: 1px;">&nbsp;</td></tr>
+                                                            </table>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -326,85 +363,103 @@ export async function POST(request: NextRequest) {
 
                                         <!-- STRONG SIGNAL -->
                                         <tr>
-                                            <td style="padding: 8px 0;">
-                                                <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=very_useful" style="display: block; background-color: #0a0a0a; border-left: 4px solid #00ff88; padding: 18px 20px; text-decoration: none;">
-                                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                                        <tr>
-                                                            <td style="width: 100px; vertical-align: top;">
-                                                                <div style="font-family: 'Courier New', monospace; color: #00ff88; font-size: 24px; font-weight: 700; line-height: 1;">
-                                                                    █████
-                                                                </div>
-                                                                <div style="font-family: 'Courier New', monospace; color: #00ff88; font-size: 10px; margin-top: 5px;">
-                                                                    STRONG
-                                                                </div>
-                                                            </td>
-                                                            <td style="vertical-align: middle;">
-                                                                <div style="color: #ffffff; font-size: 15px; font-weight: 700; margin-bottom: 4px;">
-                                                                    ${strongSignal.label}
-                                                                </div>
-                                                                <div style="color: #999999; font-size: 12px; line-height: 1.4;">
-                                                                    ${strongSignal.subtext}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </a>
+                                            <td style="padding: 0 0 10px 0;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border-left: 4px solid #00ff88;">
+                                                    <tr>
+                                                        <td style="padding: 15px;">
+                                                            <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=very_useful" style="text-decoration: none; display: block;">
+                                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                                    <tr>
+                                                                        <td style="width: 80px; vertical-align: top; padding-right: 10px;">
+                                                                            <p class="signal-bar" style="margin: 0 0 3px 0; font-family: 'Courier New', monospace; color: #00ff88; font-size: 20px; font-weight: 700; line-height: 1;">
+                                                                                █████
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; font-family: 'Courier New', monospace; color: #00ff88; font-size: 9px;">
+                                                                                STRONG
+                                                                            </p>
+                                                                        </td>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <p class="mobile-font-medium" style="margin: 0 0 4px 0; color: #ffffff; font-size: 14px; font-weight: 700;">
+                                                                                ${strongSignal.label}
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; color: #999999; font-size: 11px; line-height: 1.3;">
+                                                                                ${strongSignal.subtext}
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
 
                                         <!-- MEDIUM SIGNAL -->
                                         <tr>
-                                            <td style="padding: 8px 0;">
-                                                <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=useful" style="display: block; background-color: #0a0a0a; border-left: 4px solid #00cfff; padding: 18px 20px; text-decoration: none;">
-                                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                                        <tr>
-                                                            <td style="width: 100px; vertical-align: top;">
-                                                                <div style="font-family: 'Courier New', monospace; color: #00cfff; font-size: 24px; font-weight: 700; line-height: 1;">
-                                                                    ███░░
-                                                                </div>
-                                                                <div style="font-family: 'Courier New', monospace; color: #00cfff; font-size: 10px; margin-top: 5px;">
-                                                                    MEDIUM
-                                                                </div>
-                                                            </td>
-                                                            <td style="vertical-align: middle;">
-                                                                <div style="color: #ffffff; font-size: 15px; font-weight: 700; margin-bottom: 4px;">
-                                                                    ${mediumSignal.label}
-                                                                </div>
-                                                                <div style="color: #999999; font-size: 12px; line-height: 1.4;">
-                                                                    ${mediumSignal.subtext}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </a>
+                                            <td style="padding: 0 0 10px 0;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border-left: 4px solid #00cfff;">
+                                                    <tr>
+                                                        <td style="padding: 15px;">
+                                                            <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=useful" style="text-decoration: none; display: block;">
+                                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                                    <tr>
+                                                                        <td style="width: 80px; vertical-align: top; padding-right: 10px;">
+                                                                            <p class="signal-bar" style="margin: 0 0 3px 0; font-family: 'Courier New', monospace; color: #00cfff; font-size: 20px; font-weight: 700; line-height: 1;">
+                                                                                ███░░
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; font-family: 'Courier New', monospace; color: #00cfff; font-size: 9px;">
+                                                                                MEDIUM
+                                                                            </p>
+                                                                        </td>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <p class="mobile-font-medium" style="margin: 0 0 4px 0; color: #ffffff; font-size: 14px; font-weight: 700;">
+                                                                                ${mediumSignal.label}
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; color: #999999; font-size: 11px; line-height: 1.3;">
+                                                                                ${mediumSignal.subtext}
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
 
                                         <!-- WEAK SIGNAL -->
                                         <tr>
-                                            <td style="padding: 8px 0;">
-                                                <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=not_useful" style="display: block; background-color: #0a0a0a; border-left: 4px solid #ff0055; padding: 18px 20px; text-decoration: none;">
-                                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                                                        <tr>
-                                                            <td style="width: 100px; vertical-align: top;">
-                                                                <div style="font-family: 'Courier New', monospace; color: #ff0055; font-size: 24px; font-weight: 700; line-height: 1;">
-                                                                    █░░░░
-                                                                </div>
-                                                                <div style="font-family: 'Courier New', monospace; color: #ff0055; font-size: 10px; margin-top: 5px;">
-                                                                    WEAK
-                                                                </div>
-                                                            </td>
-                                                            <td style="vertical-align: middle;">
-                                                                <div style="color: #ffffff; font-size: 15px; font-weight: 700; margin-bottom: 4px;">
-                                                                    ${weakSignal.label}
-                                                                </div>
-                                                                <div style="color: #999999; font-size: 12px; line-height: 1.4;">
-                                                                    ${weakSignal.subtext}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </a>
+                                            <td style="padding: 0;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border-left: 4px solid #ff0055;">
+                                                    <tr>
+                                                        <td style="padding: 15px;">
+                                                            <a href="https://idir.ai/api/newsletter/feedback?token=${token}&type=not_useful" style="text-decoration: none; display: block;">
+                                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                                                    <tr>
+                                                                        <td style="width: 80px; vertical-align: top; padding-right: 10px;">
+                                                                            <p class="signal-bar" style="margin: 0 0 3px 0; font-family: 'Courier New', monospace; color: #ff0055; font-size: 20px; font-weight: 700; line-height: 1;">
+                                                                                █░░░░
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; font-family: 'Courier New', monospace; color: #ff0055; font-size: 9px;">
+                                                                                WEAK
+                                                                            </p>
+                                                                        </td>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <p class="mobile-font-medium" style="margin: 0 0 4px 0; color: #ffffff; font-size: 14px; font-weight: 700;">
+                                                                                ${weakSignal.label}
+                                                                            </p>
+                                                                            <p class="mobile-font-small" style="margin: 0; color: #999999; font-size: 11px; line-height: 1.3;">
+                                                                                ${weakSignal.subtext}
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                         </tr>
 
@@ -414,14 +469,21 @@ export async function POST(request: NextRequest) {
                             </tr>
                         </table>
 
+                        <!-- Spacing -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 20px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                            </tr>
+                        </table>
+
                         <!-- Footer message -->
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a; border: 1px solid #222222;">
                             <tr>
-                                <td style="padding: 20px; text-align: center;">
-                                    <p style="margin: 0 0 8px 0; color: #00ff88; font-size: 14px; font-weight: 700;">
+                                <td style="padding: 15px; text-align: center;">
+                                    <p class="mobile-font-medium" style="margin: 0 0 8px 0; color: #00ff88; font-size: 13px; font-weight: 700;">
                                         ${footerMessage}
                                     </p>
-                                    <p style="margin: 0; color: #666666; font-size: 12px; line-height: 1.5;">
+                                    <p class="mobile-font-small" style="margin: 0; color: #666666; font-size: 11px; line-height: 1.4;">
                                         ${footerSubtext}
                                     </p>
                                 </td>
@@ -433,22 +495,26 @@ export async function POST(request: NextRequest) {
 
                 <!-- Divider -->
                 <tr>
-                    <td style="padding: 0 30px;">
-                        <div style="height: 1px; background-color: #222222;"></div>
+                    <td class="mobile-padding" style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background-color: #222222; font-size: 1px; line-height: 1px;">&nbsp;</td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
 
                 <!-- Footer -->
                 <tr>
-                    <td style="padding: 30px; background-color: #000000;">
+                    <td class="mobile-padding" style="padding: 20px; background-color: #000000;">
                         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                             <!-- Signature -->
                             <tr>
-                                <td style="text-align: center; padding-bottom: 20px;">
-                                    <p style="margin: 0 0 5px 0; color: #00ff88; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                                <td style="text-align: center; padding-bottom: 15px;">
+                                    <p class="mobile-font-medium" style="margin: 0 0 5px 0; color: #00ff88; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
                                         Idir Ouhab Meskine
                                     </p>
-                                    <p style="margin: 0; color: #999999; font-size: 12px;">
+                                    <p class="mobile-font-small" style="margin: 0; color: #999999; font-size: 11px;">
                                         Solutions Engineer at n8n
                                     </p>
                                 </td>
@@ -456,23 +522,23 @@ export async function POST(request: NextRequest) {
 
                             <!-- Social Links -->
                             <tr>
-                                <td style="text-align: center; padding-bottom: 20px;">
+                                <td style="text-align: center; padding-bottom: 15px;">
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                                         <tr>
-                                            <td style="padding: 0 10px;">
-                                                <a href="https://idir.ai" style="color: #00ff88; text-decoration: none; font-size: 12px; font-weight: 600;">
+                                            <td style="padding: 0 8px;">
+                                                <a href="https://idir.ai" class="mobile-font-small" style="color: #00ff88; text-decoration: none; font-size: 11px; font-weight: 600;">
                                                     ${websiteText}
                                                 </a>
                                             </td>
-                                            <td style="color: #333333;">|</td>
-                                            <td style="padding: 0 10px;">
-                                                <a href="https://linkedin.com/in/idirouhab" style="color: #00ff88; text-decoration: none; font-size: 12px; font-weight: 600;">
+                                            <td style="color: #333333; font-size: 11px;">|</td>
+                                            <td style="padding: 0 8px;">
+                                                <a href="https://linkedin.com/in/idirouhab" class="mobile-font-small" style="color: #00ff88; text-decoration: none; font-size: 11px; font-weight: 600;">
                                                     LinkedIn
                                                 </a>
                                             </td>
-                                            <td style="color: #333333;">|</td>
-                                            <td style="padding: 0 10px;">
-                                                <a href="https://twitter.com/idir_ouhab" style="color: #00ff88; text-decoration: none; font-size: 12px; font-weight: 600;">
+                                            <td style="color: #333333; font-size: 11px;">|</td>
+                                            <td style="padding: 0 8px;">
+                                                <a href="https://twitter.com/idir_ouhab" class="mobile-font-small" style="color: #00ff88; text-decoration: none; font-size: 11px; font-weight: 600;">
                                                     Twitter
                                                 </a>
                                             </td>
@@ -483,11 +549,11 @@ export async function POST(request: NextRequest) {
 
                             <!-- Unsubscribe -->
                             <tr>
-                                <td style="text-align: center; padding-top: 20px; border-top: 1px solid #222222;">
-                                    <p style="margin: 0 0 5px 0; color: #666666; font-size: 11px; line-height: 1.5;">
+                                <td style="text-align: center; padding-top: 15px; border-top: 1px solid #222222;">
+                                    <p class="mobile-font-small" style="margin: 0 0 5px 0; color: #666666; font-size: 10px; line-height: 1.4;">
                                         ${footerText}
                                     </p>
-                                    <p style="margin: 0; color: #666666; font-size: 11px;">
+                                    <p class="mobile-font-small" style="margin: 0; color: #666666; font-size: 10px;">
                                         <a href="https://idir.ai/${subscriber.lang}/unsubscribe?email=${encodeURIComponent(subscriber.email)}" style="color: #00ff88; text-decoration: none;">
                                             ${unsubscribeText}
                                         </a>
