@@ -662,6 +662,42 @@ ${unsubscribeText}: https://idir.ai/${subscriber.lang}/unsubscribe?email=${encod
           html: htmlContent,
         });
 
+        // Record that feedback email was sent (unless it's a test email)
+        if (!testEmail) {
+          try {
+            const now = new Date().toISOString();
+
+            // Check if record exists for this subscriber and campaign
+            const { data: existing } = await supabase
+              .from('newsletter_feedback')
+              .select('id')
+              .eq('subscriber_email', subscriber.email)
+              .eq('campaign_date', campaignDate)
+              .single();
+
+            if (existing) {
+              // Update existing record with new sent_at
+              await supabase
+                .from('newsletter_feedback')
+                .update({ sent_at: now })
+                .eq('subscriber_email', subscriber.email)
+                .eq('campaign_date', campaignDate);
+            } else {
+              // Create new record
+              await supabase
+                .from('newsletter_feedback')
+                .insert({
+                  subscriber_email: subscriber.email,
+                  campaign_date: campaignDate,
+                  sent_at: now,
+                });
+            }
+          } catch (dbError) {
+            console.error(`Error recording sent_at for ${subscriber.email}:`, dbError);
+            // Don't fail the whole operation if DB logging fails
+          }
+        }
+
         results.sent++;
       } catch (error: any) {
         console.error(`Error sending to ${subscriber.email}:`, error);

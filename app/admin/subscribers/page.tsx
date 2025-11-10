@@ -12,6 +12,8 @@ type Subscriber = {
   welcomed: boolean;
   created_at: string;
   updated_at: string;
+  feedback_sent_at: string | null;
+  feedback_campaign_date: string | null;
 };
 
 type Statistics = {
@@ -22,6 +24,8 @@ type Statistics = {
   es: number;
   welcomed: number;
   notWelcomed: number;
+  feedbackSent: number;
+  feedbackNotSent: number;
 };
 
 export default function SubscribersPage() {
@@ -33,6 +37,9 @@ export default function SubscribersPage() {
   const [filterLang, setFilterLang] = useState<'all' | 'en' | 'es'>('all');
   const [filterWelcomed, setFilterWelcomed] = useState<'all' | 'true' | 'false'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterMinDays, setFilterMinDays] = useState<number>(0);
+  const [filterFeedbackSent, setFilterFeedbackSent] = useState<'all' | 'sent' | 'not_sent'>('all');
+  const [filterMinDaysSinceSent, setFilterMinDaysSinceSent] = useState<number>(0);
   const [showSendFeedbackModal, setShowSendFeedbackModal] = useState(false);
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [sendFeedbackLang, setSendFeedbackLang] = useState<'all' | 'en' | 'es'>('all');
@@ -242,10 +249,40 @@ export default function SubscribersPage() {
     }
   };
 
-  // Client-side search filter
-  const filteredSubscribers = subscribers.filter(sub =>
-    searchQuery === '' || sub.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Client-side filters
+  const filteredSubscribers = subscribers.filter(sub => {
+    // Search filter
+    const matchesSearch = searchQuery === '' ||
+      sub.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Min days subscribed filter
+    const daysSinceSubscribed = Math.floor(
+      (new Date().getTime() - new Date(sub.created_at).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const matchesMinDays = filterMinDays === 0 || daysSinceSubscribed >= filterMinDays;
+
+    // Feedback sent filter
+    const matchesFeedbackSent =
+      filterFeedbackSent === 'all' ||
+      (filterFeedbackSent === 'sent' && sub.feedback_sent_at !== null) ||
+      (filterFeedbackSent === 'not_sent' && sub.feedback_sent_at === null);
+
+    // Days since last feedback sent filter
+    let matchesDaysSinceSent = true;
+    if (filterMinDaysSinceSent > 0) {
+      if (sub.feedback_sent_at === null) {
+        // Never sent = passes filter (can send now)
+        matchesDaysSinceSent = true;
+      } else {
+        const daysSinceSent = Math.floor(
+          (new Date().getTime() - new Date(sub.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        matchesDaysSinceSent = daysSinceSent >= filterMinDaysSinceSent;
+      }
+    }
+
+    return matchesSearch && matchesMinDays && matchesFeedbackSent && matchesDaysSinceSent;
+  });
 
   if (loading) {
     return (
@@ -306,7 +343,7 @@ export default function SubscribersPage() {
 
         {/* Statistics Cards */}
         {statistics && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             <div className="p-4 bg-black border border-gray-800">
               <div className="text-2xl font-black text-[#00ff88]">{statistics.total}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Total</div>
@@ -322,6 +359,14 @@ export default function SubscribersPage() {
             <div className="p-4 bg-black border border-gray-800">
               <div className="text-2xl font-black text-[#ff0055]">{statistics.notWelcomed}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Not Welcomed</div>
+            </div>
+            <div className="p-4 bg-black border border-[#cc00ff]">
+              <div className="text-2xl font-black text-[#cc00ff]">{statistics.feedbackSent}</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">📧 Feedback Sent</div>
+            </div>
+            <div className="p-4 bg-black border border-[#ffaa00]">
+              <div className="text-2xl font-black text-[#ffaa00]">{statistics.feedbackNotSent}</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">⏳ Not Sent Yet</div>
             </div>
           </div>
         )}
@@ -370,6 +415,43 @@ export default function SubscribersPage() {
               <option value="true">Welcomed</option>
               <option value="false">Not Welcomed</option>
             </select>
+
+            <select
+              value={filterFeedbackSent}
+              onChange={(e) => setFilterFeedbackSent(e.target.value as any)}
+              className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+            >
+              <option value="all">All Feedback</option>
+              <option value="not_sent">📧 Not Sent</option>
+              <option value="sent">✅ Already Sent</option>
+            </select>
+
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-500 font-bold uppercase whitespace-nowrap">Subscribed ≥</label>
+              <input
+                type="number"
+                min="0"
+                value={filterMinDays}
+                onChange={(e) => setFilterMinDays(parseInt(e.target.value) || 0)}
+                className="w-20 px-3 py-2 bg-black border border-gray-800 text-white text-sm font-bold focus:border-[#00ff88] focus:outline-none"
+                placeholder="0"
+              />
+              <span className="text-xs text-gray-500">days</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-500 font-bold uppercase whitespace-nowrap">Last sent ≥</label>
+              <input
+                type="number"
+                min="0"
+                value={filterMinDaysSinceSent}
+                onChange={(e) => setFilterMinDaysSinceSent(parseInt(e.target.value) || 0)}
+                className="w-20 px-3 py-2 bg-black border border-gray-800 text-white text-sm font-bold focus:border-[#00ff88] focus:outline-none"
+                placeholder="0"
+                title="Only show users who received feedback ≥ X days ago (or never)"
+              />
+              <span className="text-xs text-gray-500">days ago</span>
+            </div>
 
             <button
               onClick={() => setShowSendFeedbackModal(true)}
@@ -448,6 +530,8 @@ export default function SubscribersPage() {
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Language</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
+                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Last Sent</th>
+                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Created</th>
                 </tr>
               </thead>
@@ -494,6 +578,21 @@ export default function SubscribersPage() {
                       ) : (
                         <span className="text-gray-600 text-sm">○</span>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {subscriber.feedback_sent_at ? (
+                        <span
+                          className="text-[#cc00ff] text-xs font-bold"
+                          title={`Last sent: ${new Date(subscriber.feedback_sent_at).toLocaleString()}`}
+                        >
+                          {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d ago
+                        </span>
+                      ) : (
+                        <span className="text-gray-600 text-xs">Never</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-500">
+                      {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))}d
                     </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {new Date(subscriber.created_at).toLocaleDateString()}

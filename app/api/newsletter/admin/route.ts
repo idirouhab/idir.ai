@@ -88,6 +88,33 @@ export async function GET(request: Request) {
       );
     }
 
+    // Get feedback email tracking info for all subscribers
+    const { data: feedbackData } = await supabase
+      .from('newsletter_feedback')
+      .select('subscriber_email, sent_at, campaign_date')
+      .not('sent_at', 'is', null)
+      .order('sent_at', { ascending: false });
+
+    // Create a map of email -> most recent feedback sent date
+    const feedbackMap = new Map<string, { sent_at: string; campaign_date: string }>();
+    if (feedbackData) {
+      for (const feedback of feedbackData) {
+        if (!feedbackMap.has(feedback.subscriber_email)) {
+          feedbackMap.set(feedback.subscriber_email, {
+            sent_at: feedback.sent_at,
+            campaign_date: feedback.campaign_date,
+          });
+        }
+      }
+    }
+
+    // Add feedback info to subscribers
+    const subscribersWithFeedback = data?.map(subscriber => ({
+      ...subscriber,
+      feedback_sent_at: feedbackMap.get(subscriber.email)?.sent_at || null,
+      feedback_campaign_date: feedbackMap.get(subscriber.email)?.campaign_date || null,
+    }));
+
     // Get statistics
     const { data: stats } = await supabase
       .from('newsletter_subscribers')
@@ -101,6 +128,8 @@ export async function GET(request: Request) {
       es: stats?.filter(s => s.lang === 'es').length || 0,
       welcomed: stats?.filter(s => s.welcomed).length || 0,
       notWelcomed: stats?.filter(s => !s.welcomed).length || 0,
+      feedbackSent: feedbackMap.size,
+      feedbackNotSent: (count || 0) - feedbackMap.size,
     };
 
     // Audit log: Track subscriber data access
@@ -124,7 +153,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      data,
+      data: subscribersWithFeedback,
       count,
       statistics,
     });
