@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import formData from 'form-data';
+import Mailgun from 'mailgun.js';
 import { z } from 'zod';
 
 // Validation schema
@@ -27,22 +28,21 @@ export async function POST(request: NextRequest) {
 
     const { name, email, message } = validation.data;
 
-    // Create Nodemailer transporter with Mailgun SMTP
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.mailgun.org',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_PORT === '465', // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
+    // Initialize Mailgun client
+    const mailgun = new Mailgun(formData);
+    const mg = mailgun.client({
+      username: 'api',
+      key: process.env.MAILGUN_API_KEY || '',
+      url: process.env.MAILGUN_API_URL || 'https://api.mailgun.net',
     });
 
+    const mailgunDomain = process.env.MAILGUN_DOMAIN || 'idir.ai';
+
     // Send email
-    const info = await transporter.sendMail({
-      from: `"Contact Form" <contact@idir.ai>`,
-      to: 'contact@idir.ai',
-      replyTo: email,
+    const info = await mg.messages.create(mailgunDomain, {
+      from: 'Contact Form <contact@idir.ai>',
+      to: ['contact@idir.ai'],
+      'h:Reply-To': email,
       subject: `New Contact Form Message from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -83,7 +83,7 @@ This message was sent from the contact form at idir.ai
     return NextResponse.json({
       success: true,
       message: 'Email sent successfully',
-      messageId: info.messageId,
+      messageId: info.id,
     });
   } catch (error) {
     console.error('Error in POST /api/contact:', error);

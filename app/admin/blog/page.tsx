@@ -137,6 +137,9 @@ export default function AdminBlogPage() {
               <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Subscribers
               </Link>
+              <Link href="/admin/feedback" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Feedback
+              </Link>
               <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Users
               </Link>

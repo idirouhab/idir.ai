@@ -123,6 +123,9 @@ export default function AdminDashboard() {
               <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Subscribers
               </Link>
+              <Link href="/admin/feedback" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
+                Feedback
+              </Link>
               <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
                 Users
               </Link>
@@ -197,6 +200,21 @@ export default function AdminDashboard() {
               </h3>
             </div>
             <p className="text-sm text-gray-400">View and manage newsletter subscribers</p>
+          </Link>
+
+          <Link
+            href="/admin/feedback"
+            className="group p-6 bg-black border border-gray-800 hover:border-[#cc00ff] transition-all"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-10 h-10 bg-[#cc00ff20] border border-[#cc00ff] flex items-center justify-center text-xl">
+                💬
+              </div>
+              <h3 className="text-lg font-black text-white group-hover:text-[#cc00ff] transition-colors">
+                Feedback
+              </h3>
+            </div>
+            <p className="text-sm text-gray-400">Track newsletter response rates</p>
           </Link>
 
           <Link
