@@ -273,6 +273,12 @@
       "opinion": "Opinión"
     },
     "filterByCategory": "Filtrar por categoría",
-    "allCategories": "Todas las Categorías"
+    "allCategories": "Todas las Categorías",
+    "newsletterCTA": {
+      "title": "¿Quieres Más Contenido Así?",
+      "description": "Recibe noticias de IA e insights directamente en tu bandeja de entrada todos los días. Únete a miles de profesionales que están un paso adelante.",
+      "buttonText": "Suscríbete al Newsletter",
+      "noSpam": "Sin spam, cancela cuando quieras"
+    }
   }
 }

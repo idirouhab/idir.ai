@@ -273,6 +273,12 @@
       "opinion": "Opinion"
     },
     "filterByCategory": "Filter by category",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "newsletterCTA": {
+      "title": "Want More Like This?",
+      "description": "Get daily AI news and insights delivered straight to your inbox. Join thousands of professionals staying ahead of the curve.",
+      "buttonText": "Subscribe to Newsletter",
+      "noSpam": "No spam, unsubscribe anytime"
+    }
   }
 }

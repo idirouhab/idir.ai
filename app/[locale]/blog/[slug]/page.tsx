@@ -12,6 +12,7 @@ import ShareButtons from '@/components/ShareButtons';
 import PostNavigation from '@/components/PostNavigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import TableOfContents from '@/components/TableOfContents';
+import NewsletterCTA from '@/components/NewsletterCTA';
 import {
   getPublishedPostBySlug,
   getRelatedPosts,
@@ -189,6 +190,9 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
             <MarkdownContent content={post.content} />
           </div>
 
+          {/* Newsletter CTA - After Content */}
+          <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_after_content" />
+
           {/* Share Buttons */}
           <div className="mt-12">
             <ShareButtons
@@ -240,6 +244,11 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
             </div>
           </section>
         )}
+
+        {/* Newsletter CTA - After Related Posts */}
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+          <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_bottom" />
+        </section>
       </main>
 
       {/* Structured Data */}

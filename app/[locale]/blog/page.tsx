@@ -6,6 +6,7 @@ import BlogCard from '@/components/BlogCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import NewsletterCTA from '@/components/NewsletterCTA';
 
 type Props = {
   params: { locale: string };
@@ -140,11 +141,18 @@ export default async function BlogPage({ params: { locale }, searchParams }: Pro
 
           {/* Posts Grid */}
           {posts.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {posts.map((post) => (
-                <BlogCard key={post.id} post={post} locale={locale as 'en' | 'es'} />
-              ))}
-            </div>
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                  <BlogCard key={post.id} post={post} locale={locale as 'en' | 'es'} />
+                ))}
+              </div>
+
+              {/* Newsletter CTA - After Posts */}
+              <div className="mt-20 max-w-4xl mx-auto">
+                <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_listing" />
+              </div>
+            </>
           ) : (
             <div className="text-center py-20">
               <div className="max-w-md mx-auto">

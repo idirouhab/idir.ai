@@ -37,3 +37,6 @@ next-env.d.ts
 
 # icon generation script
 generate-icons.js
+
+# Migration backups
+migrations/applied/
