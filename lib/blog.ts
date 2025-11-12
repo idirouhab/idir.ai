@@ -17,6 +17,7 @@ export type BlogPost = {
   language: 'en' | 'es';
   status: 'draft' | 'published';
   published_at: string | null;
+  scheduled_publish_at: string | null;
   view_count: number;
   read_time_minutes: number | null;
   created_at: string;
@@ -38,6 +39,7 @@ export type BlogPostInput = {
   language: 'en' | 'es';
   status: 'draft' | 'published';
   published_at?: string | null;
+  scheduled_publish_at?: string | null;
   read_time_minutes?: number | null;
 };
 

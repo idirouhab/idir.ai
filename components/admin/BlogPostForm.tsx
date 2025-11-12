@@ -50,6 +50,7 @@ export default function BlogPostForm({ post }: Props) {
     cover_image: '',
     category: 'insights' as BlogCategory,
     status: 'draft' as 'draft' | 'published',
+    scheduled_publish_at: '',
     title_es: '',
     excerpt_en: '',
     excerpt_es: '',
@@ -83,6 +84,11 @@ export default function BlogPostForm({ post }: Props) {
   useEffect(() => {
     if (post) {
       const isEnglish = post.language === 'en';
+      // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:mm)
+      const scheduledDate = post.scheduled_publish_at
+        ? new Date(post.scheduled_publish_at).toISOString().slice(0, 16)
+        : '';
+
       setFormData({
         title_en: isEnglish ? post.title : '',
         content_en: isEnglish ? post.content : '',
@@ -90,6 +96,7 @@ export default function BlogPostForm({ post }: Props) {
         cover_image: post.cover_image || '',
         category: post.category,
         status: post.status,
+        scheduled_publish_at: scheduledDate,
         title_es: !isEnglish ? post.title : '',
         excerpt_en: isEnglish ? post.excerpt : '',
         excerpt_es: !isEnglish ? post.excerpt : '',
@@ -139,6 +146,7 @@ export default function BlogPostForm({ post }: Props) {
           cover_image: formData.cover_image,
           category: formData.category,
           status: formData.status,
+          scheduled_publish_at: formData.scheduled_publish_at || null,
         };
 
         // Add tags if provided
@@ -195,6 +203,7 @@ export default function BlogPostForm({ post }: Props) {
         cover_image: formData.cover_image,
         category: formData.category,
         status: formData.status,
+        scheduled_publish_at: formData.scheduled_publish_at || null,
         en: {
           excerpt: formData.excerpt_en,
           tags: formData.tags_en,
@@ -674,6 +683,30 @@ Tu contenido va aquí...
           )}
         </div>
       </div>
+
+      {/* Scheduled Publish Date/Time */}
+      {formData.status === 'draft' && (
+        <div className="p-4 bg-[#00cfff10] border-2 border-[#00cfff]">
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            📅 Schedule Publication (Optional)
+          </label>
+          <input
+            type="datetime-local"
+            value={formData.scheduled_publish_at}
+            onChange={(e) => setFormData({ ...formData, scheduled_publish_at: e.target.value })}
+            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            min={new Date().toISOString().slice(0, 16)}
+          />
+          {formData.scheduled_publish_at && (
+            <p className="text-xs text-[#00ff88] mt-2 font-bold">
+              ✅ Will be published at: {new Date(formData.scheduled_publish_at).toLocaleString()}
+            </p>
+          )}
+          <p className="text-xs text-gray-300 mt-2">
+            Leave empty to keep as draft. Post will auto-publish at the scheduled time (via n8n cron).
+          </p>
+        </div>
+      )}
 
       {/* Cover Image */}
       <div>
