@@ -24,15 +24,37 @@ const nextConfig = {
     },
   },
 
-  // Image optimization
   images: {
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
+      // Supabase Storage (for blog post images)
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'cymypipxhlgjmrzonpdw.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      // PostImg (existing blog post images)
+      {
+        protocol: 'https',
+        hostname: 'i.postimg.cc',
+      },
+        {
+        protocol: 'https',
+        hostname: 'mpost.io',
+      },
+        {
+        protocol: 'https',
+        hostname: 'worth.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'miro.medium.com',
+      },
+      {
+            protocol: 'https',
+            hostname: 'scalevise.com',
       },
     ],
   },

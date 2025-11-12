@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPost, BlogCategory, generateSlug } from '@/lib/blog';
+import { uploadBlogImage, deleteBlogImage } from '@/lib/image-upload';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 // Lazy load MarkdownEditor
 const MarkdownEditor = dynamic(() => import('@/components/admin/MarkdownEditor'), {
@@ -57,6 +59,9 @@ export default function BlogPostForm({ post }: Props) {
   const [generatedData, setGeneratedData] = useState<BilingualData | null>(null);
   const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
   const [canUserPublish, setCanUserPublish] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   const [formData, setFormData] = useState({
     title_en: '',
@@ -352,6 +357,67 @@ export default function BlogPostForm({ post }: Props) {
         setError(err.message || 'Failed to generate metadata');
       }
       setGeneratingSEO(false);
+    }
+  };
+
+  // Handle image file upload
+  const handleImageUpload = async (file: File) => {
+    setUploadingImage(true);
+    setImageError('');
+
+    try {
+      const result = await uploadBlogImage(file);
+
+      if (!result.success) {
+        setImageError(result.error?.message || 'Failed to upload image');
+        return;
+      }
+
+      setFormData({ ...formData, cover_image: result.url || '' });
+    } catch (err: any) {
+      setImageError(err.message || 'An unexpected error occurred');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageUpload(file);
+    } else {
+      setImageError('Please drop an image file');
+    }
+  };
+
+  // Handle image removal
+  const handleRemoveImage = async () => {
+    if (formData.cover_image) {
+      // Optionally delete from storage
+      // await deleteBlogImage(formData.cover_image);
+      setFormData({ ...formData, cover_image: '' });
     }
   };
 
@@ -736,17 +802,116 @@ Tu contenido va aquí...
         </div>
       )}
 
-      {/* Cover Image */}
+      {/* Cover Image Upload */}
       <div>
-        <label className="block text-white font-bold mb-2 uppercase text-sm">Cover Image URL</label>
-        <input
-          type="url"
-          value={formData.cover_image}
-          onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
-          className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
-          placeholder="https://example.com/image.jpg"
-        />
-        <p className="text-xs text-gray-500 mt-1">Same cover image will be used for both language versions</p>
+        <label className="block text-white font-bold mb-2 uppercase text-sm">Cover Image</label>
+
+        {imageError && (
+          <div className="mb-3 p-3 bg-[#ff005520] border-2 border-[#ff0055] text-[#ff0055] text-sm">
+            {imageError}
+          </div>
+        )}
+
+        {!formData.cover_image ? (
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`relative border-2 border-dashed transition-colors ${
+              isDragging
+                ? 'border-[#00ff88] bg-[#00ff8820]'
+                : 'border-gray-700 hover:border-gray-500'
+            } ${uploadingImage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          >
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+              onChange={handleFileChange}
+              disabled={uploadingImage}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              id="cover-image-upload"
+            />
+            <label
+              htmlFor="cover-image-upload"
+              className="flex flex-col items-center justify-center p-8 cursor-pointer"
+            >
+              {uploadingImage ? (
+                <>
+                  <svg
+                    className="animate-spin h-10 w-10 text-[#00ff88] mb-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <p className="text-white font-bold">Uploading...</p>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="w-12 h-12 text-gray-500 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <p className="text-white font-bold mb-2">
+                    {isDragging ? 'Drop image here' : 'Click to upload or drag and drop'}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    JPEG, PNG, WebP, AVIF, or GIF (max 5MB)
+                  </p>
+                </>
+              )}
+            </label>
+          </div>
+        ) : (
+          <div className="relative border-2 border-[#00ff88]">
+            <div className="relative aspect-video w-full">
+              <Image
+                src={formData.cover_image}
+                alt="Cover preview"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveImage}
+              className="absolute top-3 right-3 bg-[#ff0055] text-white p-2 hover:bg-[#ff0077] transition-colors font-bold uppercase text-xs"
+              title="Remove image"
+            >
+              ✕ Remove
+            </button>
+            <div className="p-3 bg-black border-t-2 border-[#00ff88]">
+              <p className="text-xs text-gray-500 break-all">{formData.cover_image}</p>
+            </div>
+          </div>
+        )}
+
+        <p className="text-xs text-gray-500 mt-2">
+          Same cover image will be used for both language versions
+        </p>
       </div>
 
       {/* Actions */}
