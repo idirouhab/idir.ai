@@ -158,6 +158,38 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
               />
             </div>
           ),
+          table: ({ children }) => (
+            <div className="my-8 overflow-x-auto">
+              <table className="min-w-full border-2 border-gray-700">
+                {children}
+              </table>
+            </div>
+          ),
+          thead: ({ children }) => (
+            <thead className="bg-[#1a1a1a]">
+              {children}
+            </thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody className="bg-black">
+              {children}
+            </tbody>
+          ),
+          tr: ({ children }) => (
+            <tr className="border-b border-gray-700">
+              {children}
+            </tr>
+          ),
+          th: ({ children }) => (
+            <th className="px-6 py-3 text-left text-xs font-bold text-[#00ff88] uppercase tracking-wider border-r border-gray-700 last:border-r-0">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="px-6 py-4 text-sm text-gray-300 border-r border-gray-700 last:border-r-0">
+              {children}
+            </td>
+          ),
         }}
       >
         {content}

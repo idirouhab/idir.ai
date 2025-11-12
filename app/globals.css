@@ -225,3 +225,357 @@ a:not([class]):visited {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* Markdown Editor Customization */
+.markdown-editor-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  border: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-content {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-area {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-text {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar {
+  background-color: #1a1a1a !important;
+  border-bottom: 1px solid #333333 !important;
+  padding: 8px !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar button {
+  color: #9ca3af !important;
+  transition: all 0.2s ease;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar button:hover {
+  color: #00ff88 !important;
+  background-color: #1f1f1f !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar button.active {
+  color: #00ff88 !important;
+  background-color: #1f1f1f !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-toolbar li.active button {
+  color: #00ff88 !important;
+}
+
+/* Editor text area styling - IMPORTANT: Make text visible */
+.markdown-editor-wrapper .w-md-editor-text-pre,
+.markdown-editor-wrapper .w-md-editor-text-input,
+.markdown-editor-wrapper .w-md-editor-text,
+.markdown-editor-wrapper .w-md-editor-input {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Courier New', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Ensure textarea itself has white text - ULTRA SPECIFIC */
+.markdown-editor-wrapper textarea.w-md-editor-text-input,
+.markdown-editor-wrapper textarea,
+.markdown-editor-wrapper .w-md-editor-area textarea,
+.markdown-editor-wrapper .w-md-editor-area .w-md-editor-text-input {
+  color: #ffffff !important;
+  caret-color: #00ff88 !important;
+  background-color: #000000 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-text-pre > code,
+.markdown-editor-wrapper .w-md-editor-text-input {
+  color: #ffffff !important;
+}
+
+/* Additional specificity for text visibility */
+.markdown-editor-wrapper .w-md-editor-text-pre,
+.markdown-editor-wrapper .w-md-editor-text-pre *,
+.markdown-editor-wrapper .w-md-editor-text-pre > code > *,
+.markdown-editor-wrapper .w-md-editor-text-pre code {
+  color: #ffffff !important;
+}
+
+/* Override any inline styles or data-theme dark mode issues */
+[data-color-mode="dark"] .w-md-editor-text-pre,
+[data-color-mode="dark"] .w-md-editor-text-input,
+[data-color-mode="dark"] .w-md-editor-text-pre *,
+[data-color-mode="dark"] textarea {
+  color: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+/* Placeholder text */
+.markdown-editor-wrapper .w-md-editor-text-input::placeholder,
+.markdown-editor-wrapper textarea::placeholder {
+  color: #666666 !important;
+  opacity: 1 !important;
+}
+
+/* Nuclear option - target all text in editor area */
+.markdown-editor-wrapper .w-md-editor-area,
+.markdown-editor-wrapper .w-md-editor-content {
+  background-color: #000000 !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-area *,
+.markdown-editor-wrapper .w-md-editor-content * {
+  color: #ffffff !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview {
+  background-color: #0a0a0a !important;
+  color: #e5e5e5 !important;
+  padding: 16px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: auto !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview h1,
+.markdown-editor-wrapper .w-md-editor-preview h2,
+.markdown-editor-wrapper .w-md-editor-preview h3,
+.markdown-editor-wrapper .w-md-editor-preview h4 {
+  color: #ffffff !important;
+  border-bottom: 1px solid #333333;
+  padding-bottom: 8px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview a {
+  color: #00ff88 !important;
+  text-decoration: underline;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview code {
+  background-color: #1a1a1a !important;
+  color: #00ff88 !important;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview pre {
+  background-color: #1a1a1a !important;
+  border: 1px solid #333333 !important;
+  border-radius: 4px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview pre code {
+  background-color: transparent !important;
+  padding: 0;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview blockquote {
+  border-left: 4px solid #00ff88;
+  padding-left: 16px;
+  margin-left: 0;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview ul,
+.markdown-editor-wrapper .w-md-editor-preview ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.markdown-editor-wrapper .w-md-editor-preview li {
+  margin: 6px 0;
+  color: #e5e5e5;
+}
+
+/* Tab buttons styling */
+.markdown-editor-wrapper .w-md-editor-toolbar-child button {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+/* Active tab highlighting */
+.markdown-editor-wrapper .w-md-editor-toolbar-child button[data-name="preview"].active {
+  background-color: #00ff88 !important;
+  color: #000000 !important;
+}
+
+/* Scrollbar for editor */
+.markdown-editor-wrapper .w-md-editor-text,
+.markdown-editor-wrapper .w-md-editor-preview {
+  scrollbar-width: thin;
+  scrollbar-color: #00ff88 #1a1a1a;
+}
+
+.markdown-editor-wrapper .w-md-editor-text::-webkit-scrollbar,
+.markdown-editor-wrapper .w-md-editor-preview::-webkit-scrollbar {
+  width: 8px;
+}
+
+.markdown-editor-wrapper .w-md-editor-text::-webkit-scrollbar-track,
+.markdown-editor-wrapper .w-md-editor-preview::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.markdown-editor-wrapper .w-md-editor-text::-webkit-scrollbar-thumb,
+.markdown-editor-wrapper .w-md-editor-preview::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 4px;
+}
+
+.markdown-editor-wrapper .w-md-editor-text::-webkit-scrollbar-thumb:hover,
+.markdown-editor-wrapper .w-md-editor-preview::-webkit-scrollbar-thumb:hover {
+  background: #00cfff;
+}
+
+/* FINAL OVERRIDE - Ensure all text elements are white */
+.w-md-editor-text-pre,
+.w-md-editor-text-pre *,
+.w-md-editor-text-input,
+.w-md-editor-area textarea,
+.w-md-editor-content textarea,
+textarea.w-md-editor-text-input {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Override any color-mode dark theme from library */
+[data-color-mode="dark"] .w-md-editor,
+[data-color-mode="dark"] .w-md-editor-text,
+[data-color-mode="dark"] .w-md-editor-area {
+  background-color: #000000 !important;
+}
+
+[data-color-mode="dark"] .w-md-editor-text-pre,
+[data-color-mode="dark"] .w-md-editor-text-pre *,
+[data-color-mode="dark"] .w-md-editor-text-input,
+[data-color-mode="dark"] textarea {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* CRITICAL: Remove max-width constraints from all internal containers */
+.markdown-editor-wrapper .wmde-markdown,
+.markdown-editor-wrapper .wmde-markdown-var,
+.markdown-editor-wrapper .w-md-editor-show-edit,
+.markdown-editor-wrapper .w-md-editor-show-preview,
+.markdown-editor-wrapper .w-md-editor-show-live {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+}
+
+/* Force the input container to full width */
+.markdown-editor-wrapper .w-md-editor-input,
+.markdown-editor-wrapper .w-md-editor-text-pre,
+.markdown-editor-wrapper .w-md-editor-text-input {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+}
+
+/* Remove any internal padding/margin that creates the green line effect */
+.markdown-editor-wrapper .w-md-editor-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-area {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Specifically target the container that might have the green border - ONLY in edit mode */
+.markdown-editor-wrapper .w-md-editor-show-edit .w-md-editor-input,
+.markdown-editor-wrapper .w-md-editor-show-edit .w-md-editor-text,
+.markdown-editor-wrapper .w-md-editor-show-edit textarea,
+.markdown-editor-wrapper .w-md-editor-show-edit .w-md-editor-text-pre {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+}
+
+/* Live/Split mode specific styles - Allow 50/50 split */
+.markdown-editor-wrapper .w-md-editor-show-live {
+  display: flex !important;
+  width: 100% !important;
+  gap: 0 !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-show-live > .w-md-editor-input {
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: hidden !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-show-live > .w-md-editor-preview {
+  flex: 1 1 50% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: auto !important;
+}
+
+/* Textarea and pre inside live mode should respect their container */
+.markdown-editor-wrapper .w-md-editor-show-live textarea,
+.markdown-editor-wrapper .w-md-editor-show-live .w-md-editor-text-pre {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Preview only mode */
+.markdown-editor-wrapper .w-md-editor-show-preview {
+  width: 100% !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-show-preview .w-md-editor-preview {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Dragbar for resizing in live mode */
+.markdown-editor-wrapper .w-md-editor-bar {
+  background-color: #333333 !important;
+  width: 4px !important;
+  cursor: col-resize !important;
+  flex-shrink: 0 !important;
+}
+
+.markdown-editor-wrapper .w-md-editor-bar:hover {
+  background-color: #00ff88 !important;
+}

@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPost, BlogCategory, generateSlug } from '@/lib/blog';
 import dynamic from 'next/dynamic';
 
-// Lazy load MarkdownContent for preview
-const MarkdownContent = dynamic(() => import('@/components/MarkdownContent'), {
-  loading: () => <div className="p-4 text-gray-400">Loading preview...</div>,
+// Lazy load MarkdownEditor
+const MarkdownEditor = dynamic(() => import('@/components/admin/MarkdownEditor'), {
+  loading: () => <div className="p-4 text-gray-400">Loading editor...</div>,
   ssr: false,
 });
 
@@ -32,8 +32,6 @@ type BilingualData = {
   };
 };
 
-type PreviewTab = 'edit' | 'preview';
-
 export default function BlogPostForm({ post }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -44,8 +42,6 @@ export default function BlogPostForm({ post }: Props) {
   const [generatedData, setGeneratedData] = useState<BilingualData | null>(null);
   const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
   const [canUserPublish, setCanUserPublish] = useState(false);
-  const [previewTabEN, setPreviewTabEN] = useState<PreviewTab>('edit');
-  const [previewTabES, setPreviewTabES] = useState<PreviewTab>('edit');
 
   const [formData, setFormData] = useState({
     title_en: '',
@@ -413,47 +409,13 @@ export default function BlogPostForm({ post }: Props) {
       {/* Content - Show appropriate language based on mode */}
       {(!post || post.language === 'en') && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-white font-bold uppercase text-sm">
-              Content {post ? '' : '- English'} (Markdown) *
-            </label>
-
-            {/* Tab Switcher */}
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPreviewTabEN('edit')}
-                className={`px-4 py-2 text-xs font-bold uppercase transition-colors ${
-                  previewTabEN === 'edit'
-                    ? 'bg-[#00ff88] text-black'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                ✏️ Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewTabEN('preview')}
-                className={`px-4 py-2 text-xs font-bold uppercase transition-colors ${
-                  previewTabEN === 'preview'
-                    ? 'bg-[#00ff88] text-black'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                👁️ Preview
-              </button>
-            </div>
-          </div>
-
-          {previewTabEN === 'edit' ? (
-            <>
-              <textarea
-                required
-                value={formData.content_en}
-                onChange={(e) => setFormData({ ...formData, content_en: e.target.value })}
-                rows={15}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none font-mono text-sm resize-y"
-                placeholder="# Your heading
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            Content {post ? '' : '- English'} (Markdown) *
+          </label>
+          <MarkdownEditor
+            value={formData.content_en}
+            onChange={(value) => setFormData({ ...formData, content_en: value })}
+            placeholder="# Your heading
 
 Your content goes here...
 
@@ -461,68 +423,24 @@ Your content goes here...
 
 - List item 1
 - List item 2"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Supports Markdown: **bold**, *italic*, [links](url), lists, headings, etc.
-              </p>
-            </>
-          ) : (
-            <div className="min-h-[400px] max-h-[600px] overflow-y-auto px-4 py-3 bg-black border-2 border-[#00ff88]">
-              {formData.content_en ? (
-                <MarkdownContent content={formData.content_en} />
-              ) : (
-                <div className="text-gray-500 italic p-8 text-center">
-                  No content to preview yet. Start writing in the Edit tab!
-                </div>
-              )}
-            </div>
-          )}
+            borderColor="border-gray-700"
+            height={500}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Use the toolbar buttons or markdown syntax. Toggle preview with the tabs above.
+          </p>
         </div>
       )}
 
       {(!post || post.language === 'es') && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-white font-bold uppercase text-sm">
-              {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
-            </label>
-
-            {/* Tab Switcher */}
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPreviewTabES('edit')}
-                className={`px-4 py-2 text-xs font-bold uppercase transition-colors ${
-                  previewTabES === 'edit'
-                    ? 'bg-[#00cfff] text-black'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                ✏️ {post && post.language === 'es' ? 'Editar' : 'Edit'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewTabES('preview')}
-                className={`px-4 py-2 text-xs font-bold uppercase transition-colors ${
-                  previewTabES === 'preview'
-                    ? 'bg-[#00cfff] text-black'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                👁️ {post && post.language === 'es' ? 'Vista Previa' : 'Preview'}
-              </button>
-            </div>
-          </div>
-
-          {previewTabES === 'edit' ? (
-            <>
-              <textarea
-                required={!post || post.language === 'es'}
-                value={formData.content_es}
-                onChange={(e) => setFormData({ ...formData, content_es: e.target.value })}
-                rows={15}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none font-mono text-sm resize-y"
-                placeholder="# Tu encabezado
+          <label className="block text-white font-bold mb-2 uppercase text-sm">
+            {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
+          </label>
+          <MarkdownEditor
+            value={formData.content_es}
+            onChange={(value) => setFormData({ ...formData, content_es: value })}
+            placeholder="# Tu encabezado
 
 Tu contenido va aquí...
 
@@ -530,24 +448,14 @@ Tu contenido va aquí...
 
 - Elemento de lista 1
 - Elemento de lista 2"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Soporta Markdown: **negrita**, *cursiva*, [enlaces](url), listas, encabezados, etc.
-              </p>
-            </>
-          ) : (
-            <div className="min-h-[400px] max-h-[600px] overflow-y-auto px-4 py-3 bg-black border-2 border-[#00cfff]">
-              {formData.content_es ? (
-                <MarkdownContent content={formData.content_es} />
-              ) : (
-                <div className="text-gray-500 italic p-8 text-center">
-                  {post && post.language === 'es'
-                    ? 'No hay contenido para previsualizar aún. ¡Empieza a escribir en la pestaña Editar!'
-                    : 'No content to preview yet. Start writing in the Edit tab!'}
-                </div>
-              )}
-            </div>
-          )}
+            borderColor="border-[#00cfff]"
+            height={500}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {post && post.language === 'es'
+              ? 'Usa los botones de la barra de herramientas o la sintaxis de markdown.'
+              : 'Use the toolbar buttons or markdown syntax. Toggle preview with the tabs above.'}
+          </p>
         </div>
       )}
 
