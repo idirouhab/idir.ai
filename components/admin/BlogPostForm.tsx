@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BlogPost, BlogCategory, generateSlug } from '@/lib/blog';
-import { uploadBlogImage, deleteBlogImage } from '@/lib/image-upload';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
@@ -366,14 +365,24 @@ export default function BlogPostForm({ post }: Props) {
     setImageError('');
 
     try {
-      const result = await uploadBlogImage(file);
+      // Create FormData to send file to server
+      const formData = new FormData();
+      formData.append('file', file);
 
-      if (!result.success) {
-        setImageError(result.error?.message || 'Failed to upload image');
+      // Upload via API route (server-side)
+      const response = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setImageError(result.error || 'Failed to upload image');
         return;
       }
 
-      setFormData({ ...formData, cover_image: result.url || '' });
+      setFormData((prev) => ({ ...prev, cover_image: result.url }));
     } catch (err: any) {
       setImageError(err.message || 'An unexpected error occurred');
     } finally {

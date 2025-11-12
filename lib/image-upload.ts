@@ -5,7 +5,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
-const BUCKET_NAME = 'blog-images';
+const BUCKET_NAME = 'blog-image';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 10MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -123,9 +123,6 @@ export async function uploadBlogImage(
     const { data: urlData } = client.storage
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
-
-    console.log('Uploaded image path:', data.path);
-    console.log('Public URL:', urlData.publicUrl);
 
     return {
       success: true,
