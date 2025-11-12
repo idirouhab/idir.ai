@@ -698,12 +698,17 @@ Tu contenido va aquí...
             min={new Date().toISOString().slice(0, 16)}
           />
           {formData.scheduled_publish_at && (
-            <p className="text-xs text-[#00ff88] mt-2 font-bold">
-              ✅ Will be published at: {new Date(formData.scheduled_publish_at).toLocaleString()}
-            </p>
+            <div className="mt-2 p-2 bg-[#00ff8820] border border-[#00ff88]">
+              <p className="text-xs text-[#00ff88] font-bold">
+                ✅ Will be published at: {new Date(formData.scheduled_publish_at).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                🌍 Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone} (your local time)
+              </p>
+            </div>
           )}
           <p className="text-xs text-gray-300 mt-2">
-            Leave empty to keep as draft. Post will auto-publish at the scheduled time (via n8n cron).
+            Leave empty to keep as draft. Post will auto-publish at the scheduled time (via n8n cron every 10 minutes).
           </p>
         </div>
       )}
