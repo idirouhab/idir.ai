@@ -66,6 +66,9 @@ export async function POST(request: NextRequest) {
     // Set published_at if publishing (only for owners and admins)
     const published_at = finalStatus === 'published' ? new Date().toISOString() : null;
 
+    // Generate translation group ID to link both language versions
+    const translation_group_id = crypto.randomUUID();
+
     // Parse tags and keywords
     const tags_en = body.en.tags ? body.en.tags.split(',').map((t) => t.trim()) : [];
     const tags_es = body.es.tags ? body.es.tags.split(',').map((t) => t.trim()) : [];
@@ -87,6 +90,7 @@ export async function POST(request: NextRequest) {
       status: finalStatus,
       read_time_minutes: read_time_en,
       published_at,
+      translation_group_id,
       author_id: user.userId,
       author_name: user.email,
     };
@@ -106,6 +110,7 @@ export async function POST(request: NextRequest) {
       status: finalStatus,
       read_time_minutes: read_time_es,
       published_at,
+      translation_group_id,
       author_id: user.userId,
       author_name: user.email,
     };

@@ -18,6 +18,7 @@ export type BlogPost = {
   status: 'draft' | 'published';
   published_at: string | null;
   scheduled_publish_at: string | null;
+  translation_group_id: string | null;
   view_count: number;
   read_time_minutes: number | null;
   created_at: string;
