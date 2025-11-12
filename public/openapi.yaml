@@ -1,0 +1,665 @@
+openapi: 3.0.3
+info:
+  title: Idir.ai Blog API
+  description: |
+    RESTful API for managing bilingual blog posts (English/Spanish).
+
+    **Key Features:**
+    - Clean RESTful design
+    - Bilingual post support with translation groups
+    - Flexible filtering and grouping
+    - Media upload for cover images
+
+    **Authentication:**
+    Write operations require admin authentication via session cookie.
+  version: 2.0.0
+  contact:
+    name: Idir Ouhab Meskine
+    url: https://idir.ai
+
+servers:
+  - url: https://idir.ai/api
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Local development server
+
+tags:
+  - name: Posts
+    description: Blog post operations
+  - name: Media
+    description: Media upload and management
+
+paths:
+  /posts:
+    get:
+      tags:
+        - Posts
+      summary: List and filter posts
+      description: |
+        Flexible endpoint for listing posts with various filters.
+        Supports both standard list view and grouped view for newsletters.
+
+        **Standard View:** Returns array of posts
+        **Grouped View:** (grouped=true) Returns posts organized by translation_group_id
+      operationId: listPosts
+      parameters:
+        - name: grouped
+          in: query
+          description: Return posts grouped by translation for newsletter use
+          schema:
+            type: boolean
+            default: false
+          example: true
+        - name: date
+          in: query
+          description: Filter by published date (YYYY-MM-DD)
+          schema:
+            type: string
+            format: date
+          example: "2025-01-12"
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+            enum: [insights, learnings, opinion]
+        - name: language
+          in: query
+          description: Filter by language
+          schema:
+            type: string
+            enum: [en, es]
+        - name: status
+          in: query
+          description: Filter by status (requires authentication for 'draft')
+          schema:
+            type: string
+            enum: [draft, published]
+            default: published
+        - name: limit
+          in: query
+          description: Maximum number of results
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+      responses:
+        '200':
+          description: Posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/PostListResponse'
+                  - $ref: '#/components/schemas/GroupedPostsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Posts
+      summary: Create post(s)
+      description: |
+        Create one or more blog posts.
+
+        **Single Mode:** Create one post (default)
+        **Bilingual Mode:** Create EN + ES versions simultaneously (set bilingual=true or provide content_en + content_es)
+
+        **Permissions:**
+        - Bloggers: Can create drafts only
+        - Admins/Owners: Can publish directly
+      operationId: createPost
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/SinglePostInput'
+                - $ref: '#/components/schemas/BilingualPostInput'
+      responses:
+        '201':
+          description: Post(s) created successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/BlogPost'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BlogPost'
+                      meta:
+                        type: object
+                        properties:
+                          bilingual:
+                            type: boolean
+                          translation_group_id:
+                            type: string
+                            format: uuid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /posts/{id}:
+    get:
+      tags:
+        - Posts
+      summary: Get a single post
+      description: Get a blog post by ID
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: draft
+          in: query
+          description: Include drafts (requires authentication)
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Post retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BlogPost'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Posts
+      summary: Update a post
+      description: |
+        Update a blog post.
+
+        **Permissions:**
+        - Authors can update their own posts
+        - Owners can update any post
+        - Only Admins/Owners can change status to published
+      operationId: updatePost
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdate'
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BlogPost'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Posts
+      summary: Delete a post
+      description: Delete a blog post (owner only)
+      operationId: deletePost
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      deleted:
+                        type: boolean
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /media:
+    post:
+      tags:
+        - Media
+      summary: Upload media file
+      description: |
+        Upload an image for use as blog post cover image.
+
+        **Restrictions:**
+        - Max file size: 5MB
+        - Allowed formats: JPEG, PNG, WebP, AVIF, GIF
+        - Requires admin authentication
+      operationId: uploadMedia
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '200':
+          description: Media uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  url:
+                    type: string
+                    format: uri
+                    description: Public URL of uploaded media
+                  path:
+                    type: string
+                    description: Storage path
+        '400':
+          description: Invalid file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  schemas:
+    PostListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlogPost'
+        meta:
+          type: object
+          properties:
+            count:
+              type: integer
+            filters:
+              type: object
+
+    GroupedPostsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranslationGroup'
+        meta:
+          type: object
+          properties:
+            total_groups:
+              type: integer
+            with_both_languages:
+              type: integer
+            only_english:
+              type: integer
+            only_spanish:
+              type: integer
+            filters:
+              type: object
+
+    TranslationGroup:
+      type: object
+      properties:
+        translation_group_id:
+          type: string
+          format: uuid
+        published_at:
+          type: string
+          format: date-time
+        en:
+          $ref: '#/components/schemas/PostVersion'
+          nullable: true
+        es:
+          $ref: '#/components/schemas/PostVersion'
+          nullable: true
+
+    PostVersion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        excerpt:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        url:
+          type: string
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+          enum: [insights, learnings, opinion]
+        read_time_minutes:
+          type: integer
+          nullable: true
+        view_count:
+          type: integer
+
+    BlogPost:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        title:
+          type: string
+        excerpt:
+          type: string
+        content:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: array
+          items:
+            type: string
+          nullable: true
+        category:
+          type: string
+          enum: [insights, learnings, opinion]
+        tags:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
+          enum: [en, es]
+        status:
+          type: string
+          enum: [draft, published]
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        translation_group_id:
+          type: string
+          format: uuid
+          nullable: true
+        view_count:
+          type: integer
+        read_time_minutes:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        author_id:
+          type: string
+          format: uuid
+        author_name:
+          type: string
+          nullable: true
+
+    SinglePostInput:
+      type: object
+      required:
+        - title
+        - content
+        - language
+        - category
+      properties:
+        title:
+          type: string
+        slug:
+          type: string
+        content:
+          type: string
+        excerpt:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+        category:
+          type: string
+          enum: [insights, learnings, opinion]
+        tags:
+          type: array
+          items:
+            type: string
+        language:
+          type: string
+          enum: [en, es]
+        status:
+          type: string
+          enum: [draft, published]
+          default: draft
+        meta_description:
+          type: string
+        meta_keywords:
+          type: array
+          items:
+            type: string
+
+    BilingualPostInput:
+      type: object
+      required:
+        - bilingual
+        - title_en
+        - content_en
+        - content_es
+        - category
+        - en
+        - es
+      properties:
+        bilingual:
+          type: boolean
+          const: true
+        title_en:
+          type: string
+        content_en:
+          type: string
+        content_es:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+        category:
+          type: string
+          enum: [insights, learnings, opinion]
+        status:
+          type: string
+          enum: [draft, published]
+          default: draft
+        en:
+          type: object
+          required:
+            - excerpt
+            - tags
+            - meta_description
+            - meta_keywords
+          properties:
+            excerpt:
+              type: string
+            tags:
+              type: string
+              description: Comma-separated
+            meta_description:
+              type: string
+            meta_keywords:
+              type: string
+              description: Comma-separated
+        es:
+          type: object
+          required:
+            - title
+            - excerpt
+            - tags
+            - meta_description
+            - meta_keywords
+          properties:
+            title:
+              type: string
+            excerpt:
+              type: string
+            tags:
+              type: string
+              description: Comma-separated
+            meta_description:
+              type: string
+            meta_keywords:
+              type: string
+              description: Comma-separated
+
+    PostUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        excerpt:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+        category:
+          type: string
+          enum: [insights, learnings, opinion]
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [draft, published]
+        meta_description:
+          type: string
+        meta_keywords:
+          type: array
+          items:
+            type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized"
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Post not found"
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session

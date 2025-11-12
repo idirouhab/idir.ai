@@ -197,7 +197,7 @@ export default function BlogPostForm({ post }: Props) {
           }
         }
 
-        const response = await fetch(`/api/blog/${post.id}`, {
+        const response = await fetch(`/api/posts/${post.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatePayload),
@@ -221,6 +221,7 @@ export default function BlogPostForm({ post }: Props) {
       }
 
       const payload = {
+        bilingual: true, // Enable bilingual mode
         title_en: formData.title_en,
         content_en: formData.content_en,
         content_es: formData.content_es,
@@ -243,7 +244,7 @@ export default function BlogPostForm({ post }: Props) {
         },
       };
 
-      const response = await fetch('/api/blog/bilingual', {
+      const response = await fetch('/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -370,7 +371,7 @@ export default function BlogPostForm({ post }: Props) {
       formData.append('file', file);
 
       // Upload via API route (server-side)
-      const response = await fetch('/api/upload/image', {
+      const response = await fetch('/api/media', {
         method: 'POST',
         body: formData,
       });

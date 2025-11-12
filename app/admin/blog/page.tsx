@@ -18,7 +18,7 @@ export default function AdminBlogPage() {
   useEffect(() => {
     const checkAuthAndFetch = async () => {
       try {
-        // Check auth by trying to fetch posts
+        // Fetch all posts (including drafts) - requires auth
         const response = await fetch('/api/blog-admin');
         if (!response.ok) {
           router.push('/admin/login');
@@ -45,7 +45,7 @@ export default function AdminBlogPage() {
     setDeletingId(postId);
 
     try {
-      const response = await fetch(`/api/blog/${postId}`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: 'DELETE',
       });
 

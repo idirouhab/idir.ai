@@ -14,23 +14,21 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   useEffect(() => {
     const checkAuthAndFetch = async () => {
       try {
-        // Check auth
-        const authResponse = await fetch('/api/blog-admin');
-        if (!authResponse.ok) {
+        // Fetch specific post (including drafts with auth)
+        const response = await fetch(`/api/posts/${params.id}?draft=true`);
+
+        if (response.status === 401) {
           router.push('/admin/login');
           return;
         }
 
-        // Fetch post
-        const posts: BlogPost[] = await authResponse.json();
-        const foundPost = posts.find((p) => p.id === params.id);
-
-        if (!foundPost) {
+        if (!response.ok) {
           router.push('/admin/blog');
           return;
         }
 
-        setPost(foundPost);
+        const { data } = await response.json();
+        setPost(data);
         setLoading(false);
       } catch (error) {
         console.error('Error:', error);
