@@ -32,6 +32,21 @@ type BilingualData = {
   };
 };
 
+// Helper: Convert datetime-local string to UTC assuming Berlin timezone
+function convertBerlinToUTC(datetimeLocal: string): string {
+  // Berlin is CET (UTC+1) or CEST (UTC+2) depending on DST
+  // DST typically: last Sunday of March to last Sunday of October
+  const [dateStr] = datetimeLocal.split('T');
+  const year = parseInt(dateStr.split('-')[0]);
+  const month = parseInt(dateStr.split('-')[1]);
+
+  // Simplified DST check (Europe typically observes DST from late March to late October)
+  const isDST = month >= 3 && month <= 10;
+  const offset = isDST ? '+02:00' : '+01:00';
+
+  return new Date(datetimeLocal + ':00' + offset).toISOString();
+}
+
 export default function BlogPostForm({ post }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -134,6 +149,11 @@ export default function BlogPostForm({ post }: Props) {
     setError('');
 
     try {
+      // Convert datetime-local to ISO string assuming Berlin timezone
+      const scheduledPublishAt = formData.scheduled_publish_at
+        ? convertBerlinToUTC(formData.scheduled_publish_at)
+        : null;
+
       // EDIT MODE: Update existing post
       if (post) {
         const isEnglish = post.language === 'en';
@@ -146,7 +166,7 @@ export default function BlogPostForm({ post }: Props) {
           cover_image: formData.cover_image,
           category: formData.category,
           status: formData.status,
-          scheduled_publish_at: formData.scheduled_publish_at || null,
+          scheduled_publish_at: scheduledPublishAt,
         };
 
         // Add tags if provided
@@ -203,7 +223,7 @@ export default function BlogPostForm({ post }: Props) {
         cover_image: formData.cover_image,
         category: formData.category,
         status: formData.status,
-        scheduled_publish_at: formData.scheduled_publish_at || null,
+        scheduled_publish_at: scheduledPublishAt,
         en: {
           excerpt: formData.excerpt_en,
           tags: formData.tags_en,
@@ -688,8 +708,11 @@ Tu contenido va aquí...
       {formData.status === 'draft' && (
         <div className="p-4 bg-[#00cfff10] border-2 border-[#00cfff]">
           <label className="block text-white font-bold mb-2 uppercase text-sm">
-            📅 Schedule Publication (Optional)
+            📅 Schedule Publication - Berlin Time (CET/CEST)
           </label>
+          <p className="text-xs text-[#00cfff] mb-2 font-bold">
+            ⚠️ Enter time in Berlin timezone (Europe/Berlin)
+          </p>
           <input
             type="datetime-local"
             value={formData.scheduled_publish_at}
@@ -700,10 +723,10 @@ Tu contenido va aquí...
           {formData.scheduled_publish_at && (
             <div className="mt-2 p-2 bg-[#00ff8820] border border-[#00ff88]">
               <p className="text-xs text-[#00ff88] font-bold">
-                ✅ Will be published at: {new Date(formData.scheduled_publish_at).toLocaleString()}
+                ✅ Scheduled for: {formData.scheduled_publish_at.replace('T', ' at ')}
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                🌍 Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone} (your local time)
+                🇩🇪 Berlin Time (Europe/Berlin - CET/CEST)
               </p>
             </div>
           )}
