@@ -148,7 +148,7 @@ async function getGroupedPosts(
   // Group by translation_group_id
   const groupedMap = new Map<string, { en?: any; es?: any; published_at: string; translation_group_id: string }>();
 
-  posts?.forEach((post) => {
+  posts?.forEach((post: any) => {
     const groupId = post.translation_group_id!;
 
     if (!groupedMap.has(groupId)) {
