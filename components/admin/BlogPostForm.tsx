@@ -33,19 +33,99 @@ type BilingualData = {
   };
 };
 
+// Helper: Get last Sunday of a given month and year
+function getLastSunday(year: number, month: number): number {
+  const lastDay = new Date(Date.UTC(year, month + 1, 0)); // Last day of month
+  const lastSunday = lastDay.getUTCDate() - lastDay.getUTCDay(); // Subtract days to get to Sunday
+  return lastSunday;
+}
+
+// Helper: Check if a date is in DST (CEST) for Europe/Berlin timezone
+// DST starts: Last Sunday of March at 2:00 AM CET (becomes 3:00 AM CEST)
+// DST ends: Last Sunday of October at 3:00 AM CEST (becomes 2:00 AM CET)
+function isBerlinDST(date: Date): boolean {
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0-indexed
+  const day = date.getDate();
+  const hours = date.getHours();
+
+  // DST is from last Sunday of March to last Sunday of October
+  const marchLastSunday = getLastSunday(year, 2); // March is month 2 (0-indexed)
+  const octoberLastSunday = getLastSunday(year, 9); // October is month 9 (0-indexed)
+
+  // Before March or after October - definitely not DST
+  if (month < 2 || month > 9) return false;
+
+  // After March and before October - definitely DST
+  if (month > 2 && month < 9) return true;
+
+  // In March - check if after last Sunday at 2:00 AM
+  if (month === 2) {
+    if (day < marchLastSunday) return false;
+    if (day > marchLastSunday) return true;
+    // On the transition day, DST starts at 2:00 AM
+    return hours >= 2;
+  }
+
+  // In October - check if before last Sunday at 3:00 AM
+  if (month === 9) {
+    if (day < octoberLastSunday) return true;
+    if (day > octoberLastSunday) return false;
+    // On the transition day, DST ends at 3:00 AM
+    return hours < 3;
+  }
+
+  return false;
+}
+
 // Helper: Convert datetime-local string to UTC assuming Berlin timezone
 function convertBerlinToUTC(datetimeLocal: string): string {
-  // Berlin is CET (UTC+1) or CEST (UTC+2) depending on DST
-  // DST typically: last Sunday of March to last Sunday of October
-  const [dateStr] = datetimeLocal.split('T');
-  const year = parseInt(dateStr.split('-')[0]);
-  const month = parseInt(dateStr.split('-')[1]);
+  // Parse the datetime-local string as if it's in Berlin time
+  const [datePart, timePart] = datetimeLocal.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hours, minutes] = timePart.split(':').map(Number);
 
-  // Simplified DST check (Europe typically observes DST from late March to late October)
-  const isDST = month >= 3 && month <= 10;
+  // Create a date object representing this time in Berlin
+  const berlinDate = new Date(year, month - 1, day, hours, minutes);
+
+  // Determine if this date is in DST
+  const isDST = isBerlinDST(berlinDate);
   const offset = isDST ? '+02:00' : '+01:00';
 
+  // Convert to UTC by parsing with the timezone offset
   return new Date(datetimeLocal + ':00' + offset).toISOString();
+}
+
+// Helper: Convert UTC ISO string to Berlin datetime-local format
+function convertUTCToBerlin(utcString: string): string {
+  const utcDate = new Date(utcString);
+
+  // Get UTC time components
+  const year = utcDate.getUTCFullYear();
+  const month = utcDate.getUTCMonth();
+  const day = utcDate.getUTCDate();
+  const hours = utcDate.getUTCHours();
+  const minutes = utcDate.getUTCMinutes();
+
+  // Create a date in UTC
+  const tempDate = new Date(Date.UTC(year, month, day, hours, minutes));
+
+  // Determine offset (CET = UTC+1, CEST = UTC+2)
+  // We need to check what the Berlin time would be to determine DST
+  const isDST = isBerlinDST(new Date(year, month, day, hours + 2, minutes)); // Approximate check
+  const offsetHours = isDST ? 2 : 1;
+
+  // Add the offset to get Berlin time
+  const berlinDate = new Date(tempDate.getTime() + offsetHours * 60 * 60 * 1000);
+
+  // Format as datetime-local string (YYYY-MM-DDTHH:mm)
+  const berlinYear = berlinDate.getUTCFullYear();
+  const berlinMonth = String(berlinDate.getUTCMonth() + 1).padStart(2, '0');
+  const berlinDay = String(berlinDate.getUTCDate()).padStart(2, '0');
+  const berlinHours = String(berlinDate.getUTCHours()).padStart(2, '0');
+  const berlinMinutes = String(berlinDate.getUTCMinutes()).padStart(2, '0');
+
+  return `${berlinYear}-${berlinMonth}-${berlinDay}T${berlinHours}:${berlinMinutes}`;
 }
 
 export default function BlogPostForm({ post }: Props) {
@@ -103,9 +183,9 @@ export default function BlogPostForm({ post }: Props) {
   useEffect(() => {
     if (post) {
       const isEnglish = post.language === 'en';
-      // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:mm)
+      // Convert UTC ISO string to Berlin datetime-local format
       const scheduledDate = post.scheduled_publish_at
-        ? new Date(post.scheduled_publish_at).toISOString().slice(0, 16)
+        ? convertUTCToBerlin(post.scheduled_publish_at)
         : '';
 
       setFormData({
