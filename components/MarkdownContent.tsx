@@ -4,7 +4,8 @@ import { memo } from 'react';
 import dynamic from 'next/dynamic';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import rehypeSanitize from 'rehype-sanitize';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import Image from 'next/image';
 
 // Dynamic import for syntax highlighter to reduce bundle size (~100KB savings)
@@ -22,12 +23,55 @@ type Props = {
   content: string;
 };
 
+// Custom sanitization schema that allows HTML while keeping security
+const customSchema = {
+  ...defaultSchema,
+  attributes: {
+    ...defaultSchema.attributes,
+    '*': [
+      ...(defaultSchema.attributes?.['*'] || []),
+      'className',
+      'style',
+      'id',
+      'width',
+      'height',
+      'align',
+      'target',
+      'rel',
+    ],
+    div: ['className', 'style', 'id', 'dataType'],
+    span: ['className', 'style', 'id'],
+    iframe: ['src', 'width', 'height', 'frameBorder', 'allow', 'allowFullScreen', 'title', 'className', 'style'],
+    video: ['src', 'controls', 'width', 'height', 'autoPlay', 'loop', 'muted', 'poster', 'className'],
+    audio: ['src', 'controls', 'autoPlay', 'loop', 'muted', 'className'],
+    source: ['src', 'type'],
+  },
+  tagNames: [
+    ...(defaultSchema.tagNames || []),
+    'div',
+    'span',
+    'iframe',
+    'video',
+    'audio',
+    'source',
+    'details',
+    'summary',
+    'figure',
+    'figcaption',
+    'mark',
+    'abbr',
+    'time',
+    'sub',
+    'sup',
+  ],
+};
+
 const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
   return (
     <div className="markdown-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSanitize]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, customSchema]]}
         components={{
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
