@@ -157,6 +157,34 @@ export const getPublishedPostBySlug = cache(async (
   } as BlogPost;
 });
 
+// Get translated post slug for language switching
+export const getTranslatedPostSlug = cache(async (
+  translationGroupId: string | null,
+  currentLanguage: 'en' | 'es'
+): Promise<{ slug: string; language: 'en' | 'es' } | null> => {
+  // If no translation group, return null
+  if (!translationGroupId) {
+    return null;
+  }
+
+  const supabase = getBlogClient();
+  const targetLanguage = currentLanguage === 'en' ? 'es' : 'en';
+
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('slug, language')
+    .eq('translation_group_id', translationGroupId)
+    .eq('language', targetLanguage)
+    .eq('status', 'published')
+    .single();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as { slug: string; language: 'en' | 'es' };
+});
+
 // Increment view count
 export async function incrementViewCount(postId: string) {
   const supabase = getBlogClient();

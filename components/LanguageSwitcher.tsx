@@ -2,21 +2,28 @@
 
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
+import { useBlogTranslation } from './BlogTranslationContext';
 
 export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const translatedSlug = useBlogTranslation();
 
   const handleLanguageChange = (newLocale: string) => {
     // Remove the current locale from the pathname
     const pathWithoutLocale = pathname.replace(`/${locale}`, '');
 
-    // SPECIAL HANDLING: If on a blog post page (/blog/[slug]), redirect to blog list
-    // Blog posts are language-specific and may not exist in the other language
+    // SPECIAL HANDLING: If on a blog post page (/blog/[slug])
     if (pathWithoutLocale.match(/^\/blog\/[^/]+$/)) {
-      // On a blog post page, redirect to the blog list page instead
-      router.push(`/${newLocale}/blog`);
+      // Check if this post has a translation
+      if (translatedSlug) {
+        // Redirect to the translated post
+        router.push(`/${translatedSlug.language}/blog/${translatedSlug.slug}`);
+      } else {
+        // Single-language post: redirect to blog list
+        router.push(`/${newLocale}/blog`);
+      }
       return;
     }
 

@@ -17,10 +17,12 @@ import {
   getPublishedPostBySlug,
   getRelatedPosts,
   getAdjacentPosts,
+  getTranslatedPostSlug,
   formatDate,
   categoryColors,
   categoryNames,
 } from '@/lib/blog';
+import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
 
 type Props = {
   params: { locale: string; slug: string };
@@ -87,6 +89,13 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
   }
 
   const t = await getTranslations({ locale, namespace: 'blog' });
+
+  // Fetch translated post slug for language switching
+  const translatedSlug = await getTranslatedPostSlug(
+    post.translation_group_id,
+    locale as 'en' | 'es'
+  );
+
   const relatedPosts = await getRelatedPosts(
     post.id,
     post.category,
@@ -116,7 +125,7 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
   ];
 
   return (
-    <>
+    <BlogTranslationProvider translatedSlug={translatedSlug}>
       <ViewTracker postId={post.id} />
       <Navigation />
       <main className="min-h-screen pt-28 pb-20" style={{ background: '#0a0a0a' }}>
@@ -282,6 +291,6 @@ export default async function BlogPostPage({ params: { locale, slug } }: Props) 
       />
 
       <Footer />
-    </>
+    </BlogTranslationProvider>
   );
 }
