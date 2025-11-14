@@ -33,99 +33,102 @@ type BilingualData = {
   };
 };
 
-// Helper: Get last Sunday of a given month and year
-function getLastSunday(year: number, month: number): number {
-  const lastDay = new Date(Date.UTC(year, month + 1, 0)); // Last day of month
-  const lastSunday = lastDay.getUTCDate() - lastDay.getUTCDay(); // Subtract days to get to Sunday
-  return lastSunday;
-}
+// Common timezones with their IANA identifiers
+const TIMEZONES = [
+  { value: 'America/New_York', label: 'New York (EST/EDT)', offset: 'UTC-5/-4' },
+  { value: 'America/Chicago', label: 'Chicago (CST/CDT)', offset: 'UTC-6/-5' },
+  { value: 'America/Denver', label: 'Denver (MST/MDT)', offset: 'UTC-7/-6' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (PST/PDT)', offset: 'UTC-8/-7' },
+  { value: 'Europe/London', label: 'London (GMT/BST)', offset: 'UTC+0/+1' },
+  { value: 'Europe/Paris', label: 'Paris (CET/CEST)', offset: 'UTC+1/+2' },
+  { value: 'Europe/Berlin', label: 'Berlin (CET/CEST)', offset: 'UTC+1/+2' },
+  { value: 'Europe/Madrid', label: 'Madrid (CET/CEST)', offset: 'UTC+1/+2' },
+  { value: 'Asia/Dubai', label: 'Dubai (GST)', offset: 'UTC+4' },
+  { value: 'Asia/Kolkata', label: 'Mumbai (IST)', offset: 'UTC+5:30' },
+  { value: 'Asia/Singapore', label: 'Singapore (SGT)', offset: 'UTC+8' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (JST)', offset: 'UTC+9' },
+  { value: 'Australia/Sydney', label: 'Sydney (AEDT/AEST)', offset: 'UTC+10/+11' },
+  { value: 'Pacific/Auckland', label: 'Auckland (NZDT/NZST)', offset: 'UTC+12/+13' },
+  { value: 'UTC', label: 'UTC', offset: 'UTC+0' },
+];
 
-// Helper: Check if a date is in DST (CEST) for Europe/Berlin timezone
-// DST starts: Last Sunday of March at 2:00 AM CET (becomes 3:00 AM CEST)
-// DST ends: Last Sunday of October at 3:00 AM CEST (becomes 2:00 AM CET)
-function isBerlinDST(date: Date): boolean {
-  const year = date.getFullYear();
-  const month = date.getMonth(); // 0-indexed
-  const day = date.getDate();
-  const hours = date.getHours();
+// Helper: Convert datetime-local string to UTC using specified timezone
+function convertToUTC(datetimeLocal: string, timezone: string): string {
+  if (!datetimeLocal) return '';
 
-  // DST is from last Sunday of March to last Sunday of October
-  const marchLastSunday = getLastSunday(year, 2); // March is month 2 (0-indexed)
-  const octoberLastSunday = getLastSunday(year, 9); // October is month 9 (0-indexed)
-
-  // Before March or after October - definitely not DST
-  if (month < 2 || month > 9) return false;
-
-  // After March and before October - definitely DST
-  if (month > 2 && month < 9) return true;
-
-  // In March - check if after last Sunday at 2:00 AM
-  if (month === 2) {
-    if (day < marchLastSunday) return false;
-    if (day > marchLastSunday) return true;
-    // On the transition day, DST starts at 2:00 AM
-    return hours >= 2;
-  }
-
-  // In October - check if before last Sunday at 3:00 AM
-  if (month === 9) {
-    if (day < octoberLastSunday) return true;
-    if (day > octoberLastSunday) return false;
-    // On the transition day, DST ends at 3:00 AM
-    return hours < 3;
-  }
-
-  return false;
-}
-
-// Helper: Convert datetime-local string to UTC assuming Berlin timezone
-function convertBerlinToUTC(datetimeLocal: string): string {
-  // Parse the datetime-local string as if it's in Berlin time
+  // Parse the datetime-local string
   const [datePart, timePart] = datetimeLocal.split('T');
   const [year, month, day] = datePart.split('-').map(Number);
   const [hours, minutes] = timePart.split(':').map(Number);
 
-  // Create a date object representing this time in Berlin
-  const berlinDate = new Date(year, month - 1, day, hours, minutes);
+  // Create formatter for the target timezone
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
 
-  // Determine if this date is in DST
-  const isDST = isBerlinDST(berlinDate);
-  const offset = isDST ? '+02:00' : '+01:00';
+  // Strategy: Find what UTC time produces our desired local time in the target timezone
+  // Start with an initial guess (interpret input as UTC)
+  let utcGuess = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0));
 
-  // Convert to UTC by parsing with the timezone offset
-  return new Date(datetimeLocal + ':00' + offset).toISOString();
+  // See what this UTC time shows as in the target timezone
+  const parts = formatter.formatToParts(utcGuess);
+  const tzObj: any = {};
+  parts.forEach(part => {
+    if (part.type !== 'literal') tzObj[part.type] = part.value;
+  });
+
+  // Parse what the timezone shows
+  const tzYear = parseInt(tzObj.year);
+  const tzMonth = parseInt(tzObj.month);
+  const tzDay = parseInt(tzObj.day);
+  const tzHours = parseInt(tzObj.hour);
+  const tzMinutes = parseInt(tzObj.minute);
+
+  // Calculate the difference between what we want and what we got
+  const wantedMs = Date.UTC(year, month - 1, day, hours, minutes, 0);
+  const gotMs = Date.UTC(tzYear, tzMonth - 1, tzDay, tzHours, tzMinutes, 0);
+  const offsetMs = gotMs - wantedMs;
+
+  // Adjust our guess by the offset
+  const correctUTC = utcGuess.getTime() - offsetMs;
+
+  return new Date(correctUTC).toISOString();
 }
 
-// Helper: Convert UTC ISO string to Berlin datetime-local format
-function convertUTCToBerlin(utcString: string): string {
+// Helper: Convert UTC ISO string to datetime-local format in specified timezone
+function convertFromUTC(utcString: string, timezone: string): string {
+  if (!utcString) return '';
+
   const utcDate = new Date(utcString);
 
-  // Get UTC time components
-  const year = utcDate.getUTCFullYear();
-  const month = utcDate.getUTCMonth();
-  const day = utcDate.getUTCDate();
-  const hours = utcDate.getUTCHours();
-  const minutes = utcDate.getUTCMinutes();
+  // Use Intl API to format in the target timezone
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
 
-  // Create a date in UTC
-  const tempDate = new Date(Date.UTC(year, month, day, hours, minutes));
-
-  // Determine offset (CET = UTC+1, CEST = UTC+2)
-  // We need to check what the Berlin time would be to determine DST
-  const isDST = isBerlinDST(new Date(year, month, day, hours + 2, minutes)); // Approximate check
-  const offsetHours = isDST ? 2 : 1;
-
-  // Add the offset to get Berlin time
-  const berlinDate = new Date(tempDate.getTime() + offsetHours * 60 * 60 * 1000);
+  const parts = formatter.formatToParts(utcDate);
+  const dateObj: any = {};
+  parts.forEach(part => {
+    if (part.type !== 'literal') {
+      dateObj[part.type] = part.value;
+    }
+  });
 
   // Format as datetime-local string (YYYY-MM-DDTHH:mm)
-  const berlinYear = berlinDate.getUTCFullYear();
-  const berlinMonth = String(berlinDate.getUTCMonth() + 1).padStart(2, '0');
-  const berlinDay = String(berlinDate.getUTCDate()).padStart(2, '0');
-  const berlinHours = String(berlinDate.getUTCHours()).padStart(2, '0');
-  const berlinMinutes = String(berlinDate.getUTCMinutes()).padStart(2, '0');
-
-  return `${berlinYear}-${berlinMonth}-${berlinDay}T${berlinHours}:${berlinMinutes}`;
+  return `${dateObj.year}-${dateObj.month}-${dateObj.day}T${dateObj.hour}:${dateObj.minute}`;
 }
 
 export default function BlogPostForm({ post }: Props) {
@@ -150,6 +153,7 @@ export default function BlogPostForm({ post }: Props) {
     category: 'insights' as BlogCategory,
     status: 'draft' as 'draft' | 'published',
     scheduled_publish_at: '',
+    scheduled_timezone: 'Europe/Berlin', // Default timezone
     title_es: '',
     excerpt_en: '',
     excerpt_es: '',
@@ -183,9 +187,11 @@ export default function BlogPostForm({ post }: Props) {
   useEffect(() => {
     if (post) {
       const isEnglish = post.language === 'en';
-      // Convert UTC ISO string to Berlin datetime-local format
+      // Use stored timezone if available, otherwise default to Berlin
+      const storedTimezone = (post as any).scheduled_timezone || 'Europe/Berlin';
+      // Convert UTC ISO string to datetime-local format in the stored timezone
       const scheduledDate = post.scheduled_publish_at
-        ? convertUTCToBerlin(post.scheduled_publish_at)
+        ? convertFromUTC(post.scheduled_publish_at, storedTimezone)
         : '';
 
       setFormData({
@@ -196,6 +202,7 @@ export default function BlogPostForm({ post }: Props) {
         category: post.category,
         status: post.status,
         scheduled_publish_at: scheduledDate,
+        scheduled_timezone: storedTimezone,
         title_es: !isEnglish ? post.title : '',
         excerpt_en: isEnglish ? post.excerpt : '',
         excerpt_es: !isEnglish ? post.excerpt : '',
@@ -233,9 +240,9 @@ export default function BlogPostForm({ post }: Props) {
     setError('');
 
     try {
-      // Convert datetime-local to ISO string assuming Berlin timezone
+      // Convert datetime-local to UTC ISO string using selected timezone
       const scheduledPublishAt = formData.scheduled_publish_at
-        ? convertBerlinToUTC(formData.scheduled_publish_at)
+        ? convertToUTC(formData.scheduled_publish_at, formData.scheduled_timezone)
         : null;
 
       // EDIT MODE: Update existing post
@@ -862,32 +869,70 @@ Tu contenido va aquí...
 
       {/* Scheduled Publish Date/Time */}
       {formData.status === 'draft' && (
-        <div className="p-4 bg-[#00cfff10] border-2 border-[#00cfff]">
-          <label className="block text-white font-bold mb-2 uppercase text-sm">
-            📅 Schedule Publication - Berlin Time (CET/CEST)
-          </label>
-          <p className="text-xs text-[#00cfff] mb-2 font-bold">
-            ⚠️ Enter time in Berlin timezone (Europe/Berlin)
-          </p>
-          <input
-            type="datetime-local"
-            value={formData.scheduled_publish_at}
-            onChange={(e) => setFormData({ ...formData, scheduled_publish_at: e.target.value })}
-            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
-            min={new Date().toISOString().slice(0, 16)}
-          />
+        <div className="p-4 bg-[#00cfff10] border-2 border-[#00cfff] space-y-4">
+          <div>
+            <label className="block text-white font-bold mb-2 uppercase text-sm">
+              📅 Schedule Publication
+            </label>
+            <p className="text-xs text-[#00cfff] mb-3">
+              Choose your timezone and set when you want this post to be published
+            </p>
+          </div>
+
+          {/* Timezone Selector */}
+          <div>
+            <label className="block text-white font-bold mb-2 uppercase text-xs">
+              🌍 Timezone
+            </label>
+            <select
+              value={formData.scheduled_timezone}
+              onChange={(e) => setFormData({ ...formData, scheduled_timezone: e.target.value })}
+              className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none text-sm"
+            >
+              {TIMEZONES.map((tz) => (
+                <option key={tz.value} value={tz.value}>
+                  {tz.label} ({tz.offset})
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-400 mt-1">
+              Select the timezone you want to use for scheduling
+            </p>
+          </div>
+
+          {/* Date/Time Input */}
+          <div>
+            <label className="block text-white font-bold mb-2 uppercase text-xs">
+              📆 Date & Time
+            </label>
+            <input
+              type="datetime-local"
+              value={formData.scheduled_publish_at}
+              onChange={(e) => setFormData({ ...formData, scheduled_publish_at: e.target.value })}
+              className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+              min={new Date().toISOString().slice(0, 16)}
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              Enter time in {TIMEZONES.find(tz => tz.value === formData.scheduled_timezone)?.label} timezone
+            </p>
+          </div>
+
           {formData.scheduled_publish_at && (
-            <div className="mt-2 p-2 bg-[#00ff8820] border border-[#00ff88]">
+            <div className="p-3 bg-[#00ff8820] border border-[#00ff88]">
               <p className="text-xs text-[#00ff88] font-bold">
                 ✅ Scheduled for: {formData.scheduled_publish_at.replace('T', ' at ')}
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                🇩🇪 Berlin Time (Europe/Berlin - CET/CEST)
+                🌍 {TIMEZONES.find(tz => tz.value === formData.scheduled_timezone)?.label}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Will be stored as UTC in database and published automatically
               </p>
             </div>
           )}
-          <p className="text-xs text-gray-300 mt-2">
-            Leave empty to keep as draft. Post will auto-publish at the scheduled time (via n8n cron every 10 minutes).
+
+          <p className="text-xs text-gray-300">
+            💡 Leave empty to keep as draft. Post will auto-publish at the scheduled time (via n8n cron every 10 minutes).
           </p>
         </div>
       )}

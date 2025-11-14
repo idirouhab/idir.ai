@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     // Find all posts that should be published
     const { data: scheduledPosts, error: fetchError } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, language, scheduled_publish_at')
+      .select('id, title, slug, language, scheduled_publish_at, scheduled_timezone')
       .eq('status', 'draft')
       .not('scheduled_publish_at', 'is', null)
       .lte('scheduled_publish_at', now);
@@ -83,12 +83,14 @@ export async function POST(request: NextRequest) {
           error: updateError.message,
         });
       } else {
-        console.log(`✅ Published: ${post.title} (${post.language})`);
+        console.log(`✅ Published: ${post.title} (${post.language}) - scheduled for ${post.scheduled_publish_at} ${post.scheduled_timezone}`);
         publishResults.push({
           id: post.id,
           title: post.title,
           slug: post.slug,
           language: post.language,
+          scheduled_for: post.scheduled_publish_at,
+          timezone: post.scheduled_timezone,
           success: true,
         });
       }
@@ -141,7 +143,7 @@ export async function GET(request: NextRequest) {
     // Count posts that are scheduled
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, language, scheduled_publish_at')
+      .select('id, title, slug, language, scheduled_publish_at, scheduled_timezone')
       .eq('status', 'draft')
       .not('scheduled_publish_at', 'is', null)
       .order('scheduled_publish_at', { ascending: true });
