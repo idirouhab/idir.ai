@@ -1,0 +1,28 @@
+# Gitleaks configuration file
+# https://github.com/gitleaks/gitleaks#configuration
+
+title = "Gitleaks config for idir.ai"
+
+# Extend the default gitleaks config
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for false positives"
+paths = [
+  # Add paths to ignore, e.g.:
+  # '''node_modules/''',
+  # '''\.lock$''',
+]
+
+regexes = [
+  # Add regex patterns to allowlist, e.g.:
+  # '''example-api-key-for-tests''',
+]
+
+# You can add custom rules here if needed
+# [[rules]]
+# id = "custom-rule"
+# description = "Custom secret pattern"
+# regex = '''your-regex-here'''
+# tags = ["custom"]
