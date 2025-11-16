@@ -6,7 +6,7 @@ async function getBlogPosts() {
     const supabase = getBlogClient()
     const { data } = await supabase
       .from('blog_posts')
-      .select('slug, language, updated_at, published_at')
+      .select('slug, language, updated_at, published_at, translation_group_id')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
 
@@ -64,14 +64,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }))
 
-  // Generate blog post entries
+  // Generate blog post entries with language alternates
   const posts = await getBlogPosts()
-  const blogPostEntries: MetadataRoute.Sitemap = posts.map(post => ({
-    url: `${baseUrl}/${post.language}/blog/${post.slug}`,
-    lastModified: new Date(post.updated_at),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }))
+
+  // Group posts by translation_group_id to link translations
+  const translationGroups = new Map<string, { en?: typeof posts[0], es?: typeof posts[0] }>()
+  posts.forEach(post => {
+    if (post.translation_group_id) {
+      const group = translationGroups.get(post.translation_group_id) || {}
+      const lang = post.language as 'en' | 'es'
+      group[lang] = post
+      translationGroups.set(post.translation_group_id, group)
+    }
+  })
+
+  const blogPostEntries: MetadataRoute.Sitemap = posts.map(post => {
+    const entry: any = {
+      url: `${baseUrl}/${post.language}/blog/${post.slug}`,
+      lastModified: new Date(post.updated_at),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    }
+
+    // Add language alternates if translation exists
+    if (post.translation_group_id) {
+      const group = translationGroups.get(post.translation_group_id)
+      if (group && (group.en || group.es)) {
+        entry.alternates = {
+          languages: {} as Record<string, string>
+        }
+        if (group.en) {
+          entry.alternates.languages['en'] = `${baseUrl}/en/blog/${group.en.slug}`
+        }
+        if (group.es) {
+          entry.alternates.languages['es'] = `${baseUrl}/es/blog/${group.es.slug}`
+        }
+      }
+    }
+
+    return entry
+  })
 
   return [
     // Root URL (will redirect based on browser language)

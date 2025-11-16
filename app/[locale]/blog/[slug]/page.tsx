@@ -40,6 +40,24 @@ export async function generateMetadata({ params: { locale, slug } }: Props): Pro
   const baseUrl = 'https://idir.ai';
   const canonicalUrl = `${baseUrl}/${locale}/blog/${slug}`;
 
+  // Fetch translated post slug for proper hreflang tags
+  const translatedSlug = await getTranslatedPostSlug(
+    post.translation_group_id,
+    locale as 'en' | 'es'
+  );
+
+  // Build language alternates - only include if translation exists
+  const languageAlternates: Record<string, string> = {};
+
+  // Current language
+  languageAlternates[locale] = canonicalUrl;
+
+  // Alternate language (only if translation exists)
+  if (translatedSlug) {
+    const altLocale = locale === 'en' ? 'es' : 'en';
+    languageAlternates[altLocale] = `${baseUrl}/${altLocale}/blog/${translatedSlug.slug}`;
+  }
+
   return {
     metadataBase: new URL(baseUrl),
     title: `${post.title} | Idir Ouhab Meskine`,
@@ -47,10 +65,7 @@ export async function generateMetadata({ params: { locale, slug } }: Props): Pro
     keywords: post.meta_keywords || undefined,
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        'en': `${baseUrl}/en/blog/${slug}`,
-        'es': `${baseUrl}/es/blog/${slug}`,
-      },
+      languages: languageAlternates,
     },
     openGraph: {
       title: post.title,
