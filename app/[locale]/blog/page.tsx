@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-import { Metadata } from 'next';
 import Link from 'next/link';
 import { getPublishedPosts, categoryColors, BlogCategory } from '@/lib/blog';
 import BlogCard from '@/components/BlogCard';
@@ -13,53 +12,7 @@ type Props = {
   searchParams: { category?: string };
 };
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
-  const baseUrl = 'https://idir.ai';
-  const canonicalUrl = `${baseUrl}/${locale}/blog`;
-
-  const metadata = {
-    en: {
-      title: 'Blog | Idir Ouhab Meskine - Insights on AI, Automation & Tech',
-      description: 'Thoughts on AI, automation, and the future of work. Exploring insights, learnings, and opinions on technology and innovation.',
-      keywords: ['AI', 'artificial intelligence', 'automation', 'technology', 'machine learning', 'innovation', 'future of work', 'tech blog'],
-    },
-    es: {
-      title: 'Blog | Idir Ouhab Meskine - Perspectivas sobre IA, Automatización y Tecnología',
-      description: 'Pensamientos sobre IA, automatización y el futuro del trabajo. Explorando perspectivas, aprendizajes y opiniones sobre tecnología e innovación.',
-      keywords: ['IA', 'inteligencia artificial', 'automatización', 'tecnología', 'aprendizaje automático', 'innovación', 'futuro del trabajo', 'blog tecnológico'],
-    },
-  };
-
-  const lang = locale === 'es' ? 'es' : 'en';
-  const content = metadata[lang];
-
-  return {
-    metadataBase: new URL(baseUrl),
-    title: content.title,
-    description: content.description,
-    keywords: content.keywords,
-    alternates: {
-      canonical: canonicalUrl,
-      languages: {
-        'en': `${baseUrl}/en/blog`,
-        'es': `${baseUrl}/es/blog`,
-      },
-    },
-    openGraph: {
-      title: content.title,
-      description: content.description,
-      type: 'website',
-      url: canonicalUrl,
-      locale: lang === 'es' ? 'es_ES' : 'en_US',
-      siteName: 'Idir Ouhab Meskine',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: content.title,
-      description: content.description,
-    },
-  };
-}
+// Metadata is handled in layout.tsx to avoid duplication
 
 export default async function BlogPage({ params: { locale }, searchParams }: Props) {
   const t = await getTranslations({ locale, namespace: 'blog' });
