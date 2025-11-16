@@ -7,10 +7,10 @@ import {routing} from '@/i18n/routing';
 import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
 import "../globals.css";
 
-// Optimize font loading
+// Optimize font loading - only load weights actually used in the app
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '700', '900'], // Reduced from 7 weights to 4 (400=normal, 500=medium, 700=bold, 900=black)
   variable: '--font-inter',
   display: 'swap',
   preload: true,
@@ -120,15 +120,22 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
+      <head>
+        {/* Preconnect to external domains for faster resource loading */}
+        <link rel="preconnect" href="https://consent.cookiebot.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://consent.cookiebot.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+      </head>
       <body className="antialiased">
-        {/* Cookiebot - Loads before page interactive */}
+        {/* Cookiebot - Loads after page is interactive to avoid blocking render */}
         <Script
           id="Cookiebot"
           src="https://consent.cookiebot.com/uc.js"
           data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
           data-blockingmode="auto"
           type="text/javascript"
-          strategy="beforeInteractive"
+          strategy="lazyOnload"
         />
 
         {/* Google Analytics - Loads after interaction */}

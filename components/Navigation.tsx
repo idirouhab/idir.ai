@@ -51,39 +51,45 @@ export default function Navigation() {
   }, [isOpen]);
 
   useEffect(() => {
-    let ticking = false;
+    let timeoutId: NodeJS.Timeout | null = null;
 
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
+      // Cancel previous timeout
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
 
-          // Scroll-spy: detect which section is in view
-          const sections = ["about", "speaking", "podcast", "contact"];
-          const scrollPosition = window.scrollY + 100; // offset for navbar
+      // Throttle scroll handler to run max every 100ms
+      timeoutId = setTimeout(() => {
+        setScrolled(window.scrollY > 20);
 
-          for (const section of sections) {
-            const element = document.getElementById(section);
-            if (element) {
-              const offsetTop = element.offsetTop;
-              const offsetBottom = offsetTop + element.offsetHeight;
+        // Scroll-spy: detect which section is in view
+        const sections = ["about", "speaking", "podcast", "contact"];
+        const scrollPosition = window.scrollY + 100; // offset for navbar
 
-              if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-                setActiveSection(section);
-                break;
-              }
+        for (const section of sections) {
+          const element = document.getElementById(section);
+          if (element) {
+            const offsetTop = element.offsetTop;
+            const offsetBottom = offsetTop + element.offsetHeight;
+
+            if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+              setActiveSection(section);
+              break;
             }
           }
-
-          ticking = false;
-        });
-        ticking = true;
-      }
+        }
+      }, 100);
     };
 
     handleScroll(); // Initial check
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const navItems = [

@@ -40,3 +40,10 @@ generate-icons.js
 
 # Migration backups
 migrations/applied/
+
+# Supabase local development
+/supabase/.temp
+/supabase/.branches
+
+# Docker volumes
+/docker/data

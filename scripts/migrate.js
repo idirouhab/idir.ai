@@ -4,16 +4,49 @@
  * Database Migration Runner
  *
  * Usage:
- *   node scripts/migrate.js up              - Run all pending migrations
+ *   node scripts/migrate.js up              - Run all pending migrations (uses .env.local)
  *   node scripts/migrate.js up --step=1     - Run next migration only
  *   node scripts/migrate.js status          - Show migration status
  *   node scripts/migrate.js create <name>   - Create a new migration file
+ *   ENV=development node scripts/migrate.js up    - Run migrations on local database
+ *   ENV=production node scripts/migrate.js up     - Run migrations on production database
  */
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+
+// Load environment-specific .env file
+function loadEnv() {
+  const env = process.env.ENV || 'local';
+  const envFile = env === 'development'
+    ? '.env.development.local'
+    : env === 'production'
+    ? '.env.production.local'
+    : '.env.local';
+
+  const envPath = path.join(__dirname, '..', envFile);
+
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const match = line.match(/^([^=:#]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim();
+        if (!process.env[key]) {
+          process.env[key] = value;
+        }
+      }
+    });
+    console.log(`\x1b[34mUsing environment: ${envFile}\x1b[0m`);
+  } else {
+    console.log(`\x1b[33mWarning: ${envFile} not found, using existing environment variables\x1b[0m`);
+  }
+}
+
+loadEnv();
 
 // Configuration
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;

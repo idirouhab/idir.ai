@@ -111,12 +111,13 @@ export default function Hero() {
               {/* Headshot container */}
               <div className="relative bg-black rounded-3xl aspect-square overflow-hidden border-4 border-[#00ff88]">
                 <Image
-                  src="/headshot.jpg"
+                  src="/headshot.webp"
                   alt="Idir Ouhab Meskine, Solutions Engineer at n8n, speaking at a tech conference"
                   fill
                   className="object-cover"
                   priority
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
+                  quality={90}
                 />
               </div>
             </div>
