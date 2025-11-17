@@ -36,7 +36,7 @@ export default function Unsubscribe() {
   const loadPreferences = async (emailAddress: string) => {
     setStatus('loading');
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
+      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export default function Unsubscribe() {
     const unsubscribeAll = !subscribeNewsletter && !subscribePodcast;
 
     try {
-      const response = await fetch('/api/newsletter/subscribe', {
+      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
