@@ -2,8 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+// Helper to get PostgREST config
+function getPostgRESTConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  // For Supabase Cloud, append /rest/v1 if not already present
+  // For local Supabase, use the URL as-is
+  const baseURL = url.includes('supabase.co') && !url.includes('/rest/v1')
+    ? `${url}/rest/v1`
+    : url;
+
+  return {
+    baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': key,
+      'Authorization': `Bearer ${key}`,
+    },
+  };
+}
 
 /**
  * Get all feedback with filters
@@ -27,6 +45,8 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get('date'); // campaign_date filter
     const feedbackType = searchParams.get('type'); // feedback_type filter
 
+    const config = getPostgRESTConfig();
+
     // Build PostgREST query
     let queryParams = 'select=*&order=responded_at.desc.nullslast';
 
@@ -48,13 +68,9 @@ export async function GET(request: NextRequest) {
     }
 
     const response = await fetch(
-      `${supabaseUrl}/newsletter_feedback?${queryParams}`,
+      `${config.baseURL}/newsletter_feedback?${queryParams}`,
       {
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: config.headers,
       }
     );
 
@@ -71,13 +87,9 @@ export async function GET(request: NextRequest) {
 
     // Get summary stats
     const statsResponse = await fetch(
-      `${supabaseUrl}/newsletter_feedback?select=id,answered_at,feedback_type`,
+      `${config.baseURL}/newsletter_feedback?select=id,answered_at,feedback_type`,
       {
-        headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: config.headers,
       }
     );
 
@@ -136,14 +148,14 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    const config = getPostgRESTConfig();
+
     const response = await fetch(
-      `${supabaseUrl}/newsletter_feedback?id=eq.${id}`,
+      `${config.baseURL}/newsletter_feedback?id=eq.${id}`,
       {
         method: 'PATCH',
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
+          ...config.headers,
           'Prefer': 'return=representation',
         },
         body: JSON.stringify({

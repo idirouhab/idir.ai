@@ -2,6 +2,27 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 
+// Helper to get PostgREST config
+function getPostgRESTConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  // For Supabase Cloud, append /rest/v1 if not already present
+  // For local Supabase, use the URL as-is
+  const baseURL = url.includes('supabase.co') && !url.includes('/rest/v1')
+    ? `${url}/rest/v1`
+    : url;
+
+  return {
+    baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': key,
+      'Authorization': `Bearer ${key}`,
+    },
+  };
+}
+
 // Get all blog posts (admin only)
 export async function GET() {
   try {
@@ -25,24 +46,18 @@ export async function GET() {
       );
     }
 
-    // Use direct PostgREST fetch for local development
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const config = getPostgRESTConfig();
 
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
+    if (!config.baseURL || !config.headers.apikey) {
       return NextResponse.json({ error: 'Missing configuration' }, { status: 500 });
     }
 
-    console.log('Fetching from:', supabaseUrl);
+    console.log('Fetching from:', config.baseURL);
 
     const response = await fetch(
-      `${supabaseUrl}/blog_posts?select=*&order=created_at.desc`,
+      `${config.baseURL}/blog_posts?select=*&order=created_at.desc`,
       {
-        headers: {
-          'apikey': supabaseServiceRoleKey,
-          'Authorization': `Bearer ${supabaseServiceRoleKey}`,
-          'Content-Type': 'application/json',
-        },
+        headers: config.headers,
       }
     );
 
