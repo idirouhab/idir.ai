@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { signToken } from '@/lib/jwt';
 import { rateLimit, rateLimitConfigs, getClientIdentifier } from '@/lib/rate-limit';
-import { authenticateUser } from '@/lib/users';
+// Use direct PostgREST client for local development
+import { authenticateUser } from '@/lib/users-postgrest';
 
 export async function POST(request: Request) {
   try {

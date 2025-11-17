@@ -1,7 +1,21 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
-import { supabase } from '@/lib/supabase';
+
+// Helper to get PostgREST config
+function getPostgRESTConfig() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:3001';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+  return {
+    baseURL: url,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': key,
+      'Authorization': `Bearer ${key}`,
+    },
+  };
+}
 
 // GET: Read live event data (all events for admin)
 export async function GET() {
@@ -24,19 +38,33 @@ export async function GET() {
   }
 
   try {
-    // Get all live events, ordered by event datetime
-    const { data, error } = await supabase
-      .from('live_events')
-      .select('*')
-      .order('event_datetime', { ascending: false });
+    const config = getPostgRESTConfig();
 
-    if (error) {
-      console.error('Error reading live event data:', error);
+    // Get all live events, ordered by event datetime
+    const response = await fetch(
+      `${config.baseURL}/live_events?select=*&order=event_datetime.desc`,
+      {
+        method: 'GET',
+        headers: config.headers,
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error reading live event data:', errorText);
+
+      // If table doesn't exist, return empty array instead of error
+      if (errorText.includes('Could not find the table')) {
+        return NextResponse.json({ events: [] });
+      }
+
       return NextResponse.json(
         { error: 'Failed to read live event data' },
         { status: 500 }
       );
     }
+
+    const data = await response.json();
 
     // Return empty array if no data exists
     if (!data || data.length === 0) {
@@ -44,7 +72,7 @@ export async function GET() {
     }
 
     // Transform database format to frontend format
-    const events = data.map(row => ({
+    const events = data.map((row: any) => ({
       id: row.id,
       isActive: row.is_active,
       title: row.title,
@@ -126,16 +154,22 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString(),
     };
 
+    const config = getPostgRESTConfig();
+
     // If ID is provided, update existing event; otherwise, create new
     if (body.id) {
       // Update existing event
-      const { error: updateError } = await supabase
-        .from('live_events')
-        .update(eventData)
-        .eq('id', body.id);
+      const response = await fetch(
+        `${config.baseURL}/live_events?id=eq.${body.id}`,
+        {
+          method: 'PATCH',
+          headers: config.headers,
+          body: JSON.stringify(eventData),
+        }
+      );
 
-      if (updateError) {
-        console.error('Error updating live event data:', updateError);
+      if (!response.ok) {
+        console.error('Error updating live event data:', await response.text());
         return NextResponse.json(
           { error: 'Failed to update live event data' },
           { status: 500 }
@@ -145,12 +179,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'Event updated successfully' });
     } else {
       // Create new event
-      const { error: insertError } = await supabase
-        .from('live_events')
-        .insert([eventData]);
+      const response = await fetch(
+        `${config.baseURL}/live_events`,
+        {
+          method: 'POST',
+          headers: config.headers,
+          body: JSON.stringify(eventData),
+        }
+      );
 
-      if (insertError) {
-        console.error('Error creating live event data:', insertError);
+      if (!response.ok) {
+        console.error('Error creating live event data:', await response.text());
         return NextResponse.json(
           { error: 'Failed to create live event data' },
           { status: 500 }

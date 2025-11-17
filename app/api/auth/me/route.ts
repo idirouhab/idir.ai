@@ -1,22 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAuth } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
-// Get current authenticated user info
+/**
+ * GET /api/auth/me
+ * Get current user session info
+ */
 export async function GET(request: NextRequest) {
   try {
-    const user = await checkAuth(request);
+    const sessionCookie = cookies().get('admin-session');
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!sessionCookie) {
+      return NextResponse.json(
+        { error: 'No session cookie found', authenticated: false },
+        { status: 401 }
+      );
+    }
+
+    const payload = await verifyToken(sessionCookie.value);
+
+    if (!payload) {
+      return NextResponse.json(
+        { error: 'Invalid session token', authenticated: false },
+        { status: 401 }
+      );
     }
 
     return NextResponse.json({
-      userId: user.userId,
-      email: user.email,
-      role: user.role,
+      authenticated: true,
+      user: {
+        id: payload.userId,
+        email: payload.email,
+        role: payload.role,
+      },
     });
   } catch (error) {
-    console.error('Error in GET /api/auth/me:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error in /api/auth/me:', error);
+    return NextResponse.json(
+      { error: 'Internal server error', authenticated: false },
+      { status: 500 }
+    );
   }
 }
