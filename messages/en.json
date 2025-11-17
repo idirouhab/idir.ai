@@ -290,5 +290,17 @@
       "buttonText": "Subscribe to Newsletter",
       "noSpam": "No spam, unsubscribe anytime"
     }
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service | idir.ai",
+      "description": "Terms of Service for idir.ai website and newsletter subscription services."
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy | idir.ai",
+      "description": "Privacy Policy explaining how idir.ai collects, uses, and protects your personal information."
+    }
   }
 }

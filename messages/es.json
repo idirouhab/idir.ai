@@ -290,5 +290,17 @@
       "buttonText": "Suscríbete al Newsletter",
       "noSpam": "Sin spam, cancela cuando quieras"
     }
+  },
+  "terms": {
+    "meta": {
+      "title": "Términos de Servicio | idir.ai",
+      "description": "Términos de Servicio para el sitio web idir.ai y servicios de suscripción al newsletter."
+    }
+  },
+  "privacy": {
+    "meta": {
+      "title": "Política de Privacidad | idir.ai",
+      "description": "Política de Privacidad que explica cómo idir.ai recopila, usa y protege tu información personal."
+    }
   }
 }
