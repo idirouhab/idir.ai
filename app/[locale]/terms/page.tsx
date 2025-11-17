@@ -11,8 +11,9 @@ export async function generateMetadata({ params: { locale } }: { params: { local
   };
 }
 
-export default function TermsOfService() {
+export default function TermsOfService({ params: { locale } }: { params: { locale: string } }) {
   const siteDomain = getSiteDomain();
+  const isSpanish = locale === 'es';
   return (
     <div className="min-h-screen bg-[#050505] py-16 px-4">
       <div className="max-w-4xl mx-auto">
@@ -21,16 +22,27 @@ export default function TermsOfService() {
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-6">
               <div className="h-1 w-12 bg-[#00ff88]"></div>
-              <span className="text-[#00ff88] font-bold uppercase tracking-wider text-sm">Legal</span>
+              <span className="text-[#00ff88] font-bold uppercase tracking-wider text-sm">{isSpanish ? 'Legal' : 'Legal'}</span>
               <div className="h-1 flex-1 bg-[#00ff88]"></div>
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
-              Terms of Service
+              {isSpanish ? 'Términos de Servicio' : 'Terms of Service'}
             </h1>
             <p className="text-gray-400 text-sm">
-              Last Updated: November 17, 2025
+              {isSpanish ? 'Última Actualización: 17 de Noviembre de 2025' : 'Last Updated: November 17, 2025'}
             </p>
           </div>
+
+          {/* Spanish Notice */}
+          {isSpanish && (
+            <div className="mb-8 p-6 bg-gray-900 border-l-4 border-[#00ff88]">
+              <p className="text-gray-300">
+                <strong className="text-[#00ff88]">Nota:</strong> Este documento está disponible en inglés.
+                Los Términos de Servicio rigen el uso de {siteDomain} y constituyen un acuerdo legal vinculante.
+                Al utilizar nuestros servicios, usted acepta estos términos.
+              </p>
+            </div>
+          )}
 
           {/* Content */}
           <div className="prose prose-invert prose-gray max-w-none">
