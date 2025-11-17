@@ -244,6 +244,16 @@
       "error": "Failed to unsubscribe. Please try again.",
       "invalidEmail": "Please enter a valid email address."
     },
+    "preferences": {
+      "newsletter": {
+        "title": "Daily AI News",
+        "description": "The best AI news every day, straight to the point"
+      },
+      "podcast": {
+        "title": "New Podcast Episodes",
+        "description": "Notification when I publish a new podcast episode"
+      }
+    },
     "success": {
       "title": "You're Unsubscribed",
       "message": "You've been successfully removed from our newsletter. We're sorry to see you go, but we hope to see you again in the future.",

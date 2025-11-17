@@ -17,6 +17,7 @@ export default function Unsubscribe() {
   const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
   const [subscribePodcast, setSubscribePodcast] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
+  const [userLanguage, setUserLanguage] = useState<'en' | 'es' | null>(null); // User's stored language preference
 
   // Auto-populate email from URL parameter if provided (for email links)
   useEffect(() => {
@@ -51,8 +52,8 @@ export default function Unsubscribe() {
         const data = await response.json();
         setSubscribeNewsletter(data.subscribe_newsletter || false);
         setSubscribePodcast(data.subscribe_podcast || false);
-        // Don't override language - keep the page locale from URL
-        // The database lang is only for email preferences
+        // Store the user's language preference from database to determine which options to show
+        setUserLanguage(data.language || 'en');
         setShowPreferences(true);
         setStatus('loaded');
       } else if (response.status === 404) {
@@ -294,18 +295,16 @@ export default function Unsubscribe() {
                       />
                       <div className="flex-1">
                         <span className="text-white font-semibold text-sm block mb-1">
-                          🤖 {language === 'es' ? 'Noticias IA Diarias' : 'Daily AI News'}
+                          🤖 {t('preferences.newsletter.title')}
                         </span>
                         <span className="text-gray-400 text-xs">
-                          {language === 'es'
-                            ? 'Las mejores noticias de IA cada día, directo al punto'
-                            : 'The best AI news every day, straight to the point'}
+                          {t('preferences.newsletter.description')}
                         </span>
                       </div>
                     </label>
 
-                    {/* Podcast - Spanish only */}
-                    {language === 'es' && (
+                    {/* Podcast - Show if user's language is Spanish or if they're subscribed to it */}
+                    {(userLanguage === 'es' || subscribePodcast) && (
                       <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                           type="checkbox"
@@ -315,10 +314,10 @@ export default function Unsubscribe() {
                         />
                         <div className="flex-1">
                           <span className="text-white font-semibold text-sm block mb-1">
-                            🎙️ Nuevos Episodios del Podcast
+                            🎙️ {t('preferences.podcast.title')}
                           </span>
                           <span className="text-gray-400 text-xs">
-                            Notificación cuando publico un nuevo episodio del podcast
+                            {t('preferences.podcast.description')}
                           </span>
                         </div>
                       </label>

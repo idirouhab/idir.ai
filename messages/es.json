@@ -244,6 +244,16 @@
       "error": "Error al cancelar. Por favor intenta de nuevo.",
       "invalidEmail": "Por favor ingresa un correo electrónico válido."
     },
+    "preferences": {
+      "newsletter": {
+        "title": "Noticias IA Diarias",
+        "description": "Las mejores noticias de IA cada día, directo al punto"
+      },
+      "podcast": {
+        "title": "Nuevos Episodios del Podcast",
+        "description": "Notificación cuando publico un nuevo episodio del podcast"
+      }
+    },
     "success": {
       "title": "Suscripción Cancelada",
       "message": "Has sido eliminado exitosamente de nuestro newsletter. Lamentamos verte partir, pero esperamos verte de nuevo en el futuro.",
