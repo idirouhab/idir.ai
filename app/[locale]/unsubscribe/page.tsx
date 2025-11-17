@@ -53,7 +53,8 @@ export default function Unsubscribe() {
         setSubscribeNewsletter(data.subscribe_newsletter || false);
         setSubscribePodcast(data.subscribe_podcast || false);
         // Store the user's language preference from database to determine which options to show
-        setUserLanguage(data.language || 'en');
+        // n8n returns 'lang' field, not 'language'
+        setUserLanguage(data.lang || data.language || 'en');
         setShowPreferences(true);
         setStatus('loaded');
       } else if (response.status === 404) {
@@ -303,8 +304,8 @@ export default function Unsubscribe() {
                       </div>
                     </label>
 
-                    {/* Podcast - Show if user's language is Spanish or if they're subscribed to it */}
-                    {(userLanguage === 'es' || subscribePodcast) && (
+                    {/* Podcast - Show if page language is Spanish, user's language is Spanish, or if they're subscribed to it */}
+                    {(language === 'es' || userLanguage === 'es' || subscribePodcast) && (
                       <label className="flex items-start gap-3 cursor-pointer group">
                         <input
                           type="checkbox"
