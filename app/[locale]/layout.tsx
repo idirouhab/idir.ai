@@ -5,6 +5,7 @@ import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
+import { getSiteUrl } from '@/lib/site-config';
 import "../globals.css";
 
 // Optimize font loading - only load weights actually used in the app
@@ -39,7 +40,7 @@ type Props = {
 export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
-  const baseUrl = 'https://idir.ai';
+  const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}`;
 
   // Map locale to Open Graph locale format
@@ -51,7 +52,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
     title: "Idir Ouhab Meskine — Automation Expert, Speaker & Podcast Host",
     description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at DevOpsCon & WeAreDevelopers. Host of Prompt&Play podcast.",
     keywords: ["Idir Ouhab Meskine", "n8n", "Solutions Engineer", "AI", "Automation", "Workflow", "Speaker", "Prompt&Play", "Podcast", "DevOpsCon", "WeAreDevelopers", "Platzi"],
-    authors: [{ name: "Idir Ouhab Meskine", url: "https://idir.ai" }],
+    authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
     creator: "Idir Ouhab Meskine",
     alternates: {
       canonical: canonicalUrl,

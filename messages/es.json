@@ -230,7 +230,7 @@
       "language": "En tu idioma preferido (Inglés o Español)",
       "unsubscribe": "Cancela cuando quieras"
     },
-    "backLink": "← Volver a idir.ai"
+    "backLink": "← Volver al Inicio"
   },
   "unsubscribe": {
     "label": "Cancelar Suscripción",
@@ -261,7 +261,7 @@
       "backHome": "Volver al Inicio"
     },
     "footer": "Ya no recibirás emails de nosotros.",
-    "backLink": "← Volver a idir.ai"
+    "backLink": "← Volver al Inicio"
   },
   "blog": {
     "title": "BLOG",

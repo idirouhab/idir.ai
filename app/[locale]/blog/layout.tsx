@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { getSiteUrl } from '@/lib/site-config';
 
 type Props = {
   params: { locale: string };
@@ -8,7 +9,7 @@ type Props = {
 export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'blog' });
 
-  const baseUrl = 'https://idir.ai';
+  const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/blog`;
 
   const metadata = {

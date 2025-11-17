@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
+import { getSiteDomain } from '@/lib/site-config';
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
   const t = await getTranslations({ locale, namespace: 'privacy' });
@@ -11,6 +12,7 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 }
 
 export default function PrivacyPolicy() {
+  const siteDomain = getSiteDomain();
   return (
     <div className="min-h-screen bg-[#050505] py-16 px-4">
       <div className="max-w-4xl mx-auto">
@@ -37,7 +39,7 @@ export default function PrivacyPolicy() {
               <section>
                 <h2 className="text-2xl font-bold text-white mb-4">1. Introduction</h2>
                 <p className="mb-4">
-                  At idir.ai ("we," "our," or "us"), we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including our newsletter and podcast subscriptions.
+                  At {siteDomain} (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including our newsletter and podcast subscriptions.
                 </p>
                 <p className="mb-4">
                   By using our website, you agree to the collection and use of information in accordance with this policy. If you do not agree with the terms of this Privacy Policy, please do not access the site.
@@ -196,7 +198,7 @@ export default function PrivacyPolicy() {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">11. Children's Privacy</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">11. Children&apos;s Privacy</h2>
                 <p className="mb-4">
                   Our website is not intended for children under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so that we can take necessary actions.
                 </p>
@@ -205,7 +207,7 @@ export default function PrivacyPolicy() {
               <section>
                 <h2 className="text-2xl font-bold text-white mb-4">12. Changes to This Privacy Policy</h2>
                 <p className="mb-4">
-                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date at the top of this Privacy Policy.
+                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last Updated&quot; date at the top of this Privacy Policy.
                 </p>
                 <p className="mb-4">
                   You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.

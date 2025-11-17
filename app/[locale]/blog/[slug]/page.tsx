@@ -23,6 +23,7 @@ import {
   categoryNames,
 } from '@/lib/blog';
 import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
+import { getSiteUrl } from '@/lib/site-config';
 
 type Props = {
   params: { locale: string; slug: string };
@@ -37,7 +38,7 @@ export async function generateMetadata({ params: { locale, slug } }: Props): Pro
     };
   }
 
-  const baseUrl = 'https://idir.ai';
+  const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/blog/${slug}`;
 
   // Fetch translated post slug for proper hreflang tags

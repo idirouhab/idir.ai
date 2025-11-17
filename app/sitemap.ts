@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getBlogClient } from '@/lib/blog'
+import { getSiteUrl } from '@/lib/site-config'
 
 async function getBlogPosts() {
   try {
@@ -18,7 +19,7 @@ async function getBlogPosts() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://idir.ai'
+  const baseUrl = getSiteUrl()
   const locales = ['en', 'es']
   const lastModified = new Date()
 
