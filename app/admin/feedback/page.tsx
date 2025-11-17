@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 type Feedback = {
   id: string;
@@ -151,88 +152,20 @@ export default function FeedbackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
-        <div className="border-b border-gray-800 bg-black">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              <h1 className="text-xl font-black text-white">ADMIN</h1>
-              <nav className="hidden md:flex gap-6">
-                <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                  Blog
-                </Link>
-                <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                  Subscribers
-                </Link>
-                <Link href="/admin/feedback" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
-                  Feedback
-                </Link>
-                <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                  Users
-                </Link>
-              </nav>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href="/"
-                className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
-              >
-                View Site
-              </Link>
-            </div>
-          </div>
-        </div>
+      <AdminPageWrapper showLogout={false}>
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-[#00ff88]">Loading feedback...</div>
         </div>
-      </div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
-      {/* Header Bar */}
-      <div className="border-b border-gray-800 bg-black">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-black text-white">ADMIN</h1>
-            <nav className="hidden md:flex gap-6">
-              <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Blog
-              </Link>
-              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Subscribers
-              </Link>
-              <Link href="/admin/feedback" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Feedback
-              </Link>
-              <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Users
-              </Link>
-            </nav>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              href="/"
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
-            >
-              View Site
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-black text-white mb-2">Newsletter Feedback</h2>
-          <p className="text-gray-400 text-sm">Manage and track subscriber feedback responses</p>
-        </div>
+    <AdminPageWrapper
+      showLogout={false}
+      title="Newsletter Feedback"
+      description="Manage and track subscriber feedback responses"
+    >
 
         {/* Statistics */}
         {stats && (
@@ -429,7 +362,6 @@ export default function FeedbackPage() {
         <div className="mt-4 text-gray-500 text-sm">
           Showing {filteredFeedback.length} of {feedback.length} feedback responses
         </div>
-      </div>
-    </div>
+    </AdminPageWrapper>
   );
 }

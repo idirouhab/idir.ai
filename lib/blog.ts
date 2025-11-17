@@ -53,7 +53,18 @@ export function getBlogClient() {
     throw new Error('Missing Supabase environment variables');
   }
 
-  return createClient(supabaseUrl, supabaseAnonKey);
+  // For local PostgREST, use db schema configuration
+  const isLocal = supabaseUrl.includes('localhost');
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    db: {
+      schema: 'public',
+    },
+    auth: isLocal ? {
+      autoRefreshToken: false,
+      persistSession: false,
+    } : undefined,
+  });
 }
 
 // Helper to create Supabase admin client (bypasses RLS for admin operations)
@@ -65,7 +76,13 @@ export function getAdminBlogClient() {
     throw new Error('Missing Supabase admin environment variables');
   }
 
+  // For local PostgREST, use db schema configuration
+  const isLocal = supabaseUrl.includes('localhost');
+
   return createClient(supabaseUrl, supabaseServiceRoleKey, {
+    db: {
+      schema: 'public',
+    },
     auth: {
       autoRefreshToken: false,
       persistSession: false,

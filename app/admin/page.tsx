@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 type LiveEvent = {
   id: number;
@@ -76,15 +77,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      router.push('/admin/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
   const formatEventDateTime = (datetime: string, timezone: string) => {
     try {
       const date = new Date(datetime);
@@ -100,60 +92,20 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-white text-xl">Loading...</div>
-      </div>
+      <AdminPageWrapper>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
-      {/* Header Bar */}
-      <div className="border-b border-gray-800 bg-black">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-black text-white">ADMIN</h1>
-            <nav className="hidden md:flex gap-6">
-              <Link href="/admin" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin/blog" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Blog
-              </Link>
-              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Subscribers
-              </Link>
-              <Link href="/admin/feedback" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Feedback
-              </Link>
-              <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Users
-              </Link>
-            </nav>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              href="/"
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
-            >
-              View Site
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#ff0055] hover:text-[#ff0055] transition-all"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Page Title */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-black text-white mb-2">Dashboard</h2>
-          <p className="text-gray-400 text-sm">Manage your site content and settings</p>
-        </div>
+    <AdminPageWrapper
+      title="Dashboard"
+      description="Manage your site content and settings"
+    >
+      <div>
 
         {/* Quick Actions - Organized by Section */}
         <div className="mb-12 space-y-8">
@@ -376,6 +328,6 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 }

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
-import { getAdminBlogClient } from '@/lib/blog';
 
 // Get all blog posts (admin only)
 export async function GET() {
@@ -26,17 +25,35 @@ export async function GET() {
       );
     }
 
-    const supabase = getAdminBlogClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('created_at', { ascending: false });
+    // Use direct PostgREST fetch for local development
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (error) {
-      console.error('Error fetching blog posts:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
+      return NextResponse.json({ error: 'Missing configuration' }, { status: 500 });
     }
 
+    console.log('Fetching from:', supabaseUrl);
+
+    const response = await fetch(
+      `${supabaseUrl}/blog_posts?select=*&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': supabaseServiceRoleKey,
+          'Authorization': `Bearer ${supabaseServiceRoleKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('PostgREST error:', errorText);
+      return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
+    }
+
+    const data = await response.json();
+    console.log('Successfully fetched', data?.length || 0, 'blog posts');
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error in GET /api/blog-admin:', error);

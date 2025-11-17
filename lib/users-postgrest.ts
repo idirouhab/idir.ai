@@ -23,8 +23,14 @@ function getPostgRESTConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:3001';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
+  // For Supabase Cloud, append /rest/v1 if not already present
+  // For local Supabase, use the URL as-is
+  const baseURL = url.includes('supabase.co') && !url.includes('/rest/v1')
+    ? `${url}/rest/v1`
+    : url;
+
   return {
-    baseURL: url,
+    baseURL,
     headers: {
       'Content-Type': 'application/json',
       'apikey': key,

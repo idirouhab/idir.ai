@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BlogPost, categoryColors } from '@/lib/blog';
 import { MoreVertical, Share2, Pencil, Trash2 } from 'lucide-react';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 export default function AdminBlogPage() {
   const router = useRouter();
@@ -114,62 +115,29 @@ export default function AdminBlogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-white text-xl">Loading...</div>
-      </div>
+      <AdminPageWrapper showLogout={false}>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-white text-xl">Loading...</div>
+        </div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
-      {/* Header Bar */}
-      <div className="border-b border-gray-800 bg-black">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-black text-white">ADMIN</h1>
-            <nav className="hidden md:flex gap-6">
-              <Link href="/admin" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin/blog" className="text-sm text-white font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Blog
-              </Link>
-              <Link href="/admin/subscribers" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Subscribers
-              </Link>
-              <Link href="/admin/feedback" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Feedback
-              </Link>
-              <Link href="/admin/users" className="text-sm text-gray-400 font-bold uppercase hover:text-[#00ff88] transition-colors">
-                Users
-              </Link>
-            </nav>
-          </div>
-          <div className="flex gap-3">
-            <Link
-              href="/"
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
-            >
-              View Site
-            </Link>
-          </div>
+    <AdminPageWrapper showLogout={false}>
+      {/* Page Header */}
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
+          <p className="text-gray-400 text-sm">Create and manage your blog content</p>
         </div>
+        <Link
+          href="/admin/blog/new"
+          className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
+        >
+          + New Post
+        </Link>
       </div>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Page Header */}
-        <div className="mb-8 flex justify-between items-start">
-          <div>
-            <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
-            <p className="text-gray-400 text-sm">Create and manage your blog content</p>
-          </div>
-          <Link
-            href="/admin/blog/new"
-            className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
-          >
-            + New Post
-          </Link>
-        </div>
 
         {/* Posts List */}
         {posts.length > 0 ? (
@@ -323,7 +291,6 @@ export default function AdminBlogPage() {
             </Link>
           </div>
         )}
-      </div>
-    </div>
+    </AdminPageWrapper>
   );
 }
