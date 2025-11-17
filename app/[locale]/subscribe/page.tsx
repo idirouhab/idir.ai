@@ -38,11 +38,10 @@ export default function Subscribe() {
     setStatus('sending');
 
     try {
-      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_N8N_WEBHOOK_JWT_TOKEN}`,
         },
         body: JSON.stringify({
           email,

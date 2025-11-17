@@ -36,11 +36,10 @@ export default function Unsubscribe() {
   const loadPreferences = async (emailAddress: string) => {
     setStatus('loading');
     try {
-      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_N8N_WEBHOOK_JWT_TOKEN}`,
         },
         body: JSON.stringify({
           email: emailAddress.trim().toLowerCase(),
@@ -99,11 +98,10 @@ export default function Unsubscribe() {
     const unsubscribeAll = !subscribeNewsletter && !subscribePodcast;
 
     try {
-      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_N8N_WEBHOOK_JWT_TOKEN}`,
         },
         body: JSON.stringify({
           email: email.trim().toLowerCase(),
