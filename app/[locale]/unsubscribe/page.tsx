@@ -40,6 +40,7 @@ export default function Unsubscribe() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_N8N_WEBHOOK_JWT_TOKEN}`,
         },
         body: JSON.stringify({
           email: emailAddress.trim().toLowerCase(),
@@ -102,6 +103,7 @@ export default function Unsubscribe() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_N8N_WEBHOOK_JWT_TOKEN}`,
         },
         body: JSON.stringify({
           email: email.trim().toLowerCase(),
