@@ -25,6 +25,7 @@
     "db:down": "docker-compose stop postgres",
     "db:logs": "docker-compose logs -f postgres",
     "db:shell": "docker-compose exec postgres psql -U postgres",
+    "db:migrate": "bash scripts/migrate-local.sh",
     "prepare": "husky"
   },
   "dependencies": {
@@ -54,6 +55,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^16.0.1",
     "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.3",
     "@types/react": "^18",
@@ -62,6 +64,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.21",
     "husky": "^9.1.7",
+    "jsonwebtoken": "^9.0.2",
     "postcss": "^8.4.49",
     "sharp": "^0.34.4",
     "tailwindcss": "^3.4.17",

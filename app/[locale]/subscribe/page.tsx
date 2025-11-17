@@ -12,6 +12,10 @@ export default function Subscribe() {
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
+  // Subscription preferences
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(true);
+  const [subscribePodcast, setSubscribePodcast] = useState(false);
+
   const handleAcceptConsent = () => {
     setConsent(true);
     setShowModal(false);
@@ -24,10 +28,17 @@ export default function Subscribe() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate at least one subscription is selected
+    if (!subscribeNewsletter && !subscribePodcast) {
+      setStatus('error');
+      return;
+    }
+
     setStatus('sending');
 
     try {
-      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/subscribe', {
+      const response = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +46,11 @@ export default function Subscribe() {
         body: JSON.stringify({
           email,
           language,
-          action: 'subscribe'
+          action: 'subscribe',
+          preferences: {
+            newsletter: subscribeNewsletter,
+            podcast: subscribePodcast
+          }
         }),
       });
 
@@ -130,6 +145,54 @@ export default function Subscribe() {
                 </div>
               </div>
 
+              {/* Subscription Preferences */}
+              <div>
+                <label className="block text-white font-bold mb-3 uppercase text-sm">
+                  {language === 'es' ? 'Suscribirme a' : 'Subscribe to'}
+                </label>
+                <div className="space-y-3 border-2 border-gray-800 p-4 bg-[#0a0a0a]">
+                  {/* Newsletter / AI News */}
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={subscribeNewsletter}
+                      onChange={(e) => setSubscribeNewsletter(e.target.checked)}
+                      className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <span className="text-white font-semibold text-sm block mb-1">
+                        🤖 {language === 'es' ? 'Noticias IA Diarias' : 'Daily AI News'}
+                      </span>
+                      <span className="text-gray-400 text-xs">
+                        {language === 'es'
+                          ? 'Las mejores noticias de IA cada día, directo al punto'
+                          : 'The best AI news every day, straight to the point'}
+                      </span>
+                    </div>
+                  </label>
+
+                  {/* Podcast - Spanish only */}
+                  {language === 'es' && (
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={subscribePodcast}
+                        onChange={(e) => setSubscribePodcast(e.target.checked)}
+                        className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <span className="text-white font-semibold text-sm block mb-1">
+                          🎙️ Nuevos Episodios del Podcast
+                        </span>
+                        <span className="text-gray-400 text-xs">
+                          Notificación cuando publico un nuevo episodio del podcast
+                        </span>
+                      </div>
+                    </label>
+                  )}
+                </div>
+              </div>
+
               {/* Consent Checkbox */}
               <div className="border-2 border-gray-800 p-4 bg-[#0a0a0a]">
                 <label className="flex items-start gap-3">
@@ -169,7 +232,11 @@ export default function Subscribe() {
 
               {status === 'error' && (
                 <div className="p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
-                  {t('form.error')}
+                  {!subscribeNewsletter && !subscribePodcast
+                    ? (language === 'es'
+                      ? 'Por favor, selecciona al menos una opción de suscripción'
+                      : 'Please select at least one subscription option')
+                    : t('form.error')}
                 </div>
               )}
 
