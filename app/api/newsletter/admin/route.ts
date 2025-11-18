@@ -118,7 +118,7 @@ export async function GET(request: Request) {
     // Get statistics
     const { data: stats } = await supabase
       .from('newsletter_subscribers')
-      .select('lang, is_subscribed, welcomed');
+      .select('lang, is_subscribed, welcomed, subscribe_newsletter, subscribe_podcast');
 
     const statistics = {
       total: count || 0,
@@ -130,6 +130,8 @@ export async function GET(request: Request) {
       notWelcomed: stats?.filter(s => !s.welcomed).length || 0,
       feedbackSent: feedbackMap.size,
       feedbackNotSent: (count || 0) - feedbackMap.size,
+      newsletterSubscribers: stats?.filter(s => s.subscribe_newsletter).length || 0,
+      podcastSubscribers: stats?.filter(s => s.subscribe_podcast).length || 0,
     };
 
     // Audit log: Track subscriber data access

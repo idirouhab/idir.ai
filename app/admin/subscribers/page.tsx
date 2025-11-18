@@ -15,6 +15,8 @@ type Subscriber = {
   updated_at: string;
   feedback_sent_at: string | null;
   feedback_campaign_date: string | null;
+  subscribe_newsletter: boolean;
+  subscribe_podcast: boolean;
 };
 
 type Statistics = {
@@ -27,6 +29,8 @@ type Statistics = {
   notWelcomed: number;
   feedbackSent: number;
   feedbackNotSent: number;
+  newsletterSubscribers: number;
+  podcastSubscribers: number;
 };
 
 export default function SubscribersPage() {
@@ -41,6 +45,8 @@ export default function SubscribersPage() {
   const [filterMinDays, setFilterMinDays] = useState<number>(0);
   const [filterFeedbackSent, setFilterFeedbackSent] = useState<'all' | 'sent' | 'not_sent'>('all');
   const [filterMinDaysSinceSent, setFilterMinDaysSinceSent] = useState<number>(0);
+  const [filterNewsletter, setFilterNewsletter] = useState<'all' | 'yes' | 'no'>('all');
+  const [filterPodcast, setFilterPodcast] = useState<'all' | 'yes' | 'no'>('all');
   const [showSendFeedbackModal, setShowSendFeedbackModal] = useState(false);
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [sendFeedbackLang, setSendFeedbackLang] = useState<'all' | 'en' | 'es'>('all');
@@ -273,7 +279,19 @@ export default function SubscribersPage() {
       }
     }
 
-    return matchesSearch && matchesMinDays && matchesFeedbackSent && matchesDaysSinceSent;
+    // Newsletter subscription filter
+    const matchesNewsletter =
+      filterNewsletter === 'all' ||
+      (filterNewsletter === 'yes' && sub.subscribe_newsletter) ||
+      (filterNewsletter === 'no' && !sub.subscribe_newsletter);
+
+    // Podcast subscription filter
+    const matchesPodcast =
+      filterPodcast === 'all' ||
+      (filterPodcast === 'yes' && sub.subscribe_podcast) ||
+      (filterPodcast === 'no' && !sub.subscribe_podcast);
+
+    return matchesSearch && matchesMinDays && matchesFeedbackSent && matchesDaysSinceSent && matchesNewsletter && matchesPodcast;
   });
 
   if (loading) {
@@ -294,7 +312,7 @@ export default function SubscribersPage() {
 
         {/* Statistics Cards */}
         {statistics && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
             <div className="p-4 bg-black border border-gray-800">
               <div className="text-2xl font-black text-[#00ff88]">{statistics.total}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Total</div>
@@ -311,13 +329,21 @@ export default function SubscribersPage() {
               <div className="text-2xl font-black text-[#ff0055]">{statistics.notWelcomed}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Not Welcomed</div>
             </div>
+            <div className="p-4 bg-black border border-[#00ff88]">
+              <div className="text-2xl font-black text-[#00ff88]">{statistics.newsletterSubscribers}</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">Newsletter</div>
+            </div>
+            <div className="p-4 bg-black border border-[#ff6b00]">
+              <div className="text-2xl font-black text-[#ff6b00]">{statistics.podcastSubscribers}</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">Podcast</div>
+            </div>
             <div className="p-4 bg-black border border-[#cc00ff]">
               <div className="text-2xl font-black text-[#cc00ff]">{statistics.feedbackSent}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">📧 Feedback Sent</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">Feedback Sent</div>
             </div>
             <div className="p-4 bg-black border border-[#ffaa00]">
               <div className="text-2xl font-black text-[#ffaa00]">{statistics.feedbackNotSent}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">⏳ Not Sent Yet</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">Not Sent Yet</div>
             </div>
           </div>
         )}
@@ -373,8 +399,28 @@ export default function SubscribersPage() {
               className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
             >
               <option value="all">All Feedback</option>
-              <option value="not_sent">📧 Not Sent</option>
-              <option value="sent">✅ Already Sent</option>
+              <option value="not_sent">Not Sent</option>
+              <option value="sent">Already Sent</option>
+            </select>
+
+            <select
+              value={filterNewsletter}
+              onChange={(e) => setFilterNewsletter(e.target.value as any)}
+              className="px-4 py-2 bg-black border border-[#00ff88] text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+            >
+              <option value="all">Newsletter: All</option>
+              <option value="yes">Newsletter: Yes</option>
+              <option value="no">Newsletter: No</option>
+            </select>
+
+            <select
+              value={filterPodcast}
+              onChange={(e) => setFilterPodcast(e.target.value as any)}
+              className="px-4 py-2 bg-black border border-[#ff6b00] text-white text-sm font-bold uppercase focus:border-[#ff6b00] focus:outline-none"
+            >
+              <option value="all">Podcast: All</option>
+              <option value="yes">Podcast: Yes</option>
+              <option value="no">Podcast: No</option>
             </select>
 
             <div className="flex items-center gap-2">
@@ -481,6 +527,7 @@ export default function SubscribersPage() {
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Email</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Language</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Subscriptions</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Last Sent</th>
                   <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
@@ -523,6 +570,23 @@ export default function SubscribersPage() {
                           ○ Unsubscribed
                         </span>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        {subscriber.subscribe_newsletter && (
+                          <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]" title="Subscribed to Newsletter">
+                            Newsletter
+                          </span>
+                        )}
+                        {subscriber.subscribe_podcast && (
+                          <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]" title="Subscribed to Podcast">
+                            Podcast
+                          </span>
+                        )}
+                        {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
+                          <span className="text-xs text-gray-600">None</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       {subscriber.welcomed ? (
