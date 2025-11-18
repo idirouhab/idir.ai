@@ -47,6 +47,7 @@ export default function SubscribersPage() {
   const [filterMinDaysSinceSent, setFilterMinDaysSinceSent] = useState<number>(0);
   const [filterNewsletter, setFilterNewsletter] = useState<'all' | 'yes' | 'no'>('all');
   const [filterPodcast, setFilterPodcast] = useState<'all' | 'yes' | 'no'>('all');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showSendFeedbackModal, setShowSendFeedbackModal] = useState(false);
   const [sendingFeedback, setSendingFeedback] = useState(false);
   const [sendFeedbackLang, setSendFeedbackLang] = useState<'all' | 'en' | 'es'>('all');
@@ -312,61 +313,60 @@ export default function SubscribersPage() {
 
         {/* Statistics Cards */}
         {statistics && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-            <div className="p-4 bg-black border border-gray-800">
-              <div className="text-2xl font-black text-[#00ff88]">{statistics.total}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="p-3 sm:p-4 bg-black border border-gray-800">
+              <div className="text-xl sm:text-2xl font-black text-[#00ff88]">{statistics.total}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Total</div>
             </div>
-            <div className="p-4 bg-black border border-gray-800">
-              <div className="text-2xl font-black text-[#00cfff]">{statistics.subscribed}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Subscribed</div>
+            <div className="p-3 sm:p-4 bg-black border border-gray-800">
+              <div className="text-xl sm:text-2xl font-black text-[#00cfff]">{statistics.subscribed}</div>
+              <div className="text-xs text-gray-500 uppercase font-bold">Active</div>
             </div>
-            <div className="p-4 bg-black border border-gray-800">
-              <div className="text-2xl font-black text-gray-400">{statistics.unsubscribed}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Unsubscribed</div>
-            </div>
-            <div className="p-4 bg-black border border-gray-800">
-              <div className="text-2xl font-black text-[#ff0055]">{statistics.notWelcomed}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Not Welcomed</div>
-            </div>
-            <div className="p-4 bg-black border border-[#00ff88]">
-              <div className="text-2xl font-black text-[#00ff88]">{statistics.newsletterSubscribers}</div>
+            <div className="p-3 sm:p-4 bg-black border border-[#00ff88]">
+              <div className="text-xl sm:text-2xl font-black text-[#00ff88]">{statistics.newsletterSubscribers}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Newsletter</div>
             </div>
-            <div className="p-4 bg-black border border-[#ff6b00]">
-              <div className="text-2xl font-black text-[#ff6b00]">{statistics.podcastSubscribers}</div>
+            <div className="p-3 sm:p-4 bg-black border border-[#ff6b00]">
+              <div className="text-xl sm:text-2xl font-black text-[#ff6b00]">{statistics.podcastSubscribers}</div>
               <div className="text-xs text-gray-500 uppercase font-bold">Podcast</div>
-            </div>
-            <div className="p-4 bg-black border border-[#cc00ff]">
-              <div className="text-2xl font-black text-[#cc00ff]">{statistics.feedbackSent}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Feedback Sent</div>
-            </div>
-            <div className="p-4 bg-black border border-[#ffaa00]">
-              <div className="text-2xl font-black text-[#ffaa00]">{statistics.feedbackNotSent}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Not Sent Yet</div>
             </div>
           </div>
         )}
 
-        {/* Filters and Actions */}
+        {/* Search and Primary Actions */}
         <div className="mb-6 space-y-4">
-          {/* Search */}
-          <div>
+          {/* Search Bar */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               placeholder="Search by email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-96 px-4 py-2 bg-black border border-gray-800 text-white placeholder-gray-600 focus:border-[#00ff88] focus:outline-none"
+              className="flex-1 px-4 py-3 bg-black border border-gray-800 text-white placeholder-gray-600 focus:border-[#00ff88] focus:outline-none"
             />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowSendFeedbackModal(true)}
+                className="flex-1 sm:flex-none px-6 py-3 bg-[#cc00ff] text-white text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
+                title="Only sends to subscribed users"
+              >
+                📧 Send Survey
+              </button>
+              <button
+                onClick={exportToCSV}
+                className="flex-1 sm:flex-none px-6 py-3 bg-[#00ff88] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
+              >
+                Export
+              </button>
+            </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3">
+          {/* Quick Filters */}
+          <div className="flex flex-wrap gap-2">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
             >
               <option value="all">All Status</option>
               <option value="subscribed">Subscribed</option>
@@ -376,7 +376,7 @@ export default function SubscribersPage() {
             <select
               value={filterLang}
               onChange={(e) => setFilterLang(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
             >
               <option value="all">All Languages</option>
               <option value="en">English</option>
@@ -386,85 +386,116 @@ export default function SubscribersPage() {
             <select
               value={filterWelcomed}
               onChange={(e) => setFilterWelcomed(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
             >
-              <option value="all">All Welcomed</option>
+              <option value="all">Welcomed Status</option>
               <option value="true">Welcomed</option>
               <option value="false">Not Welcomed</option>
             </select>
 
-            <select
-              value={filterFeedbackSent}
-              onChange={(e) => setFilterFeedbackSent(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
-            >
-              <option value="all">All Feedback</option>
-              <option value="not_sent">Not Sent</option>
-              <option value="sent">Already Sent</option>
-            </select>
-
-            <select
-              value={filterNewsletter}
-              onChange={(e) => setFilterNewsletter(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-[#00ff88] text-white text-sm font-bold uppercase focus:border-[#00ff88] focus:outline-none"
-            >
-              <option value="all">Newsletter: All</option>
-              <option value="yes">Newsletter: Yes</option>
-              <option value="no">Newsletter: No</option>
-            </select>
-
-            <select
-              value={filterPodcast}
-              onChange={(e) => setFilterPodcast(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-[#ff6b00] text-white text-sm font-bold uppercase focus:border-[#ff6b00] focus:outline-none"
-            >
-              <option value="all">Podcast: All</option>
-              <option value="yes">Podcast: Yes</option>
-              <option value="no">Podcast: No</option>
-            </select>
-
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-500 font-bold uppercase whitespace-nowrap">Subscribed ≥</label>
-              <input
-                type="number"
-                min="0"
-                value={filterMinDays}
-                onChange={(e) => setFilterMinDays(parseInt(e.target.value) || 0)}
-                className="w-20 px-3 py-2 bg-black border border-gray-800 text-white text-sm font-bold focus:border-[#00ff88] focus:outline-none"
-                placeholder="0"
-              />
-              <span className="text-xs text-gray-500">days</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-500 font-bold uppercase whitespace-nowrap">Last sent ≥</label>
-              <input
-                type="number"
-                min="0"
-                value={filterMinDaysSinceSent}
-                onChange={(e) => setFilterMinDaysSinceSent(parseInt(e.target.value) || 0)}
-                className="w-20 px-3 py-2 bg-black border border-gray-800 text-white text-sm font-bold focus:border-[#00ff88] focus:outline-none"
-                placeholder="0"
-                title="Only show users who received feedback ≥ X days ago (or never)"
-              />
-              <span className="text-xs text-gray-500">days ago</span>
-            </div>
-
             <button
-              onClick={() => setShowSendFeedbackModal(true)}
-              className="ml-auto px-6 py-2 bg-[#cc00ff] text-white text-xs font-bold uppercase hover:opacity-90 transition-opacity"
-              title="Only sends to subscribed users"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={`px-4 py-2 border text-xs font-bold uppercase transition-all ${
+                showAdvancedFilters
+                  ? 'bg-[#00ff88] border-[#00ff88] text-black'
+                  : 'bg-black border-gray-800 text-gray-400 hover:border-gray-600'
+              }`}
             >
-              📧 Send Feedback Survey
-            </button>
-
-            <button
-              onClick={exportToCSV}
-              className="px-6 py-2 bg-[#00ff88] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity"
-            >
-              Export CSV
+              {showAdvancedFilters ? '▲' : '▼'} More Filters
             </button>
           </div>
+
+          {/* Advanced Filters (Collapsible) */}
+          {showAdvancedFilters && (
+            <div className="p-4 bg-black border border-gray-800 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Newsletter Filter */}
+                <div>
+                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Newsletter</label>
+                  <select
+                    value={filterNewsletter}
+                    onChange={(e) => setFilterNewsletter(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-black border border-[#00ff88] text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+                  >
+                    <option value="all">All</option>
+                    <option value="yes">Subscribed</option>
+                    <option value="no">Not Subscribed</option>
+                  </select>
+                </div>
+
+                {/* Podcast Filter */}
+                <div>
+                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Podcast</label>
+                  <select
+                    value={filterPodcast}
+                    onChange={(e) => setFilterPodcast(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-black border border-[#ff6b00] text-white text-xs font-bold uppercase focus:border-[#ff6b00] focus:outline-none"
+                  >
+                    <option value="all">All</option>
+                    <option value="yes">Subscribed</option>
+                    <option value="no">Not Subscribed</option>
+                  </select>
+                </div>
+
+                {/* Feedback Sent Filter */}
+                <div>
+                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Feedback Status</label>
+                  <select
+                    value={filterFeedbackSent}
+                    onChange={(e) => setFilterFeedbackSent(e.target.value as any)}
+                    className="w-full px-3 py-2 bg-black border border-[#cc00ff] text-white text-xs font-bold uppercase focus:border-[#cc00ff] focus:outline-none"
+                  >
+                    <option value="all">All</option>
+                    <option value="not_sent">Not Sent</option>
+                    <option value="sent">Sent</option>
+                  </select>
+                </div>
+
+                {/* Min Days Subscribed */}
+                <div>
+                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Min Days Subscribed</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={filterMinDays}
+                    onChange={(e) => setFilterMinDays(parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 bg-black border border-gray-800 text-white text-xs font-bold focus:border-[#00ff88] focus:outline-none"
+                    placeholder="0"
+                  />
+                </div>
+
+                {/* Min Days Since Feedback Sent */}
+                <div>
+                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Days Since Last Feedback</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={filterMinDaysSinceSent}
+                    onChange={(e) => setFilterMinDaysSinceSent(parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 bg-black border border-gray-800 text-white text-xs font-bold focus:border-[#00ff88] focus:outline-none"
+                    placeholder="0"
+                    title="Only show users who received feedback ≥ X days ago (or never)"
+                  />
+                </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    setFilterNewsletter('all');
+                    setFilterPodcast('all');
+                    setFilterFeedbackSent('all');
+                    setFilterMinDays(0);
+                    setFilterMinDaysSinceSent(0);
+                  }}
+                  className="px-4 py-2 text-xs font-bold uppercase text-gray-400 hover:text-white transition-colors"
+                >
+                  Clear Advanced Filters
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results Count and Selection Actions */}
@@ -503,122 +534,224 @@ export default function SubscribersPage() {
           </div>
         </div>
 
-        {/* Subscribers Table */}
+        {/* Subscribers List */}
         {filteredSubscribers.length === 0 ? (
-          <div className="border border-gray-800 bg-black p-12 text-center">
+          <div className="border border-gray-800 bg-black p-8 sm:p-12 text-center">
             <div className="text-4xl mb-4 opacity-50">📬</div>
             <p className="text-lg text-gray-300 mb-2">No subscribers found</p>
             <p className="text-sm text-gray-500">Try adjusting your filters</p>
           </div>
         ) : (
-          <div className="border border-gray-800 bg-black overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left px-4 py-3 w-12">
-                    <input
-                      type="checkbox"
-                      checked={selectedSubscribers.size === filteredSubscribers.length && filteredSubscribers.length > 0}
-                      onChange={(e) => handleSelectAll(e.target.checked)}
-                      className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
-                      title="Select all"
-                    />
-                  </th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Email</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Language</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Subscriptions</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Last Sent</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
-                  <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredSubscribers.map((subscriber) => {
-                  const isSelected = selectedSubscribers.has(subscriber.email);
-                  return (
-                    <tr
-                      key={subscriber.id}
-                      className={`border-b border-gray-800 transition-colors ${
-                        isSelected
-                          ? 'bg-[#00ff8808] hover:bg-[#00ff8812]'
-                          : 'hover:bg-gray-900'
-                      }`}
-                    >
-                      <td className="px-4 py-3">
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden lg:block border border-gray-800 bg-black overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-800">
+                    <th className="text-left px-4 py-3 w-12">
+                      <input
+                        type="checkbox"
+                        checked={selectedSubscribers.size === filteredSubscribers.length && filteredSubscribers.length > 0}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
+                        title="Select all"
+                      />
+                    </th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Email</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Lang</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Subscriptions</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Feedback</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSubscribers.map((subscriber) => {
+                    const isSelected = selectedSubscribers.has(subscriber.email);
+                    return (
+                      <tr
+                        key={subscriber.id}
+                        className={`border-b border-gray-800 transition-colors ${
+                          isSelected
+                            ? 'bg-[#00ff8808] hover:bg-[#00ff8812]'
+                            : 'hover:bg-gray-900'
+                        }`}
+                      >
+                        <td className="px-4 py-3">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={(e) => handleSelectSubscriber(subscriber.email, e.target.checked)}
+                            className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
+                          />
+                        </td>
+                        <td className="px-4 py-3 text-sm text-white font-medium">{subscriber.email}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
+                            {subscriber.lang}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {subscriber.is_subscribed ? (
+                            <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff8820] text-[#00ff88] border border-[#00ff88]">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500">
+                              Inactive
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-1">
+                            {subscriber.subscribe_newsletter && (
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]" title="Newsletter">
+                                N
+                              </span>
+                            )}
+                            {subscriber.subscribe_podcast && (
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]" title="Podcast">
+                                P
+                              </span>
+                            )}
+                            {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
+                              <span className="text-xs text-gray-600">-</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          {subscriber.welcomed ? (
+                            <span className="text-[#00cfff] text-sm">✓</span>
+                          ) : (
+                            <span className="text-gray-600 text-sm">○</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          {subscriber.feedback_sent_at ? (
+                            <span
+                              className="text-[#cc00ff] text-xs font-bold"
+                              title={`Last sent: ${new Date(subscriber.feedback_sent_at).toLocaleString()}`}
+                            >
+                              {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d
+                            </span>
+                          ) : (
+                            <span className="text-gray-600 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))}d
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="lg:hidden space-y-3">
+              {filteredSubscribers.map((subscriber) => {
+                const isSelected = selectedSubscribers.has(subscriber.email);
+                return (
+                  <div
+                    key={subscriber.id}
+                    className={`border transition-colors ${
+                      isSelected
+                        ? 'border-[#00ff88] bg-[#00ff8808]'
+                        : 'border-gray-800 bg-black'
+                    }`}
+                  >
+                    <div className="p-4 space-y-3">
+                      {/* Header: Checkbox + Email */}
+                      <div className="flex items-start gap-3">
                         <input
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => handleSelectSubscriber(subscriber.email, e.target.checked)}
-                          className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
+                          className="mt-1 w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer flex-shrink-0"
                         />
-                      </td>
-                      <td className="px-4 py-3 text-sm text-white font-medium">{subscriber.email}</td>
-                    <td className="px-4 py-3">
-                      <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
-                        {subscriber.lang}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {subscriber.is_subscribed ? (
-                        <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff8820] text-[#00ff88] border border-[#00ff88]">
-                          ● Subscribed
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500">
-                          ○ Unsubscribed
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-1">
-                        {subscriber.subscribe_newsletter && (
-                          <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]" title="Subscribed to Newsletter">
-                            Newsletter
-                          </span>
-                        )}
-                        {subscriber.subscribe_podcast && (
-                          <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]" title="Subscribed to Podcast">
-                            Podcast
-                          </span>
-                        )}
-                        {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
-                          <span className="text-xs text-gray-600">None</span>
-                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm text-white font-medium break-all">{subscriber.email}</div>
+                        </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      {subscriber.welcomed ? (
-                        <span className="text-[#00cfff] text-sm">✓</span>
-                      ) : (
-                        <span className="text-gray-600 text-sm">○</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {subscriber.feedback_sent_at ? (
-                        <span
-                          className="text-[#cc00ff] text-xs font-bold"
-                          title={`Last sent: ${new Date(subscriber.feedback_sent_at).toLocaleString()}`}
-                        >
-                          {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d ago
-                        </span>
-                      ) : (
-                        <span className="text-gray-600 text-xs">Never</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
-                      {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))}d
-                    </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {new Date(subscriber.created_at).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+
+                      {/* Details Grid */}
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                          <div className="text-gray-500 uppercase font-bold mb-1">Status</div>
+                          {subscriber.is_subscribed ? (
+                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-[#00ff8820] text-[#00ff88] border border-[#00ff88]">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500">
+                              Inactive
+                            </span>
+                          )}
+                        </div>
+
+                        <div>
+                          <div className="text-gray-500 uppercase font-bold mb-1">Language</div>
+                          <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
+                            {subscriber.lang}
+                          </span>
+                        </div>
+
+                        <div>
+                          <div className="text-gray-500 uppercase font-bold mb-1">Subscriptions</div>
+                          <div className="flex gap-1">
+                            {subscriber.subscribe_newsletter && (
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]">
+                                Newsletter
+                              </span>
+                            )}
+                            {subscriber.subscribe_podcast && (
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]">
+                                Podcast
+                              </span>
+                            )}
+                            {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
+                              <span className="text-gray-600">None</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="text-gray-500 uppercase font-bold mb-1">Age</div>
+                          <div className="text-gray-400">
+                            {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))} days
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Footer: Welcomed + Feedback */}
+                      <div className="flex justify-between items-center pt-2 border-t border-gray-800 text-xs">
+                        <div>
+                          <span className="text-gray-500">Welcomed: </span>
+                          {subscriber.welcomed ? (
+                            <span className="text-[#00cfff]">✓ Yes</span>
+                          ) : (
+                            <span className="text-gray-600">○ No</span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Feedback: </span>
+                          {subscriber.feedback_sent_at ? (
+                            <span className="text-[#cc00ff] font-bold">
+                              {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d ago
+                            </span>
+                          ) : (
+                            <span className="text-gray-600">Never</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {/* Send Feedback Survey Modal */}
