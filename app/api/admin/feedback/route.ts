@@ -7,11 +7,10 @@ function getPostgRESTConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-  // For Supabase Cloud, append /rest/v1 if not already present
-  // For local Supabase, use the URL as-is
-  const baseURL = url.includes('supabase.co') && !url.includes('/rest/v1')
-    ? `${url}/rest/v1`
-    : url;
+  // Add /rest/v1 if not already present (works for both cloud and local Supabase)
+  const baseURL = url.includes('/rest/v1')
+    ? url
+    : `${url}/rest/v1`;
 
   return {
     baseURL,

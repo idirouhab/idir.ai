@@ -16,7 +16,9 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  *   testEmail?: string,  // If provided, only sends to this email for testing
  *   selectedEmails?: string[],  // If provided, only sends to these emails
  *   lang?: 'en' | 'es' | 'all',  // Language filter (only used if no selectedEmails)
- *   campaignDate?: string
+ *   campaignDate?: string,
+ *   minDaysSubscribed?: number,  // Only send to subscribers who joined X+ days ago
+ *   excludeRecentFeedbackDays?: number  // Don't send to subscribers who received feedback in last X days
  * }
  */
 export async function POST(request: NextRequest) {
@@ -37,6 +39,8 @@ export async function POST(request: NextRequest) {
     const selectedEmails = body.selectedEmails || [];
     const lang = body.lang || 'all';
     const campaignDate = body.campaignDate || new Date().toISOString().split('T')[0];
+    const minDaysSubscribed = body.minDaysSubscribed || 0;
+    const excludeRecentFeedbackDays = body.excludeRecentFeedbackDays || 0;
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -51,7 +55,7 @@ export async function POST(request: NextRequest) {
     else if (selectedEmails.length > 0) {
       const { data, error: fetchError } = await supabase
         .from('newsletter_subscribers')
-        .select('email, lang')
+        .select('email, lang, created_at')
         .eq('is_subscribed', true)
         .in('email', selectedEmails);
 
@@ -65,15 +69,23 @@ export async function POST(request: NextRequest) {
 
       subscribers = data;
     }
-    // All subscribers with optional language filter
+    // All subscribers with optional filters
     else {
+      // First, get all active subscribers with basic filters
       let subscribersQuery = supabase
         .from('newsletter_subscribers')
-        .select('email, lang')
+        .select('email, lang, created_at')
         .eq('is_subscribed', true);
 
       if (lang !== 'all') {
         subscribersQuery = subscribersQuery.eq('lang', lang);
+      }
+
+      // Apply min days subscribed filter
+      if (minDaysSubscribed > 0) {
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() - minDaysSubscribed);
+        subscribersQuery = subscribersQuery.lte('created_at', minDate.toISOString());
       }
 
       const { data, error: fetchError } = await subscribersQuery;
@@ -86,7 +98,23 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      subscribers = data;
+      subscribers = data || [];
+
+      // If we need to exclude recent feedback, fetch that data and filter
+      if (excludeRecentFeedbackDays > 0 && subscribers.length > 0) {
+        const excludeAfterDate = new Date();
+        excludeAfterDate.setDate(excludeAfterDate.getDate() - excludeRecentFeedbackDays);
+
+        const { data: recentFeedback } = await supabase
+          .from('newsletter_feedback')
+          .select('subscriber_email')
+          .gte('sent_at', excludeAfterDate.toISOString());
+
+        if (recentFeedback && recentFeedback.length > 0) {
+          const recentEmails = new Set(recentFeedback.map(f => f.subscriber_email));
+          subscribers = subscribers.filter(sub => !recentEmails.has(sub.email));
+        }
+      }
     }
 
     if (!subscribers || subscribers.length === 0) {

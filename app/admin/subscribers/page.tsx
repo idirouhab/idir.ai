@@ -13,8 +13,6 @@ type Subscriber = {
   welcomed: boolean;
   created_at: string;
   updated_at: string;
-  feedback_sent_at: string | null;
-  feedback_campaign_date: string | null;
   subscribe_newsletter: boolean;
   subscribe_podcast: boolean;
 };
@@ -27,8 +25,6 @@ type Statistics = {
   es: number;
   welcomed: number;
   notWelcomed: number;
-  feedbackSent: number;
-  feedbackNotSent: number;
   newsletterSubscribers: number;
   podcastSubscribers: number;
 };
@@ -43,21 +39,10 @@ export default function SubscribersPage() {
   const [filterWelcomed, setFilterWelcomed] = useState<'all' | 'true' | 'false'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMinDays, setFilterMinDays] = useState<number>(0);
-  const [filterFeedbackSent, setFilterFeedbackSent] = useState<'all' | 'sent' | 'not_sent'>('all');
-  const [filterMinDaysSinceSent, setFilterMinDaysSinceSent] = useState<number>(0);
   const [filterNewsletter, setFilterNewsletter] = useState<'all' | 'yes' | 'no'>('all');
   const [filterPodcast, setFilterPodcast] = useState<'all' | 'yes' | 'no'>('all');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [showSendFeedbackModal, setShowSendFeedbackModal] = useState(false);
-  const [sendingFeedback, setSendingFeedback] = useState(false);
-  const [sendFeedbackLang, setSendFeedbackLang] = useState<'all' | 'en' | 'es'>('all');
   const [selectedSubscribers, setSelectedSubscribers] = useState<Set<string>>(new Set());
-  const [testEmail, setTestEmail] = useState('');
-
-  const handleCloseFeedbackModal = () => {
-    setShowSendFeedbackModal(false);
-    setTestEmail('');
-  };
 
   useEffect(() => {
     checkAuthAndFetch();
@@ -134,119 +119,6 @@ export default function SubscribersPage() {
     }
   };
 
-  const handleSendTestEmail = async () => {
-    if (!testEmail.trim()) {
-      alert('Please enter a test email address');
-      return;
-    }
-
-    if (!testEmail.includes('@')) {
-      alert('Please enter a valid email address');
-      return;
-    }
-
-    setSendingFeedback(true);
-
-    try {
-      const response = await fetch('/api/newsletter/feedback/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          testEmail: testEmail.trim(),
-          campaignDate: new Date().toISOString().split('T')[0],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send test email');
-      }
-
-      const data = await response.json();
-
-      alert(
-        `Test email sent successfully to ${testEmail}!\n\n` +
-        `Check your inbox to preview the feedback survey.`
-      );
-    } catch (error) {
-      console.error('Error sending test email:', error);
-      alert('Failed to send test email. Please try again.');
-    } finally {
-      setSendingFeedback(false);
-    }
-  };
-
-  const handleSendFeedbackSurvey = async () => {
-    let confirmMessage = '';
-    let targetCount = 0;
-
-    // Determine what will be sent
-    if (selectedSubscribers.size > 0) {
-      targetCount = selectedSubscribers.size;
-      confirmMessage = `Are you sure you want to send feedback surveys to ${targetCount} selected subscriber${targetCount !== 1 ? 's' : ''}?`;
-    } else {
-      if (sendFeedbackLang === 'all') {
-        targetCount = statistics?.subscribed || 0;
-      } else if (sendFeedbackLang === 'en') {
-        targetCount = statistics?.en || 0;
-      } else {
-        targetCount = statistics?.es || 0;
-      }
-      confirmMessage = `Are you sure you want to send feedback surveys to ${targetCount} ${sendFeedbackLang === 'all' ? 'all' : sendFeedbackLang.toUpperCase()} subscribers?`;
-    }
-
-    confirmMessage += '\n\nEach subscriber will receive the email in their preferred language.';
-
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-
-    setSendingFeedback(true);
-
-    try {
-      const requestBody: any = {
-        campaignDate: new Date().toISOString().split('T')[0],
-      };
-
-      // If specific subscribers are selected, send only to them
-      if (selectedSubscribers.size > 0) {
-        requestBody.selectedEmails = Array.from(selectedSubscribers);
-      } else {
-        // Otherwise use language filter
-        requestBody.lang = sendFeedbackLang;
-      }
-
-      const response = await fetch('/api/newsletter/feedback/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send feedback surveys');
-      }
-
-      const data = await response.json();
-
-      alert(
-        `Feedback surveys sent successfully!\n\n` +
-        `Total: ${data.results.total}\n` +
-        `Sent: ${data.results.sent}\n` +
-        `Failed: ${data.results.failed}`
-      );
-
-      handleCloseFeedbackModal();
-      setSelectedSubscribers(new Set());
-    } catch (error) {
-      console.error('Error sending feedback surveys:', error);
-      alert('Failed to send feedback surveys. Please try again.');
-    } finally {
-      setSendingFeedback(false);
-    }
-  };
 
   // Client-side filters
   const filteredSubscribers = subscribers.filter(sub => {
@@ -260,26 +132,6 @@ export default function SubscribersPage() {
     );
     const matchesMinDays = filterMinDays === 0 || daysSinceSubscribed >= filterMinDays;
 
-    // Feedback sent filter
-    const matchesFeedbackSent =
-      filterFeedbackSent === 'all' ||
-      (filterFeedbackSent === 'sent' && sub.feedback_sent_at !== null) ||
-      (filterFeedbackSent === 'not_sent' && sub.feedback_sent_at === null);
-
-    // Days since last feedback sent filter
-    let matchesDaysSinceSent = true;
-    if (filterMinDaysSinceSent > 0) {
-      if (sub.feedback_sent_at === null) {
-        // Never sent = passes filter (can send now)
-        matchesDaysSinceSent = true;
-      } else {
-        const daysSinceSent = Math.floor(
-          (new Date().getTime() - new Date(sub.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24)
-        );
-        matchesDaysSinceSent = daysSinceSent >= filterMinDaysSinceSent;
-      }
-    }
-
     // Newsletter subscription filter
     const matchesNewsletter =
       filterNewsletter === 'all' ||
@@ -292,7 +144,7 @@ export default function SubscribersPage() {
       (filterPodcast === 'yes' && sub.subscribe_podcast) ||
       (filterPodcast === 'no' && !sub.subscribe_podcast);
 
-    return matchesSearch && matchesMinDays && matchesFeedbackSent && matchesDaysSinceSent && matchesNewsletter && matchesPodcast;
+    return matchesSearch && matchesMinDays && matchesNewsletter && matchesPodcast;
   });
 
   if (loading) {
@@ -344,21 +196,12 @@ export default function SubscribersPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 px-4 py-3 bg-black border border-gray-800 text-white placeholder-gray-600 focus:border-[#00ff88] focus:outline-none"
             />
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowSendFeedbackModal(true)}
-                className="flex-1 sm:flex-none px-6 py-3 bg-[#cc00ff] text-white text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
-                title="Only sends to subscribed users"
-              >
-                📧 Send Survey
-              </button>
-              <button
-                onClick={exportToCSV}
-                className="flex-1 sm:flex-none px-6 py-3 bg-[#00ff88] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
-              >
-                Export
-              </button>
-            </div>
+            <button
+              onClick={exportToCSV}
+              className="px-6 py-3 bg-[#00ff88] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              Export CSV
+            </button>
           </div>
 
           {/* Quick Filters */}
@@ -437,20 +280,6 @@ export default function SubscribersPage() {
                   </select>
                 </div>
 
-                {/* Feedback Sent Filter */}
-                <div>
-                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Feedback Status</label>
-                  <select
-                    value={filterFeedbackSent}
-                    onChange={(e) => setFilterFeedbackSent(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-black border border-[#cc00ff] text-white text-xs font-bold uppercase focus:border-[#cc00ff] focus:outline-none"
-                  >
-                    <option value="all">All</option>
-                    <option value="not_sent">Not Sent</option>
-                    <option value="sent">Sent</option>
-                  </select>
-                </div>
-
                 {/* Min Days Subscribed */}
                 <div>
                   <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Min Days Subscribed</label>
@@ -463,20 +292,6 @@ export default function SubscribersPage() {
                     placeholder="0"
                   />
                 </div>
-
-                {/* Min Days Since Feedback Sent */}
-                <div>
-                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Days Since Last Feedback</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={filterMinDaysSinceSent}
-                    onChange={(e) => setFilterMinDaysSinceSent(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-black border border-gray-800 text-white text-xs font-bold focus:border-[#00ff88] focus:outline-none"
-                    placeholder="0"
-                    title="Only show users who received feedback ≥ X days ago (or never)"
-                  />
-                </div>
               </div>
 
               {/* Clear Filters Button */}
@@ -485,9 +300,7 @@ export default function SubscribersPage() {
                   onClick={() => {
                     setFilterNewsletter('all');
                     setFilterPodcast('all');
-                    setFilterFeedbackSent('all');
                     setFilterMinDays(0);
-                    setFilterMinDaysSinceSent(0);
                   }}
                   className="px-4 py-2 text-xs font-bold uppercase text-gray-400 hover:text-white transition-colors"
                 >
@@ -562,7 +375,6 @@ export default function SubscribersPage() {
                     <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
                     <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Subscriptions</th>
                     <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Feedback</th>
                     <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
                   </tr>
                 </thead>
@@ -625,18 +437,6 @@ export default function SubscribersPage() {
                             <span className="text-[#00cfff] text-sm">✓</span>
                           ) : (
                             <span className="text-gray-600 text-sm">○</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          {subscriber.feedback_sent_at ? (
-                            <span
-                              className="text-[#cc00ff] text-xs font-bold"
-                              title={`Last sent: ${new Date(subscriber.feedback_sent_at).toLocaleString()}`}
-                            >
-                              {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d
-                            </span>
-                          ) : (
-                            <span className="text-gray-600 text-xs">-</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-500">
@@ -725,26 +525,14 @@ export default function SubscribersPage() {
                         </div>
                       </div>
 
-                      {/* Footer: Welcomed + Feedback */}
-                      <div className="flex justify-between items-center pt-2 border-t border-gray-800 text-xs">
-                        <div>
-                          <span className="text-gray-500">Welcomed: </span>
-                          {subscriber.welcomed ? (
-                            <span className="text-[#00cfff]">✓ Yes</span>
-                          ) : (
-                            <span className="text-gray-600">○ No</span>
-                          )}
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Feedback: </span>
-                          {subscriber.feedback_sent_at ? (
-                            <span className="text-[#cc00ff] font-bold">
-                              {Math.floor((new Date().getTime() - new Date(subscriber.feedback_sent_at).getTime()) / (1000 * 60 * 60 * 24))}d ago
-                            </span>
-                          ) : (
-                            <span className="text-gray-600">Never</span>
-                          )}
-                        </div>
+                      {/* Footer: Welcomed */}
+                      <div className="pt-2 border-t border-gray-800 text-xs">
+                        <span className="text-gray-500">Welcomed: </span>
+                        {subscriber.welcomed ? (
+                          <span className="text-[#00cfff]">✓ Yes</span>
+                        ) : (
+                          <span className="text-gray-600">○ No</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -752,136 +540,6 @@ export default function SubscribersPage() {
               })}
             </div>
           </>
-        )}
-
-        {/* Send Feedback Survey Modal */}
-        {showSendFeedbackModal && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-black border-2 border-[#cc00ff] max-w-md w-full p-6">
-              <div className="flex justify-between items-start mb-6">
-                <h3 className="text-xl font-black text-white uppercase">Send Feedback Survey</h3>
-                <button
-                  onClick={handleCloseFeedbackModal}
-                  disabled={sendingFeedback}
-                  className="text-gray-400 hover:text-white text-2xl leading-none disabled:opacity-50"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-4 bg-[#cc00ff10] border border-[#cc00ff]">
-                  <p className="text-sm text-gray-300 mb-2">
-                    Send a feedback survey email to your subscribers.
-                  </p>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Each subscriber will receive the email in their preferred language (EN/ES) with one-click buttons to rate the newsletter.
-                  </p>
-                  <p className="text-xs text-[#00ff88] font-bold">
-                    ✓ Only sends to active subscribers (unsubscribed users are automatically excluded)
-                  </p>
-                </div>
-
-                {/* Test Email Section */}
-                <div className="p-4 bg-[#00cfff10] border border-[#00cfff]">
-                  <label className="block text-xs text-[#00cfff] mb-2 uppercase font-bold">
-                    🧪 Test First (Recommended)
-                  </label>
-                  <p className="text-xs text-gray-400 mb-3">
-                    Send a test email to yourself before sending to all subscribers.
-                  </p>
-                  <div className="flex gap-2">
-                    <input
-                      type="email"
-                      placeholder="your-email@example.com"
-                      value={testEmail}
-                      onChange={(e) => setTestEmail(e.target.value)}
-                      disabled={sendingFeedback}
-                      className="flex-1 px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm disabled:opacity-50"
-                    />
-                    <button
-                      onClick={handleSendTestEmail}
-                      disabled={sendingFeedback || !testEmail.trim()}
-                      className="px-4 py-2 bg-[#00cfff] text-black font-bold text-xs uppercase hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                    >
-                      Send Test
-                    </button>
-                  </div>
-                </div>
-
-                {/* Selection Info */}
-                {selectedSubscribers.size > 0 ? (
-                  <div className="p-4 bg-[#00ff8810] border border-[#00ff88]">
-                    <p className="text-white font-bold mb-2 text-sm">
-                      ✓ {selectedSubscribers.size} subscriber{selectedSubscribers.size !== 1 ? 's' : ''} selected
-                    </p>
-                    <p className="text-xs text-gray-400 mb-3">
-                      The feedback survey will be sent only to the selected subscribers. Each will receive the email in their preferred language.
-                    </p>
-                    <button
-                      onClick={() => {
-                        setSelectedSubscribers(new Set());
-                      }}
-                      className="text-xs text-gray-400 hover:text-white uppercase font-bold transition-colors underline"
-                    >
-                      Clear selection and use language filter instead
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-2 uppercase font-bold">
-                        Language Filter
-                      </label>
-                      <select
-                        value={sendFeedbackLang}
-                        onChange={(e) => setSendFeedbackLang(e.target.value as 'all' | 'en' | 'es')}
-                        disabled={sendingFeedback}
-                        className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#cc00ff] focus:outline-none text-sm font-bold uppercase disabled:opacity-50"
-                      >
-                        <option value="all">All Languages</option>
-                        <option value="en">English Only</option>
-                        <option value="es">Spanish Only</option>
-                      </select>
-                    </div>
-
-                    {statistics && (
-                      <div className="p-3 bg-gray-900 border border-gray-800 text-sm">
-                        <p className="text-gray-400">
-                          Will send to approximately{' '}
-                          <span className="font-bold text-white">
-                            {sendFeedbackLang === 'all'
-                              ? statistics.subscribed
-                              : sendFeedbackLang === 'en'
-                              ? statistics.en
-                              : statistics.es}
-                          </span>{' '}
-                          active subscribers
-                        </p>
-                      </div>
-                    )}
-                  </>
-                )}
-
-                <div className="pt-4 flex gap-3">
-                  <button
-                    onClick={handleSendFeedbackSurvey}
-                    disabled={sendingFeedback}
-                    className="flex-1 px-4 py-2 bg-[#cc00ff] text-white font-bold text-sm uppercase hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {sendingFeedback ? 'Sending...' : 'Send Survey'}
-                  </button>
-                  <button
-                    onClick={handleCloseFeedbackModal}
-                    disabled={sendingFeedback}
-                    className="px-4 py-2 border border-gray-700 text-gray-300 font-bold text-sm uppercase hover:border-white hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         )}
     </AdminPageWrapper>
   );
