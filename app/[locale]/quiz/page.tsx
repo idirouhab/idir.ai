@@ -66,7 +66,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       description,
       images: [
         {
-          url: `${baseUrl}/${locale}/quiz/opengraph-image`,
+          url: `${baseUrl}/quiz/og-image.png`,
           width: 1200,
           height: 630,
           alt: title,
@@ -80,7 +80,7 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
       creator: '@idir_ouhab',
       title,
       description,
-      images: [`${baseUrl}/${locale}/quiz/opengraph-image`],
+      images: [`${baseUrl}/quiz/og-image.png`],
     },
     robots: {
       index: true,
