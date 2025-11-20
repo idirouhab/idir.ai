@@ -302,5 +302,9 @@
       "title": "Política de Privacidad | idir.ai",
       "description": "Política de Privacidad que explica cómo idir.ai recopila, usa y protege tu información personal."
     }
+  },
+  "quiz": {
+    "title": "Desafío Quiz IA",
+    "description": "Pon a prueba tus conocimientos de IA y compite en el ranking global"
   }
 }

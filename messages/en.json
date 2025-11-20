@@ -302,5 +302,9 @@
       "title": "Privacy Policy | idir.ai",
       "description": "Privacy Policy explaining how idir.ai collects, uses, and protects your personal information."
     }
+  },
+  "quiz": {
+    "title": "AI Quiz Challenge",
+    "description": "Test your AI knowledge and compete on the global leaderboard"
   }
 }
