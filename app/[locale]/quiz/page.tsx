@@ -226,13 +226,30 @@ export default function QuizGame() {
     return '';
   };
 
-  const getShareText = (withScore = false) => {
+  const getShareText = (withScore = false, includeRank = false) => {
     if (withScore && gameFinished) {
       const percentage = (score / questions.length) * 100;
+      const userRank = leaderboard.findIndex(entry => entry.username === username && entry.final_score === finalScore) + 1;
+
       if (locale === 'es') {
-        return `¡Acabo de conseguir ${finalScore.toLocaleString()} puntos (${score}/${questions.length}, ${percentage.toFixed(0)}%) en el Desafío Quiz IA! 🤖 ¿Puedes superarme?`;
+        let text = `¡Acabo de conseguir ${finalScore.toLocaleString()} puntos en el Desafío Quiz IA! 🤖`;
+        if (includeRank && userRank > 0 && userRank <= 5) {
+          text = `🏆 ¡Estoy en el puesto #${userRank} del ranking con ${finalScore.toLocaleString()} puntos en el Desafío Quiz IA! 🤖`;
+        }
+        text += `\n\n📊 ${score}/${questions.length} correctas (${percentage.toFixed(0)}%)`;
+        text += `\n⏱️ ${Math.floor(totalTimeSeconds / 60)}:${(totalTimeSeconds % 60).toString().padStart(2, '0')}`;
+        text += `\n\n¿Puedes superarme? 🚀`;
+        return text;
       }
-      return `I just scored ${finalScore.toLocaleString()} points (${score}/${questions.length}, ${percentage.toFixed(0)}%) on the AI Quiz Challenge! 🤖 Can you beat me?`;
+
+      let text = `I just scored ${finalScore.toLocaleString()} points on the AI Quiz Challenge! 🤖`;
+      if (includeRank && userRank > 0 && userRank <= 5) {
+        text = `🏆 I'm ranked #${userRank} with ${finalScore.toLocaleString()} points on the AI Quiz Challenge! 🤖`;
+      }
+      text += `\n\n📊 ${score}/${questions.length} correct (${percentage.toFixed(0)}%)`;
+      text += `\n⏱️ ${Math.floor(totalTimeSeconds / 60)}:${(totalTimeSeconds % 60).toString().padStart(2, '0')}`;
+      text += `\n\nCan you beat me? 🚀`;
+      return text;
     }
     if (locale === 'es') {
       return '¡Pon a prueba tus conocimientos de IA con este quiz! 🤖';
@@ -241,14 +258,14 @@ export default function QuizGame() {
   };
 
   const shareOnX = () => {
-    const text = encodeURIComponent(getShareText(gameFinished));
+    const text = encodeURIComponent(getShareText(gameFinished, true));
     const url = encodeURIComponent(getQuizUrl());
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
   };
 
   const shareOnLinkedIn = () => {
     const url = getQuizUrl();
-    const text = `${getShareText(gameFinished)} ${url}`;
+    const text = `${getShareText(gameFinished, true)}\n\n${url}`;
     const encodedText = encodeURIComponent(text);
 
     // Use LinkedIn's feed share format
