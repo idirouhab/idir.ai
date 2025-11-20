@@ -18,6 +18,8 @@ type LeaderboardEntry = {
   total_questions: number;
   max_streak: number;
   completed_at: string;
+  final_score: number;
+  total_time_seconds: number;
 };
 
 export default function QuizGame() {
@@ -39,16 +41,19 @@ export default function QuizGame() {
   const [savingScore, setSavingScore] = useState(false);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [copied, setCopied] = useState(false);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(0);
+  const [totalTimeSeconds, setTotalTimeSeconds] = useState(0);
+  const [finalScore, setFinalScore] = useState(0);
 
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
     try {
       const { data, error } = await supabase
         .from('quiz_scores')
-        .select('username, score, total_questions, max_streak, completed_at')
+        .select('username, score, total_questions, max_streak, completed_at, final_score, total_time_seconds')
         .eq('language', locale)
-        .order('score', { ascending: false })
-        .order('completed_at', { ascending: false })
+        .order('final_score', { ascending: false })
+        .order('total_time_seconds', { ascending: true })
         .limit(5);
 
       if (error) throw error;
@@ -62,6 +67,16 @@ export default function QuizGame() {
     fetchLeaderboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale]);
+
+  // Calculate time bonus (up to 500 points per question)
+  const calculateTimeBonus = (timeInSeconds: number): number => {
+    if (timeInSeconds <= 5) return 500;
+    if (timeInSeconds <= 10) return 400;
+    if (timeInSeconds <= 15) return 300;
+    if (timeInSeconds <= 20) return 200;
+    if (timeInSeconds <= 30) return 100;
+    return 0;
+  };
 
   // Save score to database
   const saveScore = async () => {
@@ -77,6 +92,8 @@ export default function QuizGame() {
           total_questions: questions.length,
           max_streak: maxStreak,
           language: locale,
+          total_time_seconds: totalTimeSeconds,
+          final_score: finalScore,
         });
 
       if (error) throw error;
@@ -109,6 +126,7 @@ export default function QuizGame() {
       const data = await response.json();
       setQuestions(data);
       setGameStarted(true);
+      setQuestionStartTime(Date.now()); // Start timing the first question
       setLoading(false);
     } catch (err) {
       console.error('Error fetching quiz:', err);
@@ -125,10 +143,22 @@ export default function QuizGame() {
   const handleSubmitAnswer = () => {
     if (selectedAnswer === null) return;
 
+    // Calculate time taken for this question
+    const timeElapsed = Math.floor((Date.now() - questionStartTime) / 1000);
+    const newTotalTime = totalTimeSeconds + timeElapsed;
+    setTotalTimeSeconds(newTotalTime);
+
     setShowExplanation(true);
 
-    if (selectedAnswer === questions[currentQuestion].correct) {
+    const isCorrect = selectedAnswer === questions[currentQuestion].correct;
+
+    if (isCorrect) {
+      const basePoints = 1000;
+      const timeBonus = calculateTimeBonus(timeElapsed);
+      const questionPoints = basePoints + timeBonus;
+
       setScore(score + 1);
+      setFinalScore(finalScore + questionPoints);
       setStreak(streak + 1);
       setMaxStreak(Math.max(maxStreak, streak + 1));
     } else {
@@ -141,6 +171,7 @@ export default function QuizGame() {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
       setShowExplanation(false);
+      setQuestionStartTime(Date.now()); // Start timing the next question
     } else {
       setGameFinished(true);
       saveScore();
@@ -158,6 +189,9 @@ export default function QuizGame() {
     setMaxStreak(0);
     setUsername('');
     setError(null);
+    setQuestionStartTime(0);
+    setTotalTimeSeconds(0);
+    setFinalScore(0);
   };
 
   const getScoreMessage = () => {
@@ -196,9 +230,9 @@ export default function QuizGame() {
     if (withScore && gameFinished) {
       const percentage = (score / questions.length) * 100;
       if (locale === 'es') {
-        return `¡Acabo de conseguir ${score}/${questions.length} (${percentage.toFixed(0)}%) en el Desafío Quiz IA! 🤖 ¿Puedes superarme?`;
+        return `¡Acabo de conseguir ${finalScore.toLocaleString()} puntos (${score}/${questions.length}, ${percentage.toFixed(0)}%) en el Desafío Quiz IA! 🤖 ¿Puedes superarme?`;
       }
-      return `I just scored ${score}/${questions.length} (${percentage.toFixed(0)}%) on the AI Quiz Challenge! 🤖 Can you beat me?`;
+      return `I just scored ${finalScore.toLocaleString()} points (${score}/${questions.length}, ${percentage.toFixed(0)}%) on the AI Quiz Challenge! 🤖 Can you beat me?`;
     }
     if (locale === 'es') {
       return '¡Pon a prueba tus conocimientos de IA con este quiz! 🤖';
@@ -295,10 +329,19 @@ export default function QuizGame() {
                   )}
                 </button>
 
-                <div className="text-sm text-gray-500 text-center">
-                  {locale === 'es'
-                    ? '• Tu puntuación se guardará en el ranking'
-                    : '• Your score will be saved to the leaderboard'}
+                <div className="text-sm text-gray-500 space-y-2">
+                  <div className="text-center font-bold text-gray-400 uppercase mb-2">
+                    {locale === 'es' ? '⚡ Sistema de Puntuación' : '⚡ Scoring System'}
+                  </div>
+                  <div className="text-xs">
+                    • {locale === 'es' ? 'Respuesta correcta: 1000 puntos' : 'Correct answer: 1000 points'}
+                  </div>
+                  <div className="text-xs">
+                    • {locale === 'es' ? 'Bonificación por velocidad: hasta +500 puntos' : 'Speed bonus: up to +500 points'}
+                  </div>
+                  <div className="text-xs">
+                    • {locale === 'es' ? '¡Responde rápido y correctamente para maximizar tu puntuación!' : 'Answer fast and correctly to maximize your score!'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -313,6 +356,9 @@ export default function QuizGame() {
                 <div className="space-y-2">
                   {leaderboard.map((entry, index) => {
                     const percentage = (entry.score / entry.total_questions) * 100;
+                    const minutes = Math.floor((entry.total_time_seconds || 0) / 60);
+                    const seconds = (entry.total_time_seconds || 0) % 60;
+                    const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                     return (
                       <div
                         key={index}
@@ -326,15 +372,16 @@ export default function QuizGame() {
                             <div className="font-bold text-white">{entry.username}</div>
                             <div className="text-xs text-gray-500">
                               {getStreakEmoji(entry.max_streak)} {entry.max_streak > 0 && `${entry.max_streak}x`}
+                              {entry.total_time_seconds > 0 && ` • ${timeDisplay}`}
                             </div>
                           </div>
                         </div>
                         <div className="text-right">
                           <div className="font-black text-[#00ff88]">
-                            {entry.score}/{entry.total_questions}
+                            {(entry.final_score || entry.score * 1000).toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {percentage.toFixed(0)}%
+                            {entry.score}/{entry.total_questions} ({percentage.toFixed(0)}%)
                           </div>
                         </div>
                       </div>
@@ -440,7 +487,10 @@ export default function QuizGame() {
 
   if (gameFinished) {
     const percentage = (score / questions.length) * 100;
-    const userRank = leaderboard.findIndex(entry => entry.username === username && entry.score === score) + 1;
+    const userRank = leaderboard.findIndex(entry => entry.username === username && entry.final_score === finalScore) + 1;
+    const minutes = Math.floor(totalTimeSeconds / 60);
+    const seconds = totalTimeSeconds % 60;
+    const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
     return (
       <div className="min-h-screen bg-black text-white py-12 px-4">
@@ -467,11 +517,17 @@ export default function QuizGame() {
               {/* Score Display */}
               <div className="mb-8 text-center">
                 <div className="inline-block bg-black border-2 border-[#00ff88] p-6 mb-4">
-                  <div className="text-7xl font-black text-[#00ff88] mb-2">
-                    {score}<span className="text-4xl text-gray-600">/{questions.length}</span>
+                  <div className="text-5xl font-black text-[#00ff88] mb-2">
+                    {finalScore.toLocaleString()}
                   </div>
-                  <div className="text-xl text-gray-400 font-bold">
-                    {percentage.toFixed(0)}% {locale === 'es' ? 'Correcto' : 'Correct'}
+                  <div className="text-lg text-gray-400 font-bold mb-1">
+                    {locale === 'es' ? 'Puntuación Total' : 'Total Score'}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {score}/{questions.length} {locale === 'es' ? 'correctas' : 'correct'} ({percentage.toFixed(0)}%)
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    ⏱️ {timeDisplay}
                   </div>
                 </div>
 
@@ -501,12 +557,12 @@ export default function QuizGame() {
                       {maxStreak} {getStreakEmoji(maxStreak)}
                     </div>
                   </div>
-                  <div className="bg-[#ff005510] border border-[#ff0055] p-4">
+                  <div className="bg-[#00cfff10] border border-[#00cfff] p-4">
                     <div className="text-sm text-gray-400 uppercase font-bold mb-1">
-                      {locale === 'es' ? 'Incorrectas' : 'Incorrect'}
+                      {locale === 'es' ? 'Tiempo Promedio' : 'Avg Time'}
                     </div>
-                    <div className="text-3xl font-black text-[#ff0055]">
-                      {questions.length - score}
+                    <div className="text-3xl font-black text-[#00cfff]">
+                      {Math.floor(totalTimeSeconds / questions.length)}s
                     </div>
                   </div>
                 </div>
