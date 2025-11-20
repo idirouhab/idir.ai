@@ -44,6 +44,9 @@ export default function QuizGame() {
   const [questionStartTime, setQuestionStartTime] = useState<number>(0);
   const [totalTimeSeconds, setTotalTimeSeconds] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
+  const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
+  const [lastQuestionTime, setLastQuestionTime] = useState(0);
+  const [lastTimeBonus, setLastTimeBonus] = useState(0);
 
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
@@ -67,6 +70,20 @@ export default function QuizGame() {
     fetchLeaderboard();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale]);
+
+  // Update current question time every second
+  useEffect(() => {
+    if (!gameStarted || gameFinished || showExplanation || questionStartTime === 0) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - questionStartTime) / 1000);
+      setCurrentQuestionTime(elapsed);
+    }, 100); // Update every 100ms for smooth display
+
+    return () => clearInterval(interval);
+  }, [gameStarted, gameFinished, showExplanation, questionStartTime]);
 
   // Calculate time bonus (up to 500 points per question)
   const calculateTimeBonus = (timeInSeconds: number): number => {
@@ -147,6 +164,7 @@ export default function QuizGame() {
     const timeElapsed = Math.floor((Date.now() - questionStartTime) / 1000);
     const newTotalTime = totalTimeSeconds + timeElapsed;
     setTotalTimeSeconds(newTotalTime);
+    setLastQuestionTime(timeElapsed);
 
     setShowExplanation(true);
 
@@ -156,12 +174,14 @@ export default function QuizGame() {
       const basePoints = 1000;
       const timeBonus = calculateTimeBonus(timeElapsed);
       const questionPoints = basePoints + timeBonus;
+      setLastTimeBonus(timeBonus);
 
       setScore(score + 1);
       setFinalScore(finalScore + questionPoints);
       setStreak(streak + 1);
       setMaxStreak(Math.max(maxStreak, streak + 1));
     } else {
+      setLastTimeBonus(0);
       setStreak(0);
     }
   };
@@ -172,6 +192,7 @@ export default function QuizGame() {
       setSelectedAnswer(null);
       setShowExplanation(false);
       setQuestionStartTime(Date.now()); // Start timing the next question
+      setCurrentQuestionTime(0); // Reset displayed time
     } else {
       setGameFinished(true);
       saveScore();
@@ -715,13 +736,18 @@ export default function QuizGame() {
               {locale === 'es' ? 'Pregunta' : 'Question'} {currentQuestion + 1} {locale === 'es' ? 'de' : 'of'} {questions.length}
             </span>
             <div className="flex items-center gap-4">
+              {!showExplanation && (
+                <span className="text-[#00cfff] font-mono">
+                  ⏱️ {currentQuestionTime}s
+                </span>
+              )}
               {streak >= 2 && (
                 <span className="text-[#ff0055] animate-pulse">
                   {getStreakEmoji(streak)} {streak}x
                 </span>
               )}
               <span className="text-[#00ff88]">
-                {locale === 'es' ? 'Puntos' : 'Score'}: {score}
+                {locale === 'es' ? 'Puntos' : 'Score'}: {finalScore.toLocaleString()}
               </span>
             </div>
           </div>
@@ -789,6 +815,38 @@ export default function QuizGame() {
               );
             })}
           </div>
+
+          {/* Time and Score Info */}
+          {showExplanation && selectedAnswer === questions[currentQuestion].correct && (
+            <div className="mt-6 p-4 bg-[#00ff8810] border-2 border-[#00ff88] relative overflow-hidden animate-fade-in">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">⚡</span>
+                  <div>
+                    <div className="text-xs text-gray-400 uppercase font-bold">
+                      {locale === 'es' ? 'Tiempo' : 'Time'}
+                    </div>
+                    <div className="text-lg font-black text-[#00ff88]">
+                      {lastQuestionTime}s
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xs text-gray-400 uppercase font-bold">
+                    {locale === 'es' ? 'Puntos Ganados' : 'Points Earned'}
+                  </div>
+                  <div className="text-lg font-black text-[#00ff88]">
+                    +{(1000 + lastTimeBonus).toLocaleString()}
+                    {lastTimeBonus > 0 && (
+                      <span className="text-sm text-[#00cfff] ml-2">
+                        (+{lastTimeBonus} {locale === 'es' ? 'bonus' : 'bonus'})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Explanation */}
           {showExplanation && question.explanation && (
