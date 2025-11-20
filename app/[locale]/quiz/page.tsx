@@ -49,7 +49,7 @@ export default function QuizGame() {
         .eq('language', locale)
         .order('score', { ascending: false })
         .order('completed_at', { ascending: false })
-        .limit(10);
+        .limit(5);
 
       if (error) throw error;
       setLeaderboard(data || []);
@@ -306,7 +306,7 @@ export default function QuizGame() {
             {/* Leaderboard */}
             <div className="border-2 border-[#00cfff] bg-gradient-to-br from-black via-[#00cfff05] to-black p-8">
               <h2 className="text-2xl font-bold mb-6 text-[#00cfff]">
-                {locale === 'es' ? '🏆 Top 10 Ranking' : '🏆 Top 10 Leaderboard'}
+                {locale === 'es' ? '🏆 Top 5 Ranking' : '🏆 Top 5 Leaderboard'}
               </h2>
 
               {leaderboard.length > 0 ? (
