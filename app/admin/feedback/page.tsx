@@ -668,7 +668,7 @@ export default function FeedbackPage() {
                             className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#cc00ff] focus:outline-none text-sm font-bold disabled:opacity-50"
                             placeholder="30"
                           />
-                          <p className="text-xs text-gray-600 mt-1">Don't send to subscribers who received feedback in the last {excludeRecentFeedback} days</p>
+                          <p className="text-xs text-gray-600 mt-1">Don&apos;t send to subscribers who received feedback in the last {excludeRecentFeedback} days</p>
                         </div>
                       </div>
                     </div>

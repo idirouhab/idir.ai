@@ -32,6 +32,7 @@ export default function Unsubscribe() {
         loadPreferences(decodedEmail);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const loadPreferences = async (emailAddress: string) => {

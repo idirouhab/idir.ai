@@ -59,6 +59,7 @@ export default function QuizGame() {
 
   useEffect(() => {
     fetchLeaderboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale]);
 
   // Save score to database
