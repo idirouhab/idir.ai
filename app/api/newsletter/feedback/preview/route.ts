@@ -6,6 +6,15 @@ import { verifyToken } from '@/lib/jwt';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
+type SubscriberWithFeedback = {
+  email: string;
+  lang: string;
+  created_at: string;
+  feedbackCount?: number;
+  lastFeedbackSent?: string | null;
+  daysSinceLastFeedback?: number | null;
+};
+
 /**
  * Preview campaign recipients with filters
  * GET /api/newsletter/feedback/preview?lang=all&minDaysSubscribed=0&excludeRecentFeedbackDays=30
@@ -57,7 +66,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let filteredSubscribers = subscribers || [];
+    let filteredSubscribers: SubscriberWithFeedback[] = subscribers || [];
 
     // Get feedback counts for all subscribers
     const { data: allFeedback } = await supabase
