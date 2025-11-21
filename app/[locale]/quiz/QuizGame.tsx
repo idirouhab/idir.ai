@@ -48,19 +48,51 @@ export default function QuizGame() {
   const [lastQuestionTime, setLastQuestionTime] = useState(0);
   const [lastTimeBonus, setLastTimeBonus] = useState(0);
 
-  // Fetch leaderboard
+  // Fetch leaderboard - only show best score per unique player
   const fetchLeaderboard = async () => {
     try {
+      // Fetch top 50 scores to ensure we get 5 unique players
       const { data, error } = await supabase
         .from('quiz_scores')
         .select('username, score, total_questions, max_streak, completed_at, final_score, total_time_seconds')
         .eq('language', locale)
         .order('final_score', { ascending: false })
         .order('total_time_seconds', { ascending: true })
-        .limit(5);
+        .limit(50);
 
       if (error) throw error;
-      setLeaderboard(data || []);
+
+      // Filter to show only the best score per unique username
+      const uniquePlayerScores = new Map<string, LeaderboardEntry>();
+
+      (data || []).forEach(entry => {
+        const existingEntry = uniquePlayerScores.get(entry.username.toLowerCase());
+
+        if (!existingEntry) {
+          // First time seeing this player
+          uniquePlayerScores.set(entry.username.toLowerCase(), entry);
+        } else {
+          // Player already exists, keep the better score
+          // (should already be sorted, but just in case)
+          if (entry.final_score > existingEntry.final_score ||
+              (entry.final_score === existingEntry.final_score &&
+               entry.total_time_seconds < existingEntry.total_time_seconds)) {
+            uniquePlayerScores.set(entry.username.toLowerCase(), entry);
+          }
+        }
+      });
+
+      // Convert map to array and take top 5
+      const topPlayers = Array.from(uniquePlayerScores.values())
+        .sort((a, b) => {
+          if (b.final_score !== a.final_score) {
+            return b.final_score - a.final_score;
+          }
+          return a.total_time_seconds - b.total_time_seconds;
+        })
+        .slice(0, 5);
+
+      setLeaderboard(topPlayers);
     } catch (err) {
       console.error('Error fetching leaderboard:', err);
     }
@@ -95,12 +127,31 @@ export default function QuizGame() {
     return 0;
   };
 
+  const [isPersonalBest, setIsPersonalBest] = useState(false);
+  const [previousBest, setPreviousBest] = useState<number | null>(null);
+
   // Save score to database
   const saveScore = async () => {
     if (!username || savingScore) return;
 
     setSavingScore(true);
     try {
+      // Check for existing best score
+      const { data: existingScores } = await supabase
+        .from('quiz_scores')
+        .select('final_score')
+        .eq('username', username.trim())
+        .eq('language', locale)
+        .order('final_score', { ascending: false })
+        .limit(1);
+
+      const currentBest = existingScores && existingScores.length > 0 ? existingScores[0].final_score : null;
+
+      if (currentBest !== null && finalScore > currentBest) {
+        setIsPersonalBest(true);
+        setPreviousBest(currentBest);
+      }
+
       const { error } = await supabase
         .from('quiz_scores')
         .insert({
@@ -386,9 +437,14 @@ export default function QuizGame() {
 
             {/* Leaderboard */}
             <div className="border-2 border-[#00cfff] bg-gradient-to-br from-black via-[#00cfff05] to-black p-8">
-              <h2 className="text-2xl font-bold mb-6 text-[#00cfff]">
+              <h2 className="text-2xl font-bold mb-2 text-[#00cfff]">
                 {locale === 'es' ? '🏆 Top 5 Ranking' : '🏆 Top 5 Leaderboard'}
               </h2>
+              <p className="text-xs text-gray-500 mb-6">
+                {locale === 'es'
+                  ? 'Mostrando el mejor score de cada jugador único'
+                  : 'Showing best score per unique player'}
+              </p>
 
               {leaderboard.length > 0 ? (
                 <div className="space-y-2">
@@ -564,6 +620,17 @@ export default function QuizGame() {
 
               {/* Score Display */}
               <div className="mb-8 text-center">
+                {isPersonalBest && previousBest !== null && (
+                  <div className="mb-4 p-3 bg-gradient-to-r from-[#ff005520] to-[#00ff8820] border-2 border-[#ff0055] animate-pulse">
+                    <div className="text-sm font-black uppercase text-[#ff0055] mb-1">
+                      🎉 {locale === 'es' ? '¡NUEVO RÉCORD PERSONAL!' : 'NEW PERSONAL BEST!'}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {locale === 'es' ? 'Anterior' : 'Previous'}: {previousBest.toLocaleString()} → <span className="text-[#00ff88]">+{(finalScore - previousBest).toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="inline-block bg-black border-2 border-[#00ff88] p-6 mb-4">
                   <div className="text-5xl font-black text-[#00ff88] mb-2">
                     {finalScore.toLocaleString()}
