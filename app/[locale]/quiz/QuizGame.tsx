@@ -43,6 +43,7 @@ export default function QuizGame() {
   const [copied, setCopied] = useState(false);
   const [questionStartTime, setQuestionStartTime] = useState<number>(0);
   const [totalTimeSeconds, setTotalTimeSeconds] = useState(0);
+  const [totalTimeMilliseconds, setTotalTimeMilliseconds] = useState(0);
   const [finalScore, setFinalScore] = useState(0);
   const [currentQuestionTime, setCurrentQuestionTime] = useState(0);
   const [lastQuestionTime, setLastQuestionTime] = useState(0);
@@ -117,13 +118,25 @@ export default function QuizGame() {
     return () => clearInterval(interval);
   }, [gameStarted, gameFinished, showExplanation, questionStartTime]);
 
-  // Calculate time bonus (up to 500 points per question)
-  const calculateTimeBonus = (timeInSeconds: number): number => {
-    if (timeInSeconds <= 5) return 500;
-    if (timeInSeconds <= 10) return 400;
-    if (timeInSeconds <= 15) return 300;
-    if (timeInSeconds <= 20) return 200;
-    if (timeInSeconds <= 30) return 100;
+  // Calculate time bonus with millisecond precision (up to 500 points per question)
+  // More granular = less chance of ties
+  const calculateTimeBonus = (timeInMs: number): number => {
+    const seconds = timeInMs / 1000;
+
+    if (seconds <= 3) {
+      // Ultra fast: 500 - (seconds * 50) = 500 to 350
+      return Math.floor(500 - (seconds * 50));
+    } else if (seconds <= 8) {
+      // Fast: 350 - ((seconds - 3) * 50) = 350 to 100
+      return Math.floor(350 - ((seconds - 3) * 50));
+    } else if (seconds <= 15) {
+      // Medium: 100 - ((seconds - 8) * 10) = 100 to 30
+      return Math.floor(100 - ((seconds - 8) * 10));
+    } else if (seconds <= 30) {
+      // Slow: 30 - ((seconds - 15) * 2) = 30 to 0
+      return Math.max(0, Math.floor(30 - ((seconds - 15) * 2)));
+    }
+
     return 0;
   };
 
@@ -185,7 +198,7 @@ export default function QuizGame() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`https://idir-test.app.n8n.cloud/webhook/quiz?lang=${locale}`);
+      const response = await fetch(`https://idir-test.app.n8n.cloud/webhook/quiz?lang=${locale}&count=8`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch quiz questions');
@@ -211,11 +224,16 @@ export default function QuizGame() {
   const handleSubmitAnswer = () => {
     if (selectedAnswer === null) return;
 
-    // Calculate time taken for this question
-    const timeElapsed = Math.floor((Date.now() - questionStartTime) / 1000);
-    const newTotalTime = totalTimeSeconds + timeElapsed;
+    // Calculate time taken for this question (in milliseconds)
+    const timeElapsedMs = Date.now() - questionStartTime;
+    const timeElapsedSeconds = Math.floor(timeElapsedMs / 1000);
+
+    const newTotalTime = totalTimeSeconds + timeElapsedSeconds;
+    const newTotalTimeMs = totalTimeMilliseconds + timeElapsedMs;
+
     setTotalTimeSeconds(newTotalTime);
-    setLastQuestionTime(timeElapsed);
+    setTotalTimeMilliseconds(newTotalTimeMs);
+    setLastQuestionTime(timeElapsedSeconds);
 
     setShowExplanation(true);
 
@@ -223,7 +241,7 @@ export default function QuizGame() {
 
     if (isCorrect) {
       const basePoints = 1000;
-      const timeBonus = calculateTimeBonus(timeElapsed);
+      const timeBonus = calculateTimeBonus(timeElapsedMs);
       const questionPoints = basePoints + timeBonus;
       setLastTimeBonus(timeBonus);
 
@@ -263,7 +281,10 @@ export default function QuizGame() {
     setError(null);
     setQuestionStartTime(0);
     setTotalTimeSeconds(0);
+    setTotalTimeMilliseconds(0);
     setFinalScore(0);
+    setIsPersonalBest(false);
+    setPreviousBest(null);
   };
 
   const getScoreMessage = () => {
@@ -423,13 +444,19 @@ export default function QuizGame() {
                     {locale === 'es' ? '⚡ Sistema de Puntuación' : '⚡ Scoring System'}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? 'Respuesta correcta: 1000 puntos' : 'Correct answer: 1000 points'}
+                    • {locale === 'es' ? '8 preguntas para ganar' : '8 questions to win'}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? 'Bonificación por velocidad: hasta +500 puntos' : 'Speed bonus: up to +500 points'}
+                    • {locale === 'es' ? 'Respuesta correcta: 1,000 puntos base' : 'Correct answer: 1,000 base points'}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? '¡Responde rápido y correctamente para maximizar tu puntuación!' : 'Answer fast and correctly to maximize your score!'}
+                    • {locale === 'es' ? 'Bonus por velocidad: 0-500 puntos' : 'Speed bonus: 0-500 points'}
+                  </div>
+                  <div className="text-xs">
+                    • {locale === 'es' ? '<3s: +500pts | 3-8s: +350-100pts | 8-15s: +100-30pts' : '<3s: +500pts | 3-8s: +350-100pts | 8-15s: +100-30pts'}
+                  </div>
+                  <div className="text-xs font-bold text-[#00cfff] mt-2">
+                    💡 {locale === 'es' ? 'Máximo: 12,000 pts | Cada milisegundo cuenta!' : 'Max: 12,000 pts | Every millisecond counts!'}
                   </div>
                 </div>
               </div>
