@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabase';
 
 type Question = {
@@ -25,6 +26,7 @@ type LeaderboardEntry = {
 export default function QuizGame() {
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('quiz');
 
   const [username, setUsername] = useState('');
   const [gameStarted, setGameStarted] = useState(false);
@@ -191,7 +193,7 @@ export default function QuizGame() {
   // Fetch questions from API
   const startGame = async () => {
     if (!username.trim() || username.trim().length < 2) {
-      setError(locale === 'es' ? 'Por favor ingresa un nombre válido (mínimo 2 caracteres)' : 'Please enter a valid name (minimum 2 characters)');
+      setError(t('enterValidName'));
       return;
     }
 
@@ -211,7 +213,7 @@ export default function QuizGame() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching quiz:', err);
-      setError(locale === 'es' ? 'Error al cargar el quiz. Intenta de nuevo.' : 'Failed to load quiz. Please try again.');
+      setError(t('errorLoading'));
       setLoading(false);
     }
   };
@@ -289,19 +291,11 @@ export default function QuizGame() {
 
   const getScoreMessage = () => {
     const percentage = (score / questions.length) * 100;
-    if (locale === 'es') {
-      if (percentage === 100) return "¡Perfecto! ¡Eres un experto en IA! 🏆";
-      if (percentage >= 80) return "¡Excelente! ¡Dominas la IA! 🌟";
-      if (percentage >= 60) return "¡Buen trabajo! ¡Sigue aprendiendo! 👍";
-      if (percentage >= 40) return "¡No está mal! ¡Hay margen de mejora! 💪";
-      return "¡Sigue estudiando! ¡Mejorarás! 📚";
-    } else {
-      if (percentage === 100) return "Perfect! You're an AI expert! 🏆";
-      if (percentage >= 80) return "Excellent! You know your AI! 🌟";
-      if (percentage >= 60) return "Good job! Keep learning! 👍";
-      if (percentage >= 40) return "Not bad! Room for improvement! 💪";
-      return "Keep studying! You'll get better! 📚";
-    }
+    if (percentage === 100) return t('perfectScore');
+    if (percentage >= 80) return t('excellentScore');
+    if (percentage >= 60) return t('goodScore');
+    if (percentage >= 40) return t('okScore');
+    return t('poorScore');
   };
 
   const getStreakEmoji = (streak: number) => {
@@ -386,13 +380,18 @@ export default function QuizGame() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <Link href={`/${locale}`} className="text-[#00ff88] hover:text-[#00cfff] text-sm font-bold uppercase mb-4 inline-block transition-colors">
-              ← {locale === 'es' ? 'Volver al Inicio' : 'Back to Home'}
+              ← {t('backToHome')}
             </Link>
-            <h1 className="text-5xl font-black uppercase mb-4 bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055] bg-clip-text text-transparent">
-              {locale === 'es' ? 'Desafío Quiz IA' : 'AI Quiz Challenge'}
-            </h1>
-            <p className="text-gray-400 text-lg">
-              {locale === 'es' ? '¡Pon a prueba tus conocimientos de IA y compite en el ranking!' : 'Test your AI knowledge and compete on the leaderboard!'}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <h1 className="text-5xl font-black uppercase bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055] bg-clip-text text-transparent">
+                {t('title')}
+              </h1>
+              <span className="px-3 py-1 bg-[#ff0055] text-white text-xs font-black uppercase rounded-full animate-pulse">
+                {t('v2Badge')}
+              </span>
+            </div>
+            <p className="text-gray-400 text-lg mb-3">
+              {t('description')}
             </p>
           </div>
 
@@ -400,13 +399,13 @@ export default function QuizGame() {
             {/* Start Form */}
             <div className="border-2 border-[#00ff88] bg-gradient-to-br from-black via-[#00ff8805] to-black p-8">
               <h2 className="text-2xl font-bold mb-6 text-[#00ff88]">
-                {locale === 'es' ? '🎮 Comenzar Quiz' : '🎮 Start Quiz'}
+                {t('startQuiz')}
               </h2>
 
               <div className="space-y-6">
                 <div>
                   <label htmlFor="username" className="block text-sm font-bold uppercase text-gray-400 mb-2">
-                    {locale === 'es' ? 'Tu Nombre' : 'Your Name'}
+                    {t('yourName')}
                   </label>
                   <input
                     type="text"
@@ -414,7 +413,7 @@ export default function QuizGame() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && startGame()}
-                    placeholder={locale === 'es' ? 'Ingresa tu nombre...' : 'Enter your name...'}
+                    placeholder={t('enterName')}
                     className="w-full px-4 py-3 bg-black border-2 border-gray-700 text-white font-bold focus:border-[#00ff88] focus:outline-none transition-colors"
                     maxLength={100}
                     disabled={loading}
@@ -432,31 +431,31 @@ export default function QuizGame() {
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-black border-t-transparent"></div>
-                      {locale === 'es' ? 'Cargando...' : 'Loading...'}
+                      {t('loadingQuestions')}
                     </span>
                   ) : (
-                    <>🚀 {locale === 'es' ? 'Comenzar' : 'Start Game'}</>
+                    <>🚀 {t('startGame')}</>
                   )}
                 </button>
 
                 <div className="text-sm text-gray-500 space-y-2">
                   <div className="text-center font-bold text-gray-400 uppercase mb-2">
-                    {locale === 'es' ? '⚡ Sistema de Puntuación' : '⚡ Scoring System'}
+                    {t('scoringSystem')}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? '8 preguntas para ganar' : '8 questions to win'}
+                    • {t('questionsToWin')}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? 'Respuesta correcta: 1,000 puntos base' : 'Correct answer: 1,000 base points'}
+                    • {t('basePoints')}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? 'Bonus por velocidad: 0-500 puntos' : 'Speed bonus: 0-500 points'}
+                    • {t('speedBonus')}
                   </div>
                   <div className="text-xs">
-                    • {locale === 'es' ? '<3s: +500pts | 3-8s: +350-100pts | 8-15s: +100-30pts' : '<3s: +500pts | 3-8s: +350-100pts | 8-15s: +100-30pts'}
+                    • {t('speedRanges')}
                   </div>
                   <div className="text-xs font-bold text-[#00cfff] mt-2">
-                    💡 {locale === 'es' ? 'Máximo: 12,000 pts | Cada milisegundo cuenta!' : 'Max: 12,000 pts | Every millisecond counts!'}
+                    💡 {t('maxPoints')}
                   </div>
                 </div>
               </div>
@@ -465,12 +464,10 @@ export default function QuizGame() {
             {/* Leaderboard */}
             <div className="border-2 border-[#00cfff] bg-gradient-to-br from-black via-[#00cfff05] to-black p-8">
               <h2 className="text-2xl font-bold mb-2 text-[#00cfff]">
-                {locale === 'es' ? '🏆 Top 5 Ranking' : '🏆 Top 5 Leaderboard'}
+                {t('leaderboard')}
               </h2>
               <p className="text-xs text-gray-500 mb-6">
-                {locale === 'es'
-                  ? 'Mostrando el mejor score de cada jugador único'
-                  : 'Showing best score per unique player'}
+                {t('showingBestScore')}
               </p>
 
               {leaderboard.length > 0 ? (
@@ -511,7 +508,7 @@ export default function QuizGame() {
                 </div>
               ) : (
                 <div className="text-center text-gray-500 py-8">
-                  {locale === 'es' ? '¡Sé el primero en jugar!' : 'Be the first to play!'}
+                  {t('beFirstToPlay')}
                 </div>
               )}
             </div>
@@ -523,12 +520,10 @@ export default function QuizGame() {
               <div className="absolute top-0 right-0 w-24 h-24 bg-[#ff0055] opacity-5 rounded-full blur-2xl"></div>
               <div className="relative z-10">
                 <p className="text-base text-[#ff0055] font-black uppercase mb-2">
-                  {locale === 'es' ? '🚀 Invita a tus amigos' : '🚀 Challenge your friends'}
+                  {t('challengeFriends')}
                 </p>
                 <p className="text-xs text-gray-500 mb-4">
-                  {locale === 'es'
-                    ? '¡Comparte el desafío y compite por el primer lugar!'
-                    : 'Share the challenge and compete for the top spot!'}
+                  {t('shareChallenge')}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <button
@@ -538,7 +533,7 @@ export default function QuizGame() {
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
-                    {locale === 'es' ? 'Compartir en X' : 'Share on X'}
+                    {t('shareOnX')}
                   </button>
                   <button
                     onClick={shareOnLinkedIn}
@@ -547,7 +542,7 @@ export default function QuizGame() {
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
-                    {locale === 'es' ? 'Compartir en LinkedIn' : 'Share on LinkedIn'}
+                    {t('shareOnLinkedIn')}
                   </button>
                 </div>
                 <div className="flex justify-center mt-3">
@@ -560,14 +555,14 @@ export default function QuizGame() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        {locale === 'es' ? '¡Copiado!' : 'Copied!'}
+                        {t('copied')}
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-                        {locale === 'es' ? 'Copiar Link' : 'Copy Link'}
+                        {t('copyLink')}
                       </>
                     )}
                   </button>
@@ -586,7 +581,7 @@ export default function QuizGame() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#00ff88] border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-400 uppercase font-bold tracking-wider">
-            {locale === 'es' ? 'Cargando preguntas...' : 'Loading questions...'}
+            {t('loadingQuestions')}
           </p>
         </div>
       </div>
@@ -599,14 +594,14 @@ export default function QuizGame() {
         <div className="max-w-md text-center">
           <div className="text-6xl mb-4">😕</div>
           <h2 className="text-2xl font-bold mb-4 text-[#ff0055]">
-            {locale === 'es' ? '¡Ups! Algo salió mal' : 'Oops! Something went wrong'}
+            {t('errorLoading')}
           </h2>
           <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={handleRestart}
             className="inline-block px-6 py-3 bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
           >
-            {locale === 'es' ? 'Intentar de nuevo' : 'Try Again'}
+            {t('tryAgain')}
           </button>
         </div>
       </div>
@@ -638,10 +633,10 @@ export default function QuizGame() {
                   {percentage === 100 ? "🏆" : percentage >= 80 ? "🌟" : percentage >= 60 ? "👍" : percentage >= 40 ? "💪" : "📚"}
                 </div>
                 <h1 className="text-4xl font-black uppercase mb-2 bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055] bg-clip-text text-transparent">
-                  {locale === 'es' ? '¡Quiz Completado!' : 'Quiz Complete!'}
+                  {t('quizComplete')}
                 </h1>
                 <p className="text-xl text-gray-400 font-bold">
-                  {locale === 'es' ? 'Bien hecho' : 'Well done'}, {username}!
+                  {t('wellDone')}, {username}!
                 </p>
               </div>
 
@@ -650,10 +645,10 @@ export default function QuizGame() {
                 {isPersonalBest && previousBest !== null && (
                   <div className="mb-4 p-3 bg-gradient-to-r from-[#ff005520] to-[#00ff8820] border-2 border-[#ff0055] animate-pulse">
                     <div className="text-sm font-black uppercase text-[#ff0055] mb-1">
-                      🎉 {locale === 'es' ? '¡NUEVO RÉCORD PERSONAL!' : 'NEW PERSONAL BEST!'}
+                      🎉 {t('newPersonalBest')}
                     </div>
                     <div className="text-xs text-gray-400">
-                      {locale === 'es' ? 'Anterior' : 'Previous'}: {previousBest.toLocaleString()} → <span className="text-[#00ff88]">+{(finalScore - previousBest).toLocaleString()}</span>
+                      {t('previous')}: {previousBest.toLocaleString()} → <span className="text-[#00ff88]">+{(finalScore - previousBest).toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -663,10 +658,10 @@ export default function QuizGame() {
                     {finalScore.toLocaleString()}
                   </div>
                   <div className="text-lg text-gray-400 font-bold mb-1">
-                    {locale === 'es' ? 'Puntuación Total' : 'Total Score'}
+                    {t('totalScore')}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {score}/{questions.length} {locale === 'es' ? 'correctas' : 'correct'} ({percentage.toFixed(0)}%)
+                    {score}/{questions.length} {t('correct')} ({percentage.toFixed(0)}%)
                   </div>
                   <div className="text-sm text-gray-500 mt-2">
                     ⏱️ {timeDisplay}
@@ -681,7 +676,7 @@ export default function QuizGame() {
                 {userRank > 0 && (
                   <div className="mb-6 p-4 bg-[#00ff8810] border border-[#00ff88]">
                     <div className="text-sm text-gray-400 uppercase font-bold">
-                      {locale === 'es' ? 'Tu Posición en el Ranking' : 'Your Leaderboard Rank'}
+                      {t('yourRank')}
                     </div>
                     <div className="text-4xl font-black text-[#00ff88] mt-1">
                       #{userRank}
@@ -693,7 +688,7 @@ export default function QuizGame() {
                 <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-8">
                   <div className="bg-[#00ff8810] border border-[#00ff88] p-4">
                     <div className="text-sm text-gray-400 uppercase font-bold mb-1">
-                      {locale === 'es' ? 'Racha Máxima' : 'Best Streak'}
+                      {t('bestStreak')}
                     </div>
                     <div className="text-3xl font-black text-[#00ff88]">
                       {maxStreak} {getStreakEmoji(maxStreak)}
@@ -701,7 +696,7 @@ export default function QuizGame() {
                   </div>
                   <div className="bg-[#00cfff10] border border-[#00cfff] p-4">
                     <div className="text-sm text-gray-400 uppercase font-bold mb-1">
-                      {locale === 'es' ? 'Tiempo Promedio' : 'Avg Time'}
+                      {t('avgTime')}
                     </div>
                     <div className="text-3xl font-black text-[#00cfff]">
                       {Math.floor(totalTimeSeconds / questions.length)}s
@@ -711,7 +706,7 @@ export default function QuizGame() {
 
                 {savingScore && (
                   <div className="text-sm text-gray-500 mb-4">
-                    {locale === 'es' ? 'Guardando puntuación...' : 'Saving score...'}
+                    {t('savingScore')}
                   </div>
                 )}
               </div>
@@ -721,17 +716,15 @@ export default function QuizGame() {
                 {userRank > 0 && userRank <= 5 && (
                   <div className="text-center mb-4 p-4 bg-gradient-to-r from-[#00ff8820] to-[#00cfff20] border-2 border-[#00ff88] rounded-lg">
                     <div className="text-sm font-bold text-[#00ff88] mb-2 uppercase">
-                      {locale === 'es' ? '🌟 ¡Estás en el Top 5!' : '🌟 You\'re in the Top 5!'}
+                      {t('youreInTop5')}
                     </div>
                     <div className="text-xs text-gray-400">
-                      {locale === 'es'
-                        ? '¡Comparte tu logro y desafía a tus amigos!'
-                        : 'Share your achievement and challenge your friends!'}
+                      {t('shareAchievement')}
                     </div>
                   </div>
                 )}
                 <p className="text-base text-gray-300 font-bold mb-4 text-center">
-                  {locale === 'es' ? '🎉 Comparte tu puntuación' : '🎉 Share your score'}
+                  {t('shareYourScore')}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3">
                   <button
@@ -741,7 +734,7 @@ export default function QuizGame() {
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
-                    {locale === 'es' ? 'Compartir en X' : 'Share on X'}
+                    {t('shareOnX')}
                   </button>
                   <button
                     onClick={shareOnLinkedIn}
@@ -750,7 +743,7 @@ export default function QuizGame() {
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
-                    {locale === 'es' ? 'Compartir en LinkedIn' : 'Share on LinkedIn'}
+                    {t('shareOnLinkedIn')}
                   </button>
                 </div>
                 <div className="flex justify-center mt-3">
@@ -763,14 +756,14 @@ export default function QuizGame() {
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
-                        {locale === 'es' ? '¡Copiado!' : 'Copied!'}
+                        {t('copied')}
                       </>
                     ) : (
                       <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-                        {locale === 'es' ? 'Copiar Link' : 'Copy Link'}
+                        {t('copyLink')}
                       </>
                     )}
                   </button>
@@ -783,13 +776,13 @@ export default function QuizGame() {
                   onClick={handleRestart}
                   className="w-full px-6 py-4 bg-[#00ff88] text-black font-bold text-lg uppercase hover:bg-[#00cfff] transition-all transform hover:scale-105"
                 >
-                  {locale === 'es' ? '🔄 Jugar de Nuevo' : '🔄 Play Again'}
+                  {t('playAgain')}
                 </button>
                 <Link
                   href={`/${locale}`}
                   className="block w-full px-6 py-4 border-2 border-gray-700 text-gray-300 font-bold text-lg uppercase hover:border-[#00ff88] hover:text-[#00ff88] transition-all text-center"
                 >
-                  {locale === 'es' ? '← Volver al Inicio' : '← Back to Home'}
+                  ← {t('backToHome')}
                 </Link>
               </div>
             </div>
@@ -807,19 +800,19 @@ export default function QuizGame() {
           <div className="flex justify-between items-center mb-4">
             <div>
               <Link href={`/${locale}`} className="text-[#00ff88] hover:text-[#00cfff] text-sm font-bold uppercase inline-block transition-colors">
-                ← {locale === 'es' ? 'Salir' : 'Exit'}
+                ← {t('exit')}
               </Link>
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-500 uppercase font-bold">
-                {locale === 'es' ? 'Jugador' : 'Player'}
+                {t('player')}
               </div>
               <div className="text-lg font-black text-[#00ff88]">{username}</div>
             </div>
           </div>
 
           <h1 className="text-3xl font-black uppercase text-center mb-2 bg-gradient-to-r from-[#00ff88] to-[#00cfff] bg-clip-text text-transparent">
-            {locale === 'es' ? 'Desafío Quiz IA' : 'AI Quiz Challenge'}
+            {t('title')}
           </h1>
         </div>
 
@@ -827,7 +820,7 @@ export default function QuizGame() {
         <div className="mb-8">
           <div className="flex justify-between text-sm font-bold uppercase mb-2">
             <span className="text-gray-500">
-              {locale === 'es' ? 'Pregunta' : 'Question'} {currentQuestion + 1} {locale === 'es' ? 'de' : 'of'} {questions.length}
+              {t('question')} {currentQuestion + 1} {t('of')} {questions.length}
             </span>
             <div className="flex items-center gap-4">
               {!showExplanation && (
@@ -841,7 +834,7 @@ export default function QuizGame() {
                 </span>
               )}
               <span className="text-[#00ff88]">
-                {locale === 'es' ? 'Puntos' : 'Score'}: {finalScore.toLocaleString()}
+                {t('score')}: {finalScore.toLocaleString()}
               </span>
             </div>
           </div>
@@ -918,7 +911,7 @@ export default function QuizGame() {
                   <span className="text-2xl">⚡</span>
                   <div>
                     <div className="text-xs text-gray-400 uppercase font-bold">
-                      {locale === 'es' ? 'Tiempo' : 'Time'}
+                      {t('time')}
                     </div>
                     <div className="text-lg font-black text-[#00ff88]">
                       {lastQuestionTime}s
@@ -927,13 +920,13 @@ export default function QuizGame() {
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-gray-400 uppercase font-bold">
-                    {locale === 'es' ? 'Puntos Ganados' : 'Points Earned'}
+                    {t('pointsEarned')}
                   </div>
                   <div className="text-lg font-black text-[#00ff88]">
                     +{(1000 + lastTimeBonus).toLocaleString()}
                     {lastTimeBonus > 0 && (
                       <span className="text-sm text-[#00cfff] ml-2">
-                        (+{lastTimeBonus} {locale === 'es' ? 'bonus' : 'bonus'})
+                        (+{lastTimeBonus} {t('bonus')})
                       </span>
                     )}
                   </div>
@@ -947,7 +940,7 @@ export default function QuizGame() {
             <div className="mt-6 p-5 bg-[#00cfff10] border-2 border-[#00cfff] relative overflow-hidden animate-fade-in">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#00cfff]"></div>
               <div className="text-sm font-black uppercase text-[#00cfff] mb-2 flex items-center gap-2">
-                💡 {locale === 'es' ? 'Explicación' : 'Explanation'}
+                💡 {t('explanation')}
               </div>
               <div className="text-sm text-gray-300 leading-relaxed">{question.explanation}</div>
             </div>
@@ -961,7 +954,7 @@ export default function QuizGame() {
                 disabled={selectedAnswer === null}
                 className="w-full px-6 py-4 bg-[#00ff88] text-black font-bold text-lg uppercase hover:bg-[#00cfff] transition-all disabled:opacity-30 disabled:cursor-not-allowed transform hover:scale-105 disabled:hover:scale-100"
               >
-                {locale === 'es' ? '✓ Enviar Respuesta' : '✓ Submit Answer'}
+                {t('submitAnswer')}
               </button>
             ) : (
               <button
@@ -969,17 +962,12 @@ export default function QuizGame() {
                 className="w-full px-6 py-4 bg-[#00cfff] text-black font-bold text-lg uppercase hover:bg-[#00ff88] transition-all transform hover:scale-105"
               >
                 {currentQuestion < questions.length - 1
-                  ? (locale === 'es' ? '→ Siguiente Pregunta' : '→ Next Question')
-                  : (locale === 'es' ? '→ Ver Resultados' : '→ See Results')
+                  ? t('nextQuestion')
+                  : t('viewLeaderboard')
                 }
               </button>
             )}
           </div>
-        </div>
-
-        {/* Score Display */}
-        <div className="text-center text-sm text-gray-500 font-bold">
-          {score} {locale === 'es' ? 'respuesta' : 'answer'}{score !== 1 ? 's' : ''} {locale === 'es' ? 'correcta' : 'correct'}{score !== 1 ? (locale === 'es' ? 's' : 's') : ''} {locale === 'es' ? 'hasta ahora' : 'so far'}
         </div>
       </div>
 
