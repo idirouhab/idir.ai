@@ -21,6 +21,7 @@ import {
   formatDate,
   categoryColors,
   categoryNames,
+  getAllPublishedPostSlugs,
 } from '@/lib/blog';
 import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
 import { getSiteUrl } from '@/lib/site-config';
@@ -28,6 +29,22 @@ import { getSiteUrl } from '@/lib/site-config';
 type Props = {
   params: { locale: string; slug: string };
 };
+
+// PERFORMANCE: Pre-render all blog posts at build time
+// This dramatically improves load times by generating static HTML for each post
+export async function generateStaticParams() {
+  const posts = await getAllPublishedPostSlugs();
+
+  return posts.map((post) => ({
+    locale: post.locale,
+    slug: post.slug,
+  }));
+}
+
+// PERFORMANCE: Incremental Static Regeneration (ISR)
+// Revalidate pages every 1 hour to keep content fresh while maintaining performance
+// Pages are served instantly from cache, then regenerated in the background
+export const revalidate = 3600; // 1 hour in seconds
 
 export async function generateMetadata({ params: { locale, slug } }: Props): Promise<Metadata> {
   const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');

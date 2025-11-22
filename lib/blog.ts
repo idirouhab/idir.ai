@@ -301,3 +301,27 @@ export async function getAdjacentPosts(
     next: nextPost as BlogPost | null,
   };
 }
+
+// PERFORMANCE: Fetch all published post slugs for static generation
+// This enables Next.js to pre-render all blog posts at build time
+export async function getAllPublishedPostSlugs(): Promise<
+  Array<{ slug: string; locale: 'en' | 'es' }>
+> {
+  const supabase = getBlogClient();
+
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('slug, language')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching blog post slugs:', error);
+    return [];
+  }
+
+  return (data || []).map((post) => ({
+    slug: post.slug,
+    locale: post.language as 'en' | 'es',
+  }));
+}
