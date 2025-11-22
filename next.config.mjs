@@ -9,7 +9,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable compression
+  // PERFORMANCE: Enable Gzip/Brotli compression
+  // Reduces response sizes by ~70% for text-based content (HTML, CSS, JS, JSON)
+  // Next.js uses Brotli if available, falls back to Gzip
+  // Vercel automatically serves Brotli-compressed assets when available
   compress: true,
 
   // Optimize CSS
@@ -69,9 +72,10 @@ const nextConfig = {
     ],
   },
 
-  // Headers for better caching and security
+  // Headers for better caching, compression, and security
   async headers() {
     return [
+      // PERFORMANCE: Static assets with aggressive caching
       {
         source: '/:all*(svg|jpg|png|webp|avif)',
         locale: false,
@@ -82,6 +86,27 @@ const nextConfig = {
           }
         ],
       },
+      // PERFORMANCE: JavaScript and CSS with versioned caching
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // PERFORMANCE: Compression hints for all pages
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Vary',
+            value: 'Accept-Encoding',
+          },
+        ],
+      },
+      // Security headers for all routes
       {
         source: '/(.*)',
         headers: [
