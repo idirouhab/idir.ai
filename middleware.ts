@@ -37,38 +37,43 @@ async function verifySession(token: string, checkBlacklist: boolean = true): Pro
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // PERFORMANCE: Skip middleware entirely for API routes and static assets
+  // This reduces processing time for non-page requests
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next')) {
+    return NextResponse.next();
+  }
+
   // Public admin routes (no authentication required)
   const publicAdminRoutes = ['/admin/login', '/admin/signup'];
   const isPublicAdminRoute = publicAdminRoutes.some(route => pathname.startsWith(route));
 
-  // Check if it's an admin route (but not login, signup, or API)
-  if (pathname.startsWith('/admin') && !isPublicAdminRoute && !pathname.startsWith('/api')) {
-    // Check for session cookie
+  // Admin authentication check
+  if (pathname.startsWith('/admin') && !isPublicAdminRoute) {
     const sessionCookie = request.cookies.get('admin-session');
 
     if (!sessionCookie) {
-      // Redirect to login if no session
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
     // PERFORMANCE: Skip blacklist check for regular page views
-    // Blacklist will still be checked in API routes via requireAuth()
     const isValid = await verifySession(sessionCookie.value, false);
     if (!isValid) {
-      // Redirect to login if token is invalid
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+
+    return NextResponse.next();
   }
 
-  // For all other routes, use the intl middleware
-  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) {
-    return intlMiddleware(request);
-  }
-
-  return NextResponse.next();
+  // Apply i18n middleware only to public pages (not admin/api)
+  // This is where the main performance cost is for public visitors
+  return intlMiddleware(request);
 }
 
 export const config = {
-  // Match all routes except static files
-  matcher: ['/((?!_next|_vercel|.*\\..*).*)']
+  // PERFORMANCE: Exclude more paths from middleware processing
+  // Only match actual pages, not static assets, images, or internal routes
+  matcher: [
+    // Include all pages
+    '/((?!api|_next/static|_next/image|_vercel|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|woff|woff2)).*)',
+  ]
 };

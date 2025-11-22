@@ -2,14 +2,13 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import LiveEvent from "@/components/LiveEvent";
 import Transition from "@/components/Transition";
-import Footer from "@/components/Footer";
 import {getTranslations} from 'next-intl/server';
 import { createClient } from '@supabase/supabase-js';
 import { cache } from 'react';
 import dynamic from 'next/dynamic';
 
 // PERFORMANCE: Lazy load below-the-fold components (not visible on initial load)
-// This reduces initial JavaScript bundle by ~200KB
+// This reduces initial JavaScript bundle and improves Time to Interactive
 const About = dynamic(() => import('@/components/About'), {
   loading: () => <div className="min-h-[400px]" />,
 });
@@ -26,15 +25,24 @@ const Contact = dynamic(() => import('@/components/Contact'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
+const Footer = dynamic(() => import('@/components/Footer'), {
+  loading: () => <div className="min-h-[200px]" />,
+});
+
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
 }
+
+// PERFORMANCE: ISR - Revalidate every 30 minutes to keep content fresh
+// Pages are served instantly from cache, then regenerated in the background
+export const revalidate = 1800; // 30 minutes in seconds
 
 type Props = {
   params: { locale: string };
 };
 
 // PERFORMANCE: Use React cache to prevent duplicate queries
+// Add timeout to prevent slow database queries from blocking page generation
 const getActiveEvent = cache(async () => {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -46,11 +54,18 @@ const getActiveEvent = cache(async () => {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    const { data, error } = await supabase
+    // PERFORMANCE: Add timeout to database query
+    const queryPromise = supabase
       .from('live_events')
       .select('*')
       .eq('is_active', true)
       .limit(1);
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Query timeout')), 3000)
+    );
+
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
     if (error || !data || data.length === 0) {
       return null;
@@ -64,8 +79,11 @@ const getActiveEvent = cache(async () => {
 });
 
 export default async function Home({ params: { locale } }: Props) {
-  const t = await getTranslations({ locale, namespace: 'structuredData' });
-  const activeEvent = await getActiveEvent();
+  // PERFORMANCE: Fetch data in parallel instead of sequentially
+  const [t, activeEvent] = await Promise.all([
+    getTranslations({ locale, namespace: 'structuredData' }),
+    getActiveEvent(),
+  ]);
 
   // Get structured data arrays
   const knowsAbout = [
