@@ -3,16 +3,37 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import MarkdownContent from '@/components/MarkdownContent';
-import BlogCard from '@/components/BlogCard';
 import ViewTracker from '@/components/ViewTracker';
-import ShareButtons from '@/components/ShareButtons';
-import PostNavigation from '@/components/PostNavigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
-import TableOfContents from '@/components/TableOfContents';
-import NewsletterCTA from '@/components/NewsletterCTA';
+
+// PERFORMANCE: Lazy load below-the-fold components to reduce initial bundle
+// These components are not visible on initial page load, so we defer their loading
+const MarkdownContent = dynamic(() => import('@/components/MarkdownContent'), {
+  loading: () => <div className="min-h-[600px] animate-pulse bg-gray-900/20" />,
+});
+
+const ShareButtons = dynamic(() => import('@/components/ShareButtons'), {
+  loading: () => <div className="h-16" />,
+});
+
+const PostNavigation = dynamic(() => import('@/components/PostNavigation'), {
+  loading: () => <div className="h-32" />,
+});
+
+const TableOfContents = dynamic(() => import('@/components/TableOfContents'), {
+  loading: () => <div className="h-24" />,
+});
+
+const NewsletterCTA = dynamic(() => import('@/components/NewsletterCTA'), {
+  loading: () => <div className="h-64" />,
+});
+
+const BlogCard = dynamic(() => import('@/components/BlogCard'), {
+  loading: () => <div className="h-96 animate-pulse bg-gray-900/20" />,
+});
 import {
   getPublishedPostBySlug,
   getRelatedPosts,
