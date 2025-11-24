@@ -172,9 +172,9 @@ export default function BlogPostForm({ post }: Props) {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
-          setUserRole(data.role);
+          setUserRole(data.user.role);
           // Check if user can publish (owner or admin)
-          setCanUserPublish(data.role === 'owner' || data.role === 'admin');
+          setCanUserPublish(data.user.role === 'owner' || data.user.role === 'admin');
         }
       } catch (error) {
         console.error('Error fetching user role:', error);
