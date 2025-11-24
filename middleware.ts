@@ -43,24 +43,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Public admin routes (no authentication required)
-  const publicAdminRoutes = ['/admin/login', '/admin/signup'];
-  const isPublicAdminRoute = publicAdminRoutes.some(route => pathname.startsWith(route));
+  // Handle admin routes BEFORE i18n middleware (admin routes should not have locale prefix)
+  if (pathname.startsWith('/admin')) {
+    // Public admin routes (no authentication required)
+    const publicAdminRoutes = ['/admin/login', '/admin/signup'];
+    const isPublicAdminRoute = publicAdminRoutes.some(route => pathname.startsWith(route));
 
-  // Admin authentication check
-  if (pathname.startsWith('/admin') && !isPublicAdminRoute) {
-    const sessionCookie = request.cookies.get('admin-session');
+    // Admin authentication check
+    if (!isPublicAdminRoute) {
+      const sessionCookie = request.cookies.get('admin-session');
 
-    if (!sessionCookie) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      if (!sessionCookie) {
+        return NextResponse.redirect(new URL('/admin/login', request.url));
+      }
+
+      // PERFORMANCE: Skip blacklist check for regular page views
+      const isValid = await verifySession(sessionCookie.value, false);
+      if (!isValid) {
+        return NextResponse.redirect(new URL('/admin/login', request.url));
+      }
     }
 
-    // PERFORMANCE: Skip blacklist check for regular page views
-    const isValid = await verifySession(sessionCookie.value, false);
-    if (!isValid) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-
+    // Return early for admin routes - don't apply i18n middleware
     return NextResponse.next();
   }
 
