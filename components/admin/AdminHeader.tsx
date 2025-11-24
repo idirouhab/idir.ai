@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 type NavItem = {
   href: string;
@@ -41,9 +42,33 @@ type AdminHeaderProps = {
   showLogout?: boolean;
 };
 
+type UserInfo = {
+  email: string;
+  role: 'owner' | 'admin' | 'blogger';
+};
+
 export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const data = await response.json();
+          setUserInfo({
+            email: data.user.email,
+            role: data.user.role,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -51,6 +76,19 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
       router.push('/admin/login');
     } catch (error) {
       console.error('Logout error:', error);
+    }
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'owner':
+        return 'bg-[#00ff88] text-black';
+      case 'admin':
+        return 'bg-[#00cfff] text-black';
+      case 'blogger':
+        return 'bg-[#ffaa00] text-black';
+      default:
+        return 'bg-gray-700 text-white';
     }
   };
 
@@ -76,7 +114,15 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
             })}
           </nav>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          {userInfo && (
+            <div className="hidden md:flex flex-col items-end gap-1">
+              <div className="text-xs text-gray-400">{userInfo.email}</div>
+              <span className={`px-2 py-0.5 text-xs font-bold uppercase ${getRoleBadgeColor(userInfo.role)}`}>
+                {userInfo.role}
+              </span>
+            </div>
+          )}
           <Link
             href="/"
             className="px-4 py-2 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-white hover:text-white transition-all"
