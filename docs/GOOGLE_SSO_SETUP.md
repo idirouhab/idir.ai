@@ -42,10 +42,10 @@ This guide will help you set up Google Single Sign-On (SSO) for the admin panel.
    - **Name**: "Admin Panel OAuth"
    - **Authorized JavaScript origins**:
      - `http://localhost:3000` (for development)
-     - `https://yourdomain.com` (for production)
+     - `https://idir.ai` (for production)
    - **Authorized redirect URIs**:
      - `http://localhost:3000/api/auth/callback/google` (for development)
-     - `https://yourdomain.com/api/auth/callback/google` (for production)
+     - `https://idir.ai/api/auth/callback/google` (for production)
 5. Click **Create**
 6. Copy your **Client ID** and **Client Secret**
 

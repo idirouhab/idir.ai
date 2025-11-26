@@ -37,16 +37,18 @@ export default function LoginPage() {
         redirect: false,
       });
 
+      console.log('SignIn result:', result);
+
       if (result?.ok) {
-        router.push('/admin');
-        router.refresh();
+        // Force a hard redirect instead of client-side navigation
+        window.location.href = '/admin';
       } else {
         setError(result?.error || 'Invalid email or password');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Login error:', error);
       setError('Login failed. Please try again.');
-    } finally {
       setLoading(false);
     }
   };

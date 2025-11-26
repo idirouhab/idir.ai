@@ -1,7 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { auth as getSession } from '@/auth';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -22,10 +22,17 @@ export async function middleware(request: NextRequest) {
 
     // Admin authentication check using NextAuth
     if (!isPublicAdminRoute) {
-      const session = await auth();
+      try {
+        const session = await getSession();
 
-      if (!session || !session.user) {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
+        if (!session || !session.user) {
+          const loginUrl = new URL('/admin/login', request.url);
+          return NextResponse.redirect(loginUrl);
+        }
+      } catch (error) {
+        console.error('Auth error in middleware:', error);
+        const loginUrl = new URL('/admin/login', request.url);
+        return NextResponse.redirect(loginUrl);
       }
     }
 

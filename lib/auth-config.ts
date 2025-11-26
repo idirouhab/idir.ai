@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { authenticateUser } from "./users-postgrest";
 
 export const authConfig: NextAuthConfig = {
+  basePath: "/api/auth",
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
