@@ -1,38 +1,9 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
-import { isTokenBlacklisted } from './lib/session-blacklist';
+import { auth } from '@/auth';
 
 const intlMiddleware = createMiddleware(routing);
-
-async function verifySession(token: string, checkBlacklist: boolean = true): Promise<boolean> {
-  try {
-    const secret = process.env.SESSION_SECRET;
-    if (!secret) {
-      return false;
-    }
-    const secretKey = new TextEncoder().encode(secret);
-    const { payload } = await jwtVerify(token, secretKey);
-
-    // PERFORMANCE OPTIMIZATION: Only check blacklist for critical operations
-    // Skip blacklist check for regular page views to improve performance
-    if (checkBlacklist) {
-      const jti = payload.jti as string | undefined;
-      if (jti) {
-        const blacklisted = await isTokenBlacklisted(jti);
-        if (blacklisted) {
-          console.log('Token is blacklisted:', jti);
-          return false;
-        }
-      }
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -49,17 +20,11 @@ export async function middleware(request: NextRequest) {
     const publicAdminRoutes = ['/admin/login', '/admin/signup'];
     const isPublicAdminRoute = publicAdminRoutes.some(route => pathname.startsWith(route));
 
-    // Admin authentication check
+    // Admin authentication check using NextAuth
     if (!isPublicAdminRoute) {
-      const sessionCookie = request.cookies.get('admin-session');
+      const session = await auth();
 
-      if (!sessionCookie) {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
-      }
-
-      // PERFORMANCE: Skip blacklist check for regular page views
-      const isValid = await verifySession(sessionCookie.value, false);
-      if (!isValid) {
+      if (!session || !session.user) {
         return NextResponse.redirect(new URL('/admin/login', request.url));
       }
     }
