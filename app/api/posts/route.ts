@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { requireAuth, canPublish, checkAuth } from '@/lib/auth';
+import { requireRole } from '@/lib/auth-helpers';
 import { getBlogClient, getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
 
 /**
@@ -27,9 +27,9 @@ export async function GET(request: NextRequest) {
 
     // Check auth if filtering by drafts
     if (status === 'draft') {
-      const user = await checkAuth(request);
-      if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const authResult = await requireRole(['owner', 'admin', 'blogger']);
+      if (!authResult.authorized) {
+        return authResult.response;
       }
     }
 
@@ -210,7 +210,13 @@ async function getGroupedPosts(
  */
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth(request);
+    // Use NextAuth for authentication
+    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    if (!authResult.authorized) {
+      return authResult.response;
+    }
+
+    const user = authResult.user;
     const body = await request.json();
 
     // Detect bilingual mode
@@ -222,11 +228,6 @@ export async function POST(request: NextRequest) {
     return await createSinglePost(user, body);
   } catch (error: any) {
     console.error('Error in POST /api/posts:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -248,7 +249,7 @@ async function createSinglePost(user: any, body: any) {
   }
 
   // Handle permissions
-  if (!canPublish(user)) {
+  if (!user.role === 'owner' || user.role === 'admin') {
     body.status = 'draft';
     body.published_at = null;
   } else if (body.status === 'published' && !body.published_at) {
@@ -257,7 +258,7 @@ async function createSinglePost(user: any, body: any) {
 
   const postData = {
     ...body,
-    author_id: user.userId,
+    author_id: user.id,
     author_name: user.email,
   };
 
@@ -314,7 +315,7 @@ async function createBilingualPost(user: any, body: any) {
   const data = validation.data;
   let finalStatus = data.status;
 
-  if (!canPublish(user)) {
+  if (!user.role === 'owner' || user.role === 'admin') {
     finalStatus = 'draft';
   }
 
@@ -347,7 +348,7 @@ async function createBilingualPost(user: any, body: any) {
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
     translation_group_id,
-    author_id: user.userId,
+    author_id: user.id,
     author_name: user.email,
   };
 
@@ -368,7 +369,7 @@ async function createBilingualPost(user: any, body: any) {
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
     translation_group_id,
-    author_id: user.userId,
+    author_id: user.id,
     author_name: user.email,
   };
 

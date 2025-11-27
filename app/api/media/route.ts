@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAuth } from '@/lib/auth';
+import { requireRole } from '@/lib/auth-helpers';
 import { getAdminBlogClient } from '@/lib/blog';
 import sharp from 'sharp';
 
@@ -89,19 +89,10 @@ async function compressImage(
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const user = await checkAuth(request);
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user has permission to upload
-    if (!['owner', 'admin', 'blogger'].includes(user.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+    // Check authentication using NextAuth
+    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     // Get form data
@@ -220,19 +211,10 @@ export async function POST(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    // Check authentication
-    const user = await checkAuth(request);
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user has permission to delete
-    if (!['owner', 'admin', 'blogger'].includes(user.role)) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      );
+    // Check authentication using NextAuth
+    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     // Get image URL from query params

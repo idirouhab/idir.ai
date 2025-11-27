@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, canPublish } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
 import { getAdminBlogClient, getBlogClient, calculateReadTime } from '@/lib/blog';
 
@@ -65,7 +64,13 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await requireAuth(request);
+    // Use NextAuth for authentication
+    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    if (!authResult.authorized) {
+      return authResult.response;
+    }
+
+    const user = authResult.user;
     const body = await request.json();
     const supabase = getAdminBlogClient();
 
@@ -80,23 +85,24 @@ export async function PUT(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // Check permissions
-    if (existingPost.author_id !== user.userId && user.role !== 'owner') {
+    // Check permissions - user can only edit their own posts unless they're owner
+    if (existingPost.author_id !== user.id && user.role !== 'owner') {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
       );
     }
 
-    // Handle publish permissions
-    if (!canPublish(user) && body.status === 'published') {
+    // Handle publish permissions - only owner and admin can publish
+    const canUserPublish = user.role === 'owner' || user.role === 'admin';
+    if (!canUserPublish && body.status === 'published') {
       return NextResponse.json(
         { error: 'Forbidden: Only owners and admins can publish posts' },
         { status: 403 }
       );
     }
 
-    if (!canPublish(user)) {
+    if (!canUserPublish) {
       body.status = 'draft';
       body.published_at = null;
     }
@@ -144,14 +150,10 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await requireAuth(request);
-
-    // Only owners can delete
-    if (user.role !== 'owner') {
-      return NextResponse.json(
-        { error: 'Forbidden: Only owners can delete posts' },
-        { status: 403 }
-      );
+    // Use NextAuth - only owners can delete
+    const authResult = await requireRole(['owner']);
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     // Validate UUID
