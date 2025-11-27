@@ -35,8 +35,8 @@ export default function AdminBlogPage() {
           return;
         }
 
-        // Fetch grouped posts (faster - returns one post per translation group)
-        const response = await fetch('/api/blog/grouped?limit=100');
+        // Fetch grouped posts for admin (includes both published and drafts)
+        const response = await fetch('/api/blog/grouped-admin?limit=100');
         if (!response.ok) {
           throw new Error('Failed to fetch posts');
         }
@@ -80,7 +80,7 @@ export default function AdminBlogPage() {
       }
 
       // Refresh the groups
-      const groupsResponse = await fetch('/api/blog/grouped?limit=100');
+      const groupsResponse = await fetch('/api/blog/grouped-admin?limit=100');
       const groupsData = await groupsResponse.json();
       setGroups(groupsData.data || []);
 

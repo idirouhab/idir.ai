@@ -79,6 +79,9 @@ export async function GET(request: NextRequest) {
         category: post.category,
         read_time_minutes: post.read_time_minutes,
         view_count: post.view_count,
+        language: post.language,
+        status: 'published',
+        published_at: post.published_at,
       };
 
       if (post.language === 'en') {
