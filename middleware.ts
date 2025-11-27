@@ -21,12 +21,12 @@ export async function middleware(request: NextRequest) {
 
     // Admin authentication check using cookies
     if (!isPublicAdminRoute) {
-      // Check for NextAuth session cookie
-      const sessionToken = request.cookies.get('next-auth.session-token') ||
-                          request.cookies.get('__Secure-next-auth.session-token');
+      // Check for NextAuth v5 session cookie (uses 'authjs' prefix)
+      const sessionToken = request.cookies.get('__Secure-authjs.session-token') ||
+                          request.cookies.get('authjs.session-token') ||
+                          request.cookies.get('next-auth.session-token');
 
       if (!sessionToken) {
-        console.log('No session token found, redirecting to login');
         const loginUrl = new URL('/admin/login', request.url);
         return NextResponse.redirect(loginUrl);
       }
