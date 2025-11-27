@@ -88,11 +88,25 @@ export async function GET(request: Request) {
       );
     }
 
+    // SECURITY: Sanitize CSV fields to prevent CSV injection
+    // Fields starting with =, +, -, @ can execute formulas in Excel/Sheets
+    const sanitizeCSVField = (field: string): string => {
+      const fieldStr = String(field);
+      // Prevent CSV injection by prefixing dangerous characters
+      if (fieldStr.startsWith('=') || fieldStr.startsWith('+') ||
+          fieldStr.startsWith('-') || fieldStr.startsWith('@') ||
+          fieldStr.startsWith('\t') || fieldStr.startsWith('\r')) {
+        return "'" + fieldStr; // Prefix with single quote to treat as text
+      }
+      // Escape double quotes by doubling them
+      return fieldStr.replace(/"/g, '""');
+    };
+
     // Generate CSV
     const headers = ['Email', 'Language', 'Status', 'Welcomed', 'Created At'];
     const rows = (data || []).map(sub => [
-      sub.email,
-      sub.lang.toUpperCase(),
+      sanitizeCSVField(sub.email),
+      sanitizeCSVField(sub.lang.toUpperCase()),
       sub.is_subscribed ? 'Subscribed' : 'Unsubscribed',
       sub.welcomed ? 'Yes' : 'No',
       new Date(sub.created_at).toLocaleDateString(),

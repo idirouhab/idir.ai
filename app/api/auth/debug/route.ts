@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
 export async function GET() {
+  // SECURITY: Disable debug endpoint in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Not available in production' },
+      { status: 404 }
+    );
+  }
+
   try {
     const session = await auth();
 

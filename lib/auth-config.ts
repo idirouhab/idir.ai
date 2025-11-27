@@ -55,7 +55,7 @@ export const authConfig: NextAuthConfig = {
         : `next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'strict', // SECURITY: Changed from 'lax' to 'strict' for CSRF protection
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         domain: undefined, // Don't set domain to work across localhost

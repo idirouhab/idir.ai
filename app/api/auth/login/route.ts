@@ -63,11 +63,13 @@ export async function POST(request: Request) {
       email: user.email,
     });
 
-    // Set cookie with JWT token
+    // SECURITY: Set cookie with JWT token
+    // Using strict sameSite prevents CSRF attacks
+    // httpOnly prevents JavaScript access, protecting against XSS
     cookies().set('admin-session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict', // CSRF protection
+      sameSite: 'strict', // CSRF protection - prevents cross-site requests
       maxAge: 60 * 60 * 24, // 24 hours
       path: '/',
     });
