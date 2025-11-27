@@ -86,7 +86,7 @@ export async function PUT(
     }
 
     // Check permissions - user can only edit their own posts unless they're owner
-    if (existingPost.author_id !== user.id && user.role !== 'owner') {
+    if (existingPost.author_id !== user.userId && user.role !== 'owner') {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }

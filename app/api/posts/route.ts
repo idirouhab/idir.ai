@@ -258,7 +258,7 @@ async function createSinglePost(user: any, body: any) {
 
   const postData = {
     ...body,
-    author_id: user.id,
+    author_id: user.userId,
     author_name: user.email,
   };
 
@@ -348,7 +348,7 @@ async function createBilingualPost(user: any, body: any) {
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
     translation_group_id,
-    author_id: user.id,
+    author_id: user.userId,
     author_name: user.email,
   };
 
@@ -369,7 +369,7 @@ async function createBilingualPost(user: any, body: any) {
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
     translation_group_id,
-    author_id: user.id,
+    author_id: user.userId,
     author_name: user.email,
   };
 
