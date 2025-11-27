@@ -48,6 +48,17 @@ export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/admin/login',
   },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    }
+  },
   callbacks: {
     async signIn({ user, account, profile }) {
       // For Google OAuth, check if user exists in database
@@ -132,6 +143,13 @@ export const authConfig: NextAuthConfig = {
         session.user.role = token.role as string;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     },
   },
   session: {
