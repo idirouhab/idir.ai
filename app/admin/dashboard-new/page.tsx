@@ -45,17 +45,10 @@ type StatCardProps = {
 };
 
 function StatCard({ title, value, subtitle, icon, trend, color }: StatCardProps) {
-  const colorClasses = {
-    emerald: 'bg-emerald-500/10 border-emerald-500/30',
-    cyan: 'bg-cyan-500/10 border-cyan-500/30',
-    purple: 'bg-purple-500/10 border-purple-500/30',
-    amber: 'bg-amber-500/10 border-amber-500/30',
-  };
-
   return (
     <div className="bg-[#111] border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-all">
       <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-lg ${colorClasses[color as keyof typeof colorClasses] || colorClasses.emerald} border flex items-center justify-center text-xl`}>
+        <div className={`w-10 h-10 rounded-lg bg-${color}-500/10 border border-${color}-500/30 flex items-center justify-center text-xl`}>
           {icon}
         </div>
         {trend && (
@@ -104,7 +97,7 @@ function QuickAction({ href, label, icon, description }: QuickActionProps) {
   );
 }
 
-export default function AdminDashboard() {
+export default function DashboardNew() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<LiveEvent[]>([]);
@@ -151,7 +144,7 @@ export default function AdminDashboard() {
       const posts = postsData.data || [];
       setRecentPosts(posts.slice(0, 3));
 
-      // Fetch subscribers count (quick stats only)
+      // Fetch subscribers count
       const subscribersResponse = await fetch('/api/newsletter/admin');
       const subscribersData = await subscribersResponse.json();
 
@@ -299,81 +292,39 @@ export default function AdminDashboard() {
             />
           </div>
 
-          {/* Quick Actions */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link
-                href="/admin/blog/new"
-                className="group p-6 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 hover:border-emerald-400 rounded-lg transition-all hover:shadow-lg hover:shadow-emerald-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    📝
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-                      New Blog Post
-                    </h3>
-                    <p className="text-xs text-gray-400">Write and publish content</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/events/new"
-                className="group p-6 bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border border-cyan-500/30 hover:border-cyan-400 rounded-lg transition-all hover:shadow-lg hover:shadow-cyan-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-cyan-500/20 border border-cyan-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    🎥
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
-                      Create Event
-                    </h3>
-                    <p className="text-xs text-gray-400">Schedule a live event</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/subscribers"
-                className="group p-6 bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 hover:border-purple-400 rounded-lg transition-all hover:shadow-lg hover:shadow-purple-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-purple-500/20 border border-purple-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    📬
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
-                      Subscribers
-                    </h3>
-                    <p className="text-xs text-gray-400">Manage your audience</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/feedback"
-                className="group p-6 bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30 hover:border-amber-400 rounded-lg transition-all hover:shadow-lg hover:shadow-amber-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-amber-500/20 border border-amber-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    💬
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-amber-400 transition-colors">
-                      Feedback
-                    </h3>
-                    <p className="text-xs text-gray-400">View responses</p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Quick Actions */}
+            <div className="lg:col-span-2">
+              <div className="bg-[#111] border border-gray-800 rounded-lg p-6">
+                <h2 className="text-lg font-bold text-white mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <QuickAction
+                    href="/admin/blog/new"
+                    label="New Blog Post"
+                    icon="📝"
+                    description="Write and publish content"
+                  />
+                  <QuickAction
+                    href="/admin/events/new"
+                    label="Create Live Event"
+                    icon="🎥"
+                    description="Schedule a new event"
+                  />
+                  <QuickAction
+                    href="/admin/subscribers"
+                    label="View Subscribers"
+                    icon="📬"
+                    description="Manage your audience"
+                  />
+                  <QuickAction
+                    href="/admin/feedback"
+                    label="View Feedback"
+                    icon="💬"
+                    description="See feedback responses"
+                  />
+                </div>
+              </div>
+            </div>
 
             {/* Recent Posts */}
             <div className="bg-[#111] border border-gray-800 rounded-lg p-6">
