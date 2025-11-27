@@ -249,7 +249,7 @@ async function createSinglePost(user: any, body: any) {
   }
 
   // Handle permissions
-  if (!user.role === 'owner' || user.role === 'admin') {
+  if (!(user.role === 'owner' || user.role === 'admin')) {
     body.status = 'draft';
     body.published_at = null;
   } else if (body.status === 'published' && !body.published_at) {
@@ -315,7 +315,7 @@ async function createBilingualPost(user: any, body: any) {
   const data = validation.data;
   let finalStatus = data.status;
 
-  if (!user.role === 'owner' || user.role === 'admin') {
+  if (!(user.role === 'owner' || user.role === 'admin')) {
     finalStatus = 'draft';
   }
 
