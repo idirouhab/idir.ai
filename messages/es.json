@@ -364,5 +364,27 @@
     "goodScore": "👍 ¡Buen trabajo! ¡Sigue aprendiendo!",
     "okScore": "💪 ¡No está mal! ¡La práctica hace al maestro!",
     "poorScore": "📚 ¡Sigue estudiando! ¡Mejorarás!"
+  },
+  "feedbackEmail": {
+    "subject": "Calibra tu señal de contenido",
+    "title": "NOTICIAS IA <span style=\"color: #00ff88;\">DIARIAS</span>",
+    "systemStatusLabel": "ESTADO DEL SISTEMA",
+    "systemStatusOnline": "⬤ EN LÍNEA",
+    "terminalLine1": "> INICIANDO PROTOCOLO DE CALIBRACIÓN...",
+    "terminalLine2": "> ESTADO: REQUIERE INPUT DEL USUARIO",
+    "introText": "Detectamos que has estado recibiendo el feed por un tiempo. <strong>Necesito calibrar la señal</strong> para optimizar el contenido que llega a tu bandeja.",
+    "calibrationModuleLabel": "[ MÓDULO DE CALIBRACIÓN DE SEÑAL ]",
+    "question": "¿Qué intensidad de señal estás recibiendo?",
+    "strongSignalLabel": "Señal Fuerte 😍",
+    "strongSignalSubtext": "Leo casi todo, aprendo cosas nuevas constantemente",
+    "mediumSignalLabel": "Señal Media 👍",
+    "mediumSignalSubtext": "Leo algunos, encuentro valor de vez en cuando",
+    "weakSignalLabel": "Señal Débil 👎",
+    "weakSignalSubtext": "Casi no los leo, poco valor para mí",
+    "footerMessage": "→ Tu input = Mejor contenido",
+    "footerSubtext": "¿Ideas para optimizar? <a href=\"mailto:content@idir.ai?subject=Feedback%20sobre%20newsletter%20de%20IA\" style=\"color: #00cfff; text-decoration: none; font-weight: 700;\">Envía tu feedback aquí</a>",
+    "footerText": "Recibes este correo porque te suscribiste a Noticias IA Diarias.",
+    "websiteText": "Sitio Web",
+    "unsubscribeText": "Cancelar suscripción"
   }
 }

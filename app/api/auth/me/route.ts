@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
 /**
  * GET /api/auth/me
@@ -7,11 +8,22 @@ import { auth } from '@/auth';
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    // Check for admin-session cookie
+    const sessionCookie = cookies().get('admin-session');
 
-    if (!session || !session.user) {
+    if (!sessionCookie) {
       return NextResponse.json(
         { error: 'Not authenticated', authenticated: false },
+        { status: 401 }
+      );
+    }
+
+    // Verify and decode JWT token
+    const payload = await verifyToken(sessionCookie.value);
+
+    if (!payload) {
+      return NextResponse.json(
+        { error: 'Invalid or expired session', authenticated: false },
         { status: 401 }
       );
     }
@@ -19,9 +31,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       authenticated: true,
       user: {
-        id: session.user.id,
-        email: session.user.email,
-        role: session.user.role,
+        id: payload.userId,
+        email: payload.email,
+        role: payload.role,
       },
     });
   } catch (error) {

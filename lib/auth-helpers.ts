@@ -1,18 +1,20 @@
-import { auth } from '@/auth';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { verifyToken, JWTPayload } from '@/lib/jwt';
+import { isTokenBlacklisted } from './session-blacklist';
 
 type AuthResult =
   | { authorized: false; user: null; response: NextResponse }
-  | { authorized: true; user: any; response: never };
+  | { authorized: true; user: JWTPayload; response: never };
 
 /**
- * Check if the user is authenticated using NextAuth
+ * Check if the user is authenticated using custom JWT
  * Use this in API routes to verify authentication
  */
 export async function requireAuth(): Promise<AuthResult> {
-  const session = await auth();
+  const sessionCookie = cookies().get('admin-session');
 
-  if (!session || !session.user) {
+  if (!sessionCookie) {
     return {
       authorized: false,
       user: null,
@@ -23,9 +25,37 @@ export async function requireAuth(): Promise<AuthResult> {
     } as const;
   }
 
+  const payload = await verifyToken(sessionCookie.value);
+
+  if (!payload) {
+    return {
+      authorized: false,
+      user: null,
+      response: NextResponse.json(
+        { error: 'Unauthorized: Invalid or expired session' },
+        { status: 401 }
+      )
+    } as const;
+  }
+
+  // Check if token is blacklisted
+  if (payload.jti) {
+    const blacklisted = await isTokenBlacklisted(payload.jti);
+    if (blacklisted) {
+      return {
+        authorized: false,
+        user: null,
+        response: NextResponse.json(
+          { error: 'Unauthorized: Session has been revoked' },
+          { status: 401 }
+        )
+      } as const;
+    }
+  }
+
   return {
     authorized: true,
-    user: session.user,
+    user: payload,
   } as any;
 }
 

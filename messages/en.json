@@ -364,5 +364,27 @@
     "goodScore": "👍 Good job! Keep learning!",
     "okScore": "💪 Not bad! Practice makes perfect!",
     "poorScore": "📚 Keep studying! You'll get better!"
+  },
+  "feedbackEmail": {
+    "subject": "Calibrate your content signal",
+    "title": "AI NEWS <span style=\"color: #00ff88;\">DAILY</span>",
+    "systemStatusLabel": "SYSTEM STATUS",
+    "systemStatusOnline": "⬤ ONLINE",
+    "terminalLine1": "> INITIALIZING CALIBRATION PROTOCOL...",
+    "terminalLine2": "> STATUS: REQUIRES USER INPUT",
+    "introText": "We detected you've been receiving the feed for a while. <strong>I need to calibrate the signal</strong> to optimize the content reaching your inbox.",
+    "calibrationModuleLabel": "[ SIGNAL CALIBRATION MODULE ]",
+    "question": "What signal strength are you receiving?",
+    "strongSignalLabel": "Strong Signal 😍",
+    "strongSignalSubtext": "I read almost everything, constantly learning new things",
+    "mediumSignalLabel": "Medium Signal 👍",
+    "mediumSignalSubtext": "I read some, find value from time to time",
+    "weakSignalLabel": "Weak Signal 👎",
+    "weakSignalSubtext": "I barely read them, little value for me",
+    "footerMessage": "→ Your input = Better content",
+    "footerSubtext": "Ideas to optimize? <a href=\"mailto:content@idir.ai?subject=Newsletter%20Feedback\" style=\"color: #00cfff; text-decoration: none; font-weight: 700;\">Send your feedback here</a>",
+    "footerText": "You receive this email because you subscribed to AI News Daily.",
+    "websiteText": "Website",
+    "unsubscribeText": "Unsubscribe"
   }
 }
