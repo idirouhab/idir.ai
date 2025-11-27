@@ -4,15 +4,18 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-Sentry.init({
-  dsn: "https://fbb75b7a70a4e743234887bf93456134@o4510438894272512.ingest.de.sentry.io/4510438896631888",
+// Only initialize Sentry in production (disable on localhost)
+if (process.env.NODE_ENV === 'production') {
+  Sentry.init({
+    dsn: "https://fbb75b7a70a4e743234887bf93456134@o4510438894272512.ingest.de.sentry.io/4510438896631888",
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+    tracesSampleRate: 1,
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
-});
+    // Enable sending user PII (Personally Identifiable Information)
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
+    sendDefaultPii: true,
+  });
+}
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
