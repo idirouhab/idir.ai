@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, canPublish, checkAuth } from '@/lib/auth';
+import { requireAuth, canPublish } from '@/lib/auth';
+import { requireRole } from '@/lib/auth-helpers';
 import { getAdminBlogClient, getBlogClient, calculateReadTime } from '@/lib/blog';
 
 /**
@@ -23,9 +24,9 @@ export async function GET(
 
     // If requesting drafts, require auth
     if (includeDraft) {
-      const user = await checkAuth(request);
-      if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const authResult = await requireRole(['owner', 'admin', 'blogger']);
+      if (!authResult.authorized) {
+        return authResult.response;
       }
       supabase = getAdminBlogClient();
       query = supabase

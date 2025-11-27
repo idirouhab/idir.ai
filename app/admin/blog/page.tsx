@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BlogPost, categoryColors } from '@/lib/blog';
-import { MoreVertical, Share2, Pencil, Trash2 } from 'lucide-react';
+import { MoreVertical, Share2, Pencil, Trash2, ImageIcon } from 'lucide-react';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 export default function AdminBlogPage() {
@@ -149,50 +150,71 @@ export default function AdminBlogPage() {
                   key={post.id}
                   className={`p-3 hover:bg-[#0a0a0a] transition-colors ${index !== posts.length - 1 ? 'border-b border-gray-800' : ''}`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                    {/* Title and metadata */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <Link
-                          href={`/${post.language}/blog/${post.slug}`}
-                          target="_blank"
-                          className="text-white font-bold text-sm hover:text-[#00ff88] transition-colors"
-                        >
-                          {post.title}
-                        </Link>
-                        {post.status === 'published' ? (
-                          <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-[#00ff88] text-black">PUB</span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-gray-800 text-gray-400">DRAFT</span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span
-                          className="px-1.5 py-0.5 font-bold uppercase"
-                          style={{
-                            background: `${categoryColor}20`,
-                            color: categoryColor,
-                            border: `1px solid ${categoryColor}`,
-                          }}
-                        >
-                          {post.category}
-                        </span>
-                        <span className="uppercase">{post.language}</span>
-                        <span>•</span>
-                        <span>{post.view_count} views</span>
-                        {post.published_at && (
-                          <>
-                            <span>•</span>
-                            <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                          </>
-                        )}
-                      </div>
+                  <div className="flex gap-3">
+                    {/* Thumbnail */}
+                    <div className="flex-shrink-0">
+                      {post.cover_image ? (
+                        <div className="relative w-24 h-16 border border-gray-700 overflow-hidden">
+                          <Image
+                            src={post.cover_image}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                            sizes="96px"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-24 h-16 border border-gray-700 bg-gray-900 flex items-center justify-center">
+                          <ImageIcon size={20} className="text-gray-600" />
+                        </div>
+                      )}
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {/* Actions Dropdown */}
-                      <div className="relative">
+                    {/* Content */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 min-w-0">
+                      {/* Title and metadata */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <Link
+                            href={`/${post.language}/blog/${post.slug}`}
+                            target="_blank"
+                            className="text-white font-bold text-sm hover:text-[#00ff88] transition-colors"
+                          >
+                            {post.title}
+                          </Link>
+                          {post.status === 'published' ? (
+                            <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-[#00ff88] text-black">PUB</span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-gray-800 text-gray-400">DRAFT</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span
+                            className="px-1.5 py-0.5 font-bold uppercase"
+                            style={{
+                              background: `${categoryColor}20`,
+                              color: categoryColor,
+                              border: `1px solid ${categoryColor}`,
+                            }}
+                          >
+                            {post.category}
+                          </span>
+                          <span className="uppercase">{post.language}</span>
+                          <span>•</span>
+                          <span>{post.view_count} views</span>
+                          {post.published_at && (
+                            <>
+                              <span>•</span>
+                              <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Actions Dropdown */}
+                        <div className="relative">
                         <button
                           onClick={() => setActionMenuOpen(actionMenuOpen === post.id ? null : post.id)}
                           disabled={deletingId === post.id}
@@ -272,6 +294,7 @@ export default function AdminBlogPage() {
                           )}
                         </div>
                       )}
+                    </div>
                     </div>
                   </div>
                 </div>

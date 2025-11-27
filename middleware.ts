@@ -21,10 +21,11 @@ export async function middleware(request: NextRequest) {
 
     // Admin authentication check using cookies
     if (!isPublicAdminRoute) {
-      // Check for NextAuth v5 session cookie (uses 'authjs' prefix)
-      const sessionToken = request.cookies.get('__Secure-authjs.session-token') ||
-                          request.cookies.get('authjs.session-token') ||
-                          request.cookies.get('next-auth.session-token');
+      // Check for NextAuth session cookies (various naming conventions)
+      const sessionToken = request.cookies.get('__Secure-next-auth.session-token') ||
+                          request.cookies.get('next-auth.session-token') ||
+                          request.cookies.get('__Secure-authjs.session-token') ||
+                          request.cookies.get('authjs.session-token');
 
       if (!sessionToken) {
         const loginUrl = new URL('/admin/login', request.url);

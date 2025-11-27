@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import '../globals.css';
-import { SessionProvider } from '@/components/admin/SessionProvider';
 
 export const metadata: Metadata = {
   title: 'Admin Panel - idir.ai',
@@ -24,7 +23,7 @@ export default function AdminLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>{children}</SessionProvider>
+        {children}
       </body>
     </html>
   );

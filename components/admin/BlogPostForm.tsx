@@ -511,10 +511,56 @@ export default function BlogPostForm({ post }: Props) {
 
   // Handle image removal
   const handleRemoveImage = async () => {
-    if (formData.cover_image) {
-      // Optionally delete from storage
-      // await deleteBlogImage(formData.cover_image);
+    if (!formData.cover_image) return;
+
+    if (!confirm('Are you sure you want to delete this image? This action cannot be undone.')) {
+      return;
+    }
+
+    setUploadingImage(true);
+    setImageError('');
+
+    try {
+      // Delete from storage via API
+      const response = await fetch(`/api/media?url=${encodeURIComponent(formData.cover_image)}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        setImageError(result.error || 'Failed to delete image');
+        return;
+      }
+
+      // Clear from form
       setFormData({ ...formData, cover_image: '' });
+    } catch (err: any) {
+      setImageError(err.message || 'An unexpected error occurred while deleting');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Handle image replacement
+  const handleReplaceImage = async (file: File) => {
+    const oldImageUrl = formData.cover_image;
+
+    try {
+      // Upload new image first
+      await handleImageUpload(file);
+
+      // If upload was successful and there was an old image, delete it
+      if (oldImageUrl) {
+        // Delete old image in background (don't block on this)
+        fetch(`/api/media?url=${encodeURIComponent(oldImageUrl)}`, {
+          method: 'DELETE',
+        }).catch((err) => {
+          console.error('Failed to delete old image:', err);
+        });
+      }
+    } catch (err: any) {
+      console.error('Error replacing image:', err);
     }
   };
 
@@ -1030,14 +1076,39 @@ Tu contenido va aquí...
                 sizes="(max-width: 768px) 100vw, 768px"
               />
             </div>
-            <button
-              type="button"
-              onClick={handleRemoveImage}
-              className="absolute top-3 right-3 bg-[#ff0055] text-white p-2 hover:bg-[#ff0077] transition-colors font-bold uppercase text-xs"
-              title="Remove image"
-            >
-              ✕ Remove
-            </button>
+            <div className="absolute top-3 right-3 flex gap-2">
+              {/* Replace button */}
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleReplaceImage(file);
+                  }}
+                  disabled={uploadingImage}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                  id="replace-image-input"
+                />
+                <label
+                  htmlFor="replace-image-input"
+                  className={`block bg-[#00cfff] text-black p-2 hover:bg-[#00e5ff] transition-colors font-bold uppercase text-xs cursor-pointer ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title="Replace image"
+                >
+                  🔄 Replace
+                </label>
+              </div>
+              {/* Remove button */}
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                disabled={uploadingImage}
+                className="bg-[#ff0055] text-white p-2 hover:bg-[#ff0077] transition-colors font-bold uppercase text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Remove image"
+              >
+                ✕ Remove
+              </button>
+            </div>
             <div className="p-3 bg-black border-t-2 border-[#00ff88]">
               <p className="text-xs text-gray-500 break-all">{formData.cover_image}</p>
             </div>

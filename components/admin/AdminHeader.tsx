@@ -22,6 +22,11 @@ const NAV_ITEMS: NavItem[] = [
     isActive: (pathname) => pathname.startsWith('/admin/blog'),
   },
   {
+    href: '/admin/images',
+    label: 'Images',
+    isActive: (pathname) => pathname === '/admin/images',
+  },
+  {
     href: '/admin/subscribers',
     label: 'Subscribers',
     isActive: (pathname) => pathname === '/admin/subscribers',

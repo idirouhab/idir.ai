@@ -213,3 +213,76 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+/**
+ * Server-side image deletion endpoint
+ * Requires admin authentication
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    // Check authentication
+    const user = await checkAuth(request);
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user has permission to delete
+    if (!['owner', 'admin', 'blogger'].includes(user.role)) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      );
+    }
+
+    // Get image URL from query params
+    const { searchParams } = new URL(request.url);
+    const imageUrl = searchParams.get('url');
+
+    if (!imageUrl) {
+      return NextResponse.json({ error: 'No image URL provided' }, { status: 400 });
+    }
+
+    // Extract file path from URL
+    const url = new URL(imageUrl);
+    const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/blog-image\/(.+)/);
+
+    if (!pathMatch) {
+      return NextResponse.json(
+        { error: 'Invalid image URL format' },
+        { status: 400 }
+      );
+    }
+
+    const filePath = pathMatch[1];
+
+    // Use admin client to bypass RLS
+    const supabase = getAdminBlogClient();
+
+    // Delete file from storage
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .remove([filePath]);
+
+    if (error) {
+      console.error('Delete error:', error);
+      return NextResponse.json(
+        { error: error.message || 'Failed to delete image' },
+        { status: 500 }
+      );
+    }
+
+    console.log('Deleted image:', filePath);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Image deleted successfully',
+    });
+  } catch (error: any) {
+    console.error('Delete exception:', error);
+    return NextResponse.json(
+      { error: error.message || 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
