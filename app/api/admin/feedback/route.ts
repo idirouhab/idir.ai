@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth-helpers';
 
 // Helper to get PostgREST config
 function getPostgRESTConfig() {
@@ -28,15 +27,10 @@ function getPostgRESTConfig() {
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const sessionCookie = cookies().get('admin-session');
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Check authentication using NextAuth
+    const authResult = await requireAuth();
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     const { searchParams } = new URL(request.url);
@@ -126,15 +120,10 @@ export async function GET(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    // Check authentication
-    const sessionCookie = cookies().get('admin-session');
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Check authentication using NextAuth
+    const authResult = await requireAuth();
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     const body = await request.json();

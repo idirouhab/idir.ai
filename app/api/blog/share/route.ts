@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth-helpers';
 import { z } from 'zod';
 
 // Validation schema
@@ -18,16 +17,10 @@ const ShareSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const sessionCookie = cookies().get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Check authentication using NextAuth
+    const authResult = await requireAuth();
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     // Parse and validate request body

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireRole } from '@/lib/auth-helpers';
 import { createClient } from '@supabase/supabase-js';
 import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 
@@ -15,24 +14,10 @@ import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
  */
 export async function GET(request: Request) {
   try {
-    // Check authentication
-    const sessionCookie = cookies().get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Only owners and admins can access subscribers
-    if (payload.role !== 'owner' && payload.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can access subscribers' },
-        { status: 403 }
-      );
+    // Check authentication and role using NextAuth
+    const authResult = await requireRole(['owner', 'admin']);
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     // Initialize Supabase
@@ -136,9 +121,9 @@ export async function GET(request: Request) {
 
     // Audit log: Track subscriber data access
     await logAuditEvent({
-      userId: payload.userId,
-      userEmail: payload.email,
-      userRole: payload.role,
+      userId: authResult.user?.id || '',
+      userEmail: authResult.user?.email || '',
+      userRole: (authResult.user?.role || 'viewer') as any,
       action: 'view_subscribers',
       resource: 'newsletter_subscribers',
       ipAddress: getClientIP(request),

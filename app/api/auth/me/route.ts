@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { auth } from '@/auth';
 
 /**
  * GET /api/auth/me
@@ -8,20 +7,11 @@ import { verifyToken } from '@/lib/jwt';
  */
 export async function GET(request: NextRequest) {
   try {
-    const sessionCookie = cookies().get('admin-session');
+    const session = await auth();
 
-    if (!sessionCookie) {
+    if (!session || !session.user) {
       return NextResponse.json(
-        { error: 'No session cookie found', authenticated: false },
-        { status: 401 }
-      );
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-
-    if (!payload) {
-      return NextResponse.json(
-        { error: 'Invalid session token', authenticated: false },
+        { error: 'Not authenticated', authenticated: false },
         { status: 401 }
       );
     }
@@ -29,9 +19,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       authenticated: true,
       user: {
-        id: payload.userId,
-        email: payload.email,
-        role: payload.role,
+        id: session.user.id,
+        email: session.user.email,
+        role: session.user.role,
       },
     });
   } catch (error) {

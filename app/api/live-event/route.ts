@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth-helpers';
 
 // Helper to get PostgREST config
 function getPostgRESTConfig() {
@@ -24,22 +23,10 @@ function getPostgRESTConfig() {
 
 // GET: Read live event data (all events for admin)
 export async function GET() {
-  // Check authentication
-  const sessionCookie = cookies().get('admin-session');
-  if (!sessionCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  // Verify JWT token
-  const payload = await verifyToken(sessionCookie.value);
-  if (!payload) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  // Check authentication using NextAuth
+  const authResult = await requireAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
   }
 
   try {
@@ -102,26 +89,14 @@ export async function GET() {
 
 // POST: Create or update live event data
 export async function POST(request: Request) {
-  // Check authentication
-  const sessionCookie = cookies().get('admin-session');
-  if (!sessionCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  // Verify JWT token
-  const payload = await verifyToken(sessionCookie.value);
-  if (!payload) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  // Check authentication and role using NextAuth
+  const authResult = await requireAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
   }
 
   // SECURITY: Only owners and admins can create/update live events
-  if (payload.role !== 'owner' && payload.role !== 'admin') {
+  if (authResult.user?.role !== 'owner' && authResult.user?.role !== 'admin') {
     return NextResponse.json(
       { error: 'Forbidden: Only owners and admins can manage live events' },
       { status: 403 }

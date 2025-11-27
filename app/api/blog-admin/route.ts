@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireRole } from '@/lib/auth-helpers';
 
 // Helper to get PostgREST config
 function getPostgRESTConfig() {
@@ -25,24 +24,10 @@ function getPostgRESTConfig() {
 // Get all blog posts (admin only)
 export async function GET() {
   try {
-    // Check authentication - use same cookie name as other admin pages
-    const sessionCookie = cookies().get('admin-session');
-
-    if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const payload = await verifyToken(sessionCookie.value);
-    if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // SECURITY: Only owners and admins can access all blog posts
-    if (payload.role !== 'owner' && payload.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can access this endpoint' },
-        { status: 403 }
-      );
+    // Check authentication and role using NextAuth
+    const authResult = await requireRole(['owner', 'admin']);
+    if (!authResult.authorized) {
+      return authResult.response;
     }
 
     const config = getPostgRESTConfig();

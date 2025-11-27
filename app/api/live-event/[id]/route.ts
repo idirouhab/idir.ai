@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/jwt';
+import { requireAuth } from '@/lib/auth-helpers';
 import { supabase } from '@/lib/supabase';
 
 // GET: Read a single live event by ID
@@ -8,22 +7,10 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  // Check authentication
-  const sessionCookie = cookies().get('admin-session');
-  if (!sessionCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  // Verify JWT token
-  const payload = await verifyToken(sessionCookie.value);
-  if (!payload) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  // Check authentication using NextAuth
+  const authResult = await requireAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
   }
 
   try {
@@ -70,26 +57,14 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  // Check authentication
-  const sessionCookie = cookies().get('admin-session');
-  if (!sessionCookie) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  // Verify JWT token
-  const payload = await verifyToken(sessionCookie.value);
-  if (!payload) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+  // Check authentication and role using NextAuth
+  const authResult = await requireAuth();
+  if (!authResult.authorized) {
+    return authResult.response;
   }
 
   // SECURITY: Only owners and admins can delete live events
-  if (payload.role !== 'owner' && payload.role !== 'admin') {
+  if (authResult.user?.role !== 'owner' && authResult.user?.role !== 'admin') {
     return NextResponse.json(
       { error: 'Forbidden: Only owners and admins can delete live events' },
       { status: 403 }
