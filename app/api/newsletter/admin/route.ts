@@ -121,7 +121,7 @@ export async function GET(request: Request) {
 
     // Audit log: Track subscriber data access
     await logAuditEvent({
-      userId: authResult.user?.id || '',
+      userId: authResult.user?.userId || '',
       userEmail: authResult.user?.email || '',
       userRole: (authResult.user?.role || 'viewer') as any,
       action: 'view_subscribers',
