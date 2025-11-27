@@ -26,13 +26,17 @@ export async function POST(request: NextRequest) {
     // Check authentication
     const sessionCookie = cookies().get('admin-session');
     if (!sessionCookie) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('[Auth] No admin-session cookie found');
+      return NextResponse.json({ error: 'Unauthorized: No session cookie found' }, { status: 401 });
     }
 
     const payload = await verifyToken(sessionCookie.value);
     if (!payload) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      console.error('[Auth] Invalid or expired token');
+      return NextResponse.json({ error: 'Unauthorized: Invalid or expired session' }, { status: 401 });
     }
+
+    console.log('[Auth] Authenticated user:', payload.email, 'role:', payload.role);
 
     const body = await request.json();
     const testEmail = body.testEmail;

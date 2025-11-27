@@ -21,11 +21,8 @@ export async function middleware(request: NextRequest) {
 
     // Admin authentication check using cookies
     if (!isPublicAdminRoute) {
-      // Check for NextAuth session cookies (various naming conventions)
-      const sessionToken = request.cookies.get('__Secure-next-auth.session-token') ||
-                          request.cookies.get('next-auth.session-token') ||
-                          request.cookies.get('__Secure-authjs.session-token') ||
-                          request.cookies.get('authjs.session-token');
+      // Check for admin-session cookie (custom JWT auth)
+      const sessionToken = request.cookies.get('admin-session');
 
       if (!sessionToken) {
         const loginUrl = new URL('/admin/login', request.url);

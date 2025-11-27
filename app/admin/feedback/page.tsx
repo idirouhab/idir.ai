@@ -209,14 +209,21 @@ export default function FeedbackPage() {
         }),
       });
 
+      if (response.status === 401) {
+        alert('Authentication failed. Your session may have expired. Please refresh the page and log in again.');
+        router.push('/admin/login');
+        return;
+      }
+
       if (!response.ok) {
-        throw new Error('Failed to send test email');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send test email');
       }
 
       alert(`Test email sent successfully to ${testEmail}!\n\nCheck your inbox to preview the feedback survey.`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending test email:', error);
-      alert('Failed to send test email. Please try again.');
+      alert(`Failed to send test email: ${error.message}`);
     } finally {
       setSendingCampaign(false);
     }
@@ -249,8 +256,15 @@ export default function FeedbackPage() {
         body: JSON.stringify(requestBody),
       });
 
+      if (response.status === 401) {
+        alert('Authentication failed. Your session may have expired. Please refresh the page and log in again.');
+        router.push('/admin/login');
+        return;
+      }
+
       if (!response.ok) {
-        throw new Error('Failed to send campaign');
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to send campaign');
       }
 
       const data = await response.json();
@@ -267,9 +281,9 @@ export default function FeedbackPage() {
       setPreviewSubscribers([]);
       setSelectedEmails(new Set());
       await checkAuthAndFetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending campaign:', error);
-      alert('Failed to send campaign. Please try again.');
+      alert(`Failed to send campaign: ${error.message}`);
     } finally {
       setSendingCampaign(false);
     }
