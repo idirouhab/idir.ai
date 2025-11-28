@@ -137,8 +137,9 @@ export default function AdminBlogPage() {
     }
   };
 
-  const renderPost = (post: BlogPost, isExpanded: boolean = false) => {
+  const renderPost = (post: BlogPost, isExpanded: boolean = false, totalViewCount?: number) => {
     const categoryColor = categoryColors[post.category];
+    const displayViewCount = totalViewCount !== undefined ? totalViewCount : post.view_count;
 
     return (
       <div className={`p-3 hover:bg-[#0a0a0a] transition-colors ${isExpanded ? 'bg-[#0a0a0a]/50' : ''}`}>
@@ -193,7 +194,7 @@ export default function AdminBlogPage() {
                 </span>
                 <span className="uppercase">{post.language}</span>
                 <span>•</span>
-                <span>{post.view_count} views</span>
+                <span>{displayViewCount} views</span>
                 {post.published_at && (
                   <>
                     <span>•</span>
@@ -329,6 +330,9 @@ export default function AdminBlogPage() {
             const primaryPost = group.en || group.es;
             const hasMultipleLanguages = group.en && group.es;
 
+            // Calculate total view count across all languages
+            const totalViewCount = (group.en?.view_count || 0) + (group.es?.view_count || 0);
+
             if (!primaryPost) return null;
 
             return (
@@ -355,7 +359,7 @@ export default function AdminBlogPage() {
 
                   {/* Post Content */}
                   <div className="flex-1">
-                    {renderPost(primaryPost)}
+                    {renderPost(primaryPost, false, totalViewCount)}
                   </div>
 
                   {/* Languages indicator */}
