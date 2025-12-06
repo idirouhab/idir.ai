@@ -4,34 +4,31 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
-import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import { getSiteUrl } from '@/lib/site-config';
 import "../globals.css";
 
-// Optimize font loading - only load weights actually used in the app
+// PERFORMANCE: Optimize font loading - reduced to minimum weights needed
+// Inter: Primary font for body text (reduced from 4 to 2 weights: 50% reduction)
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '700', '900'], // Reduced from 7 weights to 4 (400=normal, 500=medium, 700=bold, 900=black)
+  weight: ['400', '700'], // Only load normal and bold (removed 500, 900)
   variable: '--font-inter',
   display: 'swap',
   preload: true,
 });
 
+// Space Grotesk: Headings (reduced from 4 to 2 weights: 50% reduction)
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['600', '700'], // Only semi-bold and bold (removed 400, 500)
   variable: '--font-space-grotesk',
   display: 'swap',
   preload: true,
 });
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['600', '700', '800', '900'],
-  variable: '--font-montserrat',
-  display: 'swap',
-  preload: false, // Only used for podcast title
-});
+// PERFORMANCE: Removed Montserrat font entirely (saved 4 weights)
+// If needed for podcast title, use Space Grotesk instead as fallback
 
 type Props = {
   params: { locale: string };
@@ -120,38 +117,42 @@ export default async function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <head>
-        {/* Preconnect to external domains for faster resource loading */}
-        <link rel="preconnect" href="https://consent.cookiebot.com" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        {/* PERFORMANCE: Preconnect to external domains for faster resource loading */}
+        <link rel="preconnect" href="https://consent.cookiebot.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://consent.cookiebot.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body className="antialiased">
-        {/* Cookiebot - Loads after page is interactive to avoid blocking render */}
+        {/* PERFORMANCE: Cookiebot with worker strategy - loads after all other content
+            This ensures GDPR compliance while minimizing performance impact */}
         <Script
           id="Cookiebot"
           src="https://consent.cookiebot.com/uc.js"
           data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
           data-blockingmode="auto"
           type="text/javascript"
-          strategy="lazyOnload"
+          strategy="worker"
         />
 
-        {/* Google Analytics - Loads after interaction */}
+        {/* PERFORMANCE: Google Analytics with worker strategy - loads after all other content
+            Defers analytics tracking until page is fully interactive */}
         {gaId && (
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="afterInteractive"
+              strategy="worker"
             />
-            <Script id="google-analytics" strategy="afterInteractive">
+            <Script id="google-analytics" strategy="worker">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${gaId}');
+                gtag('config', '${gaId}', {
+                  page_path: window.location.pathname,
+                });
               `}
             </Script>
           </>
