@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { trackNewsletterSubmit } from '@/lib/analytics';
+import Link from 'next/link';
 
 export default function Subscribe() {
   const t = useTranslations('subscribe');
@@ -272,12 +273,12 @@ export default function Subscribe() {
 
         {/* Back to main site */}
         <div className="text-center mt-6">
-          <a
+          <Link
             href="/"
             className="text-sm text-gray-500 hover:text-[#00ff88] transition-colors uppercase tracking-wide font-bold"
           >
             {t('backLink')}
-          </a>
+          </Link>
         </div>
       </div>
 

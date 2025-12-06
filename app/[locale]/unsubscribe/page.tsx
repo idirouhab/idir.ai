@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Unsubscribe() {
   const t = useTranslations('unsubscribe');
@@ -181,12 +182,12 @@ export default function Unsubscribe() {
                           : 'You can close this window or return to the main page.')
                       : t('success.feedback')}
                   </p>
-                  <a
+                  <Link
                     href="/"
                     className="inline-block px-8 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
                   >
                     {t('success.backHome')}
-                  </a>
+                  </Link>
                 </div>
               </div>
             ) : !showPreferences ? (
@@ -372,12 +373,12 @@ export default function Unsubscribe() {
 
         {/* Back to main site */}
         <div className="text-center mt-6">
-          <a
+          <Link
             href="/"
             className="text-sm text-gray-500 hover:text-[#ff0055] transition-colors uppercase tracking-wide font-bold"
           >
             {t('backLink')}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

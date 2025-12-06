@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { trackCTAClick } from "@/lib/analytics";
 
 export default function Hero() {
@@ -88,7 +89,7 @@ export default function Hero() {
 
               {/* Newsletter CTA - Clearer separation */}
               <div className="mt-8 pt-8 border-t-2 border-gray-800">
-                <a
+                <Link
                   href="/subscribe"
                   className="group inline-flex items-center gap-3 px-6 py-4 bg-black border-2 border-[#ff0055] text-[#ff0055] font-black uppercase tracking-wide hover:bg-[#ff0055] hover:text-black transition-all text-sm sm:text-base rounded-lg"
                   aria-label="Subscribe to AI news daily"
@@ -97,7 +98,7 @@ export default function Hero() {
                   <span className="text-2xl" aria-hidden="true">📬</span>
                   <span>{t('ctaNewsletter')}</span>
                   <span className="group-hover:translate-x-1 transition-transform" aria-hidden="true">→</span>
-                </a>
+                </Link>
               </div>
             </nav>
           </div>

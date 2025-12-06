@@ -123,12 +123,12 @@ export default function LoginPage() {
               </Link>
             </div>
             <div>
-              <a
+              <Link
                 href="/"
                 className="text-gray-300 hover:text-[#00ff88] transition-colors text-sm"
               >
                 ← Back to site
-              </a>
+              </Link>
             </div>
           </div>
         </div>
