@@ -8,16 +8,18 @@ import Footer from '@/components/Footer';
 import NewsletterCTA from '@/components/NewsletterCTA';
 
 type Props = {
-  params: { locale: string };
-  searchParams: { category?: string };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ category?: string }>;
 };
 
 // Metadata is handled in layout.tsx to avoid duplication
 
-export default async function BlogPage({ params: { locale }, searchParams }: Props) {
+export default async function BlogPage({ params, searchParams }: Props) {
+  const { locale } = await params;
+  const resolvedSearchParams = await searchParams;
   const t = await getTranslations({ locale, namespace: 'blog' });
 
-  const category = searchParams.category as BlogCategory | undefined;
+  const category = resolvedSearchParams.category as BlogCategory | undefined;
   const posts = await getPublishedPosts(locale as 'en' | 'es', undefined, category);
 
   const categories: BlogCategory[] = ['insights', 'learnings', 'opinion'];

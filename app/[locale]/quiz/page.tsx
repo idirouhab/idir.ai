@@ -3,10 +3,11 @@ import { getSiteUrl } from '@/lib/site-config';
 import QuizGame from './QuizGame';
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/quiz`;
 
@@ -103,7 +104,8 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
   };
 }
 
-export default function QuizPage({ params: { locale } }: Props) {
+export default async function QuizPage({ params }: Props) {
+  const { locale } = await params;
   const baseUrl = getSiteUrl();
   const quizUrl = `${baseUrl}/${locale}/quiz`;
 

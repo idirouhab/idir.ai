@@ -10,8 +10,9 @@ export const size = {
 
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { locale: string } }) {
-  const isSpanish = params.locale === 'es';
+export default async function Image({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const isSpanish = locale === 'es';
 
   return new ImageResponse(
     (

@@ -5,9 +5,10 @@ import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog
 // Update a blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Check authentication and get user
     const user = await requireAuth(request);
 
@@ -18,7 +19,7 @@ export async function PUT(
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
       .select('author_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError || !existingPost) {
@@ -63,7 +64,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('blog_posts')
       .update(body)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -87,9 +88,10 @@ export async function PUT(
 // Delete a blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Check authentication and get user
     const user = await requireAuth(request);
 
@@ -103,7 +105,7 @@ export async function DELETE(
 
     // Validate UUID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(params.id)) {
+    if (!uuidRegex.test(id)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
@@ -115,7 +117,7 @@ export async function DELETE(
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError || !existingPost) {
@@ -127,7 +129,7 @@ export async function DELETE(
 
     // NOTE: Owners can delete any post for content moderation
     // This allows you to remove inappropriate content if needed
-    const { error } = await supabase.from('blog_posts').delete().eq('id', params.id);
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
 
     if (error) {
       console.error('Error deleting blog post:', error);

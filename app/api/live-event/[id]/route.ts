@@ -5,8 +5,9 @@ import { supabase } from '@/lib/supabase';
 // GET: Read a single live event by ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // Check authentication using NextAuth
   const authResult = await requireAuth();
   if (!authResult.authorized) {
@@ -17,7 +18,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('live_events')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -55,8 +56,9 @@ export async function GET(
 // DELETE: Delete a live event by ID
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // Check authentication and role using NextAuth
   const authResult = await requireAuth();
   if (!authResult.authorized) {
@@ -75,7 +77,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('live_events')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       console.error('Error deleting live event:', error);

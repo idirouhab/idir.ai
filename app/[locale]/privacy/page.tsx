@@ -1,8 +1,10 @@
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { getSiteDomain } from '@/lib/site-config';
+import Link from 'next/link';
 
-export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'privacy' });
 
   return {
@@ -11,7 +13,8 @@ export async function generateMetadata({ params: { locale } }: { params: { local
   };
 }
 
-export default function PrivacyPolicy({ params: { locale } }: { params: { locale: string } }) {
+export default async function PrivacyPolicy({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const siteDomain = getSiteDomain();
   const isSpanish = locale === 'es';
   return (
@@ -246,19 +249,19 @@ export default function PrivacyPolicy({ params: { locale } }: { params: { locale
           {/* Footer Links */}
           <div className="mt-12 pt-8 border-t-2 border-gray-800">
             <div className="flex flex-wrap gap-4 justify-center">
-              <a
-                href="/en/terms"
+              <Link
+                href={`/${locale}/terms`}
                 className="text-[#ff006e] hover:text-white transition-colors font-semibold uppercase text-sm"
               >
                 Terms of Service
-              </a>
+              </Link>
               <span className="text-gray-600">•</span>
-              <a
-                href="/en"
+              <Link
+                href={`/${locale}`}
                 className="text-gray-400 hover:text-white transition-colors font-semibold uppercase text-sm"
               >
                 Back to Home
-              </a>
+              </Link>
             </div>
           </div>
         </div>

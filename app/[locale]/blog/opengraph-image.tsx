@@ -8,7 +8,8 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { locale: string } }) {
+export default async function Image({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const content = {
     en: {
       title: 'BLOG',
@@ -22,8 +23,8 @@ export default async function Image({ params }: { params: { locale: string } }) 
     },
   };
 
-  const locale = params.locale === 'es' ? 'es' : 'en';
-  const text = content[locale];
+  const lang = locale === 'es' ? 'es' : 'en';
+  const text = content[lang];
 
   const colors = ['#ff0055', '#00ff88', '#00cfff'];
 

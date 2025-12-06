@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     // SECURITY: Set cookie with JWT token
     // Using strict sameSite prevents CSRF attacks
     // httpOnly prevents JavaScript access, protecting against XSS
-    cookies().set('admin-session', sessionToken, {
+    (await cookies()).set('admin-session', sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict', // CSRF protection - prevents cross-site requests

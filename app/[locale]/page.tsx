@@ -38,7 +38,7 @@ export function generateStaticParams() {
 export const revalidate = 1800; // 30 minutes in seconds
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 // PERFORMANCE: Use React cache to prevent duplicate queries
@@ -78,7 +78,8 @@ const getActiveEvent = cache(async () => {
   }
 });
 
-export default async function Home({ params: { locale } }: Props) {
+export default async function Home({ params }: Props) {
+  const { locale } = await params;
   // PERFORMANCE: Fetch data in parallel instead of sequentially
   const [t, activeEvent] = await Promise.all([
     getTranslations({ locale, namespace: 'structuredData' }),

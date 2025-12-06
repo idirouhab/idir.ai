@@ -9,7 +9,7 @@ import { verifyToken } from '@/lib/jwt';
 export async function GET(request: NextRequest) {
   try {
     // Check for admin-session cookie
-    const sessionCookie = cookies().get('admin-session');
+    const sessionCookie = (await cookies()).get('admin-session');
 
     if (!sessionCookie) {
       return NextResponse.json(

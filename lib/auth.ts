@@ -26,7 +26,7 @@ export async function checkAuth(request: NextRequest): Promise<JWTPayload | null
 }
 
 export async function checkAuthFromCookies(): Promise<JWTPayload | null> {
-  const sessionCookie = cookies().get('admin-session');
+  const sessionCookie = (await cookies()).get('admin-session');
   if (!sessionCookie) {
     return null;
   }

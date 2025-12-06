@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { BlogPost } from '@/lib/blog';
 import BlogPostForm from '@/components/admin/BlogPostForm';
 
-export default function EditBlogPostPage({ params }: { params: { id: string } }) {
+export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [post, setPost] = useState<BlogPost | null>(null);
@@ -14,8 +14,9 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   useEffect(() => {
     const checkAuthAndFetch = async () => {
       try {
+        const { id } = await params;
         // Fetch specific post (including drafts with auth)
-        const response = await fetch(`/api/posts/${params.id}?draft=true`);
+        const response = await fetch(`/api/posts/${id}?draft=true`);
 
         if (response.status === 401) {
           router.push('/admin/login');
@@ -38,7 +39,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
 
     checkAuthAndFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [params]);
 
   if (loading) {
     return (

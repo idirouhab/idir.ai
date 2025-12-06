@@ -14,9 +14,10 @@ function escapeXml(str: string): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { locale: string } }
+  { params }: { params: Promise<{ locale: string }> }
 ) {
-  const locale = params.locale as 'en' | 'es';
+  const { locale: localeParam } = await params;
+  const locale = localeParam as 'en' | 'es';
   const posts = await getPublishedPosts(locale, 50); // Last 50 posts
 
   const baseUrl = getSiteUrl();

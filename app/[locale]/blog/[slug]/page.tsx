@@ -48,7 +48,7 @@ import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
 import { getSiteUrl } from '@/lib/site-config';
 
 type Props = {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 // PERFORMANCE: Pre-render all blog posts at build time
@@ -67,7 +67,8 @@ export async function generateStaticParams() {
 // Pages are served instantly from cache, then regenerated in the background
 export const revalidate = 3600; // 1 hour in seconds
 
-export async function generateMetadata({ params: { locale, slug } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
   const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
 
   if (!post) {
@@ -135,7 +136,8 @@ export async function generateMetadata({ params: { locale, slug } }: Props): Pro
   };
 }
 
-export default async function BlogPostPage({ params: { locale, slug } }: Props) {
+export default async function BlogPostPage({ params }: Props) {
+  const { locale, slug } = await params;
   const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
 
   if (!post) {

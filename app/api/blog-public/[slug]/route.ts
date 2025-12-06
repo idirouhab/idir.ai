@@ -17,10 +17,10 @@ import { getBlogClient } from '@/lib/blog';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug: id } = params; // Using slug param name but treating as ID
+    const { slug: id } = await params; // Using slug param name but treating as ID
     const searchParams = request.nextUrl.searchParams;
     const languageParam = searchParams.get('language');
 

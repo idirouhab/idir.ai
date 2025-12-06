@@ -24,7 +24,7 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const sessionCookie = cookies().get('admin-session');
+    const sessionCookie = (await cookies()).get('admin-session');
     if (!sessionCookie) {
       console.error('[Auth] No admin-session cookie found');
       return NextResponse.json({ error: 'Unauthorized: No session cookie found' }, { status: 401 });

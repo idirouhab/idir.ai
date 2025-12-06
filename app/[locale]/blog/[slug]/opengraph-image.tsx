@@ -9,8 +9,9 @@ export const size = {
 };
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { locale: string; slug: string } }) {
-  const post = await getPublishedPostBySlug(params.slug, params.locale as 'en' | 'es');
+export default async function Image({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
+  const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
 
   if (!post) {
     // Fallback image if post not found

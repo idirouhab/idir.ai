@@ -31,10 +31,11 @@ const spaceGrotesk = Space_Grotesk({
 // If needed for podcast title, use Space Grotesk instead as fallback
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
   const baseUrl = getSiteUrl();
@@ -100,11 +101,12 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
 
 export default async function RootLayout({
   children,
-  params: {locale}
+  params
 }: Readonly<{
   children: React.ReactNode;
-  params: {locale: string};
+  params: Promise<{locale: string}>;
 }>) {
+  const {locale} = await params;
   // Validate that the incoming `locale` parameter is valid
   if (!routing.locales.includes(locale as any)) {
     notFound();

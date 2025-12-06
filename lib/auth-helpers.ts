@@ -12,7 +12,7 @@ type AuthResult =
  * Use this in API routes to verify authentication
  */
 export async function requireAuth(): Promise<AuthResult> {
-  const sessionCookie = cookies().get('admin-session');
+  const sessionCookie = (await cookies()).get('admin-session');
 
   if (!sessionCookie) {
     return {

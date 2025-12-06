@@ -16,7 +16,7 @@ import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 export async function GET(request: Request) {
   try {
     // Check authentication
-    const sessionCookie = cookies().get('admin-session');
+    const sessionCookie = (await cookies()).get('admin-session');
 
     if (!sessionCookie) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

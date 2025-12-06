@@ -8,9 +8,10 @@ import { getAdminBlogClient, getBlogClient, calculateReadTime } from '@/lib/blog
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Check if requesting draft
     const searchParams = request.nextUrl.searchParams;
     const includeDraft = searchParams.get('draft') === 'true';
@@ -19,7 +20,7 @@ export async function GET(
     let query = supabase
       .from('blog_posts')
       .select('*, users!blog_posts_author_id_fkey(name)')
-      .eq('id', params.id);
+      .eq('id', id);
 
     // If requesting drafts, require auth
     if (includeDraft) {
@@ -31,7 +32,7 @@ export async function GET(
       query = supabase
         .from('blog_posts')
         .select('*, users!blog_posts_author_id_fkey(name)')
-        .eq('id', params.id);
+        .eq('id', id);
     } else {
       query = query.eq('status', 'published');
     }
@@ -61,9 +62,10 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Use NextAuth for authentication
     const authResult = await requireRole(['owner', 'admin', 'blogger']);
     if (!authResult.authorized) {
@@ -78,7 +80,7 @@ export async function PUT(
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
       .select('author_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError || !existingPost) {
@@ -120,7 +122,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('blog_posts')
       .update(body)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -147,9 +149,10 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // Use NextAuth - only owners can delete
     const authResult = await requireRole(['owner']);
     if (!authResult.authorized) {
@@ -158,7 +161,7 @@ export async function DELETE(
 
     // Validate UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(params.id)) {
+    if (!uuidRegex.test(id)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
@@ -168,7 +171,7 @@ export async function DELETE(
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (fetchError || !existingPost) {
@@ -178,7 +181,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('blog_posts')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       console.error('Error deleting post:', error);

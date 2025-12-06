@@ -197,8 +197,8 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           img: ({ src, alt }) => (
             <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#00ff88]">
               <Image
-                src={src || ''}
-                alt={alt || ''}
+                src={typeof src === 'string' ? src : ''}
+                alt={typeof alt === 'string' ? alt : ''}
                 width={1200}
                 height={675}
                 className="w-full h-auto"

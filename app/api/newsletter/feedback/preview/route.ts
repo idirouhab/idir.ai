@@ -22,7 +22,7 @@ type SubscriberWithFeedback = {
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const sessionCookie = cookies().get('admin-session');
+    const sessionCookie = (await cookies()).get('admin-session');
     if (!sessionCookie) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
