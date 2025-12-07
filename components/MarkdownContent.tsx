@@ -1,10 +1,10 @@
 'use client';
 
-import { memo, useState, useEffect, useMemo } from 'react';
+import { memo, useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 import Image from 'next/image';
-import DOMPurify from 'isomorphic-dompurify';
 
 // PERFORMANCE: Lightweight code highlighter that only loads when needed
 // Replaces heavy react-syntax-highlighter (8.7MB) with on-demand loading
@@ -72,29 +72,11 @@ type Props = {
 // Even though content comes from our database, defense in depth is critical
 // Protects against XSS if an attacker gains access to a blogger account
 const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
-  // Sanitize content with DOMPurify
-  const sanitizedContent = useMemo(() => {
-    return DOMPurify.sanitize(content, {
-      ALLOWED_TAGS: [
-        'p', 'br', 'strong', 'em', 'u', 's', 'a', 'img',
-        'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td',
-        'hr', 'div', 'span'
-      ],
-      ALLOWED_ATTR: [
-        'href', 'src', 'alt', 'title', 'class', 'id',
-        'target', 'rel', 'width', 'height'
-      ],
-      ALLOW_DATA_ATTR: false,
-      ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
-    });
-  }, [content]);
-
   return (
     <div className="markdown-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeSanitize]}
         components={{
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
@@ -240,7 +222,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           ),
         }}
       >
-        {sanitizedContent}
+        {content}
       </ReactMarkdown>
 
       <style jsx global>{`
