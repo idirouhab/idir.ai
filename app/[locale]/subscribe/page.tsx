@@ -1,14 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { trackNewsletterSubmit } from '@/lib/analytics';
 import Link from 'next/link';
 
 export default function Subscribe() {
   const t = useTranslations('subscribe');
+  const locale = useLocale();
   const [email, setEmail] = useState('');
-  const [language, setLanguage] = useState<'en' | 'es'>('en');
+  const [language, setLanguage] = useState<'en' | 'es'>((locale === 'es' ? 'es' : 'en'));
   const [consent, setConsent] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
