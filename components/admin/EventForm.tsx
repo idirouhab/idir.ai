@@ -78,11 +78,31 @@ export default function EventForm({ initialData, eventId, mode }: EventFormProps
         platformUrl: initialData.platformUrl,
       });
 
-      // Parse datetime into date and time
+      // Parse datetime into date and time in the event's timezone
       if (initialData.eventDatetime) {
+        // Format the datetime in the event's timezone
+        const dateFormatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone: initialData.timezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        });
+
+        const timeFormatter = new Intl.DateTimeFormat('en-GB', {
+          timeZone: initialData.timezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+
         const dt = new Date(initialData.eventDatetime);
-        const dateStr = dt.toISOString().split('T')[0];
-        const timeStr = dt.toTimeString().slice(0, 5);
+
+        // Format: YYYY-MM-DD
+        const dateStr = dateFormatter.format(dt);
+
+        // Format: HH:MM
+        const timeStr = timeFormatter.format(dt);
+
         setEventDate(dateStr);
         setEventTime(timeStr);
       }
@@ -97,8 +117,47 @@ export default function EventForm({ initialData, eventId, mode }: EventFormProps
       return;
     }
 
-    // Combine date and time
-    const eventDatetime = `${eventDate}T${eventTime}`;
+    // Convert date and time in the event's timezone to UTC ISO string
+    // The user enters the time as it should appear in the event's timezone
+    // We need to convert this to UTC for storage
+
+    // Parse the date and time components
+    const [year, month, day] = eventDate.split('-').map(Number);
+    const [hours, minutes] = eventTime.split(':').map(Number);
+
+    // Create a date in UTC with these components
+    const utcTestDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0));
+
+    // Format this UTC date as if it were in the target timezone
+    // This tells us what UTC time corresponds to our desired local time
+    const tzString = utcTestDate.toLocaleString('en-US', {
+      timeZone: eventData.timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+
+    // Parse the formatted string to get what time it shows in the target TZ
+    const tzMatch = tzString.match(/(\d+)\/(\d+)\/(\d+),?\s+(\d+):(\d+):(\d+)/);
+    if (!tzMatch) {
+      setMessage({ type: 'error', text: 'Error processing timezone' });
+      return;
+    }
+
+    const [, tzMonth, tzDay, tzYear, tzHour, tzMinute] = tzMatch.map(Number);
+
+    // Calculate the difference between what we want and what we got
+    const wantedTime = new Date(year, month - 1, day, hours, minutes, 0).getTime();
+    const gotTime = new Date(tzYear, tzMonth - 1, tzDay, tzHour, tzMinute, 0).getTime();
+    const offset = wantedTime - gotTime;
+
+    // Apply the offset to get the correct UTC time
+    const correctUtcDate = new Date(utcTestDate.getTime() + offset);
+    const eventDatetime = correctUtcDate.toISOString();
 
     setSaving(true);
     setMessage(null);
