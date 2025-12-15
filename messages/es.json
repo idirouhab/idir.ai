@@ -386,5 +386,113 @@
     "footerText": "Recibes este correo porque te suscribiste a Noticias IA Diarias.",
     "websiteText": "Sitio Web",
     "unsubscribeText": "Cancelar suscripción"
+  },
+  "courses": {
+    "automation101": {
+      "meta": {
+        "title": "Automatización 101 - Curso de Introducción | idir.ai",
+        "description": "Aprende los fundamentos de la automatización sin herramientas complicadas. Curso práctico para principiantes. 100% Gratis con apoyo opcional."
+      },
+      "hero": {
+        "badge": "NUEVO CURSO",
+        "title": "Automatización 101",
+        "subtitle": "Domina los Fundamentos",
+        "description": "Un curso práctico para entender la automatización desde cero. Sin jerga técnica, sin herramientas complicadas. Solo los conceptos que necesitas para empezar a automatizar tu trabajo.",
+        "price": {
+          "regular": "€199",
+          "regularLabel": "Precio Regular",
+          "free": "GRATIS",
+          "freeLabel": "menores de 25 y mayores de 60",
+          "specialOffer": "Oferta de Lanzamiento",
+          "optionalSupport": "Apoyo opcional disponible"
+        }
+      },
+      "overview": {
+        "label": "¿POR QUÉ ESTE CURSO?",
+        "title": "La Automatización No Debe Ser Complicada",
+        "intro": "La mayoría de los cursos te bombardean con herramientas específicas que quedan obsoletas en meses. Este curso es diferente.",
+        "reason1": {
+          "title": "Conceptos, No Herramientas",
+          "description": "Aprenderás los principios fundamentales de la automatización que se aplican a cualquier herramienta o plataforma."
+        },
+        "reason2": {
+          "title": "Casos Prácticos Reales",
+          "description": "Ejemplos del mundo real que puedes aplicar inmediatamente en tu trabajo diario."
+        },
+        "reason3": {
+          "title": "Para Principiantes",
+          "description": "No se requiere experiencia técnica. Explicado en lenguaje claro y sencillo."
+        }
+      },
+      "outcomes": {
+        "label": "LO QUE APRENDERÁS",
+        "title": "Resultados de Aprendizaje",
+        "description": "Al terminar este curso, serás capaz de:",
+        "items": {
+          "item1": "Identificar oportunidades de automatización en tu flujo de trabajo",
+          "item2": "Diseñar procesos automatizados efectivos sin escribir código",
+          "item3": "Evaluar y seleccionar las herramientas adecuadas para tus necesidades",
+          "item4": "Implementar automatizaciones simples que te ahorren horas cada semana",
+          "item5": "Entender cuándo automatizar y cuándo NO automatizar",
+          "item6": "Comunicar ideas de automatización a equipos técnicos y no técnicos"
+        }
+      },
+      "pricing": {
+        "label": "PRECIO E INSCRIPCIÓN",
+        "title": "Oferta Especial de Lanzamiento",
+        "regular": {
+          "title": "Precio Regular",
+          "amount": "€199",
+          "description": "Acceso completo al curso y material de soporte"
+        },
+        "senior": {
+          "title": "Acceso Gratuito",
+          "amount": "GRATIS",
+          "badge": "100% GRATIS",
+          "description": "Como parte de nuestra misión de hacer la tecnología accesible para todos, este curso es completamente gratuito para menores de 25 años y mayores de 60 años."
+        },
+        "includes": "El curso incluye:",
+        "benefits": {
+          "benefit1": "8 módulos de contenido en video",
+          "benefit2": "Ejercicios prácticos descargables",
+          "benefit3": "Certificado de finalización",
+          "benefit4": "Acceso de por vida al contenido",
+          "benefit5": "Actualizaciones gratuitas del curso"
+        }
+      },
+      "form": {
+        "label": "INSCRÍBETE AHORA",
+        "title": "Completa el Formulario de Inscripción",
+        "fullName": "Nombre Completo",
+        "fullNamePlaceholder": "Tu nombre completo",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "tu@email.com",
+        "freeAccess": {
+          "title": "✨ Acceso 100% Gratuito",
+          "description": "Este curso es completamente gratuito para todos. Si encuentras valor en el contenido, puedes apoyar nuestro trabajo con una contribución opcional después de completar el curso."
+        },
+        "terms": {
+          "label": "Acepto los",
+          "termsLink": "términos y condiciones",
+          "and": "y la",
+          "privacyLink": "política de privacidad",
+          "confirmAccuracy": "Confirmo que la información proporcionada es verdadera y precisa."
+        },
+        "submit": "Inscribirme Ahora",
+        "sending": "Procesando...",
+        "success": {
+          "title": "¡Inscripción Exitosa!",
+          "message": "Gracias por inscribirte en Automatización 101. Hemos enviado un email de confirmación a tu dirección de correo.",
+          "freeAccess": "¡Tienes acceso GRATUITO completo al curso!",
+          "nextSteps": "Próximos pasos:",
+          "step1": "Revisa tu bandeja de entrada para el email de confirmación",
+          "step2": "Sigue las instrucciones para acceder al contenido del curso",
+          "step3": "¡Comienza a aprender a tu propio ritmo!"
+        },
+        "error": "Error al procesar la inscripción. Por favor intenta de nuevo.",
+        "errorDuplicate": "Este correo ya está registrado para este curso."
+      },
+      "backLink": "← Volver al Inicio"
+    }
   }
 }

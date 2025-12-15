@@ -386,5 +386,113 @@
     "footerText": "You receive this email because you subscribed to AI News Daily.",
     "websiteText": "Website",
     "unsubscribeText": "Unsubscribe"
+  },
+  "courses": {
+    "automation101": {
+      "meta": {
+        "title": "Automation 101 - Introduction Course | idir.ai",
+        "description": "Learn automation fundamentals without complicated tools. Practical course for beginners. 100% Free with optional support."
+      },
+      "hero": {
+        "badge": "NEW COURSE",
+        "title": "Automation 101",
+        "subtitle": "Master the Fundamentals",
+        "description": "A practical course to understand automation from scratch. No technical jargon, no complicated tools. Just the concepts you need to start automating your work.",
+        "price": {
+          "regular": "€199",
+          "regularLabel": "Regular Price",
+          "free": "FREE",
+          "freeLabel": "under 25 and 60+ years old",
+          "specialOffer": "Launch Offer",
+          "optionalSupport": "Optional support available"
+        }
+      },
+      "overview": {
+        "label": "WHY THIS COURSE?",
+        "title": "Automation Shouldn't Be Complicated",
+        "intro": "Most courses bombard you with specific tools that become obsolete in months. This course is different.",
+        "reason1": {
+          "title": "Concepts, Not Tools",
+          "description": "You'll learn fundamental automation principles that apply to any tool or platform."
+        },
+        "reason2": {
+          "title": "Real-World Practical Cases",
+          "description": "Real-world examples you can apply immediately in your daily work."
+        },
+        "reason3": {
+          "title": "For Beginners",
+          "description": "No technical experience required. Explained in clear, simple language."
+        }
+      },
+      "outcomes": {
+        "label": "WHAT YOU'LL LEARN",
+        "title": "Learning Outcomes",
+        "description": "By the end of this course, you'll be able to:",
+        "items": {
+          "item1": "Identify automation opportunities in your workflow",
+          "item2": "Design effective automated processes without writing code",
+          "item3": "Evaluate and select the right tools for your needs",
+          "item4": "Implement simple automations that save you hours each week",
+          "item5": "Understand when to automate and when NOT to automate",
+          "item6": "Communicate automation ideas to technical and non-technical teams"
+        }
+      },
+      "pricing": {
+        "label": "PRICING & ENROLLMENT",
+        "title": "Special Launch Offer",
+        "regular": {
+          "title": "Regular Price",
+          "amount": "€199",
+          "description": "Full access to course and support materials"
+        },
+        "senior": {
+          "title": "Free Access",
+          "amount": "FREE",
+          "badge": "100% FREE",
+          "description": "As part of our mission to make technology accessible to everyone, this course is completely free for people under 25 and 60 years or older."
+        },
+        "includes": "The course includes:",
+        "benefits": {
+          "benefit1": "8 video content modules",
+          "benefit2": "Downloadable practical exercises",
+          "benefit3": "Certificate of completion",
+          "benefit4": "Lifetime access to content",
+          "benefit5": "Free course updates"
+        }
+      },
+      "form": {
+        "label": "ENROLL NOW",
+        "title": "Complete the Enrollment Form",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Your full name",
+        "email": "Email Address",
+        "emailPlaceholder": "you@email.com",
+        "freeAccess": {
+          "title": "✨ 100% Free Access",
+          "description": "This course is completely free for everyone. If you find value in the content, you can support our work with an optional contribution after completing the course."
+        },
+        "terms": {
+          "label": "I accept the",
+          "termsLink": "terms and conditions",
+          "and": "and the",
+          "privacyLink": "privacy policy",
+          "confirmAccuracy": "I confirm that the information provided is true and accurate."
+        },
+        "submit": "Enroll Now",
+        "sending": "Processing...",
+        "success": {
+          "title": "Enrollment Successful!",
+          "message": "Thank you for enrolling in Automation 101. We've sent a confirmation email to your address.",
+          "freeAccess": "You have full FREE access to the course!",
+          "nextSteps": "Next steps:",
+          "step1": "Check your inbox for the confirmation email",
+          "step2": "Follow the instructions to access the course content",
+          "step3": "Start learning at your own pace!"
+        },
+        "error": "Error processing enrollment. Please try again.",
+        "errorDuplicate": "This email is already registered for this course."
+      },
+      "backLink": "← Back to Home"
+    }
   }
 }
