@@ -41,20 +41,20 @@ export async function GET(request: Request) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '80px 100px',
+              padding: '60px 80px',
               textAlign: 'center',
             }}
           >
             {/* Main Title */}
             <div
               style={{
-                fontSize: '120px',
+                fontSize: '100px',
                 fontWeight: 900,
-                letterSpacing: '-4px',
+                letterSpacing: '-3px',
                 background: 'linear-gradient(135deg, #00ff88 0%, #00cfff 100%)',
                 backgroundClip: 'text',
                 color: 'transparent',
-                marginBottom: '20px',
+                marginBottom: '16px',
                 textTransform: 'uppercase',
                 display: 'flex',
               }}
@@ -65,10 +65,10 @@ export async function GET(request: Request) {
             {/* Subtitle with Idir */}
             <div
               style={{
-                fontSize: '42px',
+                fontSize: '38px',
                 fontWeight: 700,
                 color: '#ffffff',
-                marginBottom: '60px',
+                marginBottom: '40px',
                 display: 'flex',
               }}
             >
@@ -78,17 +78,17 @@ export async function GET(request: Request) {
             {/* Description */}
             <div
               style={{
-                fontSize: '36px',
+                fontSize: '30px',
                 fontWeight: 600,
                 color: '#b8b8b8',
-                maxWidth: '900px',
-                lineHeight: 1.4,
-                marginBottom: '60px',
+                maxWidth: '800px',
+                lineHeight: 1.3,
+                marginBottom: '45px',
                 display: 'flex',
               }}
             >
               {isSpanish
-                ? 'Domina la lógica de la automatización aunque empieces desde cero'
+                ? 'Domina la lógica de la automatización empezando desde cero'
                 : 'Master automation logic even if you start from scratch'}
             </div>
 
@@ -96,7 +96,7 @@ export async function GET(request: Request) {
             <div
               style={{
                 display: 'flex',
-                gap: '24px',
+                gap: '18px',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -107,14 +107,14 @@ export async function GET(request: Request) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '16px 32px',
+                  padding: '14px 26px',
                   background: 'linear-gradient(135deg, #00ff88 0%, #00cfff 100%)',
-                  borderRadius: '12px',
-                  fontSize: '24px',
+                  borderRadius: '10px',
+                  fontSize: '20px',
                   fontWeight: 900,
                   color: '#000000',
                   textTransform: 'uppercase',
-                  letterSpacing: '1px',
+                  letterSpacing: '0.5px',
                 }}
               >
                 {isSpanish ? '4 SESIONES EN VIVO' : '4 LIVE SESSIONS'}
@@ -126,17 +126,17 @@ export async function GET(request: Request) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '16px 32px',
+                  padding: '14px 26px',
                   background: 'linear-gradient(135deg, #ff0055 0%, #9b59d0 100%)',
-                  borderRadius: '12px',
-                  fontSize: '24px',
+                  borderRadius: '10px',
+                  fontSize: '20px',
                   fontWeight: 900,
                   color: '#ffffff',
                   textTransform: 'uppercase',
-                  letterSpacing: '1px',
+                  letterSpacing: '0.5px',
                 }}
               >
-                {isSpanish ? 'DONACIÓN €5/$5' : 'DONATION €5/$5'}
+                {isSpanish ? '30 plazas' : '30 seats'}
               </div>
 
               {/* Badge 3 */}
@@ -145,15 +145,15 @@ export async function GET(request: Request) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '16px 32px',
+                  padding: '14px 26px',
                   background: 'rgba(0, 207, 255, 0.2)',
                   border: '3px solid #00cfff',
-                  borderRadius: '12px',
-                  fontSize: '24px',
+                  borderRadius: '10px',
+                  fontSize: '20px',
                   fontWeight: 900,
                   color: '#00cfff',
                   textTransform: 'uppercase',
-                  letterSpacing: '1px',
+                  letterSpacing: '0.5px',
                 }}
               >
                 {isSpanish ? '14 ENERO 2026' : 'JAN 14 2026'}
