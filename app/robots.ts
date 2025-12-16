@@ -8,32 +8,32 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'GPTBot',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'ChatGPT-User',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'Google-Extended',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'anthropic-ai',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
       {
         userAgent: 'ClaudeBot',
-        allow: '/',
+        allow: ['/', '/api/og/'],
         disallow: ['/api/', '/admin/'],
       },
     ],
