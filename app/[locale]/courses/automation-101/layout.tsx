@@ -2,10 +2,11 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'courses.automation101.meta' });
 
   const title = t('title');
