@@ -386,5 +386,163 @@
     "footerText": "Recibes este correo porque te suscribiste a Noticias IA Diarias.",
     "websiteText": "Sitio Web",
     "unsubscribeText": "Cancelar suscripción"
+  },
+  "courses": {
+    "automation101": {
+      "meta": {
+        "title": "Automatización 101 - Curso de Introducción | idir.ai",
+        "description": "Aprende los fundamentos de la automatización sin herramientas complicadas. Curso práctico para principiantes. 100% Gratis con apoyo opcional."
+      },
+      "hero": {
+        "badge": "NUEVO CURSO",
+        "title": "AUTOMATIZACIÓN 101",
+        "subtitle": "Tu inicio garantizado: domina la lógica de la automatización aunque empieces desde cero",
+        "description": "Formación de alto valor financiada por tu compromiso solidario. Sin jerga técnica, sin herramientas complicadas. Solo los conceptos que necesitas para empezar a automatizar tu trabajo.",
+        "valueStatement": "Curso sin coste directo • Solo requiere tu compromiso"
+      },
+      "overview": {
+        "label": "¿POR QUÉ ESTE CURSO?",
+        "title": "La automatización no debe ser complicada",
+        "intro": "Si nunca has automatizado nada, este curso es para ti. Empezamos desde cero absoluto. La barrera para automatizar no es la herramienta, es la mentalidad. Aquí desarrollarás el pensamiento fundamental de la automatización, permitiéndote dominar la lógica de los procesos y elegir la herramienta adecuada en cualquier contexto sin necesidad de conocimientos técnicos previos.",
+        "donationLabel": "Tu compromiso hace la diferencia",
+        "donationAmount": "€5/$5",
+        "donationTitle": "Donación sugerida a FreeCodeCamp",
+        "donationText": "Este curso tiene un valor de mercado de €100/$100, pero he decidido ofrecerlo sin coste directo para ti. En su lugar, te pido un compromiso de honor: una donación de €5/$5 (o la cantidad que consideres justa) a FreeCodeCamp, la organización sin fines de lucro que ha ayudado a millones de personas a aprender gratuitamente e impulsa proyectos en LATAM.",
+        "transparencyTitle": "Transparencia total",
+        "transparencyText": "Por motivos de transparencia y para evitar trámites fiscales, yo no acepto ni manejo dinero. El enlace es directo a FreeCodeCamp. Tu donación va 100% a la causa.",
+        "donationCTA": "Link de donación a FreeCodeCamp",
+        "donationLink": "https://www.freecodecamp.org/espanol/donate/",
+        "reason1": {
+          "title": "Conceptos, no herramientas",
+          "description": "Aprenderás los principios fundamentales de la automatización que se aplican a cualquier herramienta o plataforma."
+        },
+        "reason2": {
+          "title": "Casos prácticos reales",
+          "description": "Ejemplos del mundo real que puedes aplicar inmediatamente en tu trabajo diario."
+        },
+        "reason3": {
+          "title": "Para principiantes",
+          "description": "No se requiere experiencia técnica. Explicado en lenguaje claro y sencillo para que sea tu verdadero punto de partida."
+        }
+      },
+      "curriculum": {
+        "label": "TEMARIO DEL CURSO",
+        "description": "4 semanas de formación práctica:",
+        "items": {
+          "item1": {
+            "title": "Semana 1: Fundamentos",
+            "description": "Entiende el modelo Trigger, Acción y Condición. Identifica tareas repetitivas listas para automatizar."
+          },
+          "item2": {
+            "title": "Semana 2: Tu primera automatización",
+            "description": "Configuración práctica con una herramienta no-code (ej. Zapier). Construye y prueba un flujo simple Trigger → Acción (ej. Google Form a mensaje de Slack)."
+          },
+          "item3": {
+            "title": "Semana 3: Añadiendo lógica",
+            "description": "Introduce Lógica Condicional (Filtros) para controlar cuándo se ejecuta una automatización. Aprende formato de datos básico y flujos multi-paso."
+          },
+          "item4": {
+            "title": "Semana 4: Introducción a IA en automatización",
+            "description": "Aprende cómo la IA puede potenciar tus automatizaciones. Introducción práctica a herramientas que combinan IA con automatización y los conceptos básicos para seguir aprendiendo."
+          }
+        }
+      },
+      "logistics": {
+        "label": "FORMATO DEL CURSO",
+        "duration": "4 sesiones en vivo",
+        "hours": "4 horas de contenido práctico",
+        "exercises": "1 hora por semana durante 4 semanas",
+        "access": "Herramientas low-code/no-code (como Zapier)",
+        "summary": "4 sesiones en vivo • 1 hora semanal • Enfoque práctico • De cero a tu primera automatización funcional",
+        "modality": "Modalidad virtual",
+        "startDate": "Inicio: Miércoles 14 de enero de 2026",
+        "schedule": "Cada miércoles a las 19:00 (hora España/CET)",
+        "scheduleDetail": "Horarios LATAM: 13:00 Ciudad de México | 15:00 Bogotá/Lima | 16:00 Santiago | 17:00 Buenos Aires",
+        "capacity": "Aforo máximo",
+        "capacityNumber": "30 participantes",
+        "capacityReason": "Para garantizar la calidad y el feedback personalizado",
+        "waitlist": "Política de aforo",
+        "waitlistText": "Si se supera la demanda de 30, se creará una lista de espera para futuras ediciones. El compromiso de donación solo aplica para participantes con plaza confirmada, no para quienes estén en lista de espera"
+      },
+      "outcomes": {
+        "label": "LO QUE APRENDERÁS",
+        "title": "Resultados de aprendizaje",
+        "description": "Al terminar este curso, serás capaz de:",
+        "items": {
+          "item1": "Identificar oportunidades de automatización en tu flujo de trabajo",
+          "item2": "Diseñar procesos automatizados efectivos sin escribir código",
+          "item3": "Evaluar y seleccionar las herramientas adecuadas para tus necesidades",
+          "item4": "Implementar automatizaciones simples que te ahorren horas cada semana",
+          "item5": "Entender cuándo automatizar y cuándo NO automatizar",
+          "item6": "Comunicar ideas de automatización a equipos técnicos y no técnicos"
+        }
+      },
+      "pricing": {
+        "label": "PRECIO E INSCRIPCIÓN",
+        "title": "Acceso basado en donación",
+        "regular": {
+          "title": "Acceso abierto",
+          "amount": "TÚ DECIDES",
+          "description": "Este curso es de acceso libre para todos"
+        },
+        "senior": {
+          "title": "Modelo de donación",
+          "amount": "Lo que consideres justo",
+          "badge": "100% FLEXIBLE",
+          "description": "Confío en que aportes lo que el curso valga para ti. Desde €0 hasta lo que tu corazón dicte. Tu generosidad permite que más personas accedan a educación de calidad."
+        }
+      },
+      "form": {
+        "label": "INSCRÍBETE AHORA",
+        "title": "Completa el formulario de inscripción",
+        "firstName": "Nombre",
+        "firstNamePlaceholder": "Tu nombre",
+        "lastName": "Apellido",
+        "lastNamePlaceholder": "Tu apellido",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "tu@email.com",
+        "country": "País",
+        "countryPlaceholder": "Selecciona tu país",
+        "birthYear": "Año de nacimiento",
+        "birthYearPlaceholder": "Ej: 1990",
+        "statisticsNote": "Solo para efectos estadísticos",
+        "commitment": {
+          "title": "💎 El compromiso de honor",
+          "checkboxLabel": "Me comprometo a hacer una donación directa a FreeCodeCamp antes de la primera sesión (14 de enero 2026), si mi plaza es confirmada, reconociendo el valor de este curso.",
+          "amountSuggestion": "Donación sugerida: €5/$5 (o la cantidad que consideres justa)",
+          "note": "Este compromiso solo aplica si recibes confirmación de plaza. Es una promesa personal que refleja tu seriedad y valoración del contenido que recibirás."
+        },
+        "terms": {
+          "label": "Acepto los",
+          "termsLink": "términos y condiciones",
+          "and": "y la",
+          "privacyLink": "política de privacidad",
+          "confirmAccuracy": "Confirmo que la información proporcionada es verdadera y precisa."
+        },
+        "submit": "Confirmar mi compromiso y acceder al curso",
+        "sending": "Procesando...",
+        "confirmModal": {
+          "title": "⚠️ Confirmación final",
+          "intro": "Antes de completar tu inscripción, por favor confirma que entiendes y aceptas:",
+          "point1": {
+            "title": "1. Compromiso de asistencia",
+            "description": "Te comprometes a asistir a las 4 sesiones en vivo. Si no puedes asistir, debes avisar con antelación para liberar tu plaza."
+          },
+          "point2": {
+            "title": "2. Donación directa a ONG",
+            "description": "La donación sugerida de €5/$5 va directamente a FreeCodeCamp (ONG), NO al instructor. Por tanto, no se realizarán devoluciones. Solo dona si estás comprometido/a."
+          },
+          "confirm": "Entiendo y acepto",
+          "cancel": "Volver atrás"
+        },
+        "success": {
+          "title": "¡Inscripción Exitosa!",
+          "message": "Gracias por inscribirte en Automatización 101. Por favor revisa tu bandeja de entrada (y la carpeta de spam) para el email de confirmación. El email incluirá información sobre si tu plaza está confirmada o si estás en lista de espera. Recuerda: el compromiso de donación solo aplica si tu plaza es confirmada."
+        },
+        "error": "Error al procesar la inscripción. Por favor contacta a contact@idir.ai para asistencia.",
+        "errorDuplicate": "Este correo ya está registrado para este curso. Si no has recibido el email de confirmación, por favor contacta a contact@idir.ai"
+      },
+      "backLink": "← Volver al Inicio"
+    }
   }
 }

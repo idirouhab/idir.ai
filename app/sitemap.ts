@@ -65,6 +65,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }))
 
+  // Generate course page entries for each locale
+  const courseEntries: MetadataRoute.Sitemap = locales.map(locale => ({
+    url: `${baseUrl}/${locale}/courses/automation-101`,
+    lastModified,
+    changeFrequency: 'weekly' as const,
+    priority: 0.95,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/en/courses/automation-101`,
+        es: `${baseUrl}/es/courses/automation-101`,
+      },
+    },
+  }))
+
   // Generate blog index entries for each locale
   const blogIndexEntries: MetadataRoute.Sitemap = locales.map(locale => ({
     url: `${baseUrl}/${locale}/blog`,
@@ -131,6 +145,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...homepageEntries,
     ...subscribeEntries,
     ...quizEntries,
+    ...courseEntries,
     ...blogIndexEntries,
     ...blogPostEntries,
   ]

@@ -1,0 +1,48 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//idir.ai//Automatizacion 101//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Automatización 101 - Semana 3
+X-WR-TIMEZONE:Europe/Madrid
+BEGIN:VTIMEZONE
+TZID:Europe/Madrid
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
+END:STANDARD
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+DTSTAMP:20250115T120000Z
+DTSTART;TZID=Europe/Madrid:20260128T190000
+DTEND;TZID=Europe/Madrid:20260128T200000
+SUMMARY:Automatización 101 con Idir - Semana 3: Añadiendo Lógica
+DESCRIPTION:Introduce Lógica Condicional (Filtros) para controlar cuándo se ejecuta una automatización. Aprende formato de datos básico y flujos multi-paso.\n\nCurso en vivo de 1 hora.\nPlataforma: Online (enlace será enviado 24h antes)
+LOCATION:Online
+URL:https://idir.ai/courses/automation-101
+UID:automation101-session3-2026@idir.ai
+SEQUENCE:0
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Automatización 101 - Semana 3 comienza en 15 minutos
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:Recordatorio: Automatización 101 - Semana 3 comienza en 1 hora
+END:VALARM
+END:VEVENT
+END:VCALENDAR
