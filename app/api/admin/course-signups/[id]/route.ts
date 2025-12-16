@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 /**
  * Update course signup status
@@ -92,8 +92,17 @@ export async function DELETE(
         { status: 403 }
       );
     }
+    // Check if admin client is available
+    if (!supabaseAdmin) {
+      console.error('Supabase admin client not configured');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
 
-    const { error } = await supabase
+    // Delete the signup using admin client (bypasses RLS)
+    const { error } = await supabaseAdmin
       .from('course_signups')
       .delete()
       .eq('id', id);
