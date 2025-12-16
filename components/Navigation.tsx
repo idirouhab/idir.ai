@@ -98,6 +98,7 @@ export default function Navigation() {
     { href: `/${locale}/#podcast`, label: t('podcast'), id: "podcast" },
     { href: `/${locale}/blog`, label: t('blog'), id: "blog", isExternal: true },
     { href: `/${locale}/subscribe`, label: t('newsletter'), id: "newsletter", isExternal: true },
+    { href: `/${locale}/courses/automation-101`, label: t('courses'), id: "courses", isExternal: true },
     { href: `/${locale}/#contact`, label: t('contact'), id: "contact" },
   ];
 
