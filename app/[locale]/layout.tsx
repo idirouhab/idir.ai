@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from 'next/script';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
@@ -128,37 +129,20 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body className="antialiased">
-        {/* PERFORMANCE: Cookiebot with worker strategy - loads after all other content
-            This ensures GDPR compliance while minimizing performance impact */}
+        {/* GDPR Compliance: Cookiebot loads early to handle consent before tracking scripts
+            Uses afterInteractive to ensure consent is obtained before analytics run */}
         <Script
           id="Cookiebot"
           src="https://consent.cookiebot.com/uc.js"
           data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
           data-blockingmode="auto"
           type="text/javascript"
-          strategy="worker"
+          strategy="afterInteractive"
         />
 
-        {/* PERFORMANCE: Google Analytics with worker strategy - loads after all other content
-            Defers analytics tracking until page is fully interactive */}
-        {gaId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="worker"
-            />
-            <Script id="google-analytics" strategy="worker">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${gaId}', {
-                  page_path: window.location.pathname,
-                });
-              `}
-            </Script>
-          </>
-        )}
+        {/* PERFORMANCE: Google Analytics with official @next/third-parties component
+            Loads after all other content with worker strategy for optimal performance */}
+        {gaId && <GoogleAnalytics gaId={gaId} />}
 
         <NextIntlClientProvider messages={messages}>
           {children}
