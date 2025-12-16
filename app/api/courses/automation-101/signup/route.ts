@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { supabase } from '@/lib/supabase';
 
 // Validation schema
 const SignupSchema = z.object({
-  fullName: z.string().min(2, 'Name must be at least 2 characters').max(255),
+  firstName: z.string().min(2, 'First name must be at least 2 characters').max(255),
+  lastName: z.string().min(2, 'Last name must be at least 2 characters').max(255),
   email: z.string().email('Invalid email address').max(255),
+  country: z.string().min(2, 'Country is required').max(10),
+  birthYear: z.string().regex(/^\d{4}$/, 'Birth year must be 4 digits'),
   language: z.enum(['en', 'es']).default('es'),
   termsAccepted: z.boolean().refine(val => val === true, 'Must accept terms and conditions'),
 });
@@ -15,7 +17,7 @@ const SignupSchema = z.object({
  * POST /api/courses/automation-101/signup
  *
  * Universal free access - no age restrictions.
- * Optional "pay what you can" model for support.
+ * Forwards signup data to n8n webhook for processing.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -34,41 +36,49 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { fullName, email, language, termsAccepted } = validation.data;
+    const { firstName, lastName, email, country, birthYear, language, termsAccepted } = validation.data;
 
-    // Insert into database
-    const { data, error } = await supabase
-      .from('course_signups')
-      .insert({
-        full_name: fullName,
-        email: email.toLowerCase(), // Normalize email
-        course_slug: 'automation-101',
-        language: language,
-        signup_status: 'pending',
-      })
-      .select()
-      .single();
+    // Forward to n8n webhook
+    const webhookUrl = 'https://idir-test.app.n8n.cloud/webhook/course-101-signup';
 
-    // Handle errors
-    if (error) {
-      console.error('Supabase error:', error);
+    const webhookResponse = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email: email.toLowerCase(),
+        country,
+        birthYear,
+        language,
+        termsAccepted,
+        courseSlug: 'automation-101',
+        timestamp: new Date().toISOString(),
+      }),
+    });
 
-      // Check for duplicate email (unique constraint violation)
-      if (error.code === '23505') {
+    // Handle webhook response
+    if (!webhookResponse.ok) {
+      console.error('n8n webhook error:', webhookResponse.status, webhookResponse.statusText);
+
+      // Check if it's a duplicate (if n8n returns specific status)
+      if (webhookResponse.status === 409) {
         return NextResponse.json(
           {
             success: false,
-            error: 'This email is already registered for this course',
+            error: 'duplicate',
           },
           { status: 409 }
         );
       }
 
-      // Generic database error
+      // Generic webhook error
       return NextResponse.json(
         {
           success: false,
-          error: 'Database error occurred',
+          error: 'signup_failed',
         },
         { status: 500 }
       );
@@ -79,9 +89,6 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: 'Signup successful',
-        data: {
-          email: email.toLowerCase(),
-        },
       },
       { status: 200 }
     );
@@ -91,7 +98,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Internal server error',
+        error: 'signup_failed',
       },
       { status: 500 }
     );

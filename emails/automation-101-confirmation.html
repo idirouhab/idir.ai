@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="{{language}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatización 101 - Confirmación de Inscripción</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {
+            font-family: Arial, Helvetica, sans-serif !important;
+        }
+    </style>
+    <![endif]-->
+    <style type="text/css">
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                max-width: 600px !important;
+            }
+
+            .mobile-padding {
+                padding: 20px 15px !important;
+            }
+
+            .header-title {
+                font-size: 42px !important;
+                letter-spacing: -2px !important;
+            }
+
+            .session-title {
+                font-size: 16px !important;
+            }
+
+            .mobile-hide-gradient {
+                display: none !important;
+            }
+
+            .full-width-mobile {
+                width: 100% !important;
+            }
+
+            .calendar-button {
+                display: block !important;
+                margin: 8px auto !important;
+                width: 100% !important;
+            }
+
+            .session-date {
+                font-size: 15px !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
+
+<!-- Outer Background -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a;">
+    <tr>
+        <td style="padding: 40px 20px;">
+
+            <!-- Main Container -->
+            <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600"
+                   style="margin: 0 auto; background-color: #000000; border-radius: 0; max-width: 600px;">
+
+                <!-- Neon Top Border -->
+                <tr>
+                    <td style="height: 6px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 25%, #ff0055 50%, #00cfff 75%, #00ff88 100%);"></td>
+                </tr>
+
+                <!-- Header -->
+                <tr>
+                    <td class="mobile-padding"
+                        style="padding: 60px 30px 50px 30px; background-color: #050505; text-align: center;">
+
+                        <!-- Success Checkmark -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 24px;">
+                            <tr>
+                                <td style="width: 80px; height: 80px; background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 50%; text-align: center; vertical-align: middle;">
+                                    <span style="font-size: 48px; line-height: 80px; color: #000000;">✓</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Main Title -->
+                        <h1 class="header-title"
+                            style="margin: 0; font-size: 48px; font-weight: 900; letter-spacing: -2px; line-height: 1.1; text-transform: uppercase; color: #00ff88;">
+                            ¡INSCRIPCIÓN CONFIRMADA!
+                        </h1>
+
+                        <!-- Subtitle Line -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 16px auto 0;">
+                            <tr>
+                                <td style="width: 100px; height: 3px; background-color: #00ff88;"></td>
+                            </tr>
+                        </table>
+
+                        <!-- Course Badge -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 20px auto 0;">
+                            <tr>
+                                <td style="background-color: rgba(0, 255, 136, 0.15); padding: 12px 30px; border-radius: 30px; border: 2px solid rgba(0, 255, 136, 0.5);">
+                                    <span style="color: #00ff88; font-size: 13px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;">
+                                        AUTOMATIZACIÓN 101
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td class="mobile-hide-gradient"
+                                    style="width: 30%; height: 2px; background: linear-gradient(90deg, transparent 0%, #00ff88 100%);"></td>
+                                <td class="full-width-mobile"
+                                    style="width: 40%; height: 4px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 25%, #ff0055 50%, #00cfff 75%, #00ff88 100%);"></td>
+                                <td class="mobile-hide-gradient"
+                                    style="width: 30%; height: 2px; background: linear-gradient(90deg, #00ff88 0%, transparent 100%);"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Welcome Message -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 50px 30px 30px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="padding-bottom: 20px;">
+                                    <p style="margin: 0 0 16px 0; color: #ffffff; font-size: 18px; font-weight: 700; line-height: 1.5;">
+                                        Hola {{firstName}},
+                                    </p>
+                                    <p style="margin: 0; color: #b8b8b8; font-size: 16px; line-height: 1.7; letter-spacing: 0.1px;">
+                                        Bienvenido/a a <strong style="color: #00ff88;">Automatización 101</strong>. Tu
+                                        plaza está confirmada para las 4 sesiones en vivo que comenzarán el próximo
+                                        <strong><u>14 de enero de 2026</u></strong>.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Course Sessions Section -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 20px 30px 40px 30px; background-color: #0a0a0a;">
+
+                        <!-- Section Header -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 30px;">
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); padding: 14px 28px; border-radius: 10px 10px 0 0;">
+                                    <h2 style="margin: 0; color: #000000; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;">
+                                        📅 AGENDA TUS SESIONES
+                                    </h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 4px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 50%, #ff0055 100%); border-radius: 0 0 10px 10px;"></td>
+                            </tr>
+                        </table>
+
+                        <!-- Session 1 -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 12px; background-color: #0d0d0d; border-left: 4px solid #00ff88; border-radius: 8px; overflow: hidden;">
+                            <tr>
+                                <td style="height: 2px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 100%);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 18px 20px;">
+                                    <h3 class="session-title"
+                                        style="margin: 0 0 8px 0; color: #00ff88; font-size: 17px; font-weight: 800; letter-spacing: -0.3px;">
+                                        Semana 1: Fundamentos
+                                    </h3>
+                                    <p class="session-date"
+                                       style="margin: 0 0 14px 0; color: #00cfff; font-size: 15px; font-weight: 700; letter-spacing: 0.5px;">
+                                        📆 Miércoles, 14 de Enero 2026 • 19:00 CET (13:00 Bogotá)
+                                    </p>
+
+                                    <!-- Calendar Buttons -->
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                        <tr>
+                                            <td class="calendar-button" style="padding-right: 8px;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 6px;">
+                                                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Automatizaci%C3%B3n+101+con+Idir+-+Semana+1%3A+Fundamentos&dates=20260114T180000Z/20260114T190000Z&details=Sesi%C3%B3n+1+de+Automatizaci%C3%B3n+101&location=Online&ctz=Europe/Madrid"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #000000; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"
+                                                                     alt="Google"
+                                                                     style="width: 14px; height: 14px; margin-right: 6px; vertical-align: middle;"/>
+                                                                GOOGLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="calendar-button">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background-color: rgba(0, 207, 255, 0.3); border: 2px solid #00cfff; border-radius: 6px;">
+                                                            <a href="{{calendar_ics_url_session1}}"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #00cfff; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24"
+                                                                     fill="currentColor"
+                                                                     style="margin-right: 6px; vertical-align: middle;">
+                                                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                                                </svg>
+                                                                APPLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Session 2 -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 12px; background-color: #0d0d0d; border-left: 4px solid #00cfff; border-radius: 8px; overflow: hidden;">
+                            <tr>
+                                <td style="height: 2px; background: linear-gradient(90deg, #00cfff 0%, #00ff88 100%);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 18px 20px;">
+                                    <h3 class="session-title"
+                                        style="margin: 0 0 8px 0; color: #00cfff; font-size: 17px; font-weight: 800; letter-spacing: -0.3px;">
+                                        Semana 2: Primera Automatización
+                                    </h3>
+                                    <p class="session-date"
+                                       style="margin: 0 0 14px 0; color: #00cfff; font-size: 15px; font-weight: 700; letter-spacing: 0.5px;">
+                                        📆 Miércoles, 21 de Enero 2026 • 19:00 CET (13:00 Bogotá)
+                                    </p>
+
+                                    <!-- Calendar Buttons -->
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                        <tr>
+                                            <td class="calendar-button" style="padding-right: 8px;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 6px;">
+                                                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Automatizaci%C3%B3n+101+con+Idir+-+Semana+2%3A+Primera+Automatizaci%C3%B3n&dates=20260121T180000Z/20260121T190000Z&details=Sesi%C3%B3n+2+de+Automatizaci%C3%B3n+101&location=Online&ctz=Europe/Madrid"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #000000; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"
+                                                                     alt="Google"
+                                                                     style="width: 14px; height: 14px; margin-right: 6px; vertical-align: middle;"/>
+                                                                GOOGLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="calendar-button">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background-color: rgba(0, 207, 255, 0.3); border: 2px solid #00cfff; border-radius: 6px;">
+                                                            <a href="{{calendar_ics_url_session2}}"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #00cfff; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24"
+                                                                     fill="currentColor"
+                                                                     style="margin-right: 6px; vertical-align: middle;">
+                                                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                                                </svg>
+                                                                APPLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Session 3 -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 12px; background-color: #0d0d0d; border-left: 4px solid #9b59d0; border-radius: 8px; overflow: hidden;">
+                            <tr>
+                                <td style="height: 2px; background: linear-gradient(90deg, #9b59d0 0%, #00cfff 100%);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 18px 20px;">
+                                    <h3 class="session-title"
+                                        style="margin: 0 0 8px 0; color: #9b59d0; font-size: 17px; font-weight: 800; letter-spacing: -0.3px;">
+                                        Semana 3: Añadiendo Lógica
+                                    </h3>
+                                    <p class="session-date"
+                                       style="margin: 0 0 14px 0; color: #00cfff; font-size: 15px; font-weight: 700; letter-spacing: 0.5px;">
+                                        📆 Miércoles, 28 de Enero 2026 • 19:00 CET (13:00 Bogotá)
+                                    </p>
+
+                                    <!-- Calendar Buttons -->
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                        <tr>
+                                            <td class="calendar-button" style="padding-right: 8px;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 6px;">
+                                                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Automatizaci%C3%B3n+101+con+Idir+-+Semana+3%3A+A%C3%B1adiendo+L%C3%B3gica&dates=20260128T180000Z/20260128T190000Z&details=Sesi%C3%B3n+3+de+Automatizaci%C3%B3n+101&location=Online&ctz=Europe/Madrid"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #000000; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"
+                                                                     alt="Google"
+                                                                     style="width: 14px; height: 14px; margin-right: 6px; vertical-align: middle;"/>
+                                                                GOOGLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="calendar-button">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background-color: rgba(0, 207, 255, 0.3); border: 2px solid #00cfff; border-radius: 6px;">
+                                                            <a href="{{calendar_ics_url_session3}}"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #00cfff; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24"
+                                                                     fill="currentColor"
+                                                                     style="margin-right: 6px; vertical-align: middle;">
+                                                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                                                </svg>
+                                                                APPLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Session 4 -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 20px; background-color: #0d0d0d; border-left: 4px solid #ff0055; border-radius: 8px; overflow: hidden;">
+                            <tr>
+                                <td style="height: 2px; background: linear-gradient(90deg, #ff0055 0%, #9b59d0 100%);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 18px 20px;">
+                                    <h3 class="session-title"
+                                        style="margin: 0 0 8px 0; color: #ff0055; font-size: 17px; font-weight: 800; letter-spacing: -0.3px;">
+                                        Semana 4: IA en Automatización
+                                    </h3>
+                                    <p class="session-date"
+                                       style="margin: 0 0 14px 0; color: #00cfff; font-size: 15px; font-weight: 700; letter-spacing: 0.5px;">
+                                        📆 Miércoles, 4 de Febrero 2026 • 19:00 CET (13:00 Bogotá)
+                                    </p>
+
+                                    <!-- Calendar Buttons -->
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                        <tr>
+                                            <td class="calendar-button" style="padding-right: 8px;">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 6px;">
+                                                            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Automatizaci%C3%B3n+101+con+Idir+-+Semana+4%3A+IA+en+Automatizaci%C3%B3n&dates=20260204T180000Z/20260204T190000Z&details=Sesi%C3%B3n+4+de+Automatizaci%C3%B3n+101&location=Online&ctz=Europe/Madrid"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #000000; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <img src="https://www.gstatic.com/images/branding/product/1x/calendar_2020q4_48dp.png"
+                                                                     alt="Google"
+                                                                     style="width: 14px; height: 14px; margin-right: 6px; vertical-align: middle;"/>
+                                                                GOOGLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="calendar-button">
+                                                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                    <tr>
+                                                        <td style="background-color: rgba(0, 207, 255, 0.3); border: 2px solid #00cfff; border-radius: 6px;">
+                                                            <a href="{{calendar_ics_url_session4}}"
+                                                               style="display: flex; align-items: center; justify-content: center; padding: 10px 18px; color: #00cfff; font-size: 10px; font-weight: 900; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                                                                <svg width="14" height="14" viewBox="0 0 24 24"
+                                                                     fill="currentColor"
+                                                                     style="margin-right: 6px; vertical-align: middle;">
+                                                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                                                </svg>
+                                                                APPLE
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Important Note -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-top: 25px; background-color: rgba(255, 0, 85, 0.1); border: 2px solid rgba(255, 0, 85, 0.4); border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <p style="margin: 0 0 10px 0; color: #ff0055; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                                        ⚠️ IMPORTANTE
+                                    </p>
+                                    <p style="margin: 0; color: #b8b8b8; font-size: 14px; line-height: 1.6;">
+                                        El curso tiene <strong style="color: #ffffff;">aforo limitado a 30
+                                        personas</strong>. Si no puedes asistir, por favor <strong
+                                            style="color: #ff0055;">responde a este correo</strong> para liberar tu
+                                        plaza y que otra persona pueda aprovecharla.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 136, 0.5) 50%, transparent 100%);"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Next Steps -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 40px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 25px;">
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #ff0055 0%, #9b59d0 100%); padding: 14px 28px; border-radius: 10px 10px 0 0;">
+                                    <h2 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;">
+                                        ⚡ PRÓXIMOS PASOS
+                                    </h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 4px; background: linear-gradient(90deg, #ff0055 0%, #9b59d0 50%, #00cfff 100%); border-radius: 0 0 10px 10px;"></td>
+                            </tr>
+                        </table>
+
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="padding-bottom: 18px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #000000; font-weight: 900; font-size: 14px;">1</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    Añade las sesiones a tu calendario usando los botones de arriba
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 18px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #00cfff 0%, #9b59d0 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #ffffff; font-weight: 900; font-size: 14px;">2</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    Recibirás el enlace de acceso 24h antes de cada sesión
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #9b59d0 0%, #ff0055 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #ffffff; font-weight: 900; font-size: 14px;">3</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    Prepárate para aprender y hacer preguntas en vivo
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 136, 0.5) 50%, transparent 100%);"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Donation Commitment Section -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 40px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 25px;">
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); padding: 14px 28px; border-radius: 10px 10px 0 0;">
+                                    <h2 style="margin: 0; color: #000000; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;">
+                                        💎 TU COMPROMISO DE DONACIÓN
+                                    </h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 4px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 50%, #ff0055 100%); border-radius: 0 0 10px 10px;"></td>
+                            </tr>
+                        </table>
+
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="background-color: rgba(0, 255, 136, 0.05); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 12px;">
+                            <tr>
+                                <td style="padding: 28px 24px;">
+                                    <p style="margin: 0 0 16px 0; color: #ffffff; font-size: 16px; font-weight: 700; line-height: 1.6;">
+                                        Como confirmaste durante la inscripción, te pedimos que hagas una <strong
+                                            style="color: #00ff88;">donación de €5/$5</strong> (o la cantidad que
+                                        consideres justa) a <a href="https://www.freecodecamp.org/espanol/donate/" style="color: #00ff88; text-decoration: underline;"><strong>FreeCodeCamp</strong></a> ANTES
+                                        de la primera sesión.
+                                    </p>
+                                    <p style="margin: 0 0 20px 0; color: #b8b8b8; font-size: 14px; line-height: 1.6;">
+                                        Este curso tiene un valor de mercado de <strong style="color: #ffffff;">€100/$100</strong>,
+                                        pero lo ofrezco sin coste directo a cambio de tu compromiso solidario con la
+                                        educación gratuita.
+                                    </p>
+
+                                    <!-- Warning Box -->
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                                           style="background-color: rgba(255, 0, 85, 0.1); border-left: 4px solid #ff0055; border-radius: 8px;">
+                                        <tr>
+                                            <td style="padding: 16px 18px;">
+                                                <p style="margin: 0 0 6px 0; color: #ff0055; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                                                    ⚠️ IMPORTANTE
+                                                </p>
+                                                <p style="margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.6;">
+                                                    La donación va <strong style="color: #ffffff;">directamente a
+                                                    FreeCodeCamp (ONG)</strong>, NO al instructor. Por tanto, <strong
+                                                        style="color: #ff0055;">no se realizarán devoluciones</strong>.
+                                                    Solo dona si estás comprometido/a con el curso.
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background-color: #222222;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td class="mobile-padding"
+                        style="padding: 50px 30px; background-color: #050505; text-align: center;">
+
+                        <!-- Contact Card -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 35px; background-color: rgba(0, 255, 136, 0.08); padding: 28px 40px; border-radius: 12px; border: 2px solid rgba(0, 255, 136, 0.3);">
+                            <tr>
+                                <td style="text-align: center;">
+                                    <p style="margin: 0 0 12px 0; color: #ffffff; font-size: 16px; font-weight: 700;">
+                                        ¿Tienes alguna pregunta?
+                                    </p>
+                                    <p style="margin: 0; color: #9ca3af; font-size: 14px; line-height: 1.6;">
+                                        Responde a este email o escríbenos a<br>
+                                        <a href="mailto:contact@idir.ai"
+                                           style="color: #00ff88; font-weight: 700; text-decoration: none;">contact@idir.ai</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Website Button -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 35px;">
+                            <tr>
+                                <td style="background-color: rgba(0, 255, 136, 0.2); padding: 12px 28px; border-radius: 8px; border: 2px solid rgba(0, 255, 136, 0.5);">
+                                    <a href="https://idir.ai"
+                                       style="color: #00ff88; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                                        🌐 VISITAR IDIR.AI
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Footer Text -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="border-top: 1px solid rgba(0, 255, 136, 0.2); padding-top: 30px;">
+                            <tr>
+                                <td style="text-align: center;">
+                                    <p style="margin: 0; color: #666666; font-size: 12px; line-height: 1.6;">
+                                        Recibiste este email porque te inscribiste en Automatización 101.<br>
+                                        © 2026 idir.ai - Todos los derechos reservados.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- Neon Bottom Border -->
+                <tr>
+                    <td style="height: 6px; background: linear-gradient(90deg, #ff0055 0%, #00cfff 25%, #00ff88 50%, #00cfff 75%, #ff0055 100%);"></td>
+                </tr>
+
+            </table>
+            <!-- End Main Container -->
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

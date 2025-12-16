@@ -396,21 +396,22 @@
       "hero": {
         "badge": "NEW COURSE",
         "title": "Automation 101",
-        "subtitle": "Master the Fundamentals",
-        "description": "A practical course to understand automation from scratch. No technical jargon, no complicated tools. Just the concepts you need to start automating your work.",
-        "price": {
-          "regular": "€199",
-          "regularLabel": "Regular Price",
-          "free": "FREE",
-          "freeLabel": "under 25 and 60+ years old",
-          "specialOffer": "Launch Offer",
-          "optionalSupport": "Optional support available"
-        }
+        "subtitle": "Master Key Concepts to Save Hours and Multiply Your Productivity",
+        "description": "High-value training funded by your solidarity commitment. No technical jargon, no complicated tools. Just the concepts you need to start automating your work.",
+        "valueStatement": "No direct cost • Only requires your commitment"
       },
       "overview": {
         "label": "WHY THIS COURSE?",
         "title": "Automation Shouldn't Be Complicated",
-        "intro": "Most courses bombard you with specific tools that become obsolete in months. This course is different.",
+        "intro": "Most courses drown you in specific tools that become obsolete. Our approach is to teach you the fundamental thinking of automation so you master the logic and know what you need before choosing any specific tool.",
+        "donationLabel": "Your commitment makes the difference",
+        "donationAmount": "€5/$5",
+        "donationTitle": "Suggested Donation to FreeCodeCamp",
+        "donationText": "This course has a market value of €100/$100, but I've decided to offer it at no direct cost to you. Instead, I ask for an honor commitment: a donation of €5/$5 (or whatever amount you deem fair) to FreeCodeCamp, the nonprofit organization that has helped millions learn for free and drives projects in Latin America.",
+        "transparencyTitle": "Total Transparency",
+        "transparencyText": "For transparency and to avoid tax procedures, I do not accept or handle money. The link goes directly to FreeCodeCamp. Your donation goes 100% to the cause.",
+        "donationCTA": "Donation link to FreeCodeCamp",
+        "donationLink": "https://www.freecodecamp.org/donate/",
         "reason1": {
           "title": "Concepts, Not Tools",
           "description": "You'll learn fundamental automation principles that apply to any tool or platform."
@@ -439,37 +440,38 @@
       },
       "pricing": {
         "label": "PRICING & ENROLLMENT",
-        "title": "Special Launch Offer",
+        "title": "Donation-Based Access",
         "regular": {
-          "title": "Regular Price",
-          "amount": "€199",
-          "description": "Full access to course and support materials"
+          "title": "Open Access",
+          "amount": "YOU DECIDE",
+          "description": "This course is freely accessible to everyone"
         },
         "senior": {
-          "title": "Free Access",
-          "amount": "FREE",
-          "badge": "100% FREE",
-          "description": "As part of our mission to make technology accessible to everyone, this course is completely free for people under 25 and 60 years or older."
-        },
-        "includes": "The course includes:",
-        "benefits": {
-          "benefit1": "8 video content modules",
-          "benefit2": "Downloadable practical exercises",
-          "benefit3": "Certificate of completion",
-          "benefit4": "Lifetime access to content",
-          "benefit5": "Free course updates"
+          "title": "Donation Model",
+          "amount": "Whatever feels right",
+          "badge": "100% FLEXIBLE",
+          "description": "I trust you to contribute what the course is worth to you. From €0 to whatever your heart says. Your generosity enables more people to access quality education."
         }
       },
       "form": {
         "label": "ENROLL NOW",
         "title": "Complete the Enrollment Form",
-        "fullName": "Full Name",
-        "fullNamePlaceholder": "Your full name",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Your first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Your last name",
         "email": "Email Address",
         "emailPlaceholder": "you@email.com",
-        "freeAccess": {
-          "title": "✨ 100% Free Access",
-          "description": "This course is completely free for everyone. If you find value in the content, you can support our work with an optional contribution after completing the course."
+        "country": "Country",
+        "countryPlaceholder": "Select your country",
+        "birthYear": "Year of birth",
+        "birthYearPlaceholder": "E.g: 1990",
+        "statisticsNote": "For statistical purposes only",
+        "commitment": {
+          "title": "💎 The Honor Commitment",
+          "checkboxLabel": "I commit to making a direct donation to FreeCodeCamp before the first session (January 14, 2026), if my spot is confirmed, acknowledging the value of this course.",
+          "amountSuggestion": "Suggested donation: €5/$5 (or whatever amount you consider fair)",
+          "note": "This commitment only applies if you receive spot confirmation. It is a personal promise that reflects your seriousness and appreciation of the content you will receive."
         },
         "terms": {
           "label": "I accept the",
@@ -478,19 +480,71 @@
           "privacyLink": "privacy policy",
           "confirmAccuracy": "I confirm that the information provided is true and accurate."
         },
-        "submit": "Enroll Now",
+        "submit": "Confirm my commitment and access the course",
         "sending": "Processing...",
+        "confirmModal": {
+          "title": "⚠️ Final confirmation",
+          "intro": "Before completing your enrollment, please confirm that you understand and accept:",
+          "point1": {
+            "title": "1. Attendance commitment",
+            "description": "You commit to attending all 4 live sessions. If you cannot attend, you must notify in advance to free up your spot."
+          },
+          "point2": {
+            "title": "2. Direct donation to NGO",
+            "description": "The suggested donation of €5/$5 goes directly to FreeCodeCamp (NGO), NOT to the instructor. Therefore, no refunds will be made. Only donate if you are committed."
+          },
+          "confirm": "I understand and accept",
+          "cancel": "Go back"
+        },
         "success": {
           "title": "Enrollment Successful!",
-          "message": "Thank you for enrolling in Automation 101. We've sent a confirmation email to your address.",
-          "freeAccess": "You have full FREE access to the course!",
+          "message": "Thank you for enrolling in Automation 101. Please check your inbox (and spam folder) for the confirmation email. The email will include information about whether your spot is confirmed or if you're on the waitlist. Remember: the donation commitment only applies if your spot is confirmed.",
           "nextSteps": "Next steps:",
           "step1": "Check your inbox for the confirmation email",
           "step2": "Follow the instructions to access the course content",
           "step3": "Start learning at your own pace!"
         },
-        "error": "Error processing enrollment. Please try again.",
-        "errorDuplicate": "This email is already registered for this course."
+        "error": "Error processing enrollment. Please contact contact@idir.ai for assistance.",
+        "errorDuplicate": "This email is already registered for this course. If you haven't received the confirmation email, please contact contact@idir.ai"
+      },
+      "curriculum": {
+        "label": "COURSE CURRICULUM",
+        "description": "4 weeks of practical training:",
+        "items": {
+          "item1": {
+            "title": "Week 1: Foundations",
+            "description": "Understand the Trigger, Action, Condition model. Identify repetitive tasks ready for automation."
+          },
+          "item2": {
+            "title": "Week 2: First Automation",
+            "description": "Hands-on setup with a no-code tool (e.g., Zapier). Build and test a simple Trigger → Action workflow (e.g., Google Form to Slack message)."
+          },
+          "item3": {
+            "title": "Week 3: Adding Logic",
+            "description": "Introduce Conditional Logic (Filters) to control when an automation runs. Learn basic data formatting and multi-step workflows."
+          },
+          "item4": {
+            "title": "Week 4: AI in Automation Introduction",
+            "description": "Learn how AI can power up your automations. Practical introduction to tools that combine AI with automation and the basic concepts to continue learning."
+          }
+        }
+      },
+      "logistics": {
+        "label": "COURSE FORMAT",
+        "duration": "4 live sessions",
+        "hours": "4 hours of practical content",
+        "exercises": "1 hour per week for 4 weeks",
+        "access": "Low-code/no-code tools (like Zapier)",
+        "summary": "4 live sessions • 1 hour weekly • Practical focus • From zero to your first functional automation",
+        "modality": "Virtual format",
+        "startDate": "Start: Wednesday, January 14, 2026",
+        "schedule": "Every Wednesday at 19:00 (Spain/CET time)",
+        "scheduleDetail": "LATAM times: 13:00 Mexico City | 15:00 Bogotá/Lima | 16:00 Santiago | 17:00 Buenos Aires",
+        "capacity": "Maximum capacity",
+        "capacityNumber": "30 participants",
+        "capacityReason": "To ensure quality and personalized feedback",
+        "waitlist": "Capacity policy",
+        "waitlistText": "If demand exceeds 30, a waiting list will be created for future editions. The donation commitment only applies to participants with confirmed spots, not to those on the waitlist"
       },
       "backLink": "← Back to Home"
     }
