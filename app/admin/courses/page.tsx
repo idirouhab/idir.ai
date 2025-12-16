@@ -117,7 +117,7 @@ export default function CoursesAdminPage() {
     const fullName = `${signup.first_name} ${signup.last_name}`.toLowerCase();
     const matchesSearch = searchQuery === '' ||
       fullName.includes(searchQuery.toLowerCase()) ||
-      signup.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      signup.course_slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (signup.country && signup.country.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return matchesStatus && matchesSearch;
@@ -212,7 +212,7 @@ export default function CoursesAdminPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name, email, or country..."
+              placeholder="Search by name, course, or country..."
               className="w-full bg-[#0a0a0a] border border-gray-700 text-white px-3 py-2 focus:outline-none focus:border-[#00ff88] placeholder-gray-600"
             />
           </div>
@@ -229,7 +229,7 @@ export default function CoursesAdminPage() {
                   Name
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  Email
+                  Course
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Country
@@ -267,8 +267,8 @@ export default function CoursesAdminPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-mono text-sm text-gray-300">
-                        {signup.email}
+                      <div className="font-mono text-sm text-[#00ff88]">
+                        {signup.course_slug}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-gray-400">

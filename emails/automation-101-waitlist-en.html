@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatización 101 - Lista de Espera</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td {
+            font-family: Arial, Helvetica, sans-serif !important;
+        }
+    </style>
+    <![endif]-->
+    <style type="text/css">
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                max-width: 600px !important;
+            }
+
+            .mobile-padding {
+                padding: 20px 15px !important;
+            }
+
+            .header-title {
+                font-size: 42px !important;
+                letter-spacing: -2px !important;
+            }
+
+            .mobile-hide-gradient {
+                display: none !important;
+            }
+
+            .full-width-mobile {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
+
+<!-- Outer Background -->
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #0a0a0a;">
+    <tr>
+        <td style="padding: 40px 20px;">
+
+            <!-- Main Container -->
+            <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600"
+                   style="margin: 0 auto; background-color: #000000; border-radius: 0; max-width: 600px;">
+
+                <!-- Neon Top Border -->
+                <tr>
+                    <td style="height: 6px; background: linear-gradient(90deg, #ffaa00 0%, #00cfff 25%, #9b59d0 50%, #00cfff 75%, #ffaa00 100%);"></td>
+                </tr>
+
+                <!-- Header -->
+                <tr>
+                    <td class="mobile-padding"
+                        style="padding: 60px 30px 50px 30px; background-color: #050505; text-align: center;">
+
+                        <!-- Clock Icon -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 24px;">
+                            <tr>
+                                <td style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffaa00 0%, #00cfff 100%); border-radius: 50%; text-align: center; vertical-align: middle;">
+                                    <span style="font-size: 48px; line-height: 80px; color: #000000;">⏳</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Main Title -->
+                        <h1 class="header-title"
+                            style="margin: 0; font-size: 48px; font-weight: 900; letter-spacing: -2px; line-height: 1.1; text-transform: uppercase; color: #ffaa00;">
+                            LISTA DE ESPERA
+                        </h1>
+
+                        <!-- Subtitle Line -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 16px auto 0;">
+                            <tr>
+                                <td style="width: 100px; height: 3px; background-color: #ffaa00;"></td>
+                            </tr>
+                        </table>
+
+                        <!-- Course Badge -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 20px auto 0;">
+                            <tr>
+                                <td style="background-color: rgba(255, 170, 0, 0.15); padding: 12px 30px; border-radius: 30px; border: 2px solid rgba(255, 170, 0, 0.5);">
+                                    <span style="color: #ffaa00; font-size: 13px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;">
+                                        AUTOMATIZACIÓN 101
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td class="mobile-hide-gradient"
+                                    style="width: 30%; height: 2px; background: linear-gradient(90deg, transparent 0%, #ffaa00 100%);"></td>
+                                <td class="full-width-mobile"
+                                    style="width: 40%; height: 4px; background: linear-gradient(90deg, #ffaa00 0%, #00cfff 25%, #9b59d0 50%, #00cfff 75%, #ffaa00 100%);"></td>
+                                <td class="mobile-hide-gradient"
+                                    style="width: 30%; height: 2px; background: linear-gradient(90deg, #ffaa00 0%, transparent 100%);"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Welcome Message -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 50px 30px 30px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="padding-bottom: 20px;">
+                                    <p style="margin: 0 0 16px 0; color: #ffffff; font-size: 18px; font-weight: 700; line-height: 1.5;">
+                                        Hola {{firstName}},
+                                    </p>
+                                    <p style="margin: 0 0 16px 0; color: #b8b8b8; font-size: 16px; line-height: 1.7; letter-spacing: 0.1px;">
+                                        Gracias por tu interés en <strong style="color: #ffaa00;">Automatización 101</strong>.
+                                        Lamentablemente, las <strong style="color: #ffffff;">30 plazas disponibles</strong>
+                                        ya están completas.
+                                    </p>
+                                    <p style="margin: 0; color: #b8b8b8; font-size: 16px; line-height: 1.7; letter-spacing: 0.1px;">
+                                        Sin embargo, <strong style="color: #00ff88;">¡estás en nuestra lista de espera!</strong>
+                                        Si alguien cancela su inscripción, te contactaremos inmediatamente para ofrecerte su plaza.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(255, 170, 0, 0.5) 50%, transparent 100%);"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- What Happens Next -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 40px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="margin-bottom: 25px;">
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); padding: 14px 28px; border-radius: 10px 10px 0 0;">
+                                    <h2 style="margin: 0; color: #000000; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;">
+                                        ⚡ ¿QUÉ PASA AHORA?
+                                    </h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height: 4px; background: linear-gradient(90deg, #00ff88 0%, #00cfff 50%, #9b59d0 100%); border-radius: 0 0 10px 10px;"></td>
+                            </tr>
+                        </table>
+
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="padding-bottom: 18px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #00ff88 0%, #00cfff 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #000000; font-weight: 900; font-size: 14px;">1</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    <strong style="color: #00ff88;">Estás en lista de espera</strong> — Tu posición está asegurada
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 18px;">
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #00cfff 0%, #9b59d0 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #ffffff; font-weight: 900; font-size: 14px;">2</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    Si una plaza se libera, <strong style="color: #00cfff;">te contactaremos inmediatamente</strong>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="width: 40px; vertical-align: top;">
+                                                <span style="display: inline-block; width: 28px; height: 28px; background: linear-gradient(135deg, #9b59d0 0%, #ffaa00 100%); border-radius: 50%; text-align: center; line-height: 28px; color: #000000; font-weight: 900; font-size: 14px;">3</span>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                                <p style="margin: 0; color: #ffffff; font-size: 15px; font-weight: 700; line-height: 1.6;">
+                                                    Tendrás <strong style="color: #ffaa00;">48 horas</strong> para confirmar tu asistencia
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Important Note -->
+                <tr>
+                    <td class="mobile-padding" style="padding: 0 30px 40px 30px; background-color: #0a0a0a;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="background-color: rgba(0, 255, 136, 0.1); border: 2px solid rgba(0, 255, 136, 0.4); border-radius: 8px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <p style="margin: 0 0 10px 0; color: #00ff88; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                                        💚 GRACIAS POR TU INTERÉS
+                                    </p>
+                                    <p style="margin: 0; color: #b8b8b8; font-size: 14px; line-height: 1.6;">
+                                        Es muy probable que algunas personas cancelen en los próximos días.
+                                        <strong style="color: #ffffff;">Mantén este email</strong> y revisa tu bandeja
+                                        regularmente. Te notificaremos si se abre una plaza.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Divider -->
+                <tr>
+                    <td style="padding: 0 30px;">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                            <tr>
+                                <td style="height: 1px; background-color: #222222;"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td class="mobile-padding"
+                        style="padding: 50px 30px; background-color: #050505; text-align: center;">
+
+                        <!-- Contact Card -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 35px; background-color: rgba(255, 170, 0, 0.08); padding: 28px 40px; border-radius: 12px; border: 2px solid rgba(255, 170, 0, 0.3);">
+                            <tr>
+                                <td style="text-align: center;">
+                                    <p style="margin: 0 0 12px 0; color: #ffffff; font-size: 16px; font-weight: 700;">
+                                        ¿Tienes alguna pregunta?
+                                    </p>
+                                    <p style="margin: 0; color: #9ca3af; font-size: 14px; line-height: 1.6;">
+                                        Responde a este email o escríbenos a<br>
+                                        <a href="mailto:contact@idir.ai"
+                                           style="color: #ffaa00; font-weight: 700; text-decoration: none;">contact@idir.ai</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Website Button -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0"
+                               style="margin: 0 auto 35px;">
+                            <tr>
+                                <td style="background-color: rgba(255, 170, 0, 0.2); padding: 12px 28px; border-radius: 8px; border: 2px solid rgba(255, 170, 0, 0.5);">
+                                    <a href="https://idir.ai"
+                                       style="color: #ffaa00; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                                        🌐 VISITAR IDIR.AI
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Footer Text -->
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%"
+                               style="border-top: 1px solid rgba(255, 170, 0, 0.2); padding-top: 30px;">
+                            <tr>
+                                <td style="text-align: center;">
+                                    <p style="margin: 0; color: #666666; font-size: 12px; line-height: 1.6;">
+                                        Recibiste este email porque te inscribiste en Automatización 101.<br>
+                                        © 2026 idir.ai - Todos los derechos reservados.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+                <!-- Neon Bottom Border -->
+                <tr>
+                    <td style="height: 6px; background: linear-gradient(90deg, #9b59d0 0%, #00cfff 25%, #ffaa00 50%, #00cfff 75%, #9b59d0 100%);"></td>
+                </tr>
+
+            </table>
+            <!-- End Main Container -->
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
