@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = t('title');
   const description = t('description');
   const ogImageUrl = `/api/og/automation-101?locale=${locale}`;
+  const pageUrl = `https://idir.ai/${locale}/courses/automation-101`;
 
   return {
     title,
@@ -20,6 +21,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: 'website',
+      url: pageUrl,
+      siteName: 'idir.ai',
       locale: locale === 'es' ? 'es_ES' : 'en_US',
       alternateLocale: locale === 'es' ? 'en_US' : 'es_ES',
       images: [
