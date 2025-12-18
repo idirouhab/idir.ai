@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
       confirmed: data?.filter((s: any) => s.signup_status === 'confirmed').length || 0,
       pending: data?.filter((s: any) => s.signup_status === 'pending').length || 0,
       waitlist: data?.filter((s: any) => s.signup_status === 'waitlist').length || 0,
+      completed: data?.filter((s: any) => s.completed_at !== null).length || 0,
     };
 
     return NextResponse.json({
