@@ -169,10 +169,11 @@ export default function CoursesAdminPage() {
 
   const filteredSignups = signups.filter(signup => {
     const matchesStatus = filterStatus === 'all' || signup.signup_status === filterStatus;
-    const fullName = signup.full_name.toLowerCase();
+    const fullName = (signup.full_name || '').toLowerCase();
+    const courseSlug = (signup.course_slug || '').toLowerCase();
     const matchesSearch = searchQuery === '' ||
       fullName.includes(searchQuery.toLowerCase()) ||
-      signup.course_slug.toLowerCase().includes(searchQuery.toLowerCase());
+      courseSlug.includes(searchQuery.toLowerCase());
 
     return matchesStatus && matchesSearch;
   });
@@ -223,23 +224,23 @@ export default function CoursesAdminPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-black border border-gray-800 p-4">
             <div className="text-gray-500 text-xs font-bold uppercase mb-2">Total</div>
-            <div className="text-3xl font-black text-white">{stats.total}</div>
+            <div className="text-3xl font-black text-white">{stats.total || 0}</div>
           </div>
           <div className="bg-black border border-[#00ff88] p-4">
             <div className="text-gray-500 text-xs font-bold uppercase mb-2">Confirmed</div>
-            <div className="text-3xl font-black text-[#00ff88]">{stats.confirmed}</div>
+            <div className="text-3xl font-black text-[#00ff88]">{stats.confirmed || 0}</div>
           </div>
           <div className="bg-black border border-[#ffaa00] p-4">
             <div className="text-gray-500 text-xs font-bold uppercase mb-2">Pending</div>
-            <div className="text-3xl font-black text-[#ffaa00]">{stats.pending}</div>
+            <div className="text-3xl font-black text-[#ffaa00]">{stats.pending || 0}</div>
           </div>
           <div className="bg-black border border-[#00cfff] p-4">
             <div className="text-gray-500 text-xs font-bold uppercase mb-2">Waitlist</div>
-            <div className="text-3xl font-black text-[#00cfff]">{stats.waitlist}</div>
+            <div className="text-3xl font-black text-[#00cfff]">{stats.waitlist || 0}</div>
           </div>
           <div className="bg-black border border-[#9b59d0] p-4">
             <div className="text-gray-500 text-xs font-bold uppercase mb-2">Completed</div>
-            <div className="text-3xl font-black text-[#9b59d0]">{stats.completed}</div>
+            <div className="text-3xl font-black text-[#9b59d0]">{stats.completed || 0}</div>
           </div>
         </div>
       )}
@@ -318,15 +319,15 @@ export default function CoursesAdminPage() {
                   >
                     <td className="px-4 py-3">
                       <div className="font-bold text-white">
-                        {signup.full_name}
+                        {signup.full_name || 'N/A'}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {signup.language.toUpperCase()}
+                        {signup.language?.toUpperCase() || 'N/A'}
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="font-mono text-sm text-[#00ff88]">
-                        {signup.course_slug}
+                        {signup.course_slug || 'N/A'}
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -362,7 +363,7 @@ export default function CoursesAdminPage() {
                                 View Certificate
                               </a>
                               <button
-                                onClick={() => regenerateCertificate(signup.certificate_id!, signup.full_name)}
+                                onClick={() => regenerateCertificate(signup.certificate_id!, signup.full_name || 'Student')}
                                 disabled={regeneratingId === signup.certificate_id}
                                 className="text-xs text-gray-500 hover:text-[#00ff88] disabled:opacity-50"
                               >
@@ -373,7 +374,7 @@ export default function CoursesAdminPage() {
                         </div>
                       ) : (
                         <button
-                          onClick={() => markComplete(signup.id, signup.full_name)}
+                          onClick={() => markComplete(signup.id, signup.full_name || 'Student')}
                           disabled={completingId === signup.id}
                           className="px-3 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black hover:bg-[#00cfff] transition-colors disabled:opacity-50"
                         >
@@ -386,7 +387,7 @@ export default function CoursesAdminPage() {
                     </td>
                     <td className="px-4 py-3">
                       <button
-                        onClick={() => deleteSignup(signup.id, signup.full_name)}
+                        onClick={() => deleteSignup(signup.id, signup.full_name || 'Student')}
                         disabled={deletingId === signup.id}
                         className={`px-3 py-1 text-xs font-bold uppercase transition-all ${
                           deletingId === signup.id
