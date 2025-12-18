@@ -11,7 +11,10 @@ type CourseSignup = {
   course_slug: string;
   signup_status: string;
   language: string;
+  first_name: string | null;
+  last_name: string | null;
   country: string | null;
+  birth_year: string | null;
   created_at: string;
   completed_at: string | null;
   certificate_id: string | null;

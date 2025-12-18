@@ -61,7 +61,10 @@ export type CourseSignup = {
   course_slug: string;
   signup_status: 'pending' | 'confirmed' | 'waitlist' | 'cancelled';
   language: 'en' | 'es';
+  first_name: string | null;
+  last_name: string | null;
   country: string | null;
+  birth_year: string | null;
   created_at: string;
   updated_at: string;
   completed_at: string | null;
