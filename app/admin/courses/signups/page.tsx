@@ -11,6 +11,7 @@ type CourseSignup = {
   course_slug: string;
   signup_status: string;
   language: string;
+  country: string | null;
   created_at: string;
   completed_at: string | null;
   certificate_id: string | null;
@@ -221,40 +222,40 @@ export default function CoursesAdminPage() {
     >
       {/* Statistics */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-black border border-gray-800 p-4">
-            <div className="text-gray-500 text-xs font-bold uppercase mb-2">Total</div>
-            <div className="text-3xl font-black text-white">{stats.total || 0}</div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+          <div className="bg-black border border-gray-800 p-3">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-1">Total</div>
+            <div className="text-2xl font-black text-white">{stats.total || 0}</div>
           </div>
-          <div className="bg-black border border-[#00ff88] p-4">
-            <div className="text-gray-500 text-xs font-bold uppercase mb-2">Confirmed</div>
-            <div className="text-3xl font-black text-[#00ff88]">{stats.confirmed || 0}</div>
+          <div className="bg-black border border-[#00ff88] p-3">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-1">Confirmed</div>
+            <div className="text-2xl font-black text-[#00ff88]">{stats.confirmed || 0}</div>
           </div>
-          <div className="bg-black border border-[#ffaa00] p-4">
-            <div className="text-gray-500 text-xs font-bold uppercase mb-2">Pending</div>
-            <div className="text-3xl font-black text-[#ffaa00]">{stats.pending || 0}</div>
+          <div className="bg-black border border-[#ffaa00] p-3">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-1">Pending</div>
+            <div className="text-2xl font-black text-[#ffaa00]">{stats.pending || 0}</div>
           </div>
-          <div className="bg-black border border-[#00cfff] p-4">
-            <div className="text-gray-500 text-xs font-bold uppercase mb-2">Waitlist</div>
-            <div className="text-3xl font-black text-[#00cfff]">{stats.waitlist || 0}</div>
+          <div className="bg-black border border-[#00cfff] p-3">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-1">Waitlist</div>
+            <div className="text-2xl font-black text-[#00cfff]">{stats.waitlist || 0}</div>
           </div>
-          <div className="bg-black border border-[#9b59d0] p-4">
-            <div className="text-gray-500 text-xs font-bold uppercase mb-2">Completed</div>
-            <div className="text-3xl font-black text-[#9b59d0]">{stats.completed || 0}</div>
+          <div className="bg-black border border-[#9b59d0] p-3">
+            <div className="text-gray-500 text-xs font-bold uppercase mb-1">Completed</div>
+            <div className="text-2xl font-black text-[#9b59d0]">{stats.completed || 0}</div>
           </div>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-black border border-gray-800 p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-black border border-gray-800 p-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Status Filter */}
           <div>
-            <label className="block text-sm text-gray-500 font-bold uppercase mb-2">Status</label>
+            <label className="block text-xs text-gray-500 font-bold uppercase mb-1.5">Status</label>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="w-full bg-[#0a0a0a] border border-gray-700 text-white px-3 py-2 focus:outline-none focus:border-[#00ff88]"
+              className="w-full bg-[#0a0a0a] border border-gray-700 text-white text-sm px-2.5 py-1.5 focus:outline-none focus:border-[#00ff88]"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -266,13 +267,13 @@ export default function CoursesAdminPage() {
 
           {/* Search */}
           <div>
-            <label className="block text-sm text-gray-500 font-bold uppercase mb-2">Search</label>
+            <label className="block text-xs text-gray-500 font-bold uppercase mb-1.5">Search</label>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name or course..."
-              className="w-full bg-[#0a0a0a] border border-gray-700 text-white px-3 py-2 focus:outline-none focus:border-[#00ff88] placeholder-gray-600"
+              className="w-full bg-[#0a0a0a] border border-gray-700 text-white text-sm px-2.5 py-1.5 focus:outline-none focus:border-[#00ff88] placeholder-gray-600"
             />
           </div>
         </div>
@@ -281,25 +282,28 @@ export default function CoursesAdminPage() {
       {/* Signups Table */}
       <div className="bg-black border border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-sm">
             <thead className="bg-[#0a0a0a] border-b border-gray-800">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                  Country
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Course
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Completion
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Signed Up
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -307,7 +311,7 @@ export default function CoursesAdminPage() {
             <tbody className="divide-y divide-gray-800">
               {filteredSignups.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={7} className="px-3 py-6 text-center text-gray-500">
                     No signups found with current filters
                   </td>
                 </tr>
@@ -317,27 +321,38 @@ export default function CoursesAdminPage() {
                     key={signup.id}
                     className="hover:bg-[#0a0a0a] transition-colors"
                   >
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-white">
+                    <td className="px-3 py-2">
+                      <div className="font-bold text-white text-sm">
                         {signup.full_name || 'N/A'}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 mt-0.5">
                         {signup.language?.toUpperCase() || 'N/A'}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-mono text-sm text-[#00ff88]">
+                    <td className="px-3 py-2">
+                      <div className="text-sm text-gray-300 font-semibold">
+                        {signup.country ? (
+                          <span className="px-2 py-0.5 bg-[#0a0a0a] border border-gray-700 rounded text-xs uppercase">
+                            {signup.country}
+                          </span>
+                        ) : (
+                          <span className="text-gray-600 text-xs">-</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="font-mono text-xs text-[#00ff88]">
                         {signup.course_slug || 'N/A'}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2">
                       {updatingId === signup.id ? (
-                        <div className="text-gray-500 text-sm">Updating...</div>
+                        <div className="text-gray-500 text-xs">Updating...</div>
                       ) : (
                         <select
                           value={signup.signup_status}
                           onChange={(e) => updateStatus(signup.id, e.target.value)}
-                          className={`px-2 py-1 text-xs font-bold uppercase bg-[#0a0a0a] border rounded cursor-pointer focus:outline-none ${getStatusColor(signup.signup_status)}`}
+                          className={`px-1.5 py-0.5 text-xs font-bold uppercase bg-[#0a0a0a] border rounded cursor-pointer focus:outline-none ${getStatusColor(signup.signup_status)}`}
                         >
                           <option value="pending">Pending</option>
                           <option value="confirmed">Confirmed</option>
@@ -346,28 +361,28 @@ export default function CoursesAdminPage() {
                         </select>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2">
                       {signup.completed_at ? (
-                        <div className="flex flex-col gap-2">
-                          <div className="text-sm text-[#00ff88]">
-                            ✓ {formatDate(signup.completed_at)}
+                        <div className="flex flex-col gap-1">
+                          <div className="text-xs text-[#00ff88]">
+                            ✓ {new Date(signup.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                           </div>
                           {signup.certificate_url && (
-                            <div className="flex gap-2">
+                            <div className="flex gap-1.5">
                               <a
                                 href={signup.certificate_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-xs text-[#00cfff] hover:underline"
                               >
-                                View Certificate
+                                View
                               </a>
                               <button
                                 onClick={() => regenerateCertificate(signup.certificate_id!, signup.full_name || 'Student')}
                                 disabled={regeneratingId === signup.certificate_id}
                                 className="text-xs text-gray-500 hover:text-[#00ff88] disabled:opacity-50"
                               >
-                                {regeneratingId === signup.certificate_id ? 'Regenerating...' : 'Regenerate'}
+                                {regeneratingId === signup.certificate_id ? 'Regen...' : 'Regen'}
                               </button>
                             </div>
                           )}
@@ -376,26 +391,26 @@ export default function CoursesAdminPage() {
                         <button
                           onClick={() => markComplete(signup.id, signup.full_name || 'Student')}
                           disabled={completingId === signup.id}
-                          className="px-3 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black hover:bg-[#00cfff] transition-colors disabled:opacity-50"
+                          className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff88] text-black hover:bg-[#00cfff] transition-colors disabled:opacity-50"
                         >
-                          {completingId === signup.id ? 'Processing...' : 'Mark Complete'}
+                          {completingId === signup.id ? 'Processing...' : 'Complete'}
                         </button>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-gray-400 text-sm">
-                      {formatDate(signup.created_at)}
+                    <td className="px-3 py-2 text-gray-400 text-xs">
+                      {new Date(signup.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2">
                       <button
                         onClick={() => deleteSignup(signup.id, signup.full_name || 'Student')}
                         disabled={deletingId === signup.id}
-                        className={`px-3 py-1 text-xs font-bold uppercase transition-all ${
+                        className={`px-2 py-0.5 text-xs font-bold uppercase transition-all ${
                           deletingId === signup.id
                             ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
                             : 'bg-[#0a0a0a] border border-gray-700 text-gray-400 hover:border-[#ff0055] hover:text-[#ff0055]'
                         }`}
                       >
-                        {deletingId === signup.id ? 'Deleting...' : 'Delete'}
+                        {deletingId === signup.id ? 'Del...' : 'Del'}
                       </button>
                     </td>
                   </tr>
