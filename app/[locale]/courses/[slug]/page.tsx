@@ -5,10 +5,9 @@ import DynamicCoursePage from '@/components/courses/DynamicCoursePage';
 export default async function CoursePage({
   params,
 }: {
-  params: { locale: 'en' | 'es'; slug: string };
+  params: Promise<{ locale: 'en' | 'es'; slug: string }>;
 }) {
-  const locale = await Promise.resolve(params.locale);
-  const slug = await Promise.resolve(params.slug);
+  const { locale, slug } = await params;
 
   const course = await getPublishedCourseBySlug(slug, locale);
 
@@ -45,10 +44,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: 'en' | 'es'; slug: string };
+  params: Promise<{ locale: 'en' | 'es'; slug: string }>;
 }) {
-  const locale = await Promise.resolve(params.locale);
-  const slug = await Promise.resolve(params.slug);
+  const { locale, slug } = await params;
 
   const course = await getPublishedCourseBySlug(slug, locale);
 
