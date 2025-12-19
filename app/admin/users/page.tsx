@@ -229,7 +229,6 @@ export default function UsersManagement() {
                     <li>✓ Change user roles</li>
                     <li>✓ Create, edit, publish posts</li>
                     <li>✓ Delete any post</li>
-                    <li>✓ Manage live events</li>
                     <li>✓ All admin capabilities</li>
                   </ul>
                 </div>
@@ -244,7 +243,6 @@ export default function UsersManagement() {
                   <p className="text-xs text-gray-300 mb-3 font-bold">Content management</p>
                   <ul className="text-xs text-gray-400 space-y-1">
                     <li>✓ Create, edit, publish posts</li>
-                    <li>✓ Manage live events</li>
                     <li>✓ View all users</li>
                     <li>✗ Cannot change roles</li>
                     <li>✗ Cannot delete posts</li>

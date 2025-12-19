@@ -33,6 +33,13 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     remotePatterns: [
+      // Local Supabase (for development)
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '54321',
+        pathname: '/storage/v1/object/public/**',
+      },
       // Supabase Storage (for blog post images)
       {
         protocol: 'https',

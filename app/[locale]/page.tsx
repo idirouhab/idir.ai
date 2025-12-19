@@ -1,10 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import LiveEvent from "@/components/LiveEvent";
 import Transition from "@/components/Transition";
 import {getTranslations} from 'next-intl/server';
-import { createClient } from '@supabase/supabase-js';
-import { cache } from 'react';
 import dynamic from 'next/dynamic';
 
 // PERFORMANCE: Lazy load below-the-fold components (not visible on initial load)
@@ -41,50 +38,9 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-// PERFORMANCE: Use React cache to prevent duplicate queries
-// Add timeout to prevent slow database queries from blocking page generation
-const getActiveEvent = cache(async () => {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return null;
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-    // PERFORMANCE: Add timeout to database query
-    const queryPromise = supabase
-      .from('live_events')
-      .select('*')
-      .eq('is_active', true)
-      .limit(1);
-
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Query timeout')), 3000)
-    );
-
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
-
-    if (error || !data || data.length === 0) {
-      return null;
-    }
-
-    return data[0];
-  } catch (error) {
-    console.error('Error fetching active event:', error);
-    return null;
-  }
-});
-
 export default async function Home({ params }: Props) {
   const { locale } = await params;
-  // PERFORMANCE: Fetch data in parallel instead of sequentially
-  const [t, activeEvent] = await Promise.all([
-    getTranslations({ locale, namespace: 'structuredData' }),
-    getActiveEvent(),
-  ]);
+  const t = await getTranslations({ locale, namespace: 'structuredData' });
 
   // Get structured data arrays
   const knowsAbout = [
@@ -112,7 +68,6 @@ export default async function Home({ params }: Props) {
       <Navigation />
       <main id="main-content" role="main">
         <Hero />
-        <LiveEvent locale={locale} eventData={activeEvent} />
         <Transition textKey="aboutIntro" />
         <About />
         <Transition textKey="speakingIntro" />
@@ -192,39 +147,6 @@ export default async function Home({ params }: Props) {
           }),
         }}
       />
-      {/* Event Structured Data - Only when active event exists */}
-      {activeEvent && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Event",
-              name: activeEvent.title,
-              description: `Live ${activeEvent.platform} event with Idir Ouhab Meskine`,
-              startDate: activeEvent.event_datetime,
-              eventStatus: "https://schema.org/EventScheduled",
-              eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
-              location: {
-                "@type": "VirtualLocation",
-                url: activeEvent.platform_url,
-              },
-              organizer: {
-                "@type": "Person",
-                name: "Idir Ouhab Meskine",
-                url: `https://idir.ai/${locale}`,
-              },
-              performer: {
-                "@type": "Person",
-                name: "Idir Ouhab Meskine",
-              },
-              inLanguage: activeEvent.event_language,
-              isAccessibleForFree: true,
-              image: `https://idir.ai/${locale}/opengraph-image`,
-            }),
-          }}
-        />
-      )}
     </>
   );
 }

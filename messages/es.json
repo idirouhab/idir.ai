@@ -175,19 +175,6 @@
     "podcastDescription": "Un podcast en español que explora la intersección de la IA, la automatización y la tecnología.",
     "podcastGenre": ["Tecnología", "Inteligencia Artificial", "Automatización"]
   },
-  "liveEvent": {
-    "badge": "EN VIVO",
-    "dateTime": "Fecha y Hora",
-    "language": "Idioma",
-    "watchOn": "Ver en",
-    "languages": {
-      "English": "Inglés",
-      "Spanish": "Español",
-      "English & Spanish": "Inglés y Español",
-      "Portuguese": "Portugués",
-      "Other": "Otro"
-    }
-  },
   "subscribe": {
     "label": "Newsletter",
     "title1": "Noticias IA",

@@ -3,7 +3,7 @@ import '../globals.css';
 
 export const metadata: Metadata = {
   title: 'Admin Panel - idir.ai',
-  description: 'Manage live events',
+  description: 'Manage content and settings',
   robots: {
     index: false,
     follow: false,
