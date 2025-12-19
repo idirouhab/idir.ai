@@ -16,7 +16,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/subscribers', label: 'Subscribers', icon: '📬' },
   { href: '/admin/feedback', label: 'Feedback', icon: '💬' },
   { href: '/admin/users', label: 'Users', icon: '👥' },
-  { href: '/admin/courses', label: 'Courses', icon: '🎓' },
 ];
 
 type UserInfo = {

@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { getAdminCourseClient } from '@/lib/courses';
+import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'edge';
 
@@ -18,9 +18,17 @@ export async function GET(
   try {
     const { certificateId } = await params;
 
-    // Fetch signup by certificate_id with course details
-    const supabase = getAdminCourseClient();
+    // Create Supabase client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response('Server configuration error', { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Fetch signup by certificate_id
     const { data: signup, error: signupError } = await supabase
       .from('course_signups')
       .select('id, full_name, email, course_slug, completed_at, certificate_id')
@@ -31,18 +39,11 @@ export async function GET(
       return new Response('Certificate not found', { status: 404 });
     }
 
-    // Fetch course details (optional - fallback to slug if not found)
-    const { data: course } = await supabase
-      .from('courses')
-      .select('title, slug')
-      .eq('slug', signup.course_slug)
-      .single();
-
     // Format student name
     const studentName = signup.full_name;
 
-    // Use course title if available, otherwise format the slug
-    const courseTitle = course?.title || formatSlugToTitle(signup.course_slug);
+    // Format the slug to create a title (no courses table needed)
+    const courseTitle = formatSlugToTitle(signup.course_slug);
 
     // Format completion date in Spanish
     const completionDate = signup.completed_at
