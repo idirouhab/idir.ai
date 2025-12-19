@@ -1,78 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
+import CourseBuilder from '@/components/courses/CourseBuilder';
 import { generateCourseSlug } from '@/lib/courses';
-
-const DEFAULT_COURSE_DATA = {
-  hero: {
-    badge: "NUEVO CURSO",
-    title: "Mi Curso",
-    subtitle: "Descripción corta del curso",
-    description: "Descripción más larga con detalles",
-    valueStatement: "Valor que ofrece el curso"
-  },
-  benefits: [
-    { icon: "💡", title: "Beneficio 1", description: "Descripción del beneficio" },
-    { icon: "🎯", title: "Beneficio 2", description: "Descripción del beneficio" }
-  ],
-  curriculum: {
-    label: "TEMARIO DEL CURSO",
-    description: "X semanas de formación práctica",
-    items: [
-      { title: "Semana 1: Tema", description: "Descripción del tema" }
-    ]
-  },
-  logistics: {
-    startDate: "Fecha de inicio",
-    schedule: "Horario",
-    scheduleDetail: "Detalle de horarios",
-    duration: "X sesiones",
-    hours: "X horas",
-    modality: "Virtual",
-    tools: "Herramientas necesarias",
-    capacity: {
-      number: "X participantes",
-      reason: "Razón del límite",
-      waitlistText: "Política de lista de espera"
-    }
-  },
-  donation: {
-    label: "Tu compromiso hace la diferencia",
-    amount: "€5/$5",
-    title: "Donación sugerida",
-    text: "Texto explicativo",
-    transparencyText: "Transparencia",
-    link: "https://example.com",
-    linkText: "Link de donación"
-  },
-  outcomes: {
-    label: "LO QUE APRENDERÁS",
-    description: "Al terminar este curso:",
-    items: ["Resultado 1", "Resultado 2"]
-  },
-  pricing: {
-    label: "PRECIO E INSCRIPCIÓN",
-    title: "Acceso basado en donación",
-    options: [
-      { title: "Opción 1", amount: "GRATIS", description: "Descripción" }
-    ]
-  },
-  commitment: {
-    title: "El compromiso de honor",
-    checkboxLabel: "Me comprometo a...",
-    amountSuggestion: "Donación sugerida: €5/$5",
-    note: "Nota adicional"
-  },
-  form: {
-    enabled: true,
-    endpoint: "/api/courses/mi-curso/signup",
-    fields: ["firstName", "lastName", "email", "country", "birthYear"],
-    requiresTerms: true,
-    requiresCommitment: true
-  }
-};
 
 export default function NewCoursePage() {
   const router = useRouter();
@@ -83,12 +15,14 @@ export default function NewCoursePage() {
     title: '',
     slug: '',
     short_description: '',
+    cover_image: '',
     language: 'es' as 'en' | 'es',
     status: 'draft' as 'draft' | 'published',
     meta_title: '',
     meta_description: '',
-    course_data: JSON.stringify(DEFAULT_COURSE_DATA, null, 2)
   });
+
+  const [courseData, setCourseData] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,15 +30,25 @@ export default function NewCoursePage() {
     setError(null);
 
     try {
-      // Parse course_data JSON
-      const courseData = JSON.parse(formData.course_data);
+      if (!courseData) {
+        throw new Error('Please configure course content using the builder below');
+      }
+
+      // Ensure hero title is synced with main title before submission
+      const finalCourseData = courseData.hero ? {
+        ...courseData,
+        hero: {
+          ...courseData.hero,
+          title: formData.title
+        }
+      } : courseData;
 
       const response = await fetch('/api/admin/courses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          course_data: courseData,
+          course_data: finalCourseData,
           published_at: formData.status === 'published' ? new Date().toISOString() : null,
         }),
       });
@@ -121,20 +65,45 @@ export default function NewCoursePage() {
     }
   };
 
-  const handleTitleChange = (title: string) => {
+  const handleTitleChange = useCallback((title: string) => {
     setFormData(prev => ({
       ...prev,
       title,
       slug: generateCourseSlug(title)
     }));
-  };
+    // Sync with hero title if hero section exists
+    setCourseData(prev => {
+      if (prev && prev.hero) {
+        return {
+          ...prev,
+          hero: {
+            ...prev.hero,
+            title: title
+          }
+        };
+      }
+      return prev;
+    });
+  }, []);
+
+  const handleCourseDataChange = useCallback((data: any) => {
+    setCourseData(data);
+    // Sync hero title with main title if it exists
+    if (data?.hero?.title && data.hero.title !== formData.title) {
+      setFormData(prev => ({
+        ...prev,
+        title: data.hero.title,
+        slug: generateCourseSlug(data.hero.title)
+      }));
+    }
+  }, [formData.title]);
 
   return (
     <AdminPageWrapper title="New Course">
-      <div className="max-w-4xl">
+      <div className="max-w-6xl">
         <div className="mb-6">
           <h1 className="text-3xl font-black text-white mb-2">Create New Course</h1>
-          <p className="text-gray-400">Fill in the course details and JSON structure below</p>
+          <p className="text-gray-400">Use the visual builder to create your course</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -153,7 +122,7 @@ export default function NewCoursePage() {
                   value={formData.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
-                  placeholder="Mi Curso Increíble"
+                  placeholder="AI-Driven Workflow Automation"
                 />
               </div>
 
@@ -167,7 +136,7 @@ export default function NewCoursePage() {
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500 font-mono"
-                  placeholder="mi-curso-increible"
+                  placeholder="ai-workflow-automation"
                 />
                 <p className="text-xs text-gray-500 mt-1">URL: /{formData.language}/courses/{formData.slug}</p>
               </div>
@@ -182,8 +151,33 @@ export default function NewCoursePage() {
                   onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
                   rows={2}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
-                  placeholder="Una breve descripción del curso..."
+                  placeholder="Learn to build autonomous systems that work while you sleep..."
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Cover Image URL <span className="text-gray-500">(for course listings/previews)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.cover_image}
+                  onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+                  placeholder="https://example.com/course-cover.jpg"
+                />
+                {formData.cover_image && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.cover_image}
+                      alt="Course cover preview"
+                      className="w-full max-w-sm h-48 object-cover rounded-lg border border-gray-700"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -232,7 +226,7 @@ export default function NewCoursePage() {
                   value={formData.meta_title}
                   onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
-                  placeholder="Mi Curso | idir.ai"
+                  placeholder="AI Workflow Automation | idir.ai"
                 />
               </div>
 
@@ -245,32 +239,20 @@ export default function NewCoursePage() {
                   onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
                   rows={2}
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
-                  placeholder="Descripción para motores de búsqueda..."
+                  placeholder="Learn to build autonomous systems..."
                 />
               </div>
             </div>
           </div>
 
-          {/* Course Data (JSON) */}
+          {/* Course Builder */}
           <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
-            <h2 className="text-xl font-bold text-white mb-2">Course Structure (JSON) *</h2>
-            <p className="text-sm text-gray-400 mb-4">
-              Edit the JSON below to customize your course sections, benefits, curriculum, etc.
+            <h2 className="text-xl font-bold text-white mb-2">Course Content Builder *</h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Use the builder below to create your course structure. Toggle sections on/off and add content dynamically.
             </p>
 
-            <textarea
-              required
-              value={formData.course_data}
-              onChange={(e) => setFormData({ ...formData, course_data: e.target.value })}
-              rows={20}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-emerald-500 font-mono text-sm"
-              placeholder="Course JSON structure..."
-              spellCheck={false}
-            />
-
-            <p className="text-xs text-gray-500 mt-2">
-              💡 Tip: Use the default structure above as a template and modify it for your course
-            </p>
+            <CourseBuilder onDataChange={handleCourseDataChange} />
           </div>
 
           {/* Error */}

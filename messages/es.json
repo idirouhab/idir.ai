@@ -531,6 +531,64 @@
         "errorDuplicate": "Este correo ya está registrado para este curso. Si no has recibido el email de confirmación, por favor contacta a contact@idir.ai"
       },
       "backLink": "← Volver al Inicio"
+    },
+    "dynamic": {
+      "nav": {
+        "back": "Volver",
+        "education": "Educación"
+      },
+      "section": {
+        "objective": "El Objetivo"
+      },
+      "curriculum": {
+        "fallback": "Temario"
+      },
+      "pricing": {
+        "label": "Precio",
+        "free": "Gratis"
+      },
+      "registration": {
+        "button": "RESERVAR MI LUGAR",
+        "registered": "¡Inscrito!"
+      },
+      "modal": {
+        "title": "Confirmación Final",
+        "message": "¿Confirmas que los datos son correctos y aceptas el compromiso del curso?",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar"
+      },
+      "form": {
+        "title": "Formulario de Inscripción",
+        "description": "Completa tus datos para comenzar.",
+        "selectOption": "Selecciona una opción",
+        "fields": {
+          "firstName": "Nombre",
+          "lastName": "Apellido",
+          "email": "Email Profesional",
+          "country": "País",
+          "birthYear": "Año de nacimiento"
+        },
+        "terms": {
+          "prefix": "Acepto los",
+          "termsLink": "términos y condiciones",
+          "and": "y la",
+          "privacyLink": "política de privacidad"
+        },
+        "submit": "CONFIRMAR INSCRIPCIÓN",
+        "submitting": "..."
+      },
+      "success": {
+        "title": "¡Bienvenido a Bordo!",
+        "message": "Revisa tu correo. Te hemos enviado los detalles para comenzar."
+      },
+      "errors": {
+        "duplicate": "Este correo ya está registrado",
+        "processing": "Error al procesar la inscripción",
+        "connection": "Error de conexión"
+      },
+      "footer": {
+        "tagline": "Sistemas de Educación Autónoma"
+      }
     }
   }
 }

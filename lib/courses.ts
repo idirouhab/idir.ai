@@ -33,6 +33,7 @@ export type Logistics = {
     scheduleDetail: string;
     duration: string;
     modality: string;
+    hours: number;
     capacity?: CapacityConfig;
 };
 
@@ -75,6 +76,16 @@ export type FormConfig = {
     requiresCommitment: boolean;
 };
 
+export type Instructor = {
+    name: string;
+    title: string;
+    bio: string;
+    image?: string; // Optional instructor profile image URL
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+};
+
 export type CourseData = {
     hero: {
         badge: string;
@@ -89,10 +100,12 @@ export type CourseData = {
     outcomes: {
         label: string;
         items: string[];
+        description: string;
     };
     pricing: Pricing;
     commitment?: Commitment;
     form: FormConfig;
+    instructors?: Instructor[]; // New instructors section
 };
 
 // --- DATABASE MAIN TYPE ---
@@ -178,6 +191,8 @@ export async function incrementCourseViews(courseId: string) {
 export function generateCourseSlug(title: string): string {
     return title
         .toLowerCase()
+        .normalize('NFD')                 // split accents from letters
+        .replace(/[\u0300-\u036f]/g, '')  // remove the accent marks
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')

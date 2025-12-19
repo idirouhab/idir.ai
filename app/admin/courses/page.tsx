@@ -45,8 +45,7 @@ export default function AdminCoursesPage() {
 
   return (
     <AdminPageWrapper title="Courses">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-black text-white">Courses</h1>
+      <div className="mb-6 flex justify-end items-center">
         <Link
           href="/admin/courses/new"
           className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition-colors"
@@ -102,6 +101,12 @@ export default function AdminCoursesPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  <Link
+                    href={`/admin/courses/${course.id}/enrollments`}
+                    className="px-4 py-2 bg-blue-900/50 text-blue-400 font-medium rounded-lg hover:bg-blue-900 transition-colors"
+                  >
+                    Enrollments ({course.enrollment_count})
+                  </Link>
                   <Link
                     href={`/admin/courses/${course.id}/edit`}
                     className="px-4 py-2 bg-gray-700 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"

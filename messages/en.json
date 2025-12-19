@@ -535,6 +535,64 @@
         "waitlistText": "If demand exceeds 30, a waiting list will be created for future editions. The donation commitment only applies to participants with confirmed spots, not to those on the waitlist"
       },
       "backLink": "← Back to Home"
+    },
+    "dynamic": {
+      "nav": {
+        "back": "Back",
+        "education": "Education"
+      },
+      "section": {
+        "objective": "The Objective"
+      },
+      "curriculum": {
+        "fallback": "Curriculum"
+      },
+      "pricing": {
+        "label": "Entry Fee",
+        "free": "Free"
+      },
+      "registration": {
+        "button": "SECURE MY SPOT",
+        "registered": "Registered!"
+      },
+      "modal": {
+        "title": "Final Confirmation",
+        "message": "Do you confirm that the data is correct and you accept the course commitment?",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "form": {
+        "title": "Enrollment Form",
+        "description": "Fill in your details to get started.",
+        "selectOption": "Select an option",
+        "fields": {
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "email": "Professional Email",
+          "country": "Country",
+          "birthYear": "Birth Year"
+        },
+        "terms": {
+          "prefix": "I accept the",
+          "termsLink": "terms and conditions",
+          "and": "and the",
+          "privacyLink": "privacy policy"
+        },
+        "submit": "CONFIRM ENROLLMENT",
+        "submitting": "..."
+      },
+      "success": {
+        "title": "Welcome Aboard!",
+        "message": "Check your email. We just sent you the details to get started."
+      },
+      "errors": {
+        "duplicate": "This email is already registered",
+        "processing": "Error processing registration",
+        "connection": "Connection error"
+      },
+      "footer": {
+        "tagline": "Autonomous Education Systems"
+      }
     }
   }
 }
