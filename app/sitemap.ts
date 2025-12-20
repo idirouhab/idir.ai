@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getBlogClient } from '@/lib/blog'
 import { getSiteUrl } from '@/lib/site-config'
+import { getPublishedCourses } from '@/lib/courses'
 
 async function getBlogPosts() {
   try {
@@ -15,6 +16,17 @@ async function getBlogPosts() {
   } catch (error) {
     console.error('Error fetching blog posts for sitemap:', error)
     return []
+  }
+}
+
+async function getCourses() {
+  try {
+    const enCourses = await getPublishedCourses('en')
+    const esCourses = await getPublishedCourses('es')
+    return { en: enCourses, es: esCourses }
+  } catch (error) {
+    console.error('Error fetching courses for sitemap:', error)
+    return { en: [], es: [] }
   }
 }
 
@@ -65,19 +77,57 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }))
 
-  // Generate course page entries for each locale
-  const courseEntries: MetadataRoute.Sitemap = locales.map(locale => ({
-    url: `${baseUrl}/${locale}/courses/automation-101`,
+  // Generate courses index page entries for each locale
+  const coursesIndexEntries: MetadataRoute.Sitemap = locales.map(locale => ({
+    url: `${baseUrl}/${locale}/courses`,
     lastModified,
     changeFrequency: 'weekly' as const,
     priority: 0.95,
     alternates: {
       languages: {
-        en: `${baseUrl}/en/courses/automation-101`,
-        es: `${baseUrl}/es/courses/automation-101`,
+        en: `${baseUrl}/en/courses`,
+        es: `${baseUrl}/es/courses`,
       },
     },
   }))
+
+  // Generate individual course page entries
+  const courses = await getCourses()
+  const allCourses = [...courses.en, ...courses.es]
+
+  // Group courses by slug to link translations
+  const coursesBySlug = new Map<string, { en?: typeof courses.en[0], es?: typeof courses.es[0] }>()
+  allCourses.forEach(course => {
+    const group = coursesBySlug.get(course.slug) || {}
+    const lang = course.language as 'en' | 'es'
+    group[lang] = course
+    coursesBySlug.set(course.slug, group)
+  })
+
+  const courseEntries: MetadataRoute.Sitemap = allCourses.map(course => {
+    const entry: any = {
+      url: `${baseUrl}/${course.language}/courses/${course.slug}`,
+      lastModified: new Date(course.updated_at),
+      changeFrequency: 'weekly' as const,
+      priority: 0.95,
+    }
+
+    // Add language alternates if translation exists
+    const group = coursesBySlug.get(course.slug)
+    if (group && (group.en || group.es)) {
+      entry.alternates = {
+        languages: {} as Record<string, string>
+      }
+      if (group.en) {
+        entry.alternates.languages['en'] = `${baseUrl}/en/courses/${course.slug}`
+      }
+      if (group.es) {
+        entry.alternates.languages['es'] = `${baseUrl}/es/courses/${course.slug}`
+      }
+    }
+
+    return entry
+  })
 
   // Generate blog index entries for each locale
   const blogIndexEntries: MetadataRoute.Sitemap = locales.map(locale => ({
@@ -145,6 +195,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...homepageEntries,
     ...subscribeEntries,
     ...quizEntries,
+    ...coursesIndexEntries,
     ...courseEntries,
     ...blogIndexEntries,
     ...blogPostEntries,

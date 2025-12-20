@@ -2,6 +2,7 @@ import { getPublishedCourses } from '@/lib/courses';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
+import Image from "next/image";
 
 type CoursesProps = {
   locale: 'en' | 'es';
@@ -44,7 +45,7 @@ export default async function Courses({ locale }: CoursesProps) {
                 {/* Course Image/Cover - Desktop only */}
                 {course.cover_image && (
                   <div className="hidden md:block mb-6 rounded-xl overflow-hidden">
-                    <img
+                    <Image
                       src={course.cover_image}
                       alt={course.title}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"

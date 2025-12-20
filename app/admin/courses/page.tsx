@@ -96,7 +96,7 @@ export default function AdminCoursesPage() {
                   <p className="text-gray-400 mb-3">{course.short_description}</p>
                   <div className="flex items-center gap-6 text-sm text-gray-500">
                     <span>👁️ {course.view_count} views</span>
-                    <span>✍️ {course.enrollment_count} enrollments</span>
+                    <span>✍️ {0} enrollments</span>
                     <span>🔗 /{course.slug}</span>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ export default function AdminCoursesPage() {
                     href={`/admin/courses/${course.id}/enrollments`}
                     className="px-4 py-2 bg-blue-900/50 text-blue-400 font-medium rounded-lg hover:bg-blue-900 transition-colors"
                   >
-                    Enrollments ({course.enrollment_count})
+                    Enrollments ({0})
                   </Link>
                   <Link
                     href={`/admin/courses/${course.id}/edit`}

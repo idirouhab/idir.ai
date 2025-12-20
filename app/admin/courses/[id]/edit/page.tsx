@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
 import { generateCourseSlug } from '@/lib/courses';
+import Image from "next/image";
 
 export default function EditCoursePage() {
   const router = useRouter();
@@ -256,7 +257,7 @@ export default function EditCoursePage() {
                 />
                 {formData.cover_image && (
                   <div className="mt-2">
-                    <img
+                    <Image
                       src={formData.cover_image}
                       alt="Course cover preview"
                       className="w-full max-w-sm h-48 object-cover rounded-lg border border-gray-700"

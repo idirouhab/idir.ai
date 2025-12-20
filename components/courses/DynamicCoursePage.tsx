@@ -13,6 +13,7 @@ import {
     Clock,
     ArrowLeft
 } from 'lucide-react';
+import Image from "next/image";
 
 type Props = {
     course: Course;
@@ -228,7 +229,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                         <div key={index} className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl">
                                             <div className="flex gap-4 items-start">
                                                 {instructor.image && (
-                                                    <img
+                                                    <Image
                                                         src={instructor.image}
                                                         alt={instructor.name}
                                                         className="w-20 h-20 rounded-full object-cover border-2 border-[#00ff88]/30"
@@ -605,6 +606,78 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                     </div>
                 </div>
             )}
+
+            {/* Course Structured Data for SEO and LLMs */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Course",
+                        name: course.title,
+                        description: course.short_description,
+                        provider: {
+                            "@type": "Person",
+                            name: instructors && instructors.length > 0 ? instructors[0].name : "Idir Ouhab Meskine",
+                            url: "https://idir.ai"
+                        },
+                        ...(course.cover_image && {
+                            image: course.cover_image
+                        }),
+                        ...(pricing && {
+                            offers: {
+                                "@type": "Offer",
+                                category: pricing.isFree ? "Free" : "Paid",
+                                price: pricing.isFree ? "0" : undefined,
+                                priceCurrency: "USD"
+                            }
+                        }),
+                        ...(logistics && {
+                            ...(logistics.duration && { timeRequired: logistics.duration }),
+                            ...(logistics.startDate && { startDate: logistics.startDate }),
+                            ...(logistics.modality && { courseMode: logistics.modality })
+                        }),
+                        ...(outcomes?.items && outcomes.items.length > 0 && {
+                            educationalLevel: "Beginner to Intermediate",
+                            learningResourceType: "Course",
+                            teaches: outcomes.items
+                        }),
+                        ...(curriculum?.sections && curriculum.sections.length > 0 && {
+                            hasCourseInstance: curriculum.sections.map((section: any) => ({
+                                "@type": "CourseInstance",
+                                name: section.title,
+                                description: section.description
+                            }))
+                        }),
+                        inLanguage: locale,
+                        url: `https://idir.ai/${locale}/courses/${course.slug}`,
+                        datePublished: course.created_at,
+                        dateModified: course.updated_at
+                    })
+                }}
+            />
+
+            {/* Additional Organization/Person Structured Data */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Person",
+                        name: "Idir Ouhab Meskine",
+                        url: "https://idir.ai",
+                        jobTitle: "Solutions Engineer",
+                        worksFor: {
+                            "@type": "Organization",
+                            name: "n8n"
+                        },
+                        teaches: {
+                            "@type": "Course",
+                            name: course.title
+                        }
+                    })
+                }}
+            />
 
             {/* Footer Branding */}
             <footer className="py-20 border-t border-white/5 text-center">

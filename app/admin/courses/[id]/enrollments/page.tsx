@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
@@ -29,29 +29,22 @@ export default function CourseEnrollmentsPage() {
   const params = useParams();
   const courseId = params.id as string;
 
-  const [courseSlug, setCourseSlug] = useState<string>('');
   const [courseTitle, setCourseTitle] = useState<string>('');
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchCourseAndEnrollments();
-  }, [courseId]);
-
-  const fetchCourseAndEnrollments = async () => {
+  const fetchCourseAndEnrollments = useCallback(async () => {
     try {
-      // First fetch the course to get the slug
+      // Fetch the course to get the title
       const courseResponse = await fetch(`/api/admin/courses/${courseId}`);
       if (courseResponse.ok) {
         const courseData = await courseResponse.json();
-        const slug = courseData.course.slug;
         const title = courseData.course.title;
-        setCourseSlug(slug);
         setCourseTitle(title);
 
-        // Then fetch enrollments by slug
-        const enrollmentsResponse = await fetch(`/api/admin/courses/${courseId}/enrollments?slug=${slug}`);
+        // Fetch enrollments by course ID
+        const enrollmentsResponse = await fetch(`/api/admin/courses/${courseId}/enrollments`);
         if (enrollmentsResponse.ok) {
           const enrollmentsData = await enrollmentsResponse.json();
           setEnrollments(enrollmentsData.enrollments);
@@ -62,7 +55,11 @@ export default function CourseEnrollmentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    fetchCourseAndEnrollments();
+  }, [fetchCourseAndEnrollments]);
 
   const handleStatusChange = async (enrollmentId: string, newStatus: string) => {
     setUpdatingId(enrollmentId);
@@ -112,7 +109,7 @@ export default function CourseEnrollmentsPage() {
   };
 
   return (
-    <AdminPageWrapper title={`Enrollments - ${courseTitle || courseSlug}`}>
+    <AdminPageWrapper title={`Enrollments - ${courseTitle || 'Course'}`}>
       <div className="mb-6 flex justify-between items-center">
         <button
           onClick={() => router.back()}

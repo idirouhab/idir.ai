@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 
 /**
  * Get all course signups
- * GET /api/admin/course-signups?course_slug=automation-101
+ * GET /api/admin/course-signups?course_id=<uuid>
  */
 export async function GET(request: NextRequest) {
   try {
@@ -15,13 +15,20 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const courseSlug = searchParams.get('course_slug') || 'automation-101';
+    const courseId = searchParams.get('course_id');
+
+    if (!courseId) {
+      return NextResponse.json(
+        { error: 'course_id parameter is required' },
+        { status: 400 }
+      );
+    }
 
     // Fetch signups from database
     const { data, error } = await supabase
       .from('course_signups')
       .select('*')
-      .eq('course_slug', courseSlug)
+      .eq('course_id', courseId)
       .order('created_at', { ascending: false });
 
     if (error) {

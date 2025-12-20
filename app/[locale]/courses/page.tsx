@@ -1,9 +1,12 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import Image from "next/image";
+
 import { getPublishedCourses } from '@/lib/courses';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
+import type { Metadata } from 'next';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
@@ -14,6 +17,60 @@ export const revalidate = 1800; // 30 minutes
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'courses' });
+
+  const title = t('title', { defaultValue: 'Courses' });
+  const description = t('subtitle', { defaultValue: 'Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.' });
+  const url = `https://idir.ai/${locale}/courses`;
+
+  return {
+    title: `${title} | Idir Ouhab Meskine`,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        en: 'https://idir.ai/en/courses',
+        es: 'https://idir.ai/es/courses',
+      },
+    },
+    openGraph: {
+      title: `${title} | Idir Ouhab Meskine`,
+      description,
+      url,
+      siteName: 'Idir Ouhab Meskine',
+      locale: locale === 'es' ? 'es_ES' : 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: 'https://idir.ai/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | Idir Ouhab Meskine`,
+      description,
+      images: ['https://idir.ai/og-image.png'],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+  };
+}
 
 export default async function CoursesPage({ params }: Props) {
   const { locale } = await params;
@@ -63,7 +120,7 @@ export default async function CoursesPage({ params }: Props) {
                       {/* Course Image/Cover - Desktop only */}
                       {course.cover_image && (
                         <div className="hidden md:block mb-6 rounded-xl overflow-hidden">
-                          <img
+                          <Image
                             src={course.cover_image}
                             alt={course.title}
                             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"

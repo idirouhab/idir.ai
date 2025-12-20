@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { createClient } from '@supabase/supabase-js';
+import Image from "next/image";
 
 export const runtime = 'edge';
 
@@ -28,10 +29,10 @@ export async function GET(
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch signup by certificate_id
+    // Fetch signup with course information by certificate_id
     const { data: signup, error: signupError } = await supabase
       .from('course_signups')
-      .select('id, full_name, email, course_slug, completed_at, certificate_id')
+      .select('id, full_name, email, course_id, completed_at, certificate_id, courses(title)')
       .eq('certificate_id', certificateId)
       .single();
 
@@ -42,8 +43,8 @@ export async function GET(
     // Format student name
     const studentName = signup.full_name;
 
-    // Format the slug to create a title (no courses table needed)
-    const courseTitle = formatSlugToTitle(signup.course_slug);
+    // Get course title from the joined courses table
+    const courseTitle = (signup as any).courses?.title || 'Course';
 
     // Format completion date in Spanish
     const completionDate = signup.completed_at
@@ -275,7 +276,7 @@ export async function GET(
               }}
             >
               {signatureDataUrl && (
-                <img
+                <Image
                   src={signatureDataUrl}
                   alt="Signature"
                   width="300"

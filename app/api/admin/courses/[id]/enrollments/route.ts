@@ -25,12 +25,10 @@ export async function GET(
   }
 
   try {
-    await params; // Await params even if not using id
-    const { searchParams } = new URL(request.url);
-    const slug = searchParams.get('slug');
+    const { id: courseId } = await params;
 
-    if (!slug) {
-      return NextResponse.json({ error: 'Course slug is required' }, { status: 400 });
+    if (!courseId) {
+      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
     }
 
     const supabase = getAdminClient();
@@ -38,7 +36,7 @@ export async function GET(
     const { data, error } = await supabase
       .from('course_signups')
       .select('*')
-      .eq('course_slug', slug)
+      .eq('course_id', courseId)
       .order('created_at', { ascending: false });
     if (error) throw error;
 

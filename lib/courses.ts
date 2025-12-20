@@ -14,10 +14,17 @@ export type CurriculumItem = {
     description: string;
 };
 
+export type Section = {
+    title: string;
+    description: string;
+};
+
+
 export type Curriculum = {
     label: string;
     description: string;
     items: CurriculumItem[];
+    sections: Section[];
 };
 
 export type CapacityConfig = {
@@ -122,7 +129,7 @@ export type Course = {
     cover_image: string | null;
     status: 'draft' | 'published';
     published_at: string | null;
-    enrollment_count: number;
+    course_signups: [];
     view_count: number;
     created_at: string;
     updated_at: string;
@@ -203,7 +210,15 @@ export function generateCourseSlug(title: string): string {
 
 export async function getAllCourses() {
     const supabase = getAdminCourseClient();
-    const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+    //const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+
+    const { data, error } = await supabase
+        .from('courses')
+        .select(`
+    *,
+    course_signups(count)
+  `)
+        .order('created_at', { ascending: false });
     if (error) throw error;
     return (data || []) as Course[];
 }

@@ -69,8 +69,56 @@ export async function generateMetadata({
     };
   }
 
+  const title = course.meta_title || `${course.title} | Idir Ouhab Meskine`;
+  const description = course.meta_description || course.short_description;
+  const url = `https://idir.ai/${locale}/courses/${slug}`;
+  const image = course.cover_image || 'https://idir.ai/og-image.png';
+
   return {
-    title: course.meta_title || `${course.title} | idir.ai`,
-    description: course.meta_description || course.short_description,
+    title,
+    description,
+    keywords: course.course_data?.hero?.badge ? [course.course_data.hero.badge, 'automation', 'AI', 'course', 'technology'] : ['automation', 'AI', 'course', 'technology'],
+    authors: [{ name: 'Idir Ouhab Meskine' }],
+    alternates: {
+      canonical: url,
+      languages: {
+        en: `https://idir.ai/en/courses/${slug}`,
+        es: `https://idir.ai/es/courses/${slug}`,
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'Idir Ouhab Meskine',
+      locale: locale === 'es' ? 'es_ES' : 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+      creator: '@idir',
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   };
 }
