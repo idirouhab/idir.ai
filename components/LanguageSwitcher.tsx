@@ -14,21 +14,25 @@ export function LanguageSwitcher() {
     // Remove the current locale from the pathname
     const pathWithoutLocale = pathname.replace(`/${locale}`, '');
 
+    let targetUrl: string;
+
     // SPECIAL HANDLING: If on a blog post page (/blog/[slug])
     if (pathWithoutLocale.match(/^\/blog\/[^/]+$/)) {
       // Check if this post has a translation
       if (translatedSlug) {
         // Redirect to the translated post
-        router.push(`/${translatedSlug.language}/blog/${translatedSlug.slug}`);
+        targetUrl = `/${translatedSlug.language}/blog/${translatedSlug.slug}`;
       } else {
         // Single-language post: redirect to blog list
-        router.push(`/${newLocale}/blog`);
+        targetUrl = `/${newLocale}/blog`;
       }
-      return;
+    } else {
+      // For all other pages, maintain the same path
+      targetUrl = `/${newLocale}${pathWithoutLocale}`;
     }
 
-    // For all other pages, maintain the same path
-    router.push(`/${newLocale}${pathWithoutLocale}`);
+    // Use window.location for a full page reload to ensure locale changes
+    window.location.href = targetUrl;
   };
 
   return (

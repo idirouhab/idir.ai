@@ -25,13 +25,6 @@
     "podcastIntro": "Listen in →",
     "contactIntro": "Ready to make something happen? →"
   },
-  "courses": {
-    "title": "Courses",
-    "subtitle": "Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.",
-    "free": "Free",
-    "viewCourse": "View Course",
-    "viewAll": "View All Courses"
-  },
   "about": {
     "label": "About",
     "title1": "BUILDING THE",
@@ -384,6 +377,11 @@
     "unsubscribeText": "Unsubscribe"
   },
   "courses": {
+    "title": "Courses",
+    "subtitle": "Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.",
+    "free": "Free",
+    "viewCourse": "View Course",
+    "viewAll": "View All Courses",
     "automation101": {
       "meta": {
         "title": "Automation 101 - Introduction Course | idir.ai",

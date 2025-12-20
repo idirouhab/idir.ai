@@ -2,7 +2,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 
-import { getPublishedCourses } from '@/lib/courses';
+import { getAllPublishedCourses } from '@/lib/courses';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'courses' });
 
-  const title = t('title', { defaultValue: 'Courses' });
-  const description = t('subtitle', { defaultValue: 'Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.' });
+  const title = t('title');
+  const description = t('subtitle');
   const url = `https://idir.ai/${locale}/courses`;
 
   return {
@@ -74,8 +74,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CoursesPage({ params }: Props) {
   const { locale } = await params;
-  const courses = await getPublishedCourses(locale as 'en' | 'es');
-  const t = await getTranslations('courses');
+  const courses = await getAllPublishedCourses();
+  const t = await getTranslations({ locale, namespace: 'courses' });
 
   return (
     <>
@@ -90,10 +90,10 @@ export default async function CoursesPage({ params }: Props) {
             {/* Page Header */}
             <div className="mb-16">
               <h1 className="text-5xl lg:text-6xl font-black text-white mb-6">
-                {t('title', { defaultValue: 'Cursos' })}
+                {t('title')}
               </h1>
               <p className="text-xl text-gray-400 max-w-3xl">
-                {t('subtitle', { defaultValue: 'Aprende automatización, IA y tecnología con cursos prácticos diseñados para llevarte del concepto a la implementación.' })}
+                {t('subtitle')}
               </p>
             </div>
 
@@ -123,17 +123,27 @@ export default async function CoursesPage({ params }: Props) {
                           <Image
                             src={course.cover_image}
                             alt={course.title}
+                            width={400}
+                            height={192}
                             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
                       )}
 
-                      {/* Badge */}
-                      {pricing?.isFree && (
-                        <div className="inline-block mb-3 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full">
-                          {t('free', { defaultValue: 'Gratis' })}
+                      {/* Badges */}
+                      <div className="flex gap-2 mb-3">
+                        {/* Language Badge */}
+                        <div className="inline-block px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                          {course.language.toUpperCase()}
                         </div>
-                      )}
+
+                        {/* Free Badge */}
+                        {pricing?.isFree && (
+                          <div className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                            {t('free')}
+                          </div>
+                        )}
+                      </div>
 
                       {/* Title */}
                       <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
@@ -170,7 +180,7 @@ export default async function CoursesPage({ params }: Props) {
                       {/* CTA */}
                       <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                         <span className="text-emerald-400 font-semibold group-hover:text-emerald-300 transition-colors">
-                          {t('viewCourse', { defaultValue: 'Ver curso' })}
+                          {t('viewCourse')}
                         </span>
                         <ArrowRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform" />
                       </div>

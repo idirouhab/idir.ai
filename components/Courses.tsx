@@ -1,4 +1,4 @@
-import { getPublishedCourses } from '@/lib/courses';
+import { getAllPublishedCourses } from '@/lib/courses';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
@@ -9,8 +9,8 @@ type CoursesProps = {
 };
 
 export default async function Courses({ locale }: CoursesProps) {
-  const courses = await getPublishedCourses(locale);
-  const t = await getTranslations('courses');
+  const courses = await getAllPublishedCourses();
+  const t = await getTranslations({ locale, namespace: 'courses' });
 
   if (courses.length === 0) {
     return null; // Don't show section if no courses
@@ -22,10 +22,10 @@ export default async function Courses({ locale }: CoursesProps) {
         {/* Section Header */}
         <div className="mb-16">
           <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
-            {t('title', { defaultValue: 'Cursos' })}
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl">
-            {t('subtitle', { defaultValue: 'Aprende automatización, IA y tecnología con cursos prácticos diseñados para llevarte del concepto a la implementación.' })}
+            {t('subtitle')}
           </p>
         </div>
 
@@ -48,17 +48,27 @@ export default async function Courses({ locale }: CoursesProps) {
                     <Image
                       src={course.cover_image}
                       alt={course.title}
+                      width={400}
+                      height={192}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 )}
 
-                {/* Badge */}
-                {pricing?.isFree && (
-                  <div className="inline-block mb-3 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full">
-                    {t('free', { defaultValue: 'Gratis' })}
+                {/* Badges */}
+                <div className="flex gap-2 mb-3">
+                  {/* Language Badge */}
+                  <div className="inline-block px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                    {course.language.toUpperCase()}
                   </div>
-                )}
+
+                  {/* Free Badge */}
+                  {pricing?.isFree && (
+                    <div className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full">
+                      {t('free')}
+                    </div>
+                  )}
+                </div>
 
                 {/* Title */}
                 <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
@@ -95,7 +105,7 @@ export default async function Courses({ locale }: CoursesProps) {
                 {/* CTA */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-800">
                   <span className="text-emerald-400 font-semibold group-hover:text-emerald-300 transition-colors">
-                    {t('viewCourse', { defaultValue: 'Ver curso' })}
+                    {t('viewCourse')}
                   </span>
                   <ArrowRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -111,7 +121,7 @@ export default async function Courses({ locale }: CoursesProps) {
               href={`/${locale}/courses`}
               className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition-colors"
             >
-              {t('viewAll', { defaultValue: 'Ver todos los cursos' })}
+              {t('viewAll')}
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>

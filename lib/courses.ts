@@ -174,6 +174,18 @@ export const getPublishedCourses = cache(async (language: 'en' | 'es') => {
     return (data || []) as Course[];
 });
 
+export const getAllPublishedCourses = cache(async () => {
+    const supabase = getCourseClient();
+    const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false });
+
+    if (error) return [];
+    return (data || []) as Course[];
+});
+
 export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en' | 'es') => {
     const supabase = getCourseClient();
     const { data, error } = await supabase
