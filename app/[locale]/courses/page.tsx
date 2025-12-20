@@ -74,6 +74,9 @@ export default async function CoursesPage({ params }: Props) {
   const courses = await getAllPublishedCourses();
   const t = await getTranslations({ locale, namespace: 'courses' });
 
+  // Ensure locale is typed correctly
+  const typedLocale = locale as 'en' | 'es';
+
   return (
     <>
       <a href="#main-content" className="skip-to-content">
@@ -104,7 +107,7 @@ export default async function CoursesPage({ params }: Props) {
             ) : (
               <CoursesWithFilter
                 courses={courses}
-                locale={locale}
+                locale={typedLocale}
                 translations={{
                   free: t('free'),
                   viewCourse: t('viewCourse'),
