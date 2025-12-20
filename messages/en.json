@@ -382,6 +382,13 @@
     "free": "Free",
     "viewCourse": "View Course",
     "viewAll": "View All Courses",
+    "noCoursesAvailable": "No courses available at the moment.",
+    "filter": {
+      "all": "All Languages",
+      "english": "English",
+      "spanish": "Spanish",
+      "noCoursesFound": "No courses found with the selected filter."
+    },
     "automation101": {
       "meta": {
         "title": "Automation 101 - Introduction Course | idir.ai",
@@ -545,7 +552,9 @@
     "dynamic": {
       "nav": {
         "back": "Back",
-        "education": "Education"
+        "education": "Education",
+        "home": "Home",
+        "courses": "Courses"
       },
       "section": {
         "objective": "The Objective"

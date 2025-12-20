@@ -382,6 +382,13 @@
     "free": "Gratis",
     "viewCourse": "Ver curso",
     "viewAll": "Ver todos los cursos",
+    "noCoursesAvailable": "No hay cursos disponibles en este momento.",
+    "filter": {
+      "all": "Todos los idiomas",
+      "english": "Inglés",
+      "spanish": "Español",
+      "noCoursesFound": "No se encontraron cursos con el filtro seleccionado."
+    },
     "automation101": {
       "meta": {
         "title": "Automatización 101 - Curso de Introducción | idir.ai",
@@ -541,7 +548,9 @@
     "dynamic": {
       "nav": {
         "back": "Volver",
-        "education": "Educación"
+        "education": "Educación",
+        "home": "Inicio",
+        "courses": "Cursos"
       },
       "section": {
         "objective": "El Objetivo"

@@ -14,6 +14,7 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import Image from "next/image";
+import CourseBreadcrumbs from './CourseBreadcrumbs';
 
 type Props = {
     course: Course;
@@ -120,6 +121,16 @@ export default function DynamicCoursePage({ course, locale }: Props) {
             </nav>
 
             <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12 lg:py-20">
+                {/* Breadcrumbs for Navigation and SEO */}
+                <CourseBreadcrumbs
+                    locale={locale}
+                    courseTitle={course.title}
+                    translations={{
+                        home: t('nav.home'),
+                        courses: t('nav.courses'),
+                    }}
+                />
+
                 <div className="grid lg:grid-cols-12 gap-8 md:gap-12 lg:gap-16">
 
                     {/* LEFT COLUMN: Narrative & Details */}
@@ -610,7 +621,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                 </div>
             )}
 
-            {/* Course Structured Data for SEO and LLMs */}
+            {/* Enhanced Course Structured Data for SEO and LLMs */}
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
@@ -618,44 +629,78 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                         "@context": "https://schema.org",
                         "@type": "Course",
                         name: course.title,
-                        description: course.short_description,
+                        description: hero?.description || course.short_description,
+                        abstract: course.short_description,
                         provider: {
                             "@type": "Person",
                             name: instructors && instructors.length > 0 ? instructors[0].name : "Idir Ouhab Meskine",
-                            url: "https://idir.ai"
+                            url: "https://idir.ai",
+                            ...(instructors && instructors.length > 0 && instructors[0].bio && {
+                                description: instructors[0].bio
+                            })
                         },
+                        ...(instructors && instructors.length > 0 && {
+                            instructor: instructors.map((instructor: any) => ({
+                                "@type": "Person",
+                                name: instructor.name,
+                                ...(instructor.bio && { description: instructor.bio }),
+                                ...(instructor.title && { jobTitle: instructor.title }),
+                                ...(instructor.linkedin && { sameAs: [instructor.linkedin] })
+                            }))
+                        }),
                         ...(course.cover_image && {
-                            image: course.cover_image
+                            image: course.cover_image,
+                            thumbnailUrl: course.cover_image
                         }),
                         ...(pricing && {
                             offers: {
                                 "@type": "Offer",
                                 category: pricing.isFree ? "Free" : "Paid",
-                                price: pricing.isFree ? "0" : undefined,
-                                priceCurrency: "USD"
+                                price: pricing.isFree ? "0" : pricing.amount || "0",
+                                priceCurrency: pricing.currency || "USD",
+                                availability: "https://schema.org/InStock",
+                                url: `https://idir.ai/${locale}/courses/${course.slug}`
                             }
                         }),
                         ...(logistics && {
                             ...(logistics.duration && { timeRequired: logistics.duration }),
-                            ...(logistics.startDate && { startDate: logistics.startDate }),
-                            ...(logistics.modality && { courseMode: logistics.modality })
+                            ...(logistics.startDate && {
+                                startDate: logistics.startDate,
+                                eventStatus: "https://schema.org/EventScheduled",
+                                eventAttendanceMode: logistics.modality?.includes('online') || logistics.modality?.includes('virtual')
+                                    ? "https://schema.org/OnlineEventAttendanceMode"
+                                    : "https://schema.org/MixedEventAttendanceMode"
+                            }),
+                            ...(logistics.modality && { courseMode: logistics.modality }),
+                            ...(logistics.capacity && {
+                                maximumAttendeeCapacity: parseInt(logistics.capacity.number) || 30
+                            })
                         }),
                         ...(outcomes?.items && outcomes.items.length > 0 && {
                             educationalLevel: "Beginner to Intermediate",
                             learningResourceType: "Course",
-                            teaches: outcomes.items
+                            teaches: outcomes.items,
+                            coursePrerequisites: hero?.subtitle || "No prerequisites required",
+                            educationalCredentialAwarded: outcomes.label || "Course Completion"
                         }),
-                        ...(curriculum?.sections && curriculum.sections.length > 0 && {
-                            hasCourseInstance: curriculum.sections.map((section: any) => ({
-                                "@type": "CourseInstance",
-                                name: section.title,
-                                description: section.description
-                            }))
+                        ...(curriculum?.items && curriculum.items.length > 0 && {
+                            syllabusSections: curriculum.items.map((item: any, index: number) => ({
+                                "@type": "Syllabus",
+                                name: item.title,
+                                description: item.description,
+                                position: index + 1
+                            })),
+                            numberOfSections: curriculum.items.length
                         }),
                         inLanguage: locale,
+                        availableLanguage: [locale],
                         url: `https://idir.ai/${locale}/courses/${course.slug}`,
                         datePublished: course.created_at,
-                        dateModified: course.updated_at
+                        dateModified: course.updated_at,
+                        isAccessibleForFree: pricing?.isFree || false,
+                        ...(benefits && benefits.length > 0 && {
+                            about: benefits.map((benefit: any) => benefit.title).join(", ")
+                        })
                     })
                 }}
             />
