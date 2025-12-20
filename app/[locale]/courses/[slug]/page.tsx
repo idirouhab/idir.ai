@@ -2,6 +2,12 @@ import { getPublishedCourseBySlug, incrementCourseViews } from '@/lib/courses';
 import { notFound } from 'next/navigation';
 import DynamicCoursePage from '@/components/courses/DynamicCoursePage';
 
+// Enable ISR - regenerate every 60 seconds
+export const revalidate = 60;
+
+// Allow dynamic params for courses created after build
+export const dynamicParams = true;
+
 export default async function CoursePage({
   params,
 }: {
@@ -9,16 +15,23 @@ export default async function CoursePage({
 }) {
   const { locale, slug } = await params;
 
-  const course = await getPublishedCourseBySlug(slug, locale);
+  try {
+    const course = await getPublishedCourseBySlug(slug, locale);
 
-  if (!course) {
-    notFound();
+    if (!course) {
+      notFound();
+    }
+
+    // Increment view count (fire and forget)
+    incrementCourseViews(course.id).catch((error) => {
+      console.error('Error incrementing views:', error);
+    });
+
+    return <DynamicCoursePage course={course} locale={locale} />;
+  } catch (error) {
+    console.error('Error loading course page:', error);
+    throw error;
   }
-
-  // Increment view count (fire and forget)
-  incrementCourseViews(course.id).catch(console.error);
-
-  return <DynamicCoursePage course={course} locale={locale} />;
 }
 
 // Generate static params for all published courses
