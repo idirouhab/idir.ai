@@ -67,6 +67,11 @@ const nextConfig = {
             protocol: 'https',
             hostname: 'scalevise.com',
       },
+      // Production domain (for course instructor images and other assets)
+      {
+        protocol: 'https',
+        hostname: 'idir.ai',
+      },
     ],
   },
 
