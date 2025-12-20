@@ -21,6 +21,7 @@
   "transitions": {
     "aboutIntro": "Te cuento →",
     "speakingIntro": "¿Me quieres en tu evento? →",
+    "coursesIntro": "¿Listo para aprender? →",
     "podcastIntro": "Escucha →",
     "contactIntro": "¿Listo para hacer algo grande? →"
   },
@@ -376,6 +377,11 @@
     "unsubscribeText": "Cancelar suscripción"
   },
   "courses": {
+    "title": "Cursos",
+    "subtitle": "Aprende automatización, IA y tecnología con cursos prácticos diseñados para llevarte del concepto a la implementación.",
+    "free": "Gratis",
+    "viewCourse": "Ver curso",
+    "viewAll": "Ver todos los cursos",
     "automation101": {
       "meta": {
         "title": "Automatización 101 - Curso de Introducción | idir.ai",

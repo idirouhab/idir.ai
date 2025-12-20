@@ -21,8 +21,16 @@
   "transitions": {
     "aboutIntro": "Here's the deal →",
     "speakingIntro": "Want me at your event? →",
+    "coursesIntro": "Ready to level up? →",
     "podcastIntro": "Listen in →",
     "contactIntro": "Ready to make something happen? →"
+  },
+  "courses": {
+    "title": "Courses",
+    "subtitle": "Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.",
+    "free": "Free",
+    "viewCourse": "View Course",
+    "viewAll": "View All Courses"
   },
   "about": {
     "label": "About",

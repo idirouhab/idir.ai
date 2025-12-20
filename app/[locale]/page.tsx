@@ -14,6 +14,10 @@ const Speaking = dynamic(() => import('@/components/Speaking'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
+const Courses = dynamic(() => import('@/components/Courses'), {
+  loading: () => <div className="min-h-[400px]" />,
+});
+
 const Podcast = dynamic(() => import('@/components/Podcast'), {
   loading: () => <div className="min-h-[400px]" />,
 });
@@ -72,6 +76,8 @@ export default async function Home({ params }: Props) {
         <About />
         <Transition textKey="speakingIntro" />
         <Speaking />
+        <Transition textKey="coursesIntro" />
+        <Courses locale={locale as 'en' | 'es'} />
         <Transition textKey="podcastIntro" />
         <Podcast />
         <Transition textKey="contactIntro" />
