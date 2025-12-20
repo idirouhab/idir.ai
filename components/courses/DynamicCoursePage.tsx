@@ -25,9 +25,21 @@ export default function DynamicCoursePage({ course, locale }: Props) {
     const formRef = useRef<HTMLDivElement>(null);
 
     // Form state - initialize dynamically based on form fields
-    const { hero, benefits, curriculum, logistics, donation, outcomes, pricing, commitment, form, instructors } = course.course_data;
+    // Safely destructure with defaults for optional fields
+    const {
+        hero,
+        benefits,
+        curriculum,
+        logistics,
+        donation,
+        outcomes,
+        pricing,
+        commitment,
+        form,
+        instructors
+    } = course.course_data || {};
 
-    const initialFormData = form.fields
+    const initialFormData = form?.fields
         ? form.fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {} as Record<string, string>)
         : { firstName: '', lastName: '', email: '', country: '', birthYear: '' };
 
@@ -112,30 +124,40 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                     <div className="lg:col-span-7 space-y-24">
 
                         {/* Hero Section */}
-                        <header>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/20 text-[#00ff88] text-xs font-bold uppercase tracking-widest mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff88] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ff88]"></span>
-                </span>
-                                {hero.badge}
-                            </div>
-                            <h1 className="text-5xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-8">
-                                {hero.title}
-                            </h1>
-                            <p className="text-xl lg:text-2xl text-slate-400 font-light leading-relaxed">
-                                {hero.subtitle}
-                            </p>
-                        </header>
+                        {hero && (
+                            <>
+                                <header>
+                                    {hero.badge && (
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00ff88]/10 border border-[#00ff88]/20 text-[#00ff88] text-xs font-bold uppercase tracking-widest mb-6">
+                                            <span className="relative flex h-2 w-2">
+                                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff88] opacity-75"></span>
+                                              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00ff88]"></span>
+                                            </span>
+                                            {hero.badge}
+                                        </div>
+                                    )}
+                                    <h1 className="text-5xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-8">
+                                        {hero.title}
+                                    </h1>
+                                    {hero.subtitle && (
+                                        <p className="text-xl lg:text-2xl text-slate-400 font-light leading-relaxed">
+                                            {hero.subtitle}
+                                        </p>
+                                    )}
+                                </header>
 
-                        {/* Why this course exists (Problem/Solution) */}
-                        <section className="relative">
-                            <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00ff88] to-transparent opacity-20" />
-                            <h2 className="text-sm uppercase tracking-[0.3em] text-[#00ff88] font-bold mb-6">{t('section.objective')}</h2>
-                            <p className="text-xl text-slate-300 leading-relaxed italic">
-                                {hero.description}
-                            </p>
-                        </section>
+                                {/* Why this course exists (Problem/Solution) */}
+                                {hero.description && (
+                                    <section className="relative">
+                                        <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00ff88] to-transparent opacity-20" />
+                                        <h2 className="text-sm uppercase tracking-[0.3em] text-[#00ff88] font-bold mb-6">{t('section.objective')}</h2>
+                                        <p className="text-xl text-slate-300 leading-relaxed italic">
+                                            {hero.description}
+                                        </p>
+                                    </section>
+                                )}
+                            </>
+                        )}
 
                         {/* Curriculum */}
                         {curriculum && curriculum.items && curriculum.items.length > 0 && (
