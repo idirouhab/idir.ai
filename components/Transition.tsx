@@ -1,10 +1,13 @@
 'use client';
 
 import { useTranslations } from "next-intl";
+import messages from "@/messages/en.json";
 
-interface TransitionProps {
-  textKey: 'aboutIntro' | 'speakingIntro' | 'podcastIntro' | 'contactIntro';
-}
+type TransitionKey = keyof typeof messages.transitions;
+
+type TransitionProps = {
+  textKey: TransitionKey;
+};
 
 export default function Transition({ textKey }: TransitionProps) {
   const t = useTranslations('transitions');

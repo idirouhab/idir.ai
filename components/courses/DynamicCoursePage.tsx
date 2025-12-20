@@ -10,7 +10,6 @@ import {
     Calendar,
     Globe,
     ShieldCheck,
-    ChevronRight,
     Clock,
     ArrowLeft
 } from 'lucide-react';
@@ -79,6 +78,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
+                    courseId: course.id,
                     language: locale,
                     termsAccepted,
                     donationCommitment,
