@@ -123,13 +123,13 @@ export default function EditCoursePage() {
   };
 
   const handleTitleChange = useCallback((title: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       title,
       slug: generateCourseSlug(title)
     }));
     // Sync with hero title if hero section exists
-    setCourseData(prev => {
+    setCourseData((prev: any) => {
       if (prev && prev.hero) {
         return {
           ...prev,
@@ -147,7 +147,7 @@ export default function EditCoursePage() {
     setCourseData(data);
     // Sync hero title with main title if it exists
     if (data?.hero?.title && data.hero.title !== formData.title) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         title: data.hero.title,
         slug: generateCourseSlug(data.hero.title)
