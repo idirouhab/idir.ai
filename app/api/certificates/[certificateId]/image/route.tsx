@@ -29,10 +29,18 @@ export async function GET(
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch signup with course information by certificate_id
+    // Fetch signup with course and student information by certificate_id
     const { data: signup, error: signupError } = await supabase
       .from('course_signups')
-      .select('id, full_name, email, course_id, completed_at, certificate_id, courses(title)')
+      .select(`
+        id,
+        full_name,
+        course_id,
+        completed_at,
+        certificate_id,
+        courses(title),
+        students(email, first_name, last_name)
+      `)
       .eq('certificate_id', certificateId)
       .single();
 
@@ -40,8 +48,11 @@ export async function GET(
       return new Response('Certificate not found', { status: 404 });
     }
 
-    // Format student name
-    const studentName = signup.full_name;
+    // Format student name from students table or fallback to full_name
+    const studentData = (signup as any).students;
+    const studentName = studentData
+      ? `${studentData.first_name} ${studentData.last_name}`.trim()
+      : (signup.full_name || 'Student');
 
     // Get course title from the joined courses table
     const courseTitle = (signup as any).courses?.title || 'Course';

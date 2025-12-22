@@ -23,29 +23,62 @@ migrations/
 
 ## Quick Start
 
-### Check Migration Status
+### NEW: Migration Management Scripts 🚀
+
+We now have dedicated scripts for better migration tracking:
+
+#### Check Migration Status
 
 ```bash
-npm run migrate:status
+./scripts/migration-status.sh
 ```
 
-This shows which migrations have been applied and which are pending.
+Shows:
+- Total migrations (applied + pending)
+- List of applied migrations with timestamps
+- List of pending migrations
+- Execution times
 
-### Run All Pending Migrations
+#### Apply a Single Migration
 
 ```bash
-npm run migrate
+./scripts/migrate.sh migrations/027_migrate_course_signups_to_course_id.sql
 ```
 
-This runs all migrations that haven't been applied yet.
+Features:
+- Checks if already applied
+- Shows checksum for verification
+- Confirms before applying
+- Records execution time
+- Tracks in migrations_history table
 
-### Run One Migration at a Time
+#### Mark Migration as Applied (Without Running)
 
 ```bash
-npm run migrate:step
+./scripts/mark-applied.sh migrations/027_migrate_course_signups_to_course_id.sql
 ```
 
-This runs only the next pending migration. Useful for testing migrations one by one.
+Use this if you already ran a migration manually and want to mark it in the tracking system.
+
+#### Mark All Migrations as Applied (Bulk)
+
+```bash
+./scripts/mark-all-applied.sh
+```
+
+Use this ONCE to initialize tracking for an existing database where all migrations were already run manually.
+
+⚠️ **WARNING**: Only use this if your database already has all migrations applied!
+
+---
+
+### Old npm Scripts (Still Work)
+
+```bash
+npm run migrate:status  # Check status
+npm run migrate         # Run all pending
+npm run migrate:step    # Run one at a time
+```
 
 ### Create a New Migration
 

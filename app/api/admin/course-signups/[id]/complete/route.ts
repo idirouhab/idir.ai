@@ -29,10 +29,17 @@ export async function POST(
 
     const { id } = await params;
 
-    // Fetch signup record
+    // Fetch signup record with student information
     const { data: signup, error: fetchError } = await supabaseAdmin
       .from('course_signups')
-      .select('*')
+      .select(`
+        *,
+        students (
+          email,
+          first_name,
+          last_name
+        )
+      `)
       .eq('id', id)
       .single();
 

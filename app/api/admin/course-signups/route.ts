@@ -24,10 +24,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch signups from database
+    // Fetch signups from database with student information
     const { data, error } = await supabase
       .from('course_signups')
-      .select('*')
+      .select(`
+        id,
+        signup_status,
+        language,
+        created_at,
+        updated_at,
+        completed_at,
+        certificate_id,
+        certificate_url,
+        student_id,
+        students (
+          email,
+          first_name,
+          last_name,
+          country,
+          birth_year
+        )
+      `)
       .eq('course_id', courseId)
       .order('created_at', { ascending: false });
 
@@ -39,18 +56,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Transform data to include student info at top level
+    const signups = (data || []).map((signup: any) => ({
+      ...signup,
+      email: signup.students?.email || 'No email',
+      first_name: signup.students?.first_name || 'N/A',
+      last_name: signup.students?.last_name || '',
+      country: signup.students?.country || null,
+      birth_year: signup.students?.birth_year || null,
+    }));
+
     // Get summary stats
     const stats = {
-      total: data?.length || 0,
-      confirmed: data?.filter((s: any) => s.signup_status === 'confirmed').length || 0,
-      pending: data?.filter((s: any) => s.signup_status === 'pending').length || 0,
-      waitlist: data?.filter((s: any) => s.signup_status === 'waitlist').length || 0,
-      completed: data?.filter((s: any) => s.completed_at !== null).length || 0,
+      total: signups?.length || 0,
+      confirmed: signups?.filter((s: any) => s.signup_status === 'confirmed').length || 0,
+      pending: signups?.filter((s: any) => s.signup_status === 'pending').length || 0,
+      waitlist: signups?.filter((s: any) => s.signup_status === 'waitlist').length || 0,
+      completed: signups?.filter((s: any) => s.completed_at !== null).length || 0,
     };
 
     return NextResponse.json({
       success: true,
-      signups: data,
+      signups,
       stats,
     });
   } catch (error) {
