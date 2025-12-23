@@ -110,7 +110,7 @@ export default function Navigation() {
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
           showBackground
-            ? "backdrop-blur-xl border-b-2 border-[#00ff88]"
+            ? "backdrop-blur-xl border-b border-[#10b981]"
             : "bg-transparent"
         }`}
         style={{
@@ -124,7 +124,7 @@ export default function Navigation() {
             <div className="flex-shrink-0">
               <a
                 href={`/${locale}`}
-                className="text-2xl font-black text-white hover:text-[#00ff88] transition-colors uppercase tracking-tight"
+                className="text-2xl font-black text-white hover:text-[#10b981] transition-colors uppercase tracking-tight"
                 aria-label="Home - Idir Ouhab Meskine"
               >
                 IO
@@ -139,8 +139,8 @@ export default function Navigation() {
                   href={item.href}
                   className={`px-4 py-2 text-sm font-bold transition-all uppercase tracking-wide ${
                     activeSection === item.id
-                      ? "text-[#00ff88] border-b-2 border-[#00ff88]"
-                      : "text-gray-300 hover:text-[#00ff88]"
+                      ? "text-[#10b981] border-b-2 border-[#10b981]"
+                      : "text-gray-300 hover:text-[#10b981]"
                   }`}
                   role="menuitem"
                   aria-current={activeSection === item.id ? "page" : undefined}
@@ -158,7 +158,7 @@ export default function Navigation() {
               <LanguageSwitcher />
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 text-white hover:text-[#00ff88] transition-colors"
+                className="p-2 text-white hover:text-[#10b981] transition-colors"
                 aria-label={isOpen ? "Close menu" : "Open menu"}
               >
                 <svg
@@ -200,7 +200,7 @@ export default function Navigation() {
 
       {/* Mobile menu - off-canvas slide-in */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#00ff88] z-[999] md:hidden transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#10b981] z-[999] md:hidden transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
@@ -213,7 +213,7 @@ export default function Navigation() {
             <span className="text-2xl font-black text-white uppercase">Menu</span>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 text-white hover:text-[#00ff88] transition-colors"
+              className="p-2 text-white hover:text-[#10b981] transition-colors"
               aria-label="Close menu"
             >
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth={3}>
@@ -231,8 +231,8 @@ export default function Navigation() {
                   href={item.href}
                   className={`block px-4 py-4 text-lg font-bold transition-all uppercase tracking-wide rounded ${
                     activeSection === item.id
-                      ? "text-[#00ff88] border-l-4 border-[#00ff88] bg-[#00ff8810]"
-                      : "text-white hover:text-[#00ff88] border-l-4 border-transparent hover:border-[#00ff88]"
+                      ? "text-[#10b981] border-l-4 border-[#10b981] bg-[#10b981]/10"
+                      : "text-white hover:text-[#10b981] border-l-4 border-transparent hover:border-[#10b981]"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >

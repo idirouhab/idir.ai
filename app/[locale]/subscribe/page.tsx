@@ -69,32 +69,33 @@ export default function Subscribe() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#050505' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a0a0a' }}>
       <div className="w-full max-w-3xl">
-        {/* Main Card */}
-        <div className="bg-black border-2 border-[#00ff88] p-8 sm:p-12 relative overflow-hidden">
-          {/* Corner markers */}
-          <div className="absolute top-3 left-3 w-4 h-4 bg-[#00ff88]"></div>
-          <div className="absolute bottom-3 right-3 w-4 h-4 bg-[#00ff88]"></div>
-          <div className="absolute top-3 right-3 w-4 h-4 bg-[#ff0055]"></div>
-          <div className="absolute bottom-3 left-3 w-4 h-4 bg-[#ff0055]"></div>
+        {/* Main Card - Template styling */}
+        <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg p-8 sm:p-12 relative overflow-hidden">
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 opacity-5" aria-hidden="true">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+              backgroundSize: '30px 30px'
+            }}></div>
+          </div>
 
           <div className="relative z-10">
             {/* Header */}
             <div className="mb-10">
               <div className="flex items-center gap-4 mb-6">
-                <div className="h-1 w-12 bg-[#ff0055]"></div>
-                <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
-                <div className="h-1 flex-1 bg-[#ff0055]"></div>
+                <div className="h-1 w-12 bg-[#10b981]"></div>
+                <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
                 {t('title1')}
                 <br />
-                <span className="gradient-text glow-text">{t('title2')}</span>
+                <span className="text-[#10b981]">{t('title2')}</span>
               </h1>
 
-              <p className="text-base text-gray-300 leading-relaxed max-w-2xl">
+              <p className="text-base text-[#d1d5db] leading-relaxed max-w-2xl">
                 {t('description')}
               </p>
             </div>
@@ -112,7 +113,7 @@ export default function Subscribe() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder={t('form.emailPlaceholder')}
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#10b981] focus:outline-none transition-colors"
                   disabled={status === 'sending'}
                 />
               </div>
@@ -125,10 +126,10 @@ export default function Subscribe() {
                   <button
                     type="button"
                     onClick={() => setLanguage('en')}
-                    className={`px-4 py-3 border-2 font-bold uppercase text-sm transition-all ${
+                    className={`px-4 py-3 border font-bold uppercase text-sm transition-all rounded ${
                       language === 'en'
-                        ? 'bg-[#00ff88] text-black border-[#00ff88]'
-                        : 'bg-[#0a0a0a] text-gray-300 border-gray-700 hover:border-gray-600'
+                        ? 'bg-[#10b981] text-black border-[#10b981]'
+                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#10b981]'
                     }`}
                   >
                     {t('form.languageEn')}
@@ -136,10 +137,10 @@ export default function Subscribe() {
                   <button
                     type="button"
                     onClick={() => setLanguage('es')}
-                    className={`px-4 py-3 border-2 font-bold uppercase text-sm transition-all ${
+                    className={`px-4 py-3 border font-bold uppercase text-sm transition-all rounded ${
                       language === 'es'
-                        ? 'bg-[#00ff88] text-black border-[#00ff88]'
-                        : 'bg-[#0a0a0a] text-gray-300 border-gray-700 hover:border-gray-600'
+                        ? 'bg-[#10b981] text-black border-[#10b981]'
+                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#10b981]'
                     }`}
                   >
                     {t('form.languageEs')}
@@ -152,20 +153,20 @@ export default function Subscribe() {
                 <label className="block text-white font-bold mb-3 uppercase text-sm">
                   {language === 'es' ? 'Suscribirme a' : 'Subscribe to'}
                 </label>
-                <div className="space-y-3 border-2 border-gray-800 p-4 bg-[#0a0a0a]">
+                <div className="space-y-3 border border-[#1f2937] rounded p-4 bg-[#0a0a0a]">
                   {/* Newsletter / AI News */}
                   <label className="flex items-start gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={subscribeNewsletter}
                       onChange={(e) => setSubscribeNewsletter(e.target.checked)}
-                      className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                      className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                     />
                     <div className="flex-1">
                       <span className="text-white font-semibold text-sm block mb-1">
                         🤖 {language === 'es' ? 'Noticias IA Diarias' : 'Daily AI News'}
                       </span>
-                      <span className="text-gray-400 text-xs">
+                      <span className="text-[#9ca3af] text-xs">
                         {language === 'es'
                           ? 'Las mejores noticias de IA cada día, directo al punto'
                           : 'The best AI news every day, straight to the point'}
@@ -180,13 +181,13 @@ export default function Subscribe() {
                         type="checkbox"
                         checked={subscribePodcast}
                         onChange={(e) => setSubscribePodcast(e.target.checked)}
-                        className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                       />
                       <div className="flex-1">
                         <span className="text-white font-semibold text-sm block mb-1">
                           🎙️ Nuevos Episodios del Podcast
                         </span>
-                        <span className="text-gray-400 text-xs">
+                        <span className="text-[#9ca3af] text-xs">
                           Notificación cuando publico un nuevo episodio del podcast
                         </span>
                       </div>
@@ -196,7 +197,7 @@ export default function Subscribe() {
               </div>
 
               {/* Consent Checkbox */}
-              <div className="border-2 border-gray-800 p-4 bg-[#0a0a0a]">
+              <div className="border border-[#1f2937] rounded p-4 bg-[#0a0a0a]">
                 <label className="flex items-start gap-3">
                   <input
                     type="checkbox"
@@ -210,16 +211,34 @@ export default function Subscribe() {
                       }
                     }}
                     required
-                    className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                    className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                   />
-                  <span className="text-sm text-gray-300 leading-relaxed">
-                    {t('form.consentShort')}{' '}
+                  <span className="text-sm text-[#d1d5db] leading-relaxed">
+                    {language === 'es' ? 'Acepto la ' : 'I accept the '}
+                    <Link
+                      href={`/${locale}/privacy`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
+                    >
+                      {language === 'es' ? 'Política de Privacidad' : 'Privacy Policy'}
+                    </Link>
+                    {language === 'es' ? ' y los ' : ' and '}
+                    <Link
+                      href={`/${locale}/terms`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
+                    >
+                      {language === 'es' ? 'Términos y Condiciones' : 'Terms and Conditions'}
+                    </Link>
+                    {'. '}
                     <button
                       type="button"
                       onClick={() => setShowModal(true)}
-                      className="text-[#00ff88] underline hover:text-[#00cfff] transition-colors"
+                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
                     >
-                      {t('form.consentLink')}
+                      {language === 'es' ? 'Leer más' : 'Read more'}
                     </button>
                   </span>
                 </label>
@@ -227,13 +246,13 @@ export default function Subscribe() {
 
               {/* Status Messages */}
               {status === 'success' && (
-                <div className="p-4 border-2 border-[#00ff88] bg-[#00ff8810] text-[#00ff88]">
+                <div className="p-4 border border-[#10b981] border-l-[3px] border-l-[#10b981] rounded bg-[#10b981]/10 text-[#10b981]">
                   {t('form.success')}
                 </div>
               )}
 
               {status === 'error' && (
-                <div className="p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
+                <div className="p-4 border border-[#ef4444] border-l-[3px] border-l-[#ef4444] rounded bg-[#ef4444]/10 text-[#ef4444]">
                   {!subscribeNewsletter && !subscribePodcast
                     ? (language === 'es'
                       ? 'Por favor, selecciona al menos una opción de suscripción'
@@ -245,26 +264,26 @@ export default function Subscribe() {
               <button
                 type="submit"
                 disabled={status === 'sending' || !consent}
-                className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 {status === 'sending' ? t('form.sending') : t('form.submit')}
               </button>
             </form>
 
             {/* What you'll get */}
-            <div className="border-t-2 border-gray-800 pt-8">
-              <p className="text-sm text-gray-500 uppercase tracking-wider font-bold mb-4">{t('whatYouGet')}</p>
-              <ul className="space-y-3 text-gray-300 text-sm">
+            <div className="border-t border-[#1f2937] pt-8">
+              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">{t('whatYouGet')}</p>
+              <ul className="space-y-3 text-[#d1d5db] text-sm">
                 <li className="flex items-start gap-3">
-                  <span className="text-[#00ff88] mt-1">→</span>
+                  <span className="text-[#10b981] mt-1">→</span>
                   <span>{t('benefits.daily')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-[#00ff88] mt-1">→</span>
+                  <span className="text-[#10b981] mt-1">→</span>
                   <span>{t('benefits.language')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-[#00ff88] mt-1">→</span>
+                  <span className="text-[#10b981] mt-1">→</span>
                   <span>{t('benefits.unsubscribe')}</span>
                 </li>
               </ul>
@@ -276,7 +295,7 @@ export default function Subscribe() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-[#00ff88] transition-colors uppercase tracking-wide font-bold"
+            className="text-sm text-[#9ca3af] hover:text-[#10b981] transition-colors uppercase tracking-wide font-bold"
           >
             {t('backLink')}
           </Link>
@@ -286,12 +305,14 @@ export default function Subscribe() {
       {/* Privacy Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
-          <div className="bg-black border-2 border-[#00ff88] max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
-            {/* Corner markers */}
-            <div className="absolute top-3 left-3 w-4 h-4 bg-[#00ff88]"></div>
-            <div className="absolute top-3 right-3 w-4 h-4 bg-[#ff0055]"></div>
-            <div className="absolute bottom-3 left-3 w-4 h-4 bg-[#ff0055]"></div>
-            <div className="absolute bottom-3 right-3 w-4 h-4 bg-[#00ff88]"></div>
+          <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 opacity-5 rounded-lg" aria-hidden="true">
+              <div className="absolute inset-0" style={{
+                backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+                backgroundSize: '30px 30px'
+              }}></div>
+            </div>
 
             <div className="p-8 relative z-10">
               {/* Header */}
@@ -300,33 +321,33 @@ export default function Subscribe() {
               </h2>
 
               {/* Content */}
-              <div className="space-y-4 text-gray-300 text-sm leading-relaxed mb-8">
+              <div className="space-y-4 text-[#d1d5db] text-sm leading-relaxed mb-8">
                 <p className="text-base font-bold text-white">
                   {t('modal.intro')}
                 </p>
 
-                <div className="border-l-3 border-[#00ff88] pl-4 bg-[#0a0a0a] p-4">
-                  <h3 className="text-[#00ff88] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section1.title')}
                   </h3>
                   <p>{t('modal.section1.content')}</p>
                 </div>
 
-                <div className="border-l-3 border-[#00cfff] pl-4 bg-[#0a0a0a] p-4">
-                  <h3 className="text-[#00cfff] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section2.title')}
                   </h3>
                   <p>{t('modal.section2.content')}</p>
                 </div>
 
-                <div className="border-l-3 border-[#ff0055] pl-4 bg-[#0a0a0a] p-4">
-                  <h3 className="text-[#ff0055] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section3.title')}
                   </h3>
                   <p>{t('modal.section3.content')}</p>
                 </div>
 
-                <p className="text-xs text-gray-500 italic pt-4">
+                <p className="text-xs text-[#9ca3af] italic pt-4">
                   {t('modal.footer')}
                 </p>
               </div>
@@ -335,13 +356,13 @@ export default function Subscribe() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAcceptConsent}
-                  className="flex-1 px-6 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+                  className="flex-1 px-6 py-3 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors"
                 >
                   {t('modal.accept')}
                 </button>
                 <button
                   onClick={handleCancelConsent}
-                  className="flex-1 px-6 py-3 border-2 border-gray-700 text-gray-300 font-bold uppercase tracking-wide hover:border-[#ff0055] hover:text-[#ff0055] transition-colors"
+                  className="flex-1 px-6 py-3 border border-[#1f2937] text-[#d1d5db] font-bold uppercase tracking-wide rounded hover:border-[#10b981] hover:text-[#10b981] transition-colors"
                 >
                   {t('modal.cancel')}
                 </button>

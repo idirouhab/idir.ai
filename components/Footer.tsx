@@ -29,13 +29,13 @@ export default function Footer() {
 
   return (
     <footer className="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: '#000000' }}>
-      {/* Top border accent */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00ff88] via-[#00cfff] to-[#ff0055]"></div>
+      {/* Top border accent with emerald green */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-[#10b981]"></div>
 
       {/* Back to top button */}
       <button
         onClick={scrollToTop}
-        className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 bg-[#00ff88] text-black font-black hover:scale-110 transition-transform"
+        className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 bg-[#10b981] text-black font-black rounded hover:bg-[#059669] transition-colors"
         aria-label="Back to top"
       >
         ↑
@@ -48,21 +48,21 @@ export default function Footer() {
             <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tight">
               Idir Ouhab Meskine
             </h3>
-            <p className="text-gray-300 leading-relaxed mb-6">
+            <p className="text-[#d1d5db] leading-relaxed mb-6">
               {t('descriptionStart')}
-              <span className="text-[#ff0055] font-bold">{t('descriptionN8n')}</span>
+              <span className="text-[#10b981] font-bold">{t('descriptionN8n')}</span>
               {t('descriptionMiddle')}
-              <span className="italic font-bold" style={{ color: '#00CFFF' }}>{t('descriptionPodcast')}</span>
+              <span className="italic font-bold text-[#10b981]">{t('descriptionPodcast')}</span>
               {t('descriptionEnd')}
             </p>
             <div className="flex gap-3">
-              <div className="px-3 py-1 border border-[#00ff88] text-[#00ff88] text-xs font-bold uppercase">
+              <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
                 AI Expert
               </div>
-              <div className="px-3 py-1 border border-[#00cfff] text-[#00cfff] text-xs font-bold uppercase">
+              <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
                 Speaker
               </div>
-              <div className="px-3 py-1 border border-[#ff0055] text-[#ff0055] text-xs font-bold uppercase">
+              <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
                 Podcaster
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function Footer() {
                 <li key={i}>
                   <a
                     href={link.href}
-                    className="text-gray-300 hover:text-[#00ff88] transition-colors font-medium"
+                    className="text-[#d1d5db] hover:text-[#10b981] transition-colors font-medium"
                   >
                     → {link.label}
                   </a>
@@ -95,7 +95,7 @@ export default function Footer() {
                     href={link.href}
                     target={link.href.startsWith("http") ? "_blank" : undefined}
                     rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="text-gray-300 hover:text-[#00cfff] transition-colors font-medium"
+                    className="text-[#d1d5db] hover:text-[#10b981] transition-colors font-medium"
                   >
                     → {link.label}
                   </a>
@@ -105,15 +105,15 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+        <div className="border-t border-[#1f2937] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#9ca3af]">
           <div>&copy; {currentYear} Idir Ouhab Meskine. {t('copyright')}</div>
           <div>
             {t('builtStart')}
-            <span className="text-[#00ff88]">{t('builtNextjs')}</span>
+            <span className="text-[#10b981]">{t('builtNextjs')}</span>
             {t('builtComma1')}
-            <span className="text-[#00cfff]">{t('builtTypescript')}</span>
+            <span className="text-[#10b981]">{t('builtTypescript')}</span>
             {t('builtAnd')}
-            <span className="text-[#ff0055]">{t('builtTailwind')}</span>
+            <span className="text-[#10b981]">{t('builtTailwind')}</span>
           </div>
         </div>
       </div>

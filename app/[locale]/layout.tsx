@@ -48,11 +48,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     metadataBase: new URL(baseUrl),
-    title: "Idir Ouhab Meskine — Automation Expert, Speaker & Podcast Host",
-    description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at DevOpsCon & WeAreDevelopers. Host of Prompt&Play podcast.",
-    keywords: ["Idir Ouhab Meskine", "n8n", "Solutions Engineer", "AI", "Automation", "Workflow", "Speaker", "Prompt&Play", "Podcast", "DevOpsCon", "WeAreDevelopers", "Platzi"],
+    title: "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
+    description: "Sharing AI automation insights & workflows. Solutions Engineer @n8n | Teaching 10K+ students | Speaking at major tech conferences | Host of Prompt&Play podcast 🎙️",
+    keywords: ["Idir Ouhab Meskine", "AI automation", "workflow automation", "n8n workflows", "AI content creator", "tech speaker", "Prompt&Play podcast", "AI tutorials", "automation tutorials", "DevOpsCon", "WeAreDevelopers", "AI community", "tech content creator"],
     authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
     creator: "Idir Ouhab Meskine",
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '32x32' },
+        { url: '/icon.png', type: 'image/png', sizes: '192x192' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+    },
     alternates: {
       canonical: canonicalUrl,
       languages: {
@@ -66,14 +75,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       alternateLocale: [alternateLocale],
       url: canonicalUrl,
       siteName: "Idir Ouhab Meskine",
-      title: "Idir Ouhab Meskine — Automation Expert, Speaker & Podcast Host",
-      description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at DevOpsCon & WeAreDevelopers.",
+      title: "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
+      description: "Sharing AI automation insights, workflows & tutorials. Teaching 10K+ students | Speaking at DevOpsCon & WeAreDevelopers | Host of Prompt&Play podcast 🎙️",
       images: [
         {
           url: `${baseUrl}/${locale}/opengraph-image`,
           width: 1200,
           height: 630,
-          alt: "Idir Ouhab Meskine - Solutions Engineer at n8n",
+          alt: "Idir Ouhab Meskine - AI Automation Expert & Content Creator",
           type: "image/png",
         },
       ],
@@ -82,8 +91,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       site: "@idir_ouhab",
       creator: "@idir_ouhab",
-      title: "Idir Ouhab Meskine — Automation Expert & Speaker",
-      description: "Solutions Engineer at n8n building AI-powered workflows. Teaching 10K+ students, speaking at major tech conferences.",
+      title: "Idir Ouhab Meskine — AI Automation Expert",
+      description: "Sharing AI automation insights & workflows 🤖 | Solutions Engineer @n8n | Teaching 10K+ students | Tech Speaker | Podcast Host 🎙️",
       images: [`${baseUrl}/${locale}/opengraph-image`],
     },
     robots: {
