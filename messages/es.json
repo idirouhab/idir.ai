@@ -225,10 +225,22 @@
     "label": "Cancelar Suscripción",
     "title": "Lamentamos Verte Partir",
     "description": "Estamos tristes de verte partir, pero respetamos tu decisión. Ingresa tu correo abajo para cancelar tu suscripción al newsletter.",
+    "manageTitle": "Gestiona tus Suscripciones",
+    "manageDescription": "Puedes desuscribirte de todas las listas o solo de algunas. Tú eliges.",
+    "preferencesLabel": "Preferencias",
+    "preferencesTitle": "Elige lo que Quieres",
+    "preferencesDescription": "Desmarca las opciones de las que quieres desuscribirte, o desmarca todas para salir completamente.",
+    "additionalInfo": "También puedes desuscribirte desde cualquier email que te enviemos.",
+    "warningUnsubscribeAll": "⚠️ Esto te desuscribirá de todo",
+    "tip": "💡 Consejo: Puedes mantener solo las suscripciones que te interesen",
     "form": {
       "email": "Correo Electrónico",
       "emailPlaceholder": "tu@email.com",
       "submit": "Cancelar Suscripción",
+      "continue": "Continuar",
+      "loading": "Cargando...",
+      "saving": "Guardando...",
+      "saveChanges": "Guardar Cambios",
       "sending": "Procesando...",
       "error": "Error al cancelar. Por favor intenta de nuevo.",
       "invalidEmail": "Por favor ingresa un correo electrónico válido."
@@ -247,7 +259,10 @@
       "title": "Suscripción Cancelada",
       "message": "Has sido eliminado exitosamente de nuestro newsletter. Lamentamos verte partir, pero esperamos verte de nuevo en el futuro.",
       "feedback": "¿Cambiaste de opinión? Siempre puedes volver a suscribirte.",
-      "backHome": "Volver al Inicio"
+      "backHome": "Volver al Inicio",
+      "preferencesUpdatedTitle": "Preferencias Actualizadas",
+      "preferencesUpdatedMessage": "Tus preferencias de suscripción han sido actualizadas correctamente.",
+      "preferencesUpdatedFeedback": "Puedes cerrar esta ventana o volver a la página principal."
     },
     "footer": "Ya no recibirás emails de nosotros.",
     "backLink": "← Volver al Inicio"

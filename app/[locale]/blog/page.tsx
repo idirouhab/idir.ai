@@ -32,41 +32,38 @@ export default async function BlogPage({ params, searchParams }: Props) {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#0a0a0a' }}>
+      <main className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#000000' }}>
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbs} />
 
           {/* Header */}
           <div className="mb-16">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="h-1 w-16 bg-[#00ff88]"></div>
-              <span className="text-[#00ff88] font-bold uppercase tracking-wider text-sm">
-                {t('title')}
-              </span>
-            </div>
+            <p className="text-base sm:text-lg md:text-xl font-bold text-[#10b981] mb-4 uppercase tracking-wide">
+              {t('title')}
+            </p>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
               {t('title')}
             </h1>
 
-            <p className="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-3xl">
+            <p className="text-lg sm:text-xl text-[#d1d5db] leading-relaxed max-w-3xl font-medium">
               {t('subtitle')}
             </p>
           </div>
 
           {/* Category Filter */}
           <div className="mb-12">
-            <p className="text-sm text-gray-500 uppercase tracking-wider font-bold mb-4">
+            <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">
               {t('filterByCategory')}
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href={`/${locale}/blog`}
-                className={`px-6 py-3 font-bold uppercase tracking-wide text-sm transition-all ${
+                className={`px-6 py-3 font-bold text-sm transition-all rounded-lg ${
                   !category
-                    ? 'bg-white text-black'
-                    : 'bg-black text-white border-2 border-gray-700 hover:border-white'
+                    ? 'bg-[#10b981] text-black'
+                    : 'bg-[#111827] text-white border border-[#1f2937] hover:border-[#10b981]'
                 }`}
               >
                 {t('allCategories')}
@@ -80,11 +77,11 @@ export default async function BlogPage({ params, searchParams }: Props) {
                   <Link
                     key={cat}
                     href={`/${locale}/blog?category=${cat}`}
-                    className="px-6 py-3 font-bold uppercase tracking-wide text-sm transition-all"
+                    className="px-6 py-3 font-bold text-sm transition-all rounded-lg"
                     style={{
-                      background: isActive ? color : 'black',
-                      color: isActive ? 'black' : color,
-                      border: `2px solid ${color}`,
+                      background: isActive ? color : '#111827',
+                      color: isActive ? '#000000' : color,
+                      border: `1px solid ${isActive ? color : '#1f2937'}`,
                     }}
                   >
                     {t(`categories.${cat}`)}
@@ -115,12 +112,12 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 <h2 className="text-2xl font-black text-white mb-4">
                   {t('noPosts')}
                 </h2>
-                <p className="text-gray-300 mb-8">
+                <p className="text-[#d1d5db] mb-8 font-medium">
                   Check back soon for insights on AI, automation, and the future of work.
                 </p>
                 <Link
                   href={`/${locale}`}
-                  className="inline-block px-8 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+                  className="inline-block px-8 py-3 bg-[#10b981] text-black font-bold rounded-lg hover:scale-105 transition-transform"
                 >
                   ← Back to Home
                 </Link>

@@ -140,51 +140,49 @@ export default function Unsubscribe() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#050505' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a0a0a' }}>
       <div className="w-full max-w-2xl">
-        {/* Main Card */}
-        <div className="bg-black border-2 border-[#ff0055] p-8 sm:p-12 relative overflow-hidden">
-          {/* Corner markers */}
-          <div className="absolute top-3 left-3 w-4 h-4 bg-[#ff0055]"></div>
-          <div className="absolute bottom-3 right-3 w-4 h-4 bg-[#ff0055]"></div>
-          <div className="absolute top-3 right-3 w-4 h-4 bg-gray-700"></div>
-          <div className="absolute bottom-3 left-3 w-4 h-4 bg-gray-700"></div>
+        {/* Main Card - Template styling */}
+        <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg p-8 sm:p-12 relative overflow-hidden">
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 opacity-5" aria-hidden="true">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+              backgroundSize: '30px 30px'
+            }}></div>
+          </div>
 
           <div className="relative z-10">
             {status === 'success' || status === 'updated' ? (
               // Success state
               <div className="text-center">
                 <div className="mb-8">
-                  <div className="w-20 h-20 bg-[#00ff88] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-[#10b981] rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg className="w-10 h-10 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
                     {status === 'updated'
-                      ? (language === 'es' ? 'Preferencias Actualizadas' : 'Preferences Updated')
+                      ? t('success.preferencesUpdatedTitle')
                       : t('success.title')}
                   </h1>
-                  <p className="text-lg text-gray-300 leading-relaxed max-w-xl mx-auto">
+                  <p className="text-lg text-[#d1d5db] leading-relaxed max-w-xl mx-auto">
                     {status === 'updated'
-                      ? (language === 'es'
-                          ? 'Tus preferencias de suscripción han sido actualizadas correctamente.'
-                          : 'Your subscription preferences have been updated successfully.')
+                      ? t('success.preferencesUpdatedMessage')
                       : t('success.message')}
                   </p>
                 </div>
 
-                <div className="border-t-2 border-gray-800 pt-8">
-                  <p className="text-sm text-gray-500 mb-4">
+                <div className="border-t border-[#1f2937] pt-8">
+                  <p className="text-sm text-[#9ca3af] mb-4">
                     {status === 'updated'
-                      ? (language === 'es'
-                          ? 'Puedes cerrar esta ventana o volver a la página principal.'
-                          : 'You can close this window or return to the main page.')
+                      ? t('success.preferencesUpdatedFeedback')
                       : t('success.feedback')}
                   </p>
                   <Link
                     href="/"
-                    className="inline-block px-8 py-3 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform"
+                    className="inline-block px-8 py-3 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors"
                   >
                     {t('success.backHome')}
                   </Link>
@@ -196,19 +194,16 @@ export default function Unsubscribe() {
                 {/* Header */}
                 <div className="mb-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-1 w-12 bg-[#ff0055]"></div>
-                    <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
-                    <div className="h-1 flex-1 bg-[#ff0055]"></div>
+                    <div className="h-1 w-12 bg-[#10b981]"></div>
+                    <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
-                    {language === 'es' ? 'Gestiona tus Suscripciones' : 'Manage Your Subscriptions'}
+                    {t('manageTitle')}
                   </h1>
 
-                  <p className="text-base text-gray-300 leading-relaxed max-w-xl">
-                    {language === 'es'
-                      ? 'Puedes desuscribirte de todas las listas o solo de algunas. Tú eliges.'
-                      : 'You can unsubscribe from all lists or just some. Your choice.'}
+                  <p className="text-base text-[#d1d5db] leading-relaxed max-w-xl">
+                    {t('manageDescription')}
                   </p>
                 </div>
 
@@ -216,7 +211,7 @@ export default function Unsubscribe() {
                 <form onSubmit={handleLoadPreferences} className="space-y-6">
                   <div>
                     <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
-                      {language === 'es' ? 'Email' : 'Email'}
+                      {t('form.email')}
                     </label>
                     <input
                       id="email"
@@ -224,15 +219,15 @@ export default function Unsubscribe() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      placeholder={language === 'es' ? 'tu@email.com' : 'your@email.com'}
-                      className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-gray-700 focus:border-[#ff0055] focus:outline-none transition-colors"
+                      placeholder={t('form.emailPlaceholder')}
+                      className="w-full px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#10b981] focus:outline-none transition-colors"
                       disabled={status === 'loading'}
                     />
                   </div>
 
                   {/* Error Message */}
                   {status === 'error' && (
-                    <div className="p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
+                    <div className="p-4 border border-[#ef4444] border-l-[3px] border-l-[#ef4444] rounded bg-[#ef4444]/10 text-[#ef4444]">
                       {errorMessage}
                     </div>
                   )}
@@ -240,20 +235,16 @@ export default function Unsubscribe() {
                   <button
                     type="submit"
                     disabled={status === 'loading'}
-                    className="w-full px-8 py-4 bg-[#ff0055] text-white font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                    className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
                   >
-                    {status === 'loading'
-                      ? (language === 'es' ? 'Cargando...' : 'Loading...')
-                      : (language === 'es' ? 'Continuar' : 'Continue')}
+                    {status === 'loading' ? t('form.loading') : t('form.continue')}
                   </button>
                 </form>
 
                 {/* Additional info */}
-                <div className="border-t-2 border-gray-800 pt-8 mt-8">
-                  <p className="text-sm text-gray-500">
-                    {language === 'es'
-                      ? 'También puedes desuscribirte desde cualquier email que te enviemos.'
-                      : 'You can also unsubscribe from any email we send you.'}
+                <div className="border-t border-[#1f2937] pt-8 mt-8">
+                  <p className="text-sm text-[#9ca3af]">
+                    {t('additionalInfo')}
                   </p>
                 </div>
               </>
@@ -263,44 +254,41 @@ export default function Unsubscribe() {
                 {/* Header */}
                 <div className="mb-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-1 w-12 bg-[#ff0055]"></div>
-                    <span className="text-[#ff0055] font-bold uppercase tracking-wider text-sm">
-                      {language === 'es' ? 'Preferencias' : 'Preferences'}
+                    <div className="h-1 w-12 bg-[#10b981]"></div>
+                    <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">
+                      {t('preferencesLabel')}
                     </span>
-                    <div className="h-1 flex-1 bg-[#ff0055]"></div>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
-                    {language === 'es' ? 'Elige lo que Quieres' : 'Choose What You Want'}
+                    {t('preferencesTitle')}
                   </h1>
 
-                  <p className="text-base text-gray-300 leading-relaxed max-w-xl mb-4">
-                    {language === 'es'
-                      ? 'Desmarca las opciones de las que quieres desuscribirte, o desmarca todas para salir completamente.'
-                      : 'Uncheck the options you want to unsubscribe from, or uncheck all to opt out completely.'}
+                  <p className="text-base text-[#d1d5db] leading-relaxed max-w-xl mb-4">
+                    {t('preferencesDescription')}
                   </p>
 
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[#9ca3af]">
                     {email}
                   </p>
                 </div>
 
                 {/* Subscription Preferences */}
                 <div className="space-y-6 mb-8">
-                  <div className="space-y-3 border-2 border-gray-800 p-4 bg-[#0a0a0a]">
+                  <div className="space-y-3 border border-[#1f2937] rounded p-4 bg-[#0a0a0a]">
                     {/* Newsletter / AI News */}
                     <label className="flex items-start gap-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={subscribeNewsletter}
                         onChange={(e) => setSubscribeNewsletter(e.target.checked)}
-                        className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                       />
                       <div className="flex-1">
                         <span className="text-white font-semibold text-sm block mb-1">
                           🤖 {t('preferences.newsletter.title')}
                         </span>
-                        <span className="text-gray-400 text-xs">
+                        <span className="text-[#9ca3af] text-xs">
                           {t('preferences.newsletter.description')}
                         </span>
                       </div>
@@ -313,13 +301,13 @@ export default function Unsubscribe() {
                           type="checkbox"
                           checked={subscribePodcast}
                           onChange={(e) => setSubscribePodcast(e.target.checked)}
-                          className="mt-1 w-5 h-5 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+                          className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                         />
                         <div className="flex-1">
                           <span className="text-white font-semibold text-sm block mb-1">
                             🎙️ {t('preferences.podcast.title')}
                           </span>
-                          <span className="text-gray-400 text-xs">
+                          <span className="text-[#9ca3af] text-xs">
                             {t('preferences.podcast.description')}
                           </span>
                         </div>
@@ -329,7 +317,7 @@ export default function Unsubscribe() {
 
                   {/* Error Message */}
                   {status === 'error' && (
-                    <div className="p-4 border-2 border-[#ff0055] bg-[#ff005510] text-[#ff0055]">
+                    <div className="p-4 border border-[#ef4444] border-l-[3px] border-l-[#ef4444] rounded bg-[#ef4444]/10 text-[#ef4444]">
                       {errorMessage}
                     </div>
                   )}
@@ -339,19 +327,15 @@ export default function Unsubscribe() {
                     <button
                       onClick={handleUpdatePreferences}
                       disabled={status === 'sending'}
-                      className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                      className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
                     >
-                      {status === 'sending'
-                        ? (language === 'es' ? 'Guardando...' : 'Saving...')
-                        : (language === 'es' ? 'Guardar Cambios' : 'Save Changes')}
+                      {status === 'sending' ? t('form.saving') : t('form.saveChanges')}
                     </button>
 
                     {!subscribeNewsletter && !subscribePodcast && (
-                      <div className="p-3 bg-[#ff005510] border border-[#ff0055] text-center">
-                        <p className="text-[#ff0055] text-sm font-semibold">
-                          {language === 'es'
-                            ? '⚠️ Esto te desuscribirá de todo'
-                            : '⚠️ This will unsubscribe you from everything'}
+                      <div className="p-3 bg-[#ef4444]/10 border border-[#ef4444] rounded text-center">
+                        <p className="text-[#ef4444] text-sm font-semibold">
+                          {t('warningUnsubscribeAll')}
                         </p>
                       </div>
                     )}
@@ -359,11 +343,9 @@ export default function Unsubscribe() {
                 </div>
 
                 {/* Additional info */}
-                <div className="border-t-2 border-gray-800 pt-8 mt-8">
-                  <p className="text-sm text-gray-500">
-                    {language === 'es'
-                      ? '💡 Consejo: Puedes mantener solo las suscripciones que te interesen'
-                      : '💡 Tip: You can keep only the subscriptions you\'re interested in'}
+                <div className="border-t border-[#1f2937] pt-8 mt-8">
+                  <p className="text-sm text-[#9ca3af]">
+                    {t('tip')}
                   </p>
                 </div>
               </>
@@ -375,7 +357,7 @@ export default function Unsubscribe() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="text-sm text-gray-500 hover:text-[#ff0055] transition-colors uppercase tracking-wide font-bold"
+            className="text-sm text-[#9ca3af] hover:text-[#10b981] transition-colors uppercase tracking-wide font-bold"
           >
             {t('backLink')}
           </Link>

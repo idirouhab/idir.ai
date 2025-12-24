@@ -184,7 +184,7 @@ export default async function BlogPostPage({ params }: Props) {
     <BlogTranslationProvider translatedSlug={translatedSlug}>
       <ViewTracker postId={post.id} />
       <Navigation />
-      <main className="min-h-screen pt-28 pb-20" style={{ background: '#0a0a0a' }}>
+      <main className="min-h-screen pt-28 pb-20" style={{ background: '#000000' }}>
         {/* Article Header */}
         <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
@@ -193,7 +193,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-[#00ff88] transition-colors mb-8 font-bold uppercase tracking-wide"
+            className="inline-flex items-center gap-2 text-sm text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide"
           >
             ← {t('backToBlog')}
           </Link>
@@ -201,34 +201,34 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Category Badge */}
           <div className="flex items-center gap-3 mb-6">
             <span
-              className="px-4 py-2 text-xs font-black uppercase tracking-wider"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded"
               style={{
                 background: `${categoryColor}20`,
                 color: categoryColor,
-                border: `2px solid ${categoryColor}`,
+                border: `1px solid ${categoryColor}`,
               }}
             >
               {categoryName}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[#9ca3af]">
               {t('readTime', { minutes: readTime })}
             </span>
           </div>
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
             {post.title}
           </h1>
 
           {/* Meta Info */}
-          <div className="flex items-center gap-6 mb-8 pb-8 border-b-2 border-gray-800">
+          <div className="flex items-center gap-6 mb-8 pb-8 border-b border-[#1f2937]">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#00ff88] to-[#00cfff] rounded-full flex items-center justify-center font-black text-black">
+              <div className="w-12 h-12 bg-gradient-to-r from-[#10b981] to-[#14b8a6] rounded-full flex items-center justify-center font-black text-black">
                 {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
               </div>
               <div>
                 <p className="text-sm font-bold text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
-                <p className="text-xs text-gray-500">{formattedDate}</p>
+                <p className="text-xs text-[#9ca3af]">{formattedDate}</p>
               </div>
             </div>
           </div>
@@ -238,7 +238,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Cover Image */}
           {post.cover_image && (
-            <div className="relative w-full aspect-video mb-12 border-4 overflow-hidden" style={{ borderColor: categoryColor }}>
+            <div className="relative w-full aspect-video mb-12 border-2 overflow-hidden rounded-lg" style={{ borderColor: categoryColor }}>
               <Image
                 src={post.cover_image}
                 alt={post.title}
@@ -255,9 +255,6 @@ export default async function BlogPostPage({ params }: Props) {
             <MarkdownContent content={post.content} />
           </div>
 
-          {/* Newsletter CTA - After Content */}
-          <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_after_content" />
-
           {/* Share Buttons */}
           <div className="mt-12">
             <ShareButtons
@@ -271,15 +268,15 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t-2 border-gray-800">
-              <p className="text-sm text-gray-500 uppercase tracking-wider font-bold mb-4">
+            <div className="mt-12 pt-8 border-t border-[#1f2937]">
+              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">
                 {t('tags')}
               </p>
               <div className="flex flex-wrap gap-3">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-4 py-2 bg-black border-2 border-gray-700 text-gray-300 font-bold text-sm uppercase tracking-wide hover:border-[#00ff88] hover:text-[#00ff88] transition-colors"
+                    className="px-4 py-2 bg-[#111827] border border-[#1f2937] text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-colors"
                   >
                     #{tag}
                   </span>
@@ -295,12 +292,12 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="h-1 w-16 bg-[#ff0055]"></div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white uppercase">
-                {t('relatedPosts')}
-              </h2>
-            </div>
+            <p className="text-base sm:text-lg font-bold text-[#10b981] mb-4 uppercase tracking-wide">
+              {t('relatedPosts')}
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-8 tracking-tight">
+              {t('relatedPosts')}
+            </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
               {relatedPosts.map((relatedPost) => (

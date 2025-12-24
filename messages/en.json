@@ -225,10 +225,22 @@
     "label": "Unsubscribe",
     "title": "Sorry to See You Go",
     "description": "We're sad to see you leave, but we respect your decision. Enter your email below to unsubscribe from our newsletter.",
+    "manageTitle": "Manage Your Subscriptions",
+    "manageDescription": "You can unsubscribe from all lists or just some. Your choice.",
+    "preferencesLabel": "Preferences",
+    "preferencesTitle": "Choose What You Want",
+    "preferencesDescription": "Uncheck the options you want to unsubscribe from, or uncheck all to opt out completely.",
+    "additionalInfo": "You can also unsubscribe from any email we send you.",
+    "warningUnsubscribeAll": "⚠️ This will unsubscribe you from everything",
+    "tip": "💡 Tip: You can keep only the subscriptions you're interested in",
     "form": {
       "email": "Email Address",
       "emailPlaceholder": "your@email.com",
       "submit": "Unsubscribe",
+      "continue": "Continue",
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
       "sending": "Processing...",
       "error": "Failed to unsubscribe. Please try again.",
       "invalidEmail": "Please enter a valid email address."
@@ -247,7 +259,10 @@
       "title": "You're Unsubscribed",
       "message": "You've been successfully removed from our newsletter. We're sorry to see you go, but we hope to see you again in the future.",
       "feedback": "Changed your mind? You can always resubscribe.",
-      "backHome": "Back to Home"
+      "backHome": "Back to Home",
+      "preferencesUpdatedTitle": "Preferences Updated",
+      "preferencesUpdatedMessage": "Your subscription preferences have been updated successfully.",
+      "preferencesUpdatedFeedback": "You can close this window or return to the main page."
     },
     "footer": "You will no longer receive emails from us.",
     "backLink": "← Back to Home"

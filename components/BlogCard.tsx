@@ -20,12 +20,10 @@ export default function BlogCard({ post, locale }: Props) {
 
   return (
     <Link href={`/${locale}/blog/${post.slug}`}>
-      <article className="group relative bg-black border-2 hover:scale-[1.02] transition-all duration-300 h-full flex flex-col"
-        style={{ borderColor: categoryColor }}>
+      <article className="group relative bg-[#111827] border border-[#1f2937] hover:border-[#10b981] hover:scale-[1.02] transition-all duration-300 h-full flex flex-col rounded-lg overflow-hidden">
 
-        {/* Corner accent */}
-        <div className="absolute top-0 left-0 w-4 h-4" style={{ background: categoryColor }}></div>
-        <div className="absolute bottom-0 right-0 w-4 h-4" style={{ background: categoryColor }}></div>
+        {/* Top accent bar */}
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: categoryColor }}></div>
 
         {/* Cover Image */}
         {post.cover_image && (
@@ -45,7 +43,7 @@ export default function BlogCard({ post, locale }: Props) {
           {/* Category Badge */}
           <div className="flex items-center gap-3 mb-3">
             <span
-              className="px-3 py-1 text-xs font-black uppercase tracking-wider"
+              className="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded"
               style={{
                 background: `${categoryColor}20`,
                 color: categoryColor,
@@ -54,32 +52,32 @@ export default function BlogCard({ post, locale }: Props) {
             >
               {categoryName}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-[#9ca3af]">
               {t('readTime', { minutes: readTime })}
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#00ff88] transition-colors">
+          <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#10b981] transition-colors">
             {post.title}
           </h3>
 
           {/* Excerpt */}
-          <p className="text-sm text-gray-300 leading-relaxed mb-4 flex-1">
+          <p className="text-sm text-[#d1d5db] leading-relaxed mb-4 flex-1">
             {post.excerpt}
           </p>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-800">
+          <div className="flex items-center justify-between pt-3 border-t border-[#1f2937]">
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-gray-500">{formattedDate}</span>
+              <span className="text-xs text-[#9ca3af]">{formattedDate}</span>
               {post.author_name && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-[#6b7280]">
                   {t('by')} {post.author_name}
                 </span>
               )}
             </div>
-            <span className="text-sm font-bold uppercase tracking-wide group-hover:translate-x-1 transition-transform"
+            <span className="text-sm font-bold tracking-wide group-hover:translate-x-1 transition-transform"
               style={{ color: categoryColor }}>
               {t('readMore')} →
             </span>
@@ -91,7 +89,7 @@ export default function BlogCard({ post, locale }: Props) {
               {post.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs text-gray-500 px-2 py-1 bg-gray-900 rounded"
+                  className="text-xs text-[#9ca3af] px-2 py-1 bg-black/50 rounded"
                 >
                   #{tag}
                 </span>
