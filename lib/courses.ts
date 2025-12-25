@@ -1,3 +1,4 @@
+import 'server-only';
 import { cache } from 'react';
 import { query } from '@/lib/db';
 import { createClient } from '@supabase/supabase-js';
@@ -216,17 +217,6 @@ export async function incrementCourseViews(courseId: string) {
     } catch (error) {
         console.error('Error incrementing course views:', error);
     }
-}
-
-export function generateCourseSlug(title: string): string {
-    return title
-        .toLowerCase()
-        .normalize('NFD')                 // split accents from letters
-        .replace(/[\u0300-\u036f]/g, '')  // remove the accent marks
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
 }
 
 // --- ADMIN CRUD FUNCTIONS ---

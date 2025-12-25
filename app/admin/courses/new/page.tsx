@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
-import { generateCourseSlug } from '@/lib/courses';
+import { generateCourseSlug } from '@/lib/course-utils';
 import Image from "next/image";
 
 export default function NewCoursePage() {

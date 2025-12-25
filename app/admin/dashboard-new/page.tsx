@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
@@ -77,7 +77,10 @@ function QuickAction({ href, label, icon, description }: QuickActionProps) {
 
 export default function DashboardNew() {
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState<Stats>({
     totalPosts: 0,
     totalSubscribers: 0,
@@ -145,7 +148,13 @@ export default function DashboardNew() {
   if (loading) {
     return (
       <div className="flex min-h-screen bg-[#0a0a0a]">
-        <AdminSidebar currentPath="/admin" />
+        <AdminSidebar
+          currentPath={pathname}
+          isCollapsed={isSidebarCollapsed}
+          isMobileOpen={isMobileMenuOpen}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
+        />
         <div className="flex-1 ml-64">
           <div className="flex items-center justify-center h-screen">
             <div className="text-white text-xl">Loading...</div>
@@ -157,7 +166,13 @@ export default function DashboardNew() {
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
-      <AdminSidebar currentPath="/admin" />
+      <AdminSidebar
+        currentPath={pathname}
+        isCollapsed={isSidebarCollapsed}
+        isMobileOpen={isMobileMenuOpen}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
+      />
 
       <div className="flex-1 ml-64">
         {/* Page Header */}
