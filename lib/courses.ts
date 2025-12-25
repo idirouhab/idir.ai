@@ -1,5 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
 import { cache } from 'react';
+import { query } from '@/lib/db';
+import { createClient } from '@supabase/supabase-js';
 
 // --- SUB-TYPES FOR JSON COURSE_DATA ---
 
@@ -129,7 +130,7 @@ export type Course = {
     cover_image: string | null;
     status: 'draft' | 'published';
     published_at: string | null;
-    course_signups: [];
+    course_signups: Array<{ count: number }>;
     view_count: number;
     created_at: string;
     updated_at: string;
@@ -162,49 +163,59 @@ export function getAdminCourseClient() {
 // --- DATA FETCHING (CACHED) ---
 
 export const getPublishedCourses = cache(async (language: 'en' | 'es') => {
-    const supabase = getCourseClient();
-    const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('status', 'published')
-        .eq('language', language)
-        .order('published_at', { ascending: false });
-
-    if (error) return [];
-    return (data || []) as Course[];
+    try {
+        const result = await query(
+            `SELECT * FROM courses
+             WHERE status = 'published' AND language = $1
+             ORDER BY published_at DESC`,
+            [language]
+        );
+        return result.rows as Course[];
+    } catch (error) {
+        console.error('Error fetching published courses:', error);
+        return [];
+    }
 });
 
 export const getAllPublishedCourses = cache(async () => {
-    const supabase = getCourseClient();
-    const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
-
-    if (error) return [];
-    return (data || []) as Course[];
+    try {
+        const result = await query(
+            `SELECT * FROM courses
+             WHERE status = 'published'
+             ORDER BY published_at DESC`
+        );
+        return result.rows as Course[];
+    } catch (error) {
+        console.error('Error fetching all published courses:', error);
+        return [];
+    }
 });
 
 export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en' | 'es') => {
-    const supabase = getCourseClient();
-    const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('slug', slug)
-        .eq('language', language)
-        .eq('status', 'published')
-        .single();
-
-    if (error) return null;
-    return data as Course;
+    try {
+        const result = await query(
+            `SELECT * FROM courses
+             WHERE slug = $1 AND language = $2 AND status = 'published'`,
+            [slug, language]
+        );
+        return result.rows.length > 0 ? result.rows[0] as Course : null;
+    } catch (error) {
+        console.error('Error fetching course by slug:', error);
+        return null;
+    }
 });
 
 // --- UTILITIES ---
 
 export async function incrementCourseViews(courseId: string) {
-    const supabase = getCourseClient();
-    await supabase.rpc('increment_course_views', { course_id: courseId });
+    try {
+        await query(
+            'UPDATE courses SET view_count = view_count + 1 WHERE id = $1',
+            [courseId]
+        );
+    } catch (error) {
+        console.error('Error incrementing course views:', error);
+    }
 }
 
 export function generateCourseSlug(title: string): string {
@@ -221,43 +232,79 @@ export function generateCourseSlug(title: string): string {
 // --- ADMIN CRUD FUNCTIONS ---
 
 export async function getAllCourses() {
-    const supabase = getAdminCourseClient();
-    //const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+    const result = await query(`
+        SELECT
+            c.*,
+            COALESCE(
+                json_agg(
+                    json_build_object('count', signup_count.count)
+                ) FILTER (WHERE signup_count.count IS NOT NULL),
+                '[]'::json
+            ) as course_signups
+        FROM courses c
+        LEFT JOIN (
+            SELECT course_id, COUNT(*)::int as count
+            FROM course_signups
+            GROUP BY course_id
+        ) signup_count ON c.id = signup_count.course_id
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+    `);
 
-    const { data, error } = await supabase
-        .from('courses')
-        .select(`
-    *,
-    course_signups(count)
-  `)
-        .order('created_at', { ascending: false });
-    if (error) throw error;
-    return (data || []) as Course[];
+    return result.rows as Course[];
 }
 
 export async function getCourseById(id: string) {
-    const supabase = getAdminCourseClient();
-    const { data, error } = await supabase.from('courses').select('*').eq('id', id).single();
-    if (error) throw error;
-    return data as Course;
+    const result = await query(
+        'SELECT * FROM courses WHERE id = $1',
+        [id]
+    );
+
+    if (result.rows.length === 0) {
+        throw new Error('Course not found');
+    }
+
+    return result.rows[0] as Course;
 }
 
 export async function createCourse(course: Partial<Course>) {
-    const supabase = getAdminCourseClient();
-    const { data, error } = await supabase.from('courses').insert([course]).select().single();
-    if (error) throw error;
-    return data as Course;
+    const fields = Object.keys(course);
+    const values = Object.values(course);
+    const placeholders = fields.map((_, i) => `$${i + 1}`).join(', ');
+    const fieldNames = fields.join(', ');
+
+    const result = await query(
+        `INSERT INTO courses (${fieldNames}) VALUES (${placeholders}) RETURNING *`,
+        values
+    );
+
+    return result.rows[0] as Course;
 }
 
 export async function updateCourse(id: string, updates: Partial<Course>) {
-    const supabase = getAdminCourseClient();
-    const { data, error } = await supabase.from('courses').update(updates).eq('id', id).select().single();
-    if (error) throw error;
-    return data as Course;
+    const fields = Object.keys(updates);
+    const values = Object.values(updates);
+    const setClause = fields.map((field, i) => `${field} = $${i + 1}`).join(', ');
+
+    const result = await query(
+        `UPDATE courses SET ${setClause}, updated_at = NOW() WHERE id = $${fields.length + 1} RETURNING *`,
+        [...values, id]
+    );
+
+    if (result.rows.length === 0) {
+        throw new Error('Course not found');
+    }
+
+    return result.rows[0] as Course;
 }
 
 export async function deleteCourse(id: string) {
-    const supabase = getAdminCourseClient();
-    const { error } = await supabase.from('courses').delete().eq('id', id);
-    if (error) throw error;
+    const result = await query(
+        'DELETE FROM courses WHERE id = $1 RETURNING id',
+        [id]
+    );
+
+    if (result.rows.length === 0) {
+        throw new Error('Course not found');
+    }
 }
