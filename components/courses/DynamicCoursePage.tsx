@@ -270,8 +270,8 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                     <p className="text-slate-400 text-xs md:text-sm leading-relaxed mb-2 md:mb-3">{instructor.bio}</p>
                                                     {(() => {
                                                         // Build array of available social links with icons
-                                                        type SocialLink = { url: string; label: string; icon: React.ReactNode };
-                                                        const socialLinks: SocialLink[] = [
+                                                        type SocialLink = { url: string; label: string; icon: React.ReactElement };
+                                                        const socialLinks = [
                                                             instructor.linkedin && {
                                                                 url: instructor.linkedin,
                                                                 label: 'LinkedIn',
