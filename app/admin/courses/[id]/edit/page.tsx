@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
-import InstructorSelector from '@/components/courses/InstructorSelector';
+import InstructorSelector, { SelectedInstructor } from '@/components/courses/InstructorSelector';
 import { generateCourseSlug } from '@/lib/course-utils';
 import Image from "next/image";
 
@@ -30,11 +30,7 @@ export default function EditCoursePage() {
 
   const [courseData, setCourseData] = useState<any>(null);
   const [initialCourseData, setInitialCourseData] = useState<any>(null);
-  const [selectedInstructors, setSelectedInstructors] = useState<Array<{
-    instructor_id: string;
-    display_order: number;
-    instructor_role: string;
-  }>>([]);
+  const [selectedInstructors, setSelectedInstructors] = useState<SelectedInstructor[]>([]);
 
   // Fetch existing course data
   useEffect(() => {
@@ -83,7 +79,7 @@ export default function EditCoursePage() {
         setSelectedInstructors(instructors.map((ci: any) => ({
           instructor_id: ci.instructor_id,
           display_order: ci.display_order,
-          instructor_role: ci.instructor_role,
+          instructor_role: ci.instructor_role as 'instructor' | 'lead_instructor' | 'teaching_assistant' | 'guest_instructor',
         })));
       } catch (err: any) {
         console.error('Error in fetchCourse:', err);

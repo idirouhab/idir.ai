@@ -14,7 +14,7 @@ type Instructor = {
     role: string;
 };
 
-type SelectedInstructor = {
+export type SelectedInstructor = {
     instructor_id: string;
     display_order: number;
     instructor_role: 'instructor' | 'lead_instructor' | 'teaching_assistant' | 'guest_instructor';

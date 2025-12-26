@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
-import InstructorSelector from '@/components/courses/InstructorSelector';
+import InstructorSelector, { SelectedInstructor } from '@/components/courses/InstructorSelector';
 import { generateCourseSlug } from '@/lib/course-utils';
 import Image from "next/image";
 
@@ -25,11 +25,7 @@ export default function NewCoursePage() {
   });
 
   const [courseData, setCourseData] = useState<any>(null);
-  const [selectedInstructors, setSelectedInstructors] = useState<Array<{
-    instructor_id: string;
-    display_order: number;
-    instructor_role: string;
-  }>>([]);
+  const [selectedInstructors, setSelectedInstructors] = useState<SelectedInstructor[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
