@@ -274,7 +274,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                             instructor.twitter && { url: instructor.twitter, label: 'X' },
                                                             instructor.youtube && { url: instructor.youtube, label: 'YouTube' },
                                                             instructor.website && { url: instructor.website, label: 'Website' },
-                                                        ].filter(Boolean).slice(0, 3); // Take first 3 available links
+                                                        ].filter((link): link is { url: string; label: string } => Boolean(link)).slice(0, 3); // Take first 3 available links
 
                                                         return socialLinks.length > 0 ? (
                                                             <div className="flex flex-wrap gap-2 md:gap-3">

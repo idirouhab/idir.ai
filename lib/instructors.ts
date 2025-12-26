@@ -88,7 +88,7 @@ export async function assignInstructorsToCourse(
 
         const params = [courseId];
         instructors.forEach(inst => {
-            params.push(inst.instructor_id, inst.display_order, inst.instructor_role);
+            params.push(inst.instructor_id, String(inst.display_order), inst.instructor_role);
         });
 
         const sql = `

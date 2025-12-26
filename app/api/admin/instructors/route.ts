@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     try {
         // Check authentication
         const authResult = await checkAuth(request);
-        if (!authResult.authenticated || !authResult.userId) {
+        if (!authResult) {
             return NextResponse.json(
                 { error: 'Unauthorized' },
                 { status: 401 }

@@ -34,7 +34,19 @@ export default async function Courses({ locale }: CoursesProps) {
           {courses.map((course) => {
             const logistics = course.course_data?.logistics;
             const pricing = course.course_data?.pricing;
-            const instructors = course.course_data?.instructors;
+            // Use relational instructors from course_instructors table
+            const instructors = course.instructors && course.instructors.length > 0
+              ? course.instructors.map(ci => ({
+                  name: `${ci.instructor.first_name} ${ci.instructor.last_name}`,
+                  title: ci.instructor.title || ci.instructor_role || ci.instructor.role,
+                  bio: ci.instructor.description || '',
+                  image: ci.instructor.picture_url,
+                  linkedin: ci.instructor.linkedin_url,
+                  twitter: ci.instructor.x_url,
+                  website: ci.instructor.website_url,
+                  youtube: ci.instructor.youtube_url,
+                }))
+              : [];
 
             return (
               <Link
@@ -94,7 +106,7 @@ export default async function Courses({ locale }: CoursesProps) {
                       <span className="truncate">{logistics.startDate}</span>
                     </div>
                   )}
-                  {instructors && instructors.length > 0 && (
+                  {instructors.length > 0 && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
                       <Users className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
                       <span className="truncate">{instructors[0].name}</span>
