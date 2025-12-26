@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Image from "next/image";
 import CourseBreadcrumbs from './CourseBreadcrumbs';
+import { LinkedInIcon, YouTubeIcon, XIcon, WebsiteIcon } from '@/components/icons/SocialIcons';
 
 type Props = {
     course: Course;
@@ -268,13 +269,30 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                     <p className="text-[#00ff88] text-xs md:text-sm font-medium mb-2 md:mb-3">{instructor.title}</p>
                                                     <p className="text-slate-400 text-xs md:text-sm leading-relaxed mb-2 md:mb-3">{instructor.bio}</p>
                                                     {(() => {
-                                                        // Build array of available social links
-                                                        const socialLinks = [
-                                                            instructor.linkedin && { url: instructor.linkedin, label: 'LinkedIn' },
-                                                            instructor.twitter && { url: instructor.twitter, label: 'X' },
-                                                            instructor.youtube && { url: instructor.youtube, label: 'YouTube' },
-                                                            instructor.website && { url: instructor.website, label: 'Website' },
-                                                        ].filter((link): link is { url: string; label: string } => Boolean(link)).slice(0, 3); // Take first 3 available links
+                                                        // Build array of available social links with icons
+                                                        type SocialLink = { url: string; label: string; icon: React.ReactNode };
+                                                        const socialLinks: SocialLink[] = [
+                                                            instructor.linkedin && {
+                                                                url: instructor.linkedin,
+                                                                label: 'LinkedIn',
+                                                                icon: <LinkedInIcon size={16} className="text-slate-500 group-hover:text-[#0077B7]" />
+                                                            },
+                                                            instructor.twitter && {
+                                                                url: instructor.twitter,
+                                                                label: 'X',
+                                                                icon: <XIcon size={16} className="text-slate-500 group-hover:text-[#76A9EA]" />
+                                                            },
+                                                            instructor.youtube && {
+                                                                url: instructor.youtube,
+                                                                label: 'YouTube',
+                                                                icon: <YouTubeIcon size={16} className="text-slate-500 group-hover:text-[#F61C0D]" />
+                                                            },
+                                                            instructor.website && {
+                                                                url: instructor.website,
+                                                                label: 'Website',
+                                                                icon: <WebsiteIcon size={16} className="text-slate-500 group-hover:text-[#00ff88]" />
+                                                            },
+                                                        ].filter((link): link is SocialLink => Boolean(link)).slice(0, 3); // Take first 3 available links
 
                                                         return socialLinks.length > 0 ? (
                                                             <div className="flex flex-wrap gap-2 md:gap-3">
@@ -284,9 +302,10 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                                         href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
-                                                                        className="text-slate-500 hover:text-[#00ff88] transition-colors text-[10px] md:text-xs"
+                                                                        className="group/social p-1.5 rounded-lg hover:bg-white/5 transition-all"
+                                                                        title={link.label}
                                                                     >
-                                                                        {link.label} →
+                                                                        {link.icon}
                                                                     </a>
                                                                 ))}
                                                             </div>
