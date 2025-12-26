@@ -36,9 +36,23 @@ export default function DynamicCoursePage({ course, locale }: Props) {
         outcomes,
         pricing,
         commitment,
-        form,
-        instructors
+        form
     } = course.course_data || {};
+
+    // Use relational instructors from course_instructors table
+    const instructors = course.instructors && course.instructors.length > 0
+        ? course.instructors.map(ci => ({
+            name: `${ci.instructor.first_name} ${ci.instructor.last_name}`,
+            // Priority: instructor's title > course-specific role > system role
+            title: ci.instructor.title || ci.instructor_role || ci.instructor.role,
+            bio: ci.instructor.description || '',
+            image: ci.instructor.picture_url,
+            linkedin: ci.instructor.linkedin_url,
+            twitter: ci.instructor.x_url,
+            website: ci.instructor.website_url,
+            youtube: ci.instructor.youtube_url,
+        }))
+        : [];
 
     const initialFormData = form?.fields
         ? form.fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {} as Record<string, string>)
@@ -253,40 +267,31 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                     <h3 className="text-lg md:text-xl font-bold text-white mb-1">{instructor.name}</h3>
                                                     <p className="text-[#00ff88] text-xs md:text-sm font-medium mb-2 md:mb-3">{instructor.title}</p>
                                                     <p className="text-slate-400 text-xs md:text-sm leading-relaxed mb-2 md:mb-3">{instructor.bio}</p>
-                                                    {(instructor.linkedin || instructor.twitter || instructor.website) && (
-                                                        <div className="flex flex-wrap gap-2 md:gap-3">
-                                                            {instructor.linkedin && (
-                                                                <a
-                                                                    href={instructor.linkedin.startsWith('http') ? instructor.linkedin : `https://${instructor.linkedin}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-slate-500 hover:text-[#00ff88] transition-colors text-[10px] md:text-xs"
-                                                                >
-                                                                    LinkedIn →
-                                                                </a>
-                                                            )}
-                                                            {instructor.twitter && (
-                                                                <a
-                                                                    href={instructor.twitter.startsWith('http') ? instructor.twitter : `https://${instructor.twitter}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-slate-500 hover:text-[#00ff88] transition-colors text-[10px] md:text-xs"
-                                                                >
-                                                                    Twitter/X →
-                                                                </a>
-                                                            )}
-                                                            {instructor.website && (
-                                                                <a
-                                                                    href={instructor.website.startsWith('http') ? instructor.website : `https://${instructor.website}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-slate-500 hover:text-[#00ff88] transition-colors text-[10px] md:text-xs"
-                                                                >
-                                                                    Website →
-                                                                </a>
-                                                            )}
-                                                        </div>
-                                                    )}
+                                                    {(() => {
+                                                        // Build array of available social links
+                                                        const socialLinks = [
+                                                            instructor.linkedin && { url: instructor.linkedin, label: 'LinkedIn' },
+                                                            instructor.twitter && { url: instructor.twitter, label: 'X' },
+                                                            instructor.youtube && { url: instructor.youtube, label: 'YouTube' },
+                                                            instructor.website && { url: instructor.website, label: 'Website' },
+                                                        ].filter(Boolean).slice(0, 3); // Take first 3 available links
+
+                                                        return socialLinks.length > 0 ? (
+                                                            <div className="flex flex-wrap gap-2 md:gap-3">
+                                                                {socialLinks.map((link, idx) => (
+                                                                    <a
+                                                                        key={idx}
+                                                                        href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-slate-500 hover:text-[#00ff88] transition-colors text-[10px] md:text-xs"
+                                                                    >
+                                                                        {link.label} →
+                                                                    </a>
+                                                                ))}
+                                                            </div>
+                                                        ) : null;
+                                                    })()}
                                                 </div>
                                             </div>
                                         </div>
@@ -640,13 +645,22 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                             })
                         },
                         ...(instructors && instructors.length > 0 && {
-                            instructor: instructors.map((instructor: any) => ({
-                                "@type": "Person",
-                                name: instructor.name,
-                                ...(instructor.bio && { description: instructor.bio }),
-                                ...(instructor.title && { jobTitle: instructor.title }),
-                                ...(instructor.linkedin && { sameAs: [instructor.linkedin] })
-                            }))
+                            instructor: instructors.map((instructor: any) => {
+                                const socialLinks = [
+                                    instructor.linkedin,
+                                    instructor.twitter,
+                                    instructor.youtube,
+                                    instructor.website
+                                ].filter(Boolean);
+
+                                return {
+                                    "@type": "Person",
+                                    name: instructor.name,
+                                    ...(instructor.bio && { description: instructor.bio }),
+                                    ...(instructor.title && { jobTitle: instructor.title }),
+                                    ...(socialLinks.length > 0 && { sameAs: socialLinks })
+                                };
+                            })
                         }),
                         ...(course.cover_image && {
                             image: course.cover_image,

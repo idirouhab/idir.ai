@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllCourses, createCourse } from '@/lib/courses';
 import { checkAuth } from '@/lib/auth';
+import { assignInstructorsToCourse } from '@/lib/instructors';
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +29,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const course = await createCourse(body);
+    const { instructors, ...courseData } = body;
+
+    // Create the course first
+    const course = await createCourse(courseData);
+
+    // Then assign instructors if provided
+    if (instructors && Array.isArray(instructors) && instructors.length > 0) {
+      await assignInstructorsToCourse(course.id, instructors);
+    }
 
     return NextResponse.json({ course }, { status: 201 });
   } catch (error: any) {

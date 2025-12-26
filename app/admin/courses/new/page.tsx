@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
+import InstructorSelector from '@/components/courses/InstructorSelector';
 import { generateCourseSlug } from '@/lib/course-utils';
 import Image from "next/image";
 
@@ -24,6 +25,11 @@ export default function NewCoursePage() {
   });
 
   const [courseData, setCourseData] = useState<any>(null);
+  const [selectedInstructors, setSelectedInstructors] = useState<Array<{
+    instructor_id: string;
+    display_order: number;
+    instructor_role: string;
+  }>>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +57,7 @@ export default function NewCoursePage() {
           ...formData,
           course_data: finalCourseData,
           published_at: formData.status === 'published' ? new Date().toISOString() : null,
+          instructors: selectedInstructors,
         }),
       });
 
@@ -244,6 +251,18 @@ export default function NewCoursePage() {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Instructors */}
+          <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Instructors</h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Select instructors for this course. You can assign multiple instructors and set their roles.
+            </p>
+            <InstructorSelector
+              selectedInstructors={selectedInstructors}
+              onChange={setSelectedInstructors}
+            />
           </div>
 
           {/* Course Builder */}

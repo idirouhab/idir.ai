@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 import CourseBuilder from '@/components/courses/CourseBuilder';
+import InstructorSelector from '@/components/courses/InstructorSelector';
 import { generateCourseSlug } from '@/lib/course-utils';
 import Image from "next/image";
 
@@ -29,6 +30,11 @@ export default function EditCoursePage() {
 
   const [courseData, setCourseData] = useState<any>(null);
   const [initialCourseData, setInitialCourseData] = useState<any>(null);
+  const [selectedInstructors, setSelectedInstructors] = useState<Array<{
+    instructor_id: string;
+    display_order: number;
+    instructor_role: string;
+  }>>([]);
 
   // Fetch existing course data
   useEffect(() => {
@@ -43,6 +49,7 @@ export default function EditCoursePage() {
         const data = await response.json();
         console.log('Fetched course data:', data);
         const course = data.course;
+        const instructors = data.instructors || [];
 
         if (!course) {
           throw new Error('Course data is empty');
@@ -71,6 +78,13 @@ export default function EditCoursePage() {
 
         setInitialCourseData(courseDataWithSyncedTitle);
         setCourseData(courseDataWithSyncedTitle);
+
+        // Set instructors
+        setSelectedInstructors(instructors.map((ci: any) => ({
+          instructor_id: ci.instructor_id,
+          display_order: ci.display_order,
+          instructor_role: ci.instructor_role,
+        })));
       } catch (err: any) {
         console.error('Error in fetchCourse:', err);
         setError(err.message);
@@ -108,6 +122,7 @@ export default function EditCoursePage() {
           ...formData,
           course_data: finalCourseData,
           published_at: formData.status === 'published' ? new Date().toISOString() : null,
+          instructors: selectedInstructors,
         }),
       });
 
@@ -332,6 +347,18 @@ export default function EditCoursePage() {
                 />
               </div>
             </div>
+          </div>
+
+          {/* Instructors */}
+          <div className="bg-gray-800/50 rounded-xl border border-gray-700 p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Instructors</h2>
+            <p className="text-sm text-gray-400 mb-6">
+              Select instructors for this course. You can assign multiple instructors and set their roles.
+            </p>
+            <InstructorSelector
+              selectedInstructors={selectedInstructors}
+              onChange={setSelectedInstructors}
+            />
           </div>
 
           {/* Course Builder */}

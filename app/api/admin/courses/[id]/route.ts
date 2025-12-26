@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCourseById, updateCourse, deleteCourse } from '@/lib/courses';
 import { checkAuth } from '@/lib/auth';
+import { assignInstructorsToCourse, getCourseInstructors } from '@/lib/instructors';
 
 export async function GET(
   request: NextRequest,
@@ -14,8 +15,9 @@ export async function GET(
 
     const { id } = await params;
     const course = await getCourseById(id);
+    const instructors = await getCourseInstructors(id);
 
-    return NextResponse.json({ course }, { status: 200 });
+    return NextResponse.json({ course, instructors }, { status: 200 });
   } catch (error: any) {
     console.error('Error fetching course:', error);
     return NextResponse.json(
@@ -37,7 +39,17 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const course = await updateCourse(id, body);
+    const { instructors, ...courseData } = body;
+
+    // Update the course
+    const course = await updateCourse(id, courseData);
+
+    // Update instructors if provided
+    if (instructors !== undefined) {
+      if (Array.isArray(instructors)) {
+        await assignInstructorsToCourse(id, instructors);
+      }
+    }
 
     return NextResponse.json({ course }, { status: 200 });
   } catch (error: any) {
