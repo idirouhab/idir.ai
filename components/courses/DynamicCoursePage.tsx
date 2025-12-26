@@ -275,22 +275,22 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                             instructor.linkedin && {
                                                                 url: instructor.linkedin,
                                                                 label: 'LinkedIn',
-                                                                icon: <LinkedInIcon size={16} className="text-slate-500 group-hover:text-[#0077B7]" />
+                                                                icon: <LinkedInIcon size={20} />
                                                             },
                                                             instructor.twitter && {
                                                                 url: instructor.twitter,
                                                                 label: 'X',
-                                                                icon: <XIcon size={16} className="text-slate-500 group-hover:text-[#76A9EA]" />
+                                                                icon: <XIcon size={20} />
                                                             },
                                                             instructor.youtube && {
                                                                 url: instructor.youtube,
                                                                 label: 'YouTube',
-                                                                icon: <YouTubeIcon size={16} className="text-slate-500 group-hover:text-[#F61C0D]" />
+                                                                icon: <YouTubeIcon size={20} />
                                                             },
                                                             instructor.website && {
                                                                 url: instructor.website,
                                                                 label: 'Website',
-                                                                icon: <WebsiteIcon size={16} className="text-slate-500 group-hover:text-[#00ff88]" />
+                                                                icon: <WebsiteIcon size={20} />
                                                             },
                                                         ].filter((link): link is SocialLink => Boolean(link)).slice(0, 3); // Take first 3 available links
 
@@ -302,7 +302,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                                         href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
-                                                                        className="group/social p-1.5 rounded-lg hover:bg-white/5 transition-all"
+                                                                        className="p-1.5 rounded-lg hover:bg-white/5 transition-all hover:scale-110"
                                                                         title={link.label}
                                                                     >
                                                                         {link.icon}
