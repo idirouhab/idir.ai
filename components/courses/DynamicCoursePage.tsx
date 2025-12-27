@@ -11,11 +11,151 @@ import {
     Globe,
     ShieldCheck,
     Clock,
-    ArrowLeft
+    ArrowLeft,
+    Award,
+    Briefcase,
+    BookOpen,
+    Target,
+    Zap,
+    Heart,
+    Star,
+    TrendingUp,
+    Lightbulb,
+    Rocket,
+    Code,
+    GraduationCap,
+    Coffee,
+    Trophy,
+    Sparkles,
+    Brain,
+    MessageSquare,
+    Lock,
+    Unlock,
+    FileText,
+    Video,
+    Headphones,
+    Smile,
+    ThumbsUp,
+    Download,
+    Upload,
+    Database,
+    Server,
+    Wifi,
+    Settings,
+    Wrench,
+    Palette,
+    Camera,
+    Music,
+    Film,
+    Monitor,
+    Smartphone,
+    Tablet,
+    Watch,
+    Cpu,
+    HardDrive,
+    Network,
+    Share2,
+    Send,
+    Mail,
+    Phone,
+    MapPin,
+    Home,
+    Building,
+    Store,
+    ShoppingCart,
+    CreditCard,
+    DollarSign,
+    TrendingDown,
+    BarChart,
+    PieChart,
+    Activity,
+    AlertCircle,
+    Info,
+    HelpCircle,
+    LucideIcon
 } from 'lucide-react';
 import Image from "next/image";
 import CourseBreadcrumbs from './CourseBreadcrumbs';
 import { LinkedInIcon, YouTubeIcon, XIcon, WebsiteIcon } from '@/components/icons/SocialIcons';
+
+// Map of icon names to lucide-react components
+const iconMap: Record<string, LucideIcon> = {
+    CheckCircle,
+    Users,
+    Calendar,
+    Globe,
+    ShieldCheck,
+    Clock,
+    Award,
+    Briefcase,
+    BookOpen,
+    Target,
+    Zap,
+    Heart,
+    Star,
+    TrendingUp,
+    Lightbulb,
+    Rocket,
+    Code,
+    GraduationCap,
+    Coffee,
+    Trophy,
+    Sparkles,
+    Brain,
+    MessageSquare,
+    Lock,
+    Unlock,
+    FileText,
+    Video,
+    Headphones,
+    Smile,
+    ThumbsUp,
+    Download,
+    Upload,
+    Database,
+    Server,
+    Wifi,
+    Settings,
+    Wrench,
+    Palette,
+    Camera,
+    Music,
+    Film,
+    Monitor,
+    Smartphone,
+    Tablet,
+    Watch,
+    Cpu,
+    HardDrive,
+    Network,
+    Share2,
+    Send,
+    Mail,
+    Phone,
+    MapPin,
+    Home,
+    Building,
+    Store,
+    ShoppingCart,
+    CreditCard,
+    DollarSign,
+    TrendingDown,
+    BarChart,
+    PieChart,
+    Activity,
+    AlertCircle,
+    Info,
+    HelpCircle,
+};
+
+// Helper component to render icon from string name
+const DynamicIcon = ({ iconName, className = "w-8 h-8" }: { iconName: string; className?: string }) => {
+    const Icon = iconMap[iconName];
+    if (!Icon) {
+        return <span className="text-2xl md:text-3xl">{iconName}</span>; // Fallback to emoji if not found
+    }
+    return <Icon className={className} />;
+};
 
 type Props = {
     course: Course;
@@ -215,7 +355,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                             <section className="grid sm:grid-cols-2 gap-6 md:gap-8">
                                 {benefits.map((benefit, index) => (
                                     <div key={index} className="space-y-3 md:space-y-4">
-                                        <div className="text-2xl md:text-3xl">{benefit.icon}</div>
+                                        <DynamicIcon iconName={benefit.icon} className="w-8 h-8 md:w-10 md:h-10 text-[#00ff88]" />
                                         <h3 className="text-lg md:text-xl font-bold text-white">{benefit.title}</h3>
                                         <p className="text-sm md:text-base text-slate-400 leading-relaxed">{benefit.description}</p>
                                     </div>
