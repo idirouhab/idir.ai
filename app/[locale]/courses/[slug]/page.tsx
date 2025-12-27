@@ -1,5 +1,5 @@
-import { getPublishedCourseBySlug, incrementCourseViews } from '@/lib/courses';
-import { notFound, redirect } from 'next/navigation';
+import { getPublishedCourseBySlugOnly, incrementCourseViews } from '@/lib/courses';
+import { notFound } from 'next/navigation';
 import DynamicCoursePage from '@/components/courses/DynamicCoursePage';
 
 // Enable ISR - regenerate every 60 seconds
@@ -16,16 +16,11 @@ export default async function CoursePage({
   const { locale, slug } = await params;
 
   try {
-    const course = await getPublishedCourseBySlug(slug, locale);
+    // Fetch course by slug only, ignoring locale to allow cross-language access
+    const course = await getPublishedCourseBySlugOnly(slug);
 
     if (!course) {
       notFound();
-    }
-
-    // Redirect if course language doesn't match the URL locale
-    // This handles cases where someone types the URL directly or follows an old link
-    if (course.language !== locale) {
-      redirect(`/${course.language}/courses/${course.slug}`);
     }
 
     // Increment view count (fire and forget)
@@ -67,7 +62,7 @@ export async function generateMetadata({
 }) {
   const { locale, slug } = await params;
 
-  const course = await getPublishedCourseBySlug(slug, locale);
+  const course = await getPublishedCourseBySlugOnly(slug);
 
   if (!course) {
     return {

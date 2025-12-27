@@ -276,6 +276,51 @@ export const getAllPublishedCourses = cache(async () => {
     }
 });
 
+// Fetch course by slug only (ignoring language) - used when showing courses across locales
+export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
+    try {
+        const result = await query(
+            `SELECT
+                c.*,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'instructor_id', ci.instructor_id,
+                            'display_order', ci.display_order,
+                            'instructor_role', ci.instructor_role,
+                            'instructor', json_build_object(
+                                'id', i.id,
+                                'email', i.email,
+                                'first_name', i.first_name,
+                                'last_name', i.last_name,
+                                'title', i.title,
+                                'description', i.description,
+                                'picture_url', i.picture_url,
+                                'linkedin_url', i.linkedin_url,
+                                'website_url', i.website_url,
+                                'x_url', i.x_url,
+                                'youtube_url', i.youtube_url,
+                                'role', i.role
+                            )
+                        )
+                        ORDER BY ci.display_order
+                    ) FILTER (WHERE ci.id IS NOT NULL),
+                    '[]'::json
+                ) as instructors
+             FROM courses c
+             LEFT JOIN course_instructors ci ON c.id = ci.course_id
+             LEFT JOIN instructors i ON ci.instructor_id = i.id
+             WHERE c.slug = $1 AND c.status = 'published'
+             GROUP BY c.id`,
+            [slug]
+        );
+        return result.rows.length > 0 ? result.rows[0] as Course : null;
+    } catch (error) {
+        console.error('Error fetching course by slug:', error);
+        return null;
+    }
+});
+
 export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en' | 'es') => {
     try {
         const result = await query(

@@ -22,22 +22,11 @@ type Props = {
 export default function CoursesWithFilter({ courses, locale, translations }: Props) {
   const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'en' | 'es'>('all');
 
-  // Smart filtering: English speakers see only English, Spanish speakers see both
-  const getAvailableCourses = () => {
-    if (locale === 'en') {
-      // English speakers: only show English courses
-      return courses.filter(course => course.language === 'en');
-    }
-    // Spanish speakers: show both Spanish and English courses
-    return courses;
-  };
-
-  const availableCourses = getAvailableCourses();
-
+  // Show all courses regardless of locale
   // Filter courses based on selected language
   const filteredCourses = selectedLanguage === 'all'
-    ? availableCourses
-    : availableCourses.filter(course => course.language === selectedLanguage);
+    ? courses
+    : courses.filter(course => course.language === selectedLanguage);
 
   return (
     <>
@@ -107,7 +96,7 @@ export default function CoursesWithFilter({ courses, locale, translations }: Pro
             return (
               <Link
                 key={course.id}
-                href={`/${course.language}/courses/${course.slug}`}
+                href={`/${locale}/courses/${course.slug}`}
                 className="group relative bg-gradient-to-br from-gray-900/50 to-gray-950/50 border border-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:-translate-y-1"
               >
                 {/* Course Image/Cover - Desktop only */}
