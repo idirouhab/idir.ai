@@ -9,8 +9,13 @@ type CoursesProps = {
 };
 
 export default async function Courses({ locale }: CoursesProps) {
-  const courses = await getAllPublishedCourses();
+  const allCourses = await getAllPublishedCourses();
   const t = await getTranslations({ locale, namespace: 'courses' });
+
+  // Smart filtering: English speakers see only English, Spanish speakers see both
+  const courses = locale === 'en'
+    ? allCourses.filter(course => course.language === 'en')
+    : allCourses;
 
   if (courses.length === 0) {
     return null; // Don't show section if no courses
@@ -51,7 +56,7 @@ export default async function Courses({ locale }: CoursesProps) {
             return (
               <Link
                 key={course.id}
-                href={`/${locale}/courses/${course.slug}`}
+                href={`/${course.language}/courses/${course.slug}`}
                 className="group relative bg-gradient-to-br from-gray-900/50 to-gray-950/50 border border-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:-translate-y-1"
               >
                 {/* Course Image/Cover - Desktop only */}

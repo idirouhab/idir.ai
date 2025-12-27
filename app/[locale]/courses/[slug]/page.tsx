@@ -1,5 +1,5 @@
 import { getPublishedCourseBySlug, incrementCourseViews } from '@/lib/courses';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import DynamicCoursePage from '@/components/courses/DynamicCoursePage';
 
 // Enable ISR - regenerate every 60 seconds
@@ -20,6 +20,12 @@ export default async function CoursePage({
 
     if (!course) {
       notFound();
+    }
+
+    // Redirect if course language doesn't match the URL locale
+    // This handles cases where someone types the URL directly or follows an old link
+    if (course.language !== locale) {
+      redirect(`/${course.language}/courses/${course.slug}`);
     }
 
     // Increment view count (fire and forget)
