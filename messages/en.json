@@ -1,7 +1,7 @@
 {
   "nav": {
     "about": "ABOUT",
-    "speaking": "SPEAKING",
+    "services": "SERVICES",
     "podcast": "PODCAST",
     "blog": "BLOG",
     "newsletter": "NEWSLETTER",
@@ -104,6 +104,23 @@
       "description": "Looking for a speaker on AI, automation, or developer tools?",
       "button": "Let's Talk →"
     }
+  },
+  "services": {
+    "title": "Services",
+    "description": "I help teams and organizations unlock the power of automation and AI through hands-on enablement, training, and speaking engagements.",
+    "enablement": {
+      "title": "Team Enablement",
+      "description": "Custom workflow implementation, best practices for scaling, and ongoing architecture guidance"
+    },
+    "training": {
+      "title": "Training & Workshops",
+      "description": "Hands-on training sessions on automation, AI, and n8n tailored to your team's needs"
+    },
+    "talks": {
+      "title": "Speaking & Keynotes",
+      "description": "Technical talks on AI integration, LLMs, and workflow automation for conferences and events"
+    },
+    "cta": "Get in Touch"
   },
   "podcast": {
     "label": "Podcast en Español",

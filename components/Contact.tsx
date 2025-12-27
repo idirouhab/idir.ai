@@ -82,46 +82,37 @@ export default function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ background: '#0a0a0a' }} aria-labelledby="contact-heading">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <header className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="h-1 w-12 bg-[#10b981]" aria-hidden="true"></div>
-            <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm sm:text-base">{t('label')}</span>
-            <div className="h-1 w-12 bg-[#10b981]" aria-hidden="true"></div>
-          </div>
-
-          <h2 id="contact-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4">
-            {t('title1')}
-            <br />
-            <span className="gradient-text">{t('title2')}</span>
+    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: '#0a0a0a' }} aria-labelledby="contact-heading">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8">
+          <h2 id="contact-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+            {t('title1')} <span className="text-[#10b981]">{t('title2')}</span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-[#d1d5db] max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-[#d1d5db]">
             {t('description')}
           </p>
         </header>
 
-        <div className="grid lg:grid-cols-2 gap-12 mb-20">
-          {/* Contact Form with template styling */}
-          <section className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg p-8" aria-labelledby="contact-form-heading">
-            <h3 id="contact-form-heading" className="text-xl sm:text-2xl font-bold text-white mb-6 uppercase">{t('form.title')}</h3>
+        <div className="mb-12">
+          {/* Contact Form */}
+          <div className="bg-[#111827] rounded-lg p-6 sm:p-8"  aria-labelledby="contact-form-heading">
 
             {status === 'success' && (
-              <div className="mb-6 p-4 border border-[#10b981] border-l-[3px] border-l-[#10b981] bg-[#10b981]/10 text-[#10b981] rounded" role="alert" aria-live="polite">
+              <div className="mb-6 p-4 bg-[#10b981]/10 text-[#10b981] rounded" role="alert" aria-live="polite">
                 {t('form.success')}
               </div>
             )}
 
             {status === 'error' && (
-              <div className="mb-6 p-4 border border-[#ef4444] border-l-[3px] border-l-[#ef4444] bg-[#ef4444]/10 text-[#ef4444] rounded" role="alert" aria-live="assertive">
+              <div className="mb-6 p-4 bg-[#ef4444]/10 text-[#ef4444] rounded" role="alert" aria-live="assertive">
                 {t('form.error')}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6" aria-describedby="contact-form-heading">
+            <form onSubmit={handleSubmit} className="space-y-4" aria-describedby="contact-form-heading">
               <div>
-                <label htmlFor="name" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
+                <label htmlFor="name" className="block text-white font-medium mb-2 text-sm">
                   {t('form.name')}
                 </label>
                 <input
@@ -138,7 +129,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
+                <label htmlFor="email" className="block text-white font-medium mb-2 text-sm">
                   {t('form.email')}
                 </label>
                 <input
@@ -155,14 +146,14 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-white font-bold mb-2 uppercase text-sm sm:text-base">
+                <label htmlFor="message" className="block text-white font-medium mb-2 text-sm">
                   {t('form.message')}
                 </label>
                 <textarea
                   id="message"
                   name="message"
                   required
-                  rows={6}
+                  rows={5}
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                   placeholder={t('form.messagePlaceholder')}
@@ -174,38 +165,13 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="w-full px-8 py-4 bg-[#10b981] text-black font-bold uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                className="w-full px-6 py-3 bg-[#10b981] text-black font-bold rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-busy={status === 'sending'}
               >
                 {status === 'sending' ? t('form.sending') : t('form.submit')}
               </button>
             </form>
-          </section>
-
-          {/* Social Links Grid with template styling */}
-          <nav aria-label="Social media links">
-            <div className="grid grid-cols-2 gap-6" role="list">
-              {socialLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.href}
-                  target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  aria-label={`Connect with Idir on ${link.name}`}
-                  className="group relative p-6 sm:p-8 bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg transition-all duration-300 hover:bg-[#1f2937]"
-                  role="listitem"
-                  onClick={() => trackSocialLink(link.name)}
-                >
-                  <div className="mb-4 text-[#10b981] group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
-                    {link.svg}
-                  </div>
-                  <div className="font-bold text-lg sm:text-xl text-white uppercase tracking-tight">
-                    {link.name}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </nav>
+          </div>
         </div>
       </div>
     </section>

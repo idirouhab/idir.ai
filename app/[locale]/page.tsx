@@ -1,6 +1,5 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import Transition from "@/components/Transition";
 import {getTranslations} from 'next-intl/server';
 import dynamic from 'next/dynamic';
 
@@ -10,7 +9,7 @@ const About = dynamic(() => import('@/components/About'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
-const Speaking = dynamic(() => import('@/components/Speaking'), {
+const Services = dynamic(() => import('@/components/Services'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
@@ -72,15 +71,10 @@ export default async function Home({ params }: Props) {
       <Navigation />
       <main id="main-content" role="main">
         <Hero />
-        <Transition textKey="aboutIntro" />
         <About />
-        <Transition textKey="speakingIntro" />
-        <Speaking />
-        <Transition textKey="coursesIntro" />
+        <Services />
         <Courses locale={locale as 'en' | 'es'} />
-        <Transition textKey="podcastIntro" />
         <Podcast />
-        <Transition textKey="contactIntro" />
         <Contact />
       </main>
       <Footer />

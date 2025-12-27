@@ -64,7 +64,7 @@ export default function Navigation() {
         setScrolled(window.scrollY > 20);
 
         // Scroll-spy: detect which section is in view
-        const sections = ["about", "speaking", "podcast", "contact"];
+        const sections = ["about", "services", "podcast", "contact"];
         const scrollPosition = window.scrollY + 100; // offset for navbar
 
         for (const section of sections) {
@@ -94,7 +94,7 @@ export default function Navigation() {
 
   const navItems = [
     { href: `/${locale}/#about`, label: t('about'), id: "about" },
-    { href: `/${locale}/#speaking`, label: t('speaking'), id: "speaking" },
+    { href: `/${locale}/#services`, label: t('services'), id: "services" },
     { href: `/${locale}/#podcast`, label: t('podcast'), id: "podcast" },
     { href: `/${locale}/blog`, label: t('blog'), id: "blog", isExternal: true },
     { href: `/${locale}/subscribe`, label: t('newsletter'), id: "newsletter", isExternal: true },

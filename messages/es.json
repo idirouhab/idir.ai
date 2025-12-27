@@ -1,7 +1,7 @@
 {
   "nav": {
     "about": "SOBRE MÍ",
-    "speaking": "CHARLAS",
+    "services": "SERVICIOS",
     "podcast": "PODCAST",
     "blog": "BLOG",
     "newsletter": "NEWSLETTER",
@@ -104,6 +104,23 @@
       "description": "¿Buscas un ponente sobre IA, automatización o herramientas de desarrollo?",
       "button": "Hablemos →"
     }
+  },
+  "services": {
+    "title": "Servicios",
+    "description": "Ayudo a equipos y organizaciones a aprovechar el poder de la automatización e IA a través de capacitación práctica, formación y ponencias.",
+    "enablement": {
+      "title": "Capacitación de Equipos",
+      "description": "Implementación personalizada de workflows, mejores prácticas y guía de arquitectura continua"
+    },
+    "training": {
+      "title": "Formación y Talleres",
+      "description": "Sesiones prácticas sobre automatización, IA y n8n adaptadas a las necesidades de tu equipo"
+    },
+    "talks": {
+      "title": "Ponencias y Keynotes",
+      "description": "Charlas técnicas sobre integración de IA, LLMs y automatización para conferencias y eventos"
+    },
+    "cta": "Contáctame"
   },
   "podcast": {
     "label": "Podcast en Español",

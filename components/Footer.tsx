@@ -11,7 +11,7 @@ export default function Footer() {
   const links = {
     navigation: [
       { label: nav('about'), href: "#about" },
-      { label: nav('speaking'), href: "#speaking" },
+      { label: nav('services'), href: "#services" },
       { label: nav('podcast'), href: "#podcast" },
       { label: nav('contact'), href: "#contact" },
     ],
