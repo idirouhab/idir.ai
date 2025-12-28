@@ -11,12 +11,16 @@
   "hero": {
     "name": "IDIR",
     "lastName": "OUHAB MESKINE",
-    "role": "Solutions Engineer at n8n",
+    "role": "Senior Solutions Engineer at n8n",
     "headline": "I Turn Chaos Into Workflows",
     "subheadline": "Helping teams automate the boring stuff so they can focus on building what actually matters",
     "cta": "LET'S TALK",
     "ctaSecondary": "SEE MY TALKS",
     "ctaNewsletter": "AI NEWS DAILY"
+  },
+  "trustedExperience": {
+    "title": "Trusted Experience",
+    "subtitle": "Building solutions with industry leaders"
   },
   "transitions": {
     "aboutIntro": "Here's the deal →",
@@ -120,6 +124,10 @@
       "title": "Speaking & Keynotes",
       "description": "Technical talks on AI integration, LLMs, and workflow automation for conferences and events"
     },
+    "aiops": {
+      "title": "Technical AI-Ops & Infrastructure",
+      "description": "Building scalable automation infrastructure with GitLab CI/CD, deploying AI agents, and managing complex workflow systems in production environments. Expertise from enterprise DevOps to cloud-native architectures."
+    },
     "cta": "Get in Touch"
   },
   "podcast": {
@@ -163,7 +171,7 @@
     }
   },
   "footer": {
-    "descriptionStart": "Solutions Engineer at ",
+    "descriptionStart": "Senior Solutions Engineer at ",
     "descriptionN8n": "n8n",
     "descriptionMiddle": ". Speaker on AI and automation. Host of ",
     "descriptionPodcast": "Prompt&Play",
@@ -179,16 +187,16 @@
     "builtTailwind": "Tailwind"
   },
   "metadata": {
-    "title": "Idir Ouhab Meskine | Solutions Engineer at n8n | AI & Automation Speaker",
-    "description": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
-    "ogTitle": "Idir Ouhab Meskine | Solutions Engineer at n8n",
-    "ogDescription": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
-    "twitterTitle": "Idir Ouhab Meskine | Solutions Engineer at n8n",
-    "twitterDescription": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish."
+    "title": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n | AI & Automation Speaker",
+    "description": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "ogTitle": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n",
+    "ogDescription": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "twitterTitle": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n",
+    "twitterDescription": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish."
   },
   "structuredData": {
-    "jobTitle": "Solutions Engineer",
-    "description": "Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
+    "jobTitle": "Senior Solutions Engineer",
+    "description": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
     "knowsAbout": ["Artificial Intelligence", "Automation", "Workflow Automation", "Machine Learning", "Software Engineering", "Developer Tools"],
     "podcastDescription": "A Spanish-language podcast exploring the intersection of AI, automation, and technology.",
     "podcastGenre": ["Technology", "Artificial Intelligence", "Automation"]
@@ -298,6 +306,7 @@
     "relatedPosts": "Related Posts",
     "backToBlog": "← Back to Blog",
     "noPosts": "No posts yet. Check back soon!",
+    "tldr": "TL;DR - Key Takeaways",
     "categories": {
       "insights": "Insights",
       "learnings": "Learnings",
@@ -411,6 +420,7 @@
   "courses": {
     "title": "Courses",
     "subtitle": "Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.",
+    "officialInstructor": "Official n8n Course Instructor at Platzi",
     "free": "Free",
     "viewCourse": "View Course",
     "viewAll": "View All Courses",
@@ -640,6 +650,45 @@
       "footer": {
         "tagline": "Autonomous Education Systems"
       }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Frequently Asked Questions | Idir Ouhab Meskine",
+      "description": "Common questions about automation services, n8n expertise, training, speaking engagements, and Prompt&Play podcast."
+    },
+    "title": "Frequently Asked Questions",
+    "subtitle": "Common questions about automation, services, and speaking engagements",
+    "questions": [
+      {
+        "question": "What automation services do you offer?",
+        "answer": "I offer three main services:\n\n1. Team Enablement - Custom workflow implementation, best practices for scaling, and ongoing architecture guidance to help teams cut manual work by 70%+.\n\n2. Training & Workshops - Hands-on training sessions on automation, AI, and n8n tailored to your team's needs.\n\n3. Technical AI-Ops & Infrastructure - Building scalable automation infrastructure with GitLab CI/CD, deploying AI agents, and managing complex workflow systems in production environments.\n\nAll services are customized to your specific needs and can be delivered remotely or on-site."
+      },
+      {
+        "question": "What is your experience with n8n?",
+        "answer": "I'm a Senior Solutions Engineer at n8n, where I help teams implement workflow automation at scale. I've shipped 500+ automation workflows and work directly with enterprise clients to design and deploy production-ready automation systems.\n\nI'm also the Official n8n Course Instructor at Platzi, teaching thousands of students about n8n fundamentals, AI integration, and advanced automation patterns.\n\nMy expertise covers everything from basic workflow design to complex AI agent orchestration and production deployment strategies."
+      },
+      {
+        "question": "Do you provide training and workshops?",
+        "answer": "Yes! I offer hands-on training sessions tailored to your team's needs. Training topics include:\n\n• n8n fundamentals and best practices\n• Workflow automation patterns\n• AI integration strategies\n• Production deployment and scaling\n• Custom automation development\n• Team enablement and adoption strategies\n\nWorkshops can be delivered remotely or on-site, and are customized based on your team's skill level and specific use cases. Sessions typically range from half-day introductions to multi-day deep dives."
+      },
+      {
+        "question": "What industries do you work with?",
+        "answer": "I work with teams across various industries including:\n\n• Technology startups and scale-ups\n• Enterprise software companies\n• DevOps and engineering teams\n• Education and training organizations\n• Marketing and operations teams\n\nThe beauty of workflow automation is that it applies universally. Whether you're drowning in spreadsheets or managing 50 disconnected tools, I help build systems that just work.\n\nMy background at GitLab and n8n gives me deep expertise in DevOps, CI/CD, and technical infrastructure that translates across industries."
+      },
+      {
+        "question": "How can I book you for a speaking engagement?",
+        "answer": "I'm available for technical talks, keynotes, and conference presentations on topics including:\n\n• AI integration and LLM implementation\n• Workflow automation and n8n\n• DevOps and GitLab CI/CD\n• Future of work and automation trends\n• AI agent development and orchestration\n\nI've spoken at 5+ major tech conferences and love sharing practical insights that teams can implement immediately.\n\nTo book a speaking engagement, contact me at contact@idir.ai with details about your event, audience, and preferred topics. I'm happy to discuss custom presentations tailored to your audience."
+      },
+      {
+        "question": "What is Prompt&Play podcast about?",
+        "answer": "Prompt&Play is a Spanish-language podcast exploring AI prompts, automation workflows, and the future of technology.\n\nWeekly episodes feature:\n• AI prompt engineering techniques\n• Workflow automation best practices\n• n8n tips and tutorials\n• Technology trends and insights\n• Conversations about emerging tech\n\nThe podcast reaches developers in 12+ countries and is available on Spotify and major podcast platforms. It's designed for Spanish-speaking tech professionals who want to stay current on AI and automation trends.\n\nYou can listen at idir.ai/podcast or find it on your favorite podcast app."
+      }
+    ],
+    "cta": {
+      "title": "Still have questions?",
+      "description": "Get in touch and I'll be happy to help.",
+      "button": "Contact Me"
     }
   }
 }

@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     metadataBase: new URL(baseUrl),
     title: "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
-    description: "Sharing AI automation insights & workflows. Solutions Engineer @n8n | Teaching 10K+ students | Speaking at major tech conferences | Host of Prompt&Play podcast 🎙️",
+    description: "Sharing AI automation insights & workflows. Senior Solutions Engineer @n8n | Teaching 10K+ students | Speaking at major tech conferences | Host of Prompt&Play podcast 🎙️",
     keywords: ["Idir Ouhab Meskine", "AI automation", "workflow automation", "n8n workflows", "AI content creator", "tech speaker", "Prompt&Play podcast", "AI tutorials", "automation tutorials", "DevOpsCon", "WeAreDevelopers", "AI community", "tech content creator"],
     authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
     creator: "Idir Ouhab Meskine",
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       site: "@idir_ouhab",
       creator: "@idir_ouhab",
       title: "Idir Ouhab Meskine — AI Automation Expert",
-      description: "Sharing AI automation insights & workflows 🤖 | Solutions Engineer @n8n | Teaching 10K+ students | Tech Speaker | Podcast Host 🎙️",
+      description: "Sharing AI automation insights & workflows 🤖 | Senior Solutions Engineer @n8n | Teaching 10K+ students | Tech Speaker | Podcast Host 🎙️",
       images: [`${baseUrl}/${locale}/opengraph-image`],
     },
     robots: {

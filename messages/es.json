@@ -11,12 +11,16 @@
   "hero": {
     "name": "IDIR",
     "lastName": "OUHAB MESKINE",
-    "role": "Solutions Engineer en n8n",
+    "role": "Senior Solutions Engineer en n8n",
     "headline": "Convierto el caos en flujos de trabajo",
     "subheadline": "Ayudando a equipos a automatizar lo aburrido para que se enfoquen en construir lo que realmente importa",
     "cta": "HABLEMOS",
     "ctaSecondary": "VER MIS CHARLAS",
     "ctaNewsletter": "NOTICIAS IA DIARIAS"
+  },
+  "trustedExperience": {
+    "title": "Experiencia de Confianza",
+    "subtitle": "Construyendo soluciones con líderes de la industria"
   },
   "transitions": {
     "aboutIntro": "Te cuento →",
@@ -120,6 +124,10 @@
       "title": "Ponencias y Keynotes",
       "description": "Charlas técnicas sobre integración de IA, LLMs y automatización para conferencias y eventos"
     },
+    "aiops": {
+      "title": "AI-Ops Técnico e Infraestructura",
+      "description": "Construcción de infraestructura de automatización escalable con GitLab CI/CD, despliegue de agentes de IA y gestión de sistemas de flujos complejos en producción. Experiencia desde DevOps empresarial hasta arquitecturas cloud-native."
+    },
     "cta": "Contáctame"
   },
   "podcast": {
@@ -163,7 +171,7 @@
     }
   },
   "footer": {
-    "descriptionStart": "Ingeniero de Soluciones en ",
+    "descriptionStart": "Ingeniero de Soluciones Senior en ",
     "descriptionN8n": "n8n",
     "descriptionMiddle": ". Ponente sobre IA y automatización. Host del podcast ",
     "descriptionPodcast": "Prompt&Play",
@@ -179,15 +187,15 @@
     "builtTailwind": "Tailwind"
   },
   "metadata": {
-    "title": "Idir Ouhab Meskine | Ingeniero de Soluciones en n8n | Ponente de IA y Automatización",
-    "description": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
+    "title": "Idir Ouhab Meskine | Ingeniero de Soluciones Senior en n8n | Ponente de IA y Automatización",
+    "description": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
     "ogTitle": "Idir Ouhab Meskine | Ingeniero de Soluciones en n8n",
-    "ogDescription": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
-    "twitterTitle": "Idir Ouhab Meskine | Ingeniero de Soluciones en n8n",
-    "twitterDescription": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español."
+    "ogDescription": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
+    "twitterTitle": "Idir Ouhab Meskine | Ingeniero de Soluciones Senior en n8n",
+    "twitterDescription": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español."
   },
   "structuredData": {
-    "jobTitle": "Ingeniero de Soluciones",
+    "jobTitle": "Ingeniero de Soluciones Senior",
     "description": "Ingeniero de Soluciones en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
     "knowsAbout": ["Inteligencia Artificial", "Automatización", "Automatización de Flujos de Trabajo", "Aprendizaje Automático", "Ingeniería de Software", "Herramientas para Desarrolladores"],
     "podcastDescription": "Un podcast en español que explora la intersección de la IA, la automatización y la tecnología.",
@@ -298,6 +306,7 @@
     "relatedPosts": "Artículos Relacionados",
     "backToBlog": "← Volver al Blog",
     "noPosts": "Aún no hay artículos. ¡Vuelve pronto!",
+    "tldr": "Resumen Ejecutivo - Puntos Clave",
     "categories": {
       "insights": "Perspectivas",
       "learnings": "Aprendizajes",
@@ -411,6 +420,7 @@
   "courses": {
     "title": "Cursos",
     "subtitle": "Aprende automatización, IA y tecnología con cursos prácticos diseñados para llevarte del concepto a la implementación.",
+    "officialInstructor": "Instructor del curso oficial de n8n en Platzi",
     "free": "Gratis",
     "viewCourse": "Ver curso",
     "viewAll": "Ver todos los cursos",
@@ -636,6 +646,45 @@
       "footer": {
         "tagline": "Sistemas de Educación Autónoma"
       }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Preguntas Frecuentes | Idir Ouhab Meskine",
+      "description": "Preguntas comunes sobre servicios de automatización, experiencia en n8n, formación, ponencias y el podcast Prompt&Play."
+    },
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Preguntas comunes sobre automatización, servicios y ponencias",
+    "questions": [
+      {
+        "question": "¿Qué servicios de automatización ofreces?",
+        "answer": "Ofrezco tres servicios principales:\n\n1. Capacitación de Equipos - Implementación personalizada de workflows, mejores prácticas para escalar y guía de arquitectura continua para ayudar a equipos a reducir trabajo manual en un 70%+.\n\n2. Formación y Talleres - Sesiones prácticas sobre automatización, IA y n8n adaptadas a las necesidades de tu equipo.\n\n3. AI-Ops Técnico e Infraestructura - Construcción de infraestructura de automatización escalable con GitLab CI/CD, despliegue de agentes de IA y gestión de sistemas de flujos complejos en producción.\n\nTodos los servicios se personalizan según tus necesidades específicas y pueden entregarse de forma remota o presencial."
+      },
+      {
+        "question": "¿Cuál es tu experiencia con n8n?",
+        "answer": "Soy Senior Solutions Engineer en n8n, donde ayudo a equipos a implementar automatización de workflows a escala. He implementado más de 500 workflows de automatización y trabajo directamente con clientes empresariales para diseñar y desplegar sistemas de automatización listos para producción.\n\nTambién soy el Instructor Oficial del Curso de n8n en Platzi, enseñando a miles de estudiantes sobre fundamentos de n8n, integración de IA y patrones avanzados de automatización.\n\nMi experiencia abarca desde diseño básico de workflows hasta orquestación compleja de agentes de IA y estrategias de despliegue en producción."
+      },
+      {
+        "question": "¿Ofreces formación y talleres?",
+        "answer": "¡Sí! Ofrezco sesiones de formación práctica adaptadas a las necesidades de tu equipo. Los temas de formación incluyen:\n\n• Fundamentos y mejores prácticas de n8n\n• Patrones de automatización de workflows\n• Estrategias de integración de IA\n• Despliegue en producción y escalado\n• Desarrollo de automatización personalizada\n• Estrategias de adopción y habilitación de equipos\n\nLos talleres pueden entregarse de forma remota o presencial, y se personalizan según el nivel de habilidad de tu equipo y casos de uso específicos. Las sesiones suelen variar desde introducciones de medio día hasta inmersiones profundas de varios días."
+      },
+      {
+        "question": "¿Con qué industrias trabajas?",
+        "answer": "Trabajo con equipos de diversas industrias incluyendo:\n\n• Startups y scale-ups tecnológicas\n• Empresas de software empresarial\n• Equipos de DevOps e ingeniería\n• Organizaciones de educación y formación\n• Equipos de marketing y operaciones\n\nLa belleza de la automatización de workflows es que se aplica universalmente. Ya sea que estés ahogándote en hojas de cálculo o gestionando 50 herramientas desconectadas, ayudo a construir sistemas que simplemente funcionan.\n\nMi experiencia en GitLab y n8n me da una profunda experiencia en DevOps, CI/CD e infraestructura técnica que se traduce en todas las industrias."
+      },
+      {
+        "question": "¿Cómo puedo contratarte para una ponencia?",
+        "answer": "Estoy disponible para charlas técnicas, keynotes y presentaciones en conferencias sobre temas que incluyen:\n\n• Integración de IA e implementación de LLMs\n• Automatización de workflows y n8n\n• DevOps y GitLab CI/CD\n• Futuro del trabajo y tendencias de automatización\n• Desarrollo y orquestación de agentes de IA\n\nHe hablado en más de 5 conferencias tecnológicas importantes y me encanta compartir insights prácticos que los equipos pueden implementar de inmediato.\n\nPara contratar una ponencia, contáctame en contact@idir.ai con detalles sobre tu evento, audiencia y temas preferidos. Estaré encantado de discutir presentaciones personalizadas para tu audiencia."
+      },
+      {
+        "question": "¿De qué trata el podcast Prompt&Play?",
+        "answer": "Prompt&Play es un podcast en español que explora prompts de IA, workflows de automatización y el futuro de la tecnología.\n\nLos episodios semanales incluyen:\n• Técnicas de ingeniería de prompts de IA\n• Mejores prácticas de automatización de workflows\n• Consejos y tutoriales de n8n\n• Tendencias e insights tecnológicos\n• Conversaciones sobre tecnologías emergentes\n\nEl podcast alcanza a desarrolladores en más de 12 países y está disponible en Spotify y las principales plataformas de podcast. Está diseñado para profesionales tecnológicos de habla hispana que quieren mantenerse actualizados sobre tendencias de IA y automatización.\n\nPuedes escucharlo en idir.ai/podcast o encontrarlo en tu aplicación de podcast favorita."
+      }
+    ],
+    "cta": {
+      "title": "¿Aún tienes preguntas?",
+      "description": "Ponte en contacto y estaré encantado de ayudarte.",
+      "button": "Contáctame"
     }
   }
 }

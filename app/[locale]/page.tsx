@@ -5,6 +5,10 @@ import dynamic from 'next/dynamic';
 
 // PERFORMANCE: Lazy load below-the-fold components (not visible on initial load)
 // This reduces initial JavaScript bundle and improves Time to Interactive
+const TrustedExperience = dynamic(() => import('@/components/TrustedExperience'), {
+  loading: () => <div className="min-h-[200px]" />,
+});
+
 const About = dynamic(() => import('@/components/About'), {
   loading: () => <div className="min-h-[400px]" />,
 });
@@ -71,6 +75,7 @@ export default async function Home({ params }: Props) {
       <Navigation />
       <main id="main-content" role="main">
         <Hero />
+        <TrustedExperience />
         <About />
         <Services />
         <Courses locale={locale as 'en' | 'es'} />
@@ -86,28 +91,47 @@ export default async function Home({ params }: Props) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
+            "@id": "https://idir.ai/#person",
             name: "Idir Ouhab Meskine",
             url: `https://idir.ai/${locale}`,
             jobTitle: t('jobTitle'),
             worksFor: {
               "@type": "Organization",
+              "@id": "https://n8n.io/#organization",
               name: "n8n",
               url: "https://n8n.io",
             },
-            knowsAbout,
-            sameAs: [
-              "https://linkedin.com/in/idir-Ouhab Meskine",
-              "https://twitter.com/idir",
-              "https://github.com/idir",
+            knowsAbout: [
+              ...knowsAbout,
+              "n8n workflow automation",
+              "GitLab CI/CD",
+              "DevOps infrastructure",
+              "AI agent orchestration",
+              "Technical education and speaking",
+              "Low-code/no-code automation",
             ],
-            alumniOf: {
-              "@type": "EducationalOrganization",
-              name: "Technology",
-            },
+            sameAs: [
+              "https://www.linkedin.com/in/idirouhab/",
+              "https://x.com/idir_ouhab",
+              "https://github.com/idirouhab",
+              "https://youtube.com/@Prompt_and_Pay",
+            ],
+            alumniOf: [
+              {
+                "@type": "Organization",
+                name: "GitLab",
+                url: "https://gitlab.com",
+              },
+              {
+                "@type": "Organization",
+                name: "Platzi",
+                url: "https://platzi.com",
+              },
+            ],
             description: t('description'),
             contactPoint: {
               "@type": "ContactPoint",
-              email: "hello@idir.ai",
+              email: "contact@idir.ai",
               contactType: "Professional",
             },
             inLanguage: locale,
@@ -138,11 +162,20 @@ export default async function Home({ params }: Props) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ProfilePage",
+            "@id": "https://idir.ai/#profilepage",
             mainEntity: {
-              "@type": "Person",
-              name: "Idir Ouhab Meskine",
-              description: t('description'),
-              knowsAbout,
+              "@id": "https://idir.ai/#person",
+            },
+            breadcrumb: {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Home",
+                  item: `https://idir.ai/${locale}`,
+                },
+              ],
             },
           }),
         }}

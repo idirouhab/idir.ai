@@ -21,6 +21,7 @@ export type BlogPost = {
   translation_group_id: string | null;
   view_count: number;
   read_time_minutes: number | null;
+  tldr: string | null; // TL;DR summary / key takeaways (3-5 bullet points)
   created_at: string;
   updated_at: string;
   author_id: string;
@@ -42,6 +43,7 @@ export type BlogPostInput = {
   published_at?: string | null;
   scheduled_publish_at?: string | null;
   read_time_minutes?: number | null;
+  tldr?: string | null;
 };
 
 // Helper to create Supabase client (for public read operations)

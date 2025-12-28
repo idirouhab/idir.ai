@@ -14,7 +14,7 @@ A modern, SEO-optimized personal website built with Next.js 14, TypeScript, and 
 ## Sections
 
 - **Hero**: Professional introduction and key highlights
-- **About**: Solutions Engineer role at n8n and expertise
+- **About**: Senior Solutions Engineer role at n8n and expertise
 - **Speaking**: Topics and availability for conferences and events
 - **Podcast**: Prompt&Play podcast in Spanish
 - **Contact**: Social links and contact information

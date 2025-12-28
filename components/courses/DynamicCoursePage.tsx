@@ -887,7 +887,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                         "@type": "Person",
                         name: "Idir Ouhab Meskine",
                         url: "https://idir.ai",
-                        jobTitle: "Solutions Engineer",
+                        jobTitle: "Senior Solutions Engineer",
                         worksFor: {
                             "@type": "Organization",
                             name: "n8n"

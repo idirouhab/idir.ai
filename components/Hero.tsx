@@ -105,7 +105,7 @@ export default function Hero() {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-[#10b981]" aria-hidden="true"></div>
                 <Image
                   src="/headshot.webp"
-                  alt="Idir Ouhab Meskine, Solutions Engineer at n8n, speaking at a tech conference"
+                  alt="Idir Ouhab Meskine, Senior Solutions Engineer at n8n, speaking at a tech conference"
                   fill
                   className="object-cover"
                   priority

@@ -250,6 +250,23 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           )}
 
+          {/* TL;DR / Answer Kit */}
+          {post.tldr && (
+            <div className="mb-8 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+              <h2 className="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2">
+                {t('tldr')} ⚡
+              </h2>
+              <ul className="space-y-2 text-gray-300">
+                {post.tldr.split('\n').filter(line => line.trim()).map((point, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-emerald-400 mt-1 flex-shrink-0">→</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Content */}
           <div className="prose prose-invert max-w-none">
             <MarkdownContent content={post.content} />
@@ -320,6 +337,7 @@ export default async function BlogPostPage({ params }: Props) {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
+            '@id': `https://idir.ai/${locale}/blog/${post.slug}#blogpost`,
             headline: post.title,
             description: post.meta_description || post.excerpt,
             image: post.cover_image || undefined,
@@ -327,18 +345,33 @@ export default async function BlogPostPage({ params }: Props) {
             dateModified: post.updated_at,
             author: {
               '@type': 'Person',
+              '@id': 'https://idir.ai/#person',
               name: post.author_name || 'Idir Ouhab Meskine',
               url: `https://idir.ai/${locale}`,
+              jobTitle: 'Senior Solutions Engineer',
+              worksFor: {
+                '@type': 'Organization',
+                '@id': 'https://n8n.io/#organization',
+                name: 'n8n',
+                url: 'https://n8n.io',
+              },
             },
             publisher: {
               '@type': 'Person',
+              '@id': 'https://idir.ai/#person',
               name: post.author_name || 'Idir Ouhab Meskine',
+              url: `https://idir.ai/${locale}`,
+            },
+            mainEntity: {
+              '@id': 'https://idir.ai/#person',
             },
             articleSection: categoryName,
             keywords: post.tags?.join(', '),
             wordCount: post.content.split(/\s+/).length,
             timeRequired: `PT${readTime}M`,
             inLanguage: locale,
+            isAccessibleForFree: true,
+            educationalLevel: 'Intermediate',
           }),
         }}
       />

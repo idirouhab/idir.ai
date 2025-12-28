@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Zap, GraduationCap, Presentation } from "lucide-react";
+import { Zap, GraduationCap, Presentation, Server } from "lucide-react";
 
 export default function Services() {
   const t = useTranslations('services');
@@ -23,6 +23,11 @@ export default function Services() {
       description: t('talks.description'),
       icon: Presentation,
     },
+    {
+      title: t('aiops.title'),
+      description: t('aiops.description'),
+      icon: Server,
+    },
   ];
 
   return (
@@ -40,7 +45,7 @@ export default function Services() {
         </header>
 
         {/* Services Grid - Compact */}
-        <div className="grid sm:grid-cols-3 gap-8 mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (

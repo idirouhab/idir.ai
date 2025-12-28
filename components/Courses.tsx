@@ -1,7 +1,7 @@
 import { getAllPublishedCourses } from '@/lib/courses';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Users, ArrowRight, GraduationCap } from 'lucide-react';
 import Image from "next/image";
 
 type CoursesProps = {
@@ -29,9 +29,17 @@ export default async function Courses({ locale }: CoursesProps) {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 md:mb-4">
             {t('title')}
           </h2>
-          <p className="text-base md:text-xl text-gray-400 max-w-3xl">
+          <p className="text-base md:text-xl text-gray-400 max-w-3xl mb-4">
             {t('subtitle')}
           </p>
+
+          {/* Official Instructor Badge */}
+          <div className="flex items-center justify-start gap-2 mt-4">
+            <GraduationCap className="w-5 h-5 text-emerald-400" />
+            <p className="text-base md:text-lg text-emerald-400 font-semibold">
+              {t('officialInstructor')}
+            </p>
+          </div>
         </div>
 
         {/* Courses Grid */}

@@ -591,7 +591,7 @@ export async function POST(request: NextRequest) {
                                         Idir Ouhab Meskine
                                     </p>
                                     <p class="mobile-font-small" style="margin: 0; color: #999999; font-size: 13px;">
-                                        Solutions Engineer at n8n
+                                        Senior Solutions Engineer at n8n
                                     </p>
                                 </td>
                             </tr>
@@ -691,7 +691,7 @@ ${footerSubtext.replace(/<[^>]*>/g, '')}
 ---
 
 Idir Ouhab Meskine
-Solutions Engineer at n8n
+Senior Solutions Engineer at n8n
 
 ${websiteText}: https://idir.ai
 LinkedIn: https://linkedin.com/in/idirouhab
