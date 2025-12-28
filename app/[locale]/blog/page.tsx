@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { FileText } from 'lucide-react';
 import { getPublishedPosts, categoryColors, BlogCategory } from '@/lib/blog';
 import BlogCard from '@/components/BlogCard';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -32,38 +33,46 @@ export default async function BlogPage({ params, searchParams }: Props) {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#000000' }}>
-        <div className="max-w-7xl mx-auto">
+      <main className="relative min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#000000' }}>
+        {/* Subtle background pattern - decorative only */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          }}></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbs} />
 
-          {/* Header */}
-          <div className="mb-16">
-            <p className="text-base sm:text-lg md:text-xl font-bold text-[#10b981] mb-4 uppercase tracking-wide">
+          {/* Header - Hero style */}
+          <header className="mb-20">
+            <p className="text-base sm:text-lg md:text-xl font-bold text-[#10b981] mb-6 uppercase tracking-wide">
               {t('title')}
             </p>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight">
               {t('title')}
             </h1>
 
-            <p className="text-lg sm:text-xl text-[#d1d5db] leading-relaxed max-w-3xl font-medium">
+            <p className="text-lg sm:text-xl md:text-2xl text-[#d1d5db] leading-relaxed max-w-3xl font-medium">
               {t('subtitle')}
             </p>
-          </div>
+          </header>
 
           {/* Category Filter */}
-          <div className="mb-12">
-            <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">
+          <div className="mb-16">
+            <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-6">
               {t('filterByCategory')}
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               <Link
                 href={`/${locale}/blog`}
-                className={`px-6 py-3 font-bold text-sm transition-all rounded-lg ${
+                className={`px-6 py-3 font-bold text-sm uppercase tracking-wide transition-all rounded-xl ${
                   !category
-                    ? 'bg-[#10b981] text-black'
-                    : 'bg-[#111827] text-white border border-[#1f2937] hover:border-[#10b981]'
+                    ? 'bg-[#10b981] text-black scale-105'
+                    : 'bg-[#111827] text-white border border-[#1f2937] hover:border-[#10b981] hover:scale-105'
                 }`}
               >
                 {t('allCategories')}
@@ -77,11 +86,12 @@ export default async function BlogPage({ params, searchParams }: Props) {
                   <Link
                     key={cat}
                     href={`/${locale}/blog?category=${cat}`}
-                    className="px-6 py-3 font-bold text-sm transition-all rounded-lg"
+                    className="px-6 py-3 font-bold text-sm uppercase tracking-wide transition-all rounded-xl hover:scale-105"
                     style={{
                       background: isActive ? color : '#111827',
                       color: isActive ? '#000000' : color,
                       border: `1px solid ${isActive ? color : '#1f2937'}`,
+                      transform: isActive ? 'scale(1.05)' : 'scale(1)',
                     }}
                   >
                     {t(`categories.${cat}`)}
@@ -108,7 +118,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
           ) : (
             <div className="text-center py-20">
               <div className="max-w-md mx-auto">
-                <div className="text-6xl mb-6">📝</div>
+                <div className="mb-6 flex justify-center">
+                  <FileText className="w-16 h-16 text-[#10b981]" strokeWidth={1.5} />
+                </div>
                 <h2 className="text-2xl font-black text-white mb-4">
                   {t('noPosts')}
                 </h2>

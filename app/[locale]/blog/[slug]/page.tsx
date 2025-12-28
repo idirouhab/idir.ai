@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { Zap, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ViewTracker from '@/components/ViewTracker';
@@ -185,24 +186,32 @@ export default async function BlogPostPage({ params }: Props) {
     <BlogTranslationProvider translatedSlug={translatedSlug}>
       <ViewTracker postId={post.id} />
       <Navigation />
-      <main className="min-h-screen pt-28 pb-20" style={{ background: '#000000' }}>
+      <main className="relative min-h-screen pt-28 pb-20" style={{ background: '#000000' }}>
+        {/* Subtle background pattern - decorative only */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          }}></div>
+        </div>
+
         {/* Article Header */}
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbs} />
 
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center gap-2 text-sm text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide"
+            className="inline-flex items-center gap-2 text-sm text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide uppercase"
           >
             ← {t('backToBlog')}
           </Link>
 
-          {/* Category Badge */}
-          <div className="flex items-center gap-3 mb-6">
+          {/* Category Badge & Read Time */}
+          <div className="flex items-center flex-wrap gap-3 mb-8">
             <span
-              className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg"
               style={{
                 background: `${categoryColor}20`,
                 color: categoryColor,
@@ -211,25 +220,25 @@ export default async function BlogPostPage({ params }: Props) {
             >
               {categoryName}
             </span>
-            <span className="text-sm text-[#9ca3af]">
+            <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-[#111827] border border-[#1f2937] text-[#9ca3af]">
               {t('readTime', { minutes: readTime })}
             </span>
           </div>
 
-          {/* Title */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
+          {/* Title - Hero style */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight">
             {post.title}
           </h1>
 
           {/* Meta Info */}
-          <div className="flex items-center gap-6 mb-8 pb-8 border-b border-[#1f2937]">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#10b981] to-[#14b8a6] rounded-full flex items-center justify-center font-black text-black">
+          <div className="flex items-center gap-6 mb-12 pb-12 border-b border-[#1f2937]">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-gradient-to-r from-[#10b981] to-[#14b8a6] rounded-lg flex items-center justify-center font-black text-black text-lg">
                 {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
               </div>
               <div>
-                <p className="text-sm font-bold text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
-                <p className="text-xs text-[#9ca3af]">{formattedDate}</p>
+                <p className="text-base font-bold text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
+                <p className="text-sm text-[#9ca3af] font-medium">{formattedDate}</p>
               </div>
             </div>
           </div>
@@ -239,7 +248,9 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Cover Image */}
           {post.cover_image && (
-            <div className="relative w-full aspect-video mb-12 border-2 overflow-hidden rounded-lg" style={{ borderColor: categoryColor }}>
+            <div className="relative w-full aspect-video mb-16 overflow-hidden rounded-xl border border-[#1f2937]">
+              {/* Top accent border */}
+              <div className="absolute top-0 left-0 right-0 h-1 z-10" style={{ background: categoryColor }}></div>
               <Image
                 src={post.cover_image}
                 alt={post.title}
@@ -253,14 +264,15 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* TL;DR / Answer Kit */}
           {post.tldr && (
-            <div className="mb-8 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-              <h2 className="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2"><ScrollText className="w-4 h-4 text-emerald-400 flex-shrink-0 transition-transform group-open:rotate-180" /> {t('tldr')}
+            <div className="mb-16 p-8 bg-[#10b981]/10 border border-[#10b981]/20 rounded-xl">
+              <h2 className="text-2xl font-bold text-[#10b981] mb-6 flex items-center gap-3 uppercase tracking-wide">
+                <Zap className="w-6 h-6" strokeWidth={2.5} />
+                {t('tldr')}
               </h2>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-3">
                 {post.tldr.split('\n').filter(line => line.trim()).map((point, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-emerald-400 mt-1 flex-shrink-0">→</span>
-                    <span>{point}</span>
+                  <li key={i} className="flex items-start gap-3 text-[#d1d5db] text-base leading-relaxed">
+                    <span className="font-medium">{point}</span>
                   </li>
                 ))}
               </ul>
@@ -285,15 +297,15 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-[#1f2937]">
-              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">
+            <div className="mt-16 pt-12 border-t border-[#1f2937]">
+              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-6">
                 {t('tags')}
               </p>
               <div className="flex flex-wrap gap-3">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-4 py-2 bg-[#111827] border border-[#1f2937] text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-colors"
+                    className="px-5 py-3 bg-[#111827] border border-[#1f2937] text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-all hover:scale-105"
                   >
                     #{tag}
                   </span>
@@ -308,13 +320,15 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
-            <p className="text-base sm:text-lg font-bold text-[#10b981] mb-4 uppercase tracking-wide">
-              {t('relatedPosts')}
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-black text-white mb-8 tracking-tight">
-              {t('relatedPosts')}
-            </h2>
+          <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 pt-16 border-t border-[#1f2937]">
+            <div className="mb-12">
+              <p className="text-base sm:text-lg font-bold text-[#10b981] mb-4 uppercase tracking-wide">
+                {t('relatedPosts')}
+              </p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+                {t('relatedPosts')}
+              </h2>
+            </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {relatedPosts.map((relatedPost) => (
@@ -325,7 +339,7 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Newsletter CTA - After Related Posts */}
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
+        <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
           <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_bottom" />
         </section>
       </main>
