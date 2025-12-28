@@ -1,4 +1,4 @@
--- Migration: 041_add_tldr_to_blog_posts
+I -- Migration: 041_add_tldr_to_blog_posts
 -- Description: Adds tldr (TL;DR/key takeaways) field to blog_posts table for LLM-friendly summaries
 -- Created: 2025-12-28
 

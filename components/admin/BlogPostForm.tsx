@@ -163,6 +163,8 @@ export default function BlogPostForm({ post }: Props) {
     meta_description_es: '',
     meta_keywords_en: '',
     meta_keywords_es: '',
+    tldr_en: '',
+    tldr_es: '',
   });
 
   // Fetch current user role
@@ -212,6 +214,8 @@ export default function BlogPostForm({ post }: Props) {
         meta_description_es: !isEnglish && post.meta_description ? post.meta_description : '',
         meta_keywords_en: isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
         meta_keywords_es: !isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
+        tldr_en: isEnglish ? ((post as any).tldr || '') : '',
+        tldr_es: !isEnglish ? ((post as any).tldr || '') : '',
       });
 
       // Set generatedData to show metadata fields in edit mode
@@ -258,6 +262,7 @@ export default function BlogPostForm({ post }: Props) {
           category: formData.category,
           status: formData.status,
           scheduled_publish_at: scheduledPublishAt,
+          tldr: isEnglish ? (formData.tldr_en || null) : (formData.tldr_es || null),
         };
 
         // Add tags if provided
@@ -321,6 +326,7 @@ export default function BlogPostForm({ post }: Props) {
           tags: formData.tags_en,
           meta_description: formData.meta_description_en,
           meta_keywords: formData.meta_keywords_en,
+          tldr: formData.tldr_en || null,
         },
         es: {
           title: formData.title_es,
@@ -328,6 +334,7 @@ export default function BlogPostForm({ post }: Props) {
           tags: formData.tags_es,
           meta_description: formData.meta_description_es,
           meta_keywords: formData.meta_keywords_es,
+          tldr: formData.tldr_es || null,
         },
       };
 
@@ -795,6 +802,23 @@ Tu contenido va aquí...
                 className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none text-sm"
               />
             </div>
+
+            {/* English TL;DR */}
+            <div>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                TL;DR - Key Takeaways {post ? '' : '(EN)'} ⚡
+              </label>
+              <textarea
+                value={formData.tldr_en}
+                onChange={(e) => setFormData({ ...formData, tldr_en: e.target.value })}
+                rows={4}
+                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
+                placeholder="AI agents are transforming automation&#10;No-code tools make AI accessible to everyone&#10;The future of work is human-AI collaboration"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Add 3-5 key takeaways (one per line). Displayed at the top of blog post.
+              </p>
+            </div>
           </div>
           )}
 
@@ -873,6 +897,25 @@ Tu contenido va aquí...
                 onChange={(e) => setFormData({ ...formData, meta_keywords_es: e.target.value })}
                 className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none text-sm"
               />
+            </div>
+
+            {/* Spanish TL;DR */}
+            <div>
+              <label className="block text-white font-bold mb-2 uppercase text-xs">
+                {post && post.language === 'es' ? 'TL;DR - Puntos Clave ⚡' : 'TL;DR - Puntos Clave (ES) ⚡'}
+              </label>
+              <textarea
+                value={formData.tldr_es}
+                onChange={(e) => setFormData({ ...formData, tldr_es: e.target.value })}
+                rows={4}
+                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
+                placeholder="Los agentes de IA están transformando la automatización&#10;Las herramientas no-code hacen la IA accesible para todos&#10;El futuro del trabajo es la colaboración humano-IA"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {post && post.language === 'es'
+                  ? 'Agrega 3-5 puntos clave (uno por línea). Se muestra al inicio del post.'
+                  : 'Add 3-5 key takeaways (one per line). Displayed at the top of blog post.'}
+              </p>
             </div>
           </div>
           )}

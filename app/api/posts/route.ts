@@ -294,6 +294,7 @@ async function createBilingualPost(user: any, body: any) {
       tags: z.string().max(200),
       meta_description: z.string().max(160),
       meta_keywords: z.string().max(500),
+      tldr: z.string().max(1000).optional().nullable(),
     }),
     es: z.object({
       title: z.string().min(1).max(200),
@@ -301,6 +302,7 @@ async function createBilingualPost(user: any, body: any) {
       tags: z.string().max(200),
       meta_description: z.string().max(160),
       meta_keywords: z.string().max(500),
+      tldr: z.string().max(1000).optional().nullable(),
     }),
   });
 
@@ -347,6 +349,7 @@ async function createBilingualPost(user: any, body: any) {
     published_at,
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
+    tldr: data.en.tldr || null,
     translation_group_id,
     author_id: user.userId,
     author_name: user.email,
@@ -368,6 +371,7 @@ async function createBilingualPost(user: any, body: any) {
     published_at,
     scheduled_publish_at: data.scheduled_publish_at || null,
     scheduled_timezone: data.scheduled_timezone || 'Europe/Berlin',
+    tldr: data.es.tldr || null,
     translation_group_id,
     author_id: user.userId,
     author_name: user.email,
