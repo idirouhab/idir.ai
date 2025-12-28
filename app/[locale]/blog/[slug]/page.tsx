@@ -46,6 +46,7 @@ import {
 } from '@/lib/blog';
 import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
 import { getSiteUrl } from '@/lib/site-config';
+import {ChevronDown, ScrollText} from "lucide-react";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -253,8 +254,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* TL;DR / Answer Kit */}
           {post.tldr && (
             <div className="mb-8 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-              <h2 className="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2">
-                {t('tldr')} ⚡
+              <h2 className="text-xl font-bold text-emerald-400 mb-3 flex items-center gap-2"><ScrollText className="w-4 h-4 text-emerald-400 flex-shrink-0 transition-transform group-open:rotate-180" /> {t('tldr')}
               </h2>
               <ul className="space-y-2 text-gray-300">
                 {post.tldr.split('\n').filter(line => line.trim()).map((point, i) => (
