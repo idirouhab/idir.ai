@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     // Standard list view
     let query = supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, translation_group_id, author_id, users!blog_posts_author_id_fkey(name)')
+      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, translation_group_id, author_id, admin_users!blog_posts_author_id_fkey(name)')
       .order('published_at', { ascending: false });
 
     // Apply filters
@@ -86,8 +86,8 @@ export async function GET(request: NextRequest) {
     // Map to include author name
     const posts = (data || []).map((post: any) => ({
       ...post,
-      author_name: post.users?.name || null,
-      users: undefined,
+      author_name: post.admin_users?.name || null,
+      admin_users: undefined,
     }));
 
     return NextResponse.json({

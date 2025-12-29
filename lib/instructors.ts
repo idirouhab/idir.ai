@@ -39,13 +39,15 @@ export type CourseInstructor = {
 export async function getAllInstructors(): Promise<Instructor[]> {
     const sql = `
         SELECT
-            id, email, first_name, last_name, title, date_of_birth, country,
-            description, picture_url, preferred_language, is_active, role,
-            linkedin_url, website_url, x_url, youtube_url,
-            created_at, updated_at
-        FROM instructors
-        WHERE is_active = true
-        ORDER BY last_name, first_name
+            u.id, u.email, u.first_name, u.last_name, ip.title,
+            NULL as date_of_birth, u.country,
+            ip.description, ip.picture_url, ip.preferred_language, u.is_active, ip.role,
+            ip.linkedin_url, ip.website_url, ip.x_url, ip.youtube_url,
+            u.created_at, u.updated_at
+        FROM users u
+        INNER JOIN instructor_profiles ip ON u.id = ip.user_id
+        WHERE u.is_active = true
+        ORDER BY u.last_name, u.first_name
     `;
 
     const result = await query(sql, []);
@@ -58,12 +60,14 @@ export async function getAllInstructors(): Promise<Instructor[]> {
 export async function getInstructorById(id: string): Promise<Instructor | null> {
     const sql = `
         SELECT
-            id, email, first_name, last_name, title, date_of_birth, country,
-            description, picture_url, preferred_language, is_active, role,
-            linkedin_url, website_url, x_url, youtube_url,
-            created_at, updated_at
-        FROM instructors
-        WHERE id = $1
+            u.id, u.email, u.first_name, u.last_name, ip.title,
+            NULL as date_of_birth, u.country,
+            ip.description, ip.picture_url, ip.preferred_language, u.is_active, ip.role,
+            ip.linkedin_url, ip.website_url, ip.x_url, ip.youtube_url,
+            u.created_at, u.updated_at
+        FROM users u
+        INNER JOIN instructor_profiles ip ON u.id = ip.user_id
+        WHERE u.id = $1
     `;
 
     const result = await query(sql, [id]);
@@ -113,20 +117,21 @@ export async function getCourseInstructors(courseId: string): Promise<CourseInst
             ci.instructor_role,
             ci.created_at,
             ci.updated_at,
-            i.id as "instructor.id",
-            i.email as "instructor.email",
-            i.first_name as "instructor.first_name",
-            i.last_name as "instructor.last_name",
-            i.title as "instructor.title",
-            i.description as "instructor.description",
-            i.picture_url as "instructor.picture_url",
-            i.linkedin_url as "instructor.linkedin_url",
-            i.website_url as "instructor.website_url",
-            i.x_url as "instructor.x_url",
-            i.youtube_url as "instructor.youtube_url",
-            i.role as "instructor.role"
+            u.id as "instructor.id",
+            u.email as "instructor.email",
+            u.first_name as "instructor.first_name",
+            u.last_name as "instructor.last_name",
+            ip.title as "instructor.title",
+            ip.description as "instructor.description",
+            ip.picture_url as "instructor.picture_url",
+            ip.linkedin_url as "instructor.linkedin_url",
+            ip.website_url as "instructor.website_url",
+            ip.x_url as "instructor.x_url",
+            ip.youtube_url as "instructor.youtube_url",
+            ip.role as "instructor.role"
         FROM course_instructors ci
-        JOIN instructors i ON ci.instructor_id = i.id
+        JOIN users u ON ci.instructor_id = u.id
+        JOIN instructor_profiles ip ON u.id = ip.user_id
         WHERE ci.course_id = $1
         ORDER BY ci.display_order
     `;

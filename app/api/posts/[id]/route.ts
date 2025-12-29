@@ -19,7 +19,7 @@ export async function GET(
     let supabase = getBlogClient();
     let query = supabase
       .from('blog_posts')
-      .select('*, users!blog_posts_author_id_fkey(name)')
+      .select('*, admin_users!blog_posts_author_id_fkey(name)')
       .eq('id', id);
 
     // If requesting drafts, require auth
@@ -31,7 +31,7 @@ export async function GET(
       supabase = getAdminBlogClient();
       query = supabase
         .from('blog_posts')
-        .select('*, users!blog_posts_author_id_fkey(name)')
+        .select('*, admin_users!blog_posts_author_id_fkey(name)')
         .eq('id', id);
     } else {
       query = query.eq('status', 'published');
@@ -45,8 +45,8 @@ export async function GET(
 
     const post = {
       ...data,
-      author_name: (data as any).users?.name || null,
-      users: undefined,
+      author_name: (data as any).admin_users?.name || null,
+      admin_users: undefined,
     };
 
     return NextResponse.json({ data: post });

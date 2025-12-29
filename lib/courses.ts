@@ -199,18 +199,18 @@ export const getPublishedCourses = cache(async (language: 'en' | 'es') => {
                             'display_order', ci.display_order,
                             'instructor_role', ci.instructor_role,
                             'instructor', json_build_object(
-                                'id', i.id,
-                                'email', i.email,
-                                'first_name', i.first_name,
-                                'last_name', i.last_name,
-                                'title', i.title,
-                                'description', i.description,
-                                'picture_url', i.picture_url,
-                                'linkedin_url', i.linkedin_url,
-                                'website_url', i.website_url,
-                                'x_url', i.x_url,
-                                'youtube_url', i.youtube_url,
-                                'role', i.role
+                                'id', u.id,
+                                'email', u.email,
+                                'first_name', u.first_name,
+                                'last_name', u.last_name,
+                                'title', ip.title,
+                                'description', ip.description,
+                                'picture_url', ip.picture_url,
+                                'linkedin_url', ip.linkedin_url,
+                                'website_url', ip.website_url,
+                                'x_url', ip.x_url,
+                                'youtube_url', ip.youtube_url,
+                                'role', ip.role
                             )
                         )
                         ORDER BY ci.display_order
@@ -219,7 +219,8 @@ export const getPublishedCourses = cache(async (language: 'en' | 'es') => {
                 ) as instructors
              FROM courses c
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
-             LEFT JOIN instructors i ON ci.instructor_id = i.id
+             LEFT JOIN users u ON ci.instructor_id = u.id
+             LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
              WHERE c.status = 'published' AND c.language = $1
              GROUP BY c.id
              ORDER BY c.published_at DESC`,
@@ -244,18 +245,18 @@ export const getAllPublishedCourses = cache(async () => {
                             'display_order', ci.display_order,
                             'instructor_role', ci.instructor_role,
                             'instructor', json_build_object(
-                                'id', i.id,
-                                'email', i.email,
-                                'first_name', i.first_name,
-                                'last_name', i.last_name,
-                                'title', i.title,
-                                'description', i.description,
-                                'picture_url', i.picture_url,
-                                'linkedin_url', i.linkedin_url,
-                                'website_url', i.website_url,
-                                'x_url', i.x_url,
-                                'youtube_url', i.youtube_url,
-                                'role', i.role
+                                'id', u.id,
+                                'email', u.email,
+                                'first_name', u.first_name,
+                                'last_name', u.last_name,
+                                'title', ip.title,
+                                'description', ip.description,
+                                'picture_url', ip.picture_url,
+                                'linkedin_url', ip.linkedin_url,
+                                'website_url', ip.website_url,
+                                'x_url', ip.x_url,
+                                'youtube_url', ip.youtube_url,
+                                'role', ip.role
                             )
                         )
                         ORDER BY ci.display_order
@@ -264,7 +265,8 @@ export const getAllPublishedCourses = cache(async () => {
                 ) as instructors
              FROM courses c
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
-             LEFT JOIN instructors i ON ci.instructor_id = i.id
+             LEFT JOIN users u ON ci.instructor_id = u.id
+             LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
              WHERE c.status = 'published'
              GROUP BY c.id
              ORDER BY c.published_at DESC`
@@ -289,18 +291,18 @@ export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
                             'display_order', ci.display_order,
                             'instructor_role', ci.instructor_role,
                             'instructor', json_build_object(
-                                'id', i.id,
-                                'email', i.email,
-                                'first_name', i.first_name,
-                                'last_name', i.last_name,
-                                'title', i.title,
-                                'description', i.description,
-                                'picture_url', i.picture_url,
-                                'linkedin_url', i.linkedin_url,
-                                'website_url', i.website_url,
-                                'x_url', i.x_url,
-                                'youtube_url', i.youtube_url,
-                                'role', i.role
+                                'id', u.id,
+                                'email', u.email,
+                                'first_name', u.first_name,
+                                'last_name', u.last_name,
+                                'title', ip.title,
+                                'description', ip.description,
+                                'picture_url', ip.picture_url,
+                                'linkedin_url', ip.linkedin_url,
+                                'website_url', ip.website_url,
+                                'x_url', ip.x_url,
+                                'youtube_url', ip.youtube_url,
+                                'role', ip.role
                             )
                         )
                         ORDER BY ci.display_order
@@ -309,7 +311,8 @@ export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
                 ) as instructors
              FROM courses c
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
-             LEFT JOIN instructors i ON ci.instructor_id = i.id
+             LEFT JOIN users u ON ci.instructor_id = u.id
+             LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
              WHERE c.slug = $1 AND c.status = 'published'
              GROUP BY c.id`,
             [slug]
@@ -333,18 +336,18 @@ export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en
                             'display_order', ci.display_order,
                             'instructor_role', ci.instructor_role,
                             'instructor', json_build_object(
-                                'id', i.id,
-                                'email', i.email,
-                                'first_name', i.first_name,
-                                'last_name', i.last_name,
-                                'title', i.title,
-                                'description', i.description,
-                                'picture_url', i.picture_url,
-                                'linkedin_url', i.linkedin_url,
-                                'website_url', i.website_url,
-                                'x_url', i.x_url,
-                                'youtube_url', i.youtube_url,
-                                'role', i.role
+                                'id', u.id,
+                                'email', u.email,
+                                'first_name', u.first_name,
+                                'last_name', u.last_name,
+                                'title', ip.title,
+                                'description', ip.description,
+                                'picture_url', ip.picture_url,
+                                'linkedin_url', ip.linkedin_url,
+                                'website_url', ip.website_url,
+                                'x_url', ip.x_url,
+                                'youtube_url', ip.youtube_url,
+                                'role', ip.role
                             )
                         )
                         ORDER BY ci.display_order
@@ -353,7 +356,8 @@ export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en
                 ) as instructors
              FROM courses c
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
-             LEFT JOIN instructors i ON ci.instructor_id = i.id
+             LEFT JOIN users u ON ci.instructor_id = u.id
+             LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
              WHERE c.slug = $1 AND c.language = $2 AND c.status = 'published'
              GROUP BY c.id`,
             [slug, language]
@@ -397,17 +401,17 @@ export async function getAllCourses() {
                         'display_order', ci.display_order,
                         'instructor_role', ci.instructor_role,
                         'instructor', json_build_object(
-                            'id', i.id,
-                            'email', i.email,
-                            'first_name', i.first_name,
-                            'last_name', i.last_name,
-                            'description', i.description,
-                            'picture_url', i.picture_url,
-                            'linkedin_url', i.linkedin_url,
-                            'website_url', i.website_url,
-                            'x_url', i.x_url,
-                            'youtube_url', i.youtube_url,
-                            'role', i.role
+                            'id', u.id,
+                            'email', u.email,
+                            'first_name', u.first_name,
+                            'last_name', u.last_name,
+                            'description', ip.description,
+                            'picture_url', ip.picture_url,
+                            'linkedin_url', ip.linkedin_url,
+                            'website_url', ip.website_url,
+                            'x_url', ip.x_url,
+                            'youtube_url', ip.youtube_url,
+                            'role', ip.role
                         )
                     )
                     ORDER BY ci.display_order
@@ -421,7 +425,8 @@ export async function getAllCourses() {
             GROUP BY course_id
         ) signup_count ON c.id = signup_count.course_id
         LEFT JOIN course_instructors ci ON c.id = ci.course_id
-        LEFT JOIN instructors i ON ci.instructor_id = i.id
+        LEFT JOIN users u ON ci.instructor_id = u.id
+        LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
         GROUP BY c.id
         ORDER BY c.created_at DESC
     `);
@@ -440,17 +445,17 @@ export async function getCourseById(id: string) {
                         'display_order', ci.display_order,
                         'instructor_role', ci.instructor_role,
                         'instructor', json_build_object(
-                            'id', i.id,
-                            'email', i.email,
-                            'first_name', i.first_name,
-                            'last_name', i.last_name,
-                            'description', i.description,
-                            'picture_url', i.picture_url,
-                            'linkedin_url', i.linkedin_url,
-                            'website_url', i.website_url,
-                            'x_url', i.x_url,
-                            'youtube_url', i.youtube_url,
-                            'role', i.role
+                            'id', u.id,
+                            'email', u.email,
+                            'first_name', u.first_name,
+                            'last_name', u.last_name,
+                            'description', ip.description,
+                            'picture_url', ip.picture_url,
+                            'linkedin_url', ip.linkedin_url,
+                            'website_url', ip.website_url,
+                            'x_url', ip.x_url,
+                            'youtube_url', ip.youtube_url,
+                            'role', ip.role
                         )
                     )
                     ORDER BY ci.display_order
@@ -459,7 +464,8 @@ export async function getCourseById(id: string) {
             ) as instructors
         FROM courses c
         LEFT JOIN course_instructors ci ON c.id = ci.course_id
-        LEFT JOIN instructors i ON ci.instructor_id = i.id
+        LEFT JOIN users u ON ci.instructor_id = u.id
+        LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
         WHERE c.id = $1
         GROUP BY c.id
     `, [id]);
