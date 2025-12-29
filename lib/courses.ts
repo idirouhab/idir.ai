@@ -280,6 +280,8 @@ export const getAllPublishedCourses = cache(async () => {
 
 // Fetch course by slug only (ignoring language) - used when showing courses across locales
 export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
+    console.log(`[getPublishedCourseBySlugOnly] Fetching course with slug: ${slug}`);
+
     try {
         const result = await query(
             `SELECT
@@ -317,9 +319,23 @@ export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
              GROUP BY c.id`,
             [slug]
         );
-        return result.rows.length > 0 ? result.rows[0] as Course : null;
+
+        if (result.rows.length > 0) {
+            console.log(`[getPublishedCourseBySlugOnly] Course found: ${result.rows[0].id} - ${result.rows[0].title}`);
+            return result.rows[0] as Course;
+        } else {
+            console.log(`[getPublishedCourseBySlugOnly] No course found with slug: ${slug}`);
+            return null;
+        }
     } catch (error) {
-        console.error('Error fetching course by slug:', error);
+        console.error('[getPublishedCourseBySlugOnly] Database error:', {
+            slug,
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            code: (error as any)?.code,
+            detail: (error as any)?.detail,
+            hint: (error as any)?.hint,
+        });
         return null;
     }
 });

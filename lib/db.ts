@@ -9,6 +9,12 @@ export function getDbPool() {
     const connectionString = process.env.DATABASE_URL ||
       'postgresql://postgres:postgres@127.0.0.1:5432/postgres';
 
+    console.log('[DB] Initializing database pool', {
+      hasConnectionString: !!process.env.DATABASE_URL,
+      usingDefault: !process.env.DATABASE_URL,
+      environment: process.env.NODE_ENV,
+    });
+
     pool = new Pool({
       connectionString,
       max: 20,
@@ -18,7 +24,16 @@ export function getDbPool() {
 
     // Handle pool errors
     pool.on('error', (err) => {
-      console.error('Unexpected error on idle client', err);
+      console.error('[DB] Unexpected error on idle client:', {
+        error: err.message,
+        stack: err.stack,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    // Log successful connection
+    pool.on('connect', () => {
+      console.log('[DB] New client connected to database pool');
     });
   }
 
@@ -29,13 +44,31 @@ export function getDbPool() {
 export async function query(text: string, params?: any[]) {
   const pool = getDbPool();
   const start = Date.now();
+  const queryPreview = text.substring(0, 100).replace(/\s+/g, ' ');
+
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
 
+    if (duration > 1000) {
+      console.warn('[DB] Slow query detected:', {
+        duration: `${duration}ms`,
+        queryPreview,
+        params: params?.length,
+      });
+    }
+
     return res;
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('[DB] Database query error:', {
+      queryPreview,
+      params,
+      error: error instanceof Error ? error.message : String(error),
+      code: (error as any)?.code,
+      detail: (error as any)?.detail,
+      hint: (error as any)?.hint,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
