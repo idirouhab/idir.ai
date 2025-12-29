@@ -23,11 +23,6 @@ export default function Services() {
       description: t('talks.description'),
       icon: Presentation,
     },
-    {
-      title: t('aiops.title'),
-      description: t('aiops.description'),
-      icon: Server,
-    },
   ];
 
   return (

@@ -127,10 +127,6 @@
       "title": "Speaking & Keynotes",
       "description": "Technical talks on AI integration, LLMs, and workflow automation for conferences and events"
     },
-    "aiops": {
-      "title": "Technical AI-Ops & Infrastructure",
-      "description": "Building scalable automation infrastructure with GitLab CI/CD, deploying AI agents, and managing complex workflow systems in production environments. Expertise from enterprise DevOps to cloud-native architectures."
-    },
     "cta": "Get in Touch"
   },
   "podcast": {

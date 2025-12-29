@@ -127,10 +127,6 @@
       "title": "Ponencias y Keynotes",
       "description": "Charlas técnicas sobre integración de IA, LLMs y automatización para conferencias y eventos"
     },
-    "aiops": {
-      "title": "AI-Ops Técnico e Infraestructura",
-      "description": "Construcción de infraestructura de automatización escalable con GitLab CI/CD, despliegue de agentes de IA y gestión de sistemas de flujos complejos en producción. Experiencia desde DevOps empresarial hasta arquitecturas cloud-native."
-    },
     "cta": "Contáctame"
   },
   "podcast": {
