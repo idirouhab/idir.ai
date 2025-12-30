@@ -41,7 +41,8 @@ export async function POST(request: Request) {
 
     // Authenticate user with email/password
     const user = await authenticateUser(email, password);
-
+      console.log('test')
+      console.log(user, email, password)
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },

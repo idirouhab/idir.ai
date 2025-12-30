@@ -68,11 +68,11 @@ export default function AdminSidebar({
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'owner':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        return 'bg-[#10b981]/20 text-[#10b981] border-[#10b981]/50';
       case 'admin':
-        return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
+        return 'bg-[#10b981]/15 text-[#10b981] border-[#10b981]/40';
       case 'blogger':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        return 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30';
       default:
         return 'bg-gray-700 text-white border-gray-600';
     }
@@ -90,7 +90,7 @@ export default function AdminSidebar({
         {/* Logo and Toggle */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-black font-black text-sm flex-shrink-0">
+            <div className="w-8 h-8 bg-[#10b981] flex items-center justify-center text-black font-black text-sm flex-shrink-0">
               ID
             </div>
             {!isCollapsed && <span className="text-lg font-black text-white">ADMIN</span>}
@@ -134,7 +134,7 @@ export default function AdminSidebar({
                   ${isCollapsed ? 'px-4 justify-center' : 'px-6'}
                   ${
                     active
-                      ? 'text-white bg-gray-800/50 border-l-2 border-emerald-400'
+                      ? 'text-white bg-gray-800/50 border-l-2 border-[#10b981]'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800/30 border-l-2 border-transparent'
                   }
                 `}
@@ -192,13 +192,13 @@ export default function AdminSidebar({
                 <div className="flex gap-2">
                   <Link
                     href="/"
-                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-gray-500 hover:text-white transition-all rounded"
+                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
                   >
                     View Site
                   </Link>
                   <Link
                     href="/admin/login"
-                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-red-500 hover:text-red-400 transition-all rounded"
+                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
                   >
                     Logout
                   </Link>
@@ -219,7 +219,7 @@ export default function AdminSidebar({
         {/* Logo and Close */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3" onClick={onCloseMobile}>
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-black font-black text-sm">
+            <div className="w-8 h-8 bg-[#10b981] flex items-center justify-center text-black font-black text-sm">
               ID
             </div>
             <span className="text-lg font-black text-white">ADMIN</span>
@@ -248,7 +248,7 @@ export default function AdminSidebar({
                   flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all
                   ${
                     active
-                      ? 'text-white bg-gray-800/50 border-l-2 border-emerald-400'
+                      ? 'text-white bg-gray-800/50 border-l-2 border-[#10b981]'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800/30 border-l-2 border-transparent'
                   }
                 `}
@@ -280,14 +280,14 @@ export default function AdminSidebar({
               <Link
                 href="/"
                 onClick={onCloseMobile}
-                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-gray-500 hover:text-white transition-all rounded"
+                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
               >
                 View Site
               </Link>
               <Link
                 href="/admin/login"
                 onClick={onCloseMobile}
-                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-red-500 hover:text-red-400 transition-all rounded"
+                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
               >
                 Logout
               </Link>

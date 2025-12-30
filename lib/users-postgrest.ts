@@ -49,7 +49,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
   try {
     const response = await fetch(
-      `${config.baseURL}/users?email=eq.${encodeURIComponent(email.toLowerCase().trim())}&select=*`,
+      `${config.baseURL}/admin_users?email=eq.${encodeURIComponent(email.toLowerCase().trim())}&select=*`,
       {
         method: 'GET',
         headers: config.headers,
@@ -80,7 +80,7 @@ async function getPasswordHash(userId: string): Promise<string | null> {
 
   try {
     const response = await fetch(
-      `${config.baseURL}/users?id=eq.${userId}&select=password_hash`,
+      `${config.baseURL}/admin_users?id=eq.${userId}&select=password_hash`,
       {
         method: 'GET',
         headers: config.headers,

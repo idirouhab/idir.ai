@@ -192,8 +192,8 @@ export default function UsersManagement() {
           <div
             className={`mb-4 p-3 text-sm border ${
               message.type === 'success'
-                ? 'border-[#00ff88] bg-[#00ff8810] text-[#00ff88]'
-                : 'border-[#ff0055] bg-[#ff005510] text-[#ff0055]'
+                ? 'border-[#10b981] bg-[#10b981]/10 text-[#10b981]'
+                : 'border-red-500 bg-red-500/10 text-red-500'
             }`}
           >
             {message.text}
@@ -204,22 +204,22 @@ export default function UsersManagement() {
         <div className="mb-6">
           <button
             onClick={() => setShowRoleInfo(!showRoleInfo)}
-            className="w-full p-4 bg-[#00cfff10] border border-[#00cfff] text-left flex justify-between items-center hover:bg-[#00cfff15] transition-colors"
+            className="w-full p-4 bg-[#10b981]/10 border border-[#10b981] text-left flex justify-between items-center hover:bg-[#10b981]/15 transition-colors"
           >
             <div>
-              <p className="text-[#00cfff] font-bold text-sm">Role Permissions & Guidelines</p>
+              <p className="text-[#10b981] font-bold text-sm">Role Permissions & Guidelines</p>
               <p className="text-gray-500 text-xs mt-1">Click to {showRoleInfo ? 'hide' : 'view'} detailed role information</p>
             </div>
-            <span className="text-[#00cfff] text-xl">{showRoleInfo ? '−' : '+'}</span>
+            <span className="text-[#10b981] text-xl">{showRoleInfo ? '−' : '+'}</span>
           </button>
 
           {showRoleInfo && (
             <div className="border border-gray-800 border-t-0 p-4 bg-black">
               <div className="grid md:grid-cols-3 gap-4">
                 {/* Owner Role */}
-                <div className="p-4 border border-[#ff0055] bg-[#ff005510]">
+                <div className="p-4 border border-[#10b981] bg-[#10b981]/10">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#ff0055] text-white">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981] text-black">
                       OWNER
                     </span>
                   </div>
@@ -234,9 +234,9 @@ export default function UsersManagement() {
                 </div>
 
                 {/* Admin Role */}
-                <div className="p-4 border border-[#00cfff] bg-[#00cfff10]">
+                <div className="p-4 border border-[#10b981]/70 bg-[#10b981]/5">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00cfff] text-black">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981]/80 text-black">
                       ADMIN
                     </span>
                   </div>
@@ -251,9 +251,9 @@ export default function UsersManagement() {
                 </div>
 
                 {/* Blogger Role */}
-                <div className="p-4 border border-[#00ff88] bg-[#00ff8810]">
+                <div className="p-4 border border-[#10b981]/50 bg-[#10b981]/5">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff88] text-black">
+                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981]/60 text-black">
                       BLOGGER
                     </span>
                   </div>
@@ -271,8 +271,8 @@ export default function UsersManagement() {
 
               <div className="mt-4 p-3 bg-gray-900 border border-gray-800">
                 <p className="text-xs text-gray-400">
-                  <span className="font-bold text-gray-300">Note:</span> New signups are automatically assigned the <span className="text-[#00ff88]">Blogger</span> role and require owner activation.
-                  Only <span className="text-[#ff0055]">Owner</span> can change user roles. You cannot change your own role.
+                  <span className="font-bold text-gray-300">Note:</span> New signups are automatically assigned the <span className="text-[#10b981]">Blogger</span> role and require owner activation.
+                  Only <span className="text-[#10b981]">Owner</span> can change user roles. You cannot change your own role.
                 </p>
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function UsersManagement() {
                       <span className="text-white font-bold text-sm">{user.name}</span>
                       <span
                         className={`px-1.5 py-0.5 text-xs font-bold uppercase ${
-                          user.is_active ? 'bg-[#00ff88] text-black' : 'bg-gray-800 text-gray-400'
+                          user.is_active ? 'bg-[#10b981] text-black' : 'bg-gray-800 text-gray-400'
                         }`}
                       >
                         {user.is_active ? 'ACTIVE' : 'INACTIVE'}
@@ -308,9 +308,9 @@ export default function UsersManagement() {
                       <span
                         className="px-1.5 py-0.5 text-xs font-bold uppercase"
                         style={{
-                          backgroundColor: user.role === 'owner' ? '#ff005520' : user.role === 'admin' ? '#00cfff20' : '#00ff8820',
-                          color: user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88',
-                          border: `1px solid ${user.role === 'owner' ? '#ff0055' : user.role === 'admin' ? '#00cfff' : '#00ff88'}`
+                          backgroundColor: user.role === 'owner' ? 'rgba(16, 185, 129, 0.2)' : user.role === 'admin' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                          color: '#10b981',
+                          border: `1px solid ${user.role === 'owner' ? 'rgba(16, 185, 129, 0.5)' : user.role === 'admin' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
                         }}
                       >
                         {user.role}
@@ -357,7 +357,7 @@ export default function UsersManagement() {
                                 setActionMenuOpen(null);
                                 handleEditUser(user);
                               }}
-                              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#00cfff] transition-all"
+                              className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#10b981] transition-all"
                             >
                               <Pencil size={14} /> Edit
                             </button>
@@ -370,8 +370,8 @@ export default function UsersManagement() {
                                 }}
                                 className={`flex items-center gap-2 w-full px-3 py-2 text-xs text-left font-bold uppercase hover:bg-[#0a0a0a] transition-all border-t border-gray-800 ${
                                   user.is_active
-                                    ? 'text-gray-400 hover:text-[#ff0055]'
-                                    : 'text-gray-300 hover:text-[#00ff88]'
+                                    ? 'text-gray-400 hover:text-red-500'
+                                    : 'text-gray-300 hover:text-[#10b981]'
                                 }`}
                               >
                                 {user.is_active ? (
@@ -399,7 +399,7 @@ export default function UsersManagement() {
         {/* Edit User Modal */}
         {editingUser && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-black border-2 border-[#00cfff] max-w-md w-full p-6">
+            <div className="bg-black border-2 border-[#10b981] max-w-md w-full p-6">
               <div className="flex justify-between items-start mb-6">
                 <h3 className="text-xl font-black text-white uppercase">Edit User</h3>
                 <button
@@ -417,7 +417,7 @@ export default function UsersManagement() {
                     type="text"
                     value={editingUser.name}
                     onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#10b981] focus:outline-none text-sm"
                   />
                 </div>
 
@@ -427,14 +427,14 @@ export default function UsersManagement() {
                     type="email"
                     value={editingUser.email}
                     onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#00cfff] focus:outline-none text-sm"
+                    className="w-full px-3 py-2 bg-[#0a0a0a] text-white border border-gray-700 focus:border-[#10b981] focus:outline-none text-sm"
                   />
                 </div>
 
                 <div className="pt-4 flex gap-3">
                   <button
                     onClick={handleSaveUser}
-                    className="flex-1 px-4 py-2 bg-[#00cfff] text-black font-bold text-sm uppercase hover:opacity-90 transition-opacity"
+                    className="flex-1 px-4 py-2 bg-[#10b981] text-black font-bold text-sm uppercase hover:opacity-90 transition-opacity"
                   >
                     Save Changes
                   </button>

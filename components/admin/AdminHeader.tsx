@@ -87,11 +87,11 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'owner':
-        return 'bg-[#00ff88] text-black';
+        return 'bg-[#10b981] text-black';
       case 'admin':
-        return 'bg-[#00cfff] text-black';
+        return 'bg-[#10b981]/80 text-black';
       case 'blogger':
-        return 'bg-[#ffaa00] text-black';
+        return 'bg-[#10b981]/60 text-black';
       default:
         return 'bg-gray-700 text-white';
     }
@@ -109,7 +109,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-bold uppercase hover:text-[#00ff88] transition-colors ${
+                  className={`text-sm font-bold uppercase hover:text-[#10b981] transition-colors ${
                     isActive ? 'text-white' : 'text-gray-400'
                   }`}
                 >
@@ -137,7 +137,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
           {showLogout && (
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#ff0055] hover:text-[#ff0055] transition-all"
+              className="px-4 py-2 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#10b981] hover:text-[#10b981] transition-all"
             >
               Logout
             </button>

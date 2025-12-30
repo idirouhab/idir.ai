@@ -58,7 +58,7 @@ export async function createUser(input: UserInput, isActive: boolean = true): Pr
   const passwordHash = await hashPassword(input.password);
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .insert([
       {
         email: input.email.toLowerCase().trim(),
@@ -84,7 +84,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .select('*')
     .eq('email', email.toLowerCase().trim())
     .single();
@@ -106,7 +106,7 @@ export async function getUserById(id: string): Promise<User | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .select('*')
     .eq('id', id)
     .single();
@@ -151,7 +151,7 @@ async function getPasswordHash(userId: string): Promise<string | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .select('password_hash')
     .eq('id', userId)
     .single();
@@ -168,7 +168,7 @@ export async function listUsers(): Promise<User[]> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .select('id, email, name, role, is_active, created_at, updated_at')
     .order('created_at', { ascending: false });
 
@@ -185,7 +185,7 @@ export async function updateUserStatus(userId: string, isActive: boolean): Promi
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .update({ is_active: isActive })
     .eq('id', userId)
     .select()
@@ -203,7 +203,7 @@ export async function updateUserStatus(userId: string, isActive: boolean): Promi
 export async function deleteUser(userId: string): Promise<void> {
   const supabase = getAdminClient();
 
-  const { error } = await supabase.from('users').delete().eq('id', userId);
+  const { error } = await supabase.from('admin_users').delete().eq('id', userId);
 
   if (error) {
     console.error('Error deleting user:', error);
@@ -217,7 +217,7 @@ export async function updateUserPassword(userId: string, newPassword: string): P
   const passwordHash = await hashPassword(newPassword);
 
   const { error } = await supabase
-    .from('users')
+    .from('admin_users')
     .update({ password_hash: passwordHash })
     .eq('id', userId);
 
@@ -232,7 +232,7 @@ export async function updateUserRole(userId: string, newRole: UserRole): Promise
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .update({ role: newRole })
     .eq('id', userId)
     .select()
@@ -260,7 +260,7 @@ export async function updateUserDetails(
   if (updates.twitter_url !== undefined) updateData.twitter_url = updates.twitter_url || null;
 
   const { data, error } = await supabase
-    .from('users')
+    .from('admin_users')
     .update(updateData)
     .eq('id', userId)
     .select()

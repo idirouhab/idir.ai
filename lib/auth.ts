@@ -49,7 +49,8 @@ export async function checkAuthFromCookies(): Promise<JWTPayload | null> {
 
 export async function requireAuth(request: NextRequest): Promise<JWTPayload> {
   const user = await checkAuth(request);
-  if (!user) {
+
+    if (!user) {
     throw new Error('Unauthorized');
   }
   return user;
@@ -57,6 +58,7 @@ export async function requireAuth(request: NextRequest): Promise<JWTPayload> {
 
 export async function requireRole(request: NextRequest, allowedRoles: UserRole[]): Promise<JWTPayload> {
   const user = await requireAuth(request);
+
   if (!allowedRoles.includes(user.role)) {
     throw new Error('Forbidden: insufficient permissions');
   }
