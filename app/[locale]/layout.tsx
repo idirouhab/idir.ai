@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: "Sharing AI automation insights, workflows & tutorials. Teaching 10K+ students | Speaking at DevOpsCon & WeAreDevelopers | Host of Prompt&Play podcast 🎙️",
       images: [
         {
-          url: `${baseUrl}/${locale}/opengraph-image`,
+          url: `${baseUrl}/${locale}/opengraph-image?v=2`,
           width: 1200,
           height: 630,
           alt: "Idir Ouhab Meskine - AI Automation Expert & Content Creator",
@@ -93,7 +93,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       creator: "@idir_ouhab",
       title: "Idir Ouhab Meskine — AI Automation Expert",
       description: "Sharing AI automation insights & workflows 🤖 | Senior Solutions Engineer @n8n | Teaching 10K+ students | Tech Speaker | Podcast Host 🎙️",
-      images: [`${baseUrl}/${locale}/opengraph-image`],
+      images: [`${baseUrl}/${locale}/opengraph-image?v=2`],
     },
     robots: {
       index: true,
