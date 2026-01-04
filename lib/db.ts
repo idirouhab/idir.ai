@@ -9,12 +9,6 @@ export function getDbPool() {
     const connectionString = process.env.DATABASE_URL ||
       'postgresql://postgres:postgres@127.0.0.1:5432/postgres';
 
-    console.log('[DB] Initializing database pool', {
-      hasConnectionString: !!process.env.DATABASE_URL,
-      usingDefault: !process.env.DATABASE_URL,
-      environment: process.env.NODE_ENV,
-    });
-
     pool = new Pool({
       connectionString,
       max: 20,

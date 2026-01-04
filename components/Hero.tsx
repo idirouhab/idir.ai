@@ -118,14 +118,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-
-      {/* Scroll indicator - with accessible label */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce" aria-label={tAria('scrollDown')}>
-        <div className="w-6 h-10 border-2 border-[#10b981] rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-3 bg-[#10b981] rounded-full" aria-hidden="true"></div>
-        </div>
-        <span className="sr-only">Scroll down to view more content</span>
-      </div>
     </section>
   );
 }

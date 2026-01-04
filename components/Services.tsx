@@ -40,7 +40,7 @@ export default function Services() {
         </header>
 
         {/* Services Grid - Compact */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
