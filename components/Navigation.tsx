@@ -12,6 +12,7 @@ export default function Navigation() {
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('nav');
+  const tAria = useTranslations('aria');
 
   // Extract locale from pathname (e.g., /en/blog -> en)
   const locale = pathname?.split('/')[1] || 'en';
@@ -125,7 +126,7 @@ export default function Navigation() {
               <a
                 href={`/${locale}`}
                 className="text-2xl font-black text-white hover:text-[#10b981] transition-colors uppercase tracking-tight"
-                aria-label="Home - Idir Ouhab Meskine"
+                aria-label={tAria('logoHome')}
               >
                 IO
               </a>
@@ -159,7 +160,7 @@ export default function Navigation() {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 text-white hover:text-[#10b981] transition-colors"
-                aria-label={isOpen ? "Close menu" : "Open menu"}
+                aria-label={isOpen ? tAria('closeMenu') : tAria('openMenu')}
               >
                 <svg
                   className="h-8 w-8"
@@ -214,7 +215,7 @@ export default function Navigation() {
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 text-white hover:text-[#10b981] transition-colors"
-              aria-label="Close menu"
+              aria-label={tAria('closeMenu')}
             >
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth={3}>
                 <path strokeLinecap="square" strokeLinejoin="miter" d="M6 18L18 6M6 6l12 12" />

@@ -7,6 +7,8 @@ export default function Footer() {
   const t = useTranslations('footer');
   const nav = useTranslations('nav');
   const contact = useTranslations('contact');
+  const tCommon = useTranslations('common');
+  const tAria = useTranslations('aria');
 
   const links = {
     navigation: [
@@ -19,7 +21,7 @@ export default function Footer() {
       { label: contact('platforms.linkedin'), href: "https://www.linkedin.com/in/idirouhab/" },
       { label: contact('platforms.x'), href: "https://x.com/idir_ouhab" },
       { label: contact('platforms.github'), href: "https://www.github.com/idirouhab" },
-      { label: "Email", href: "mailto:hello@idir.ai" },
+      { label: tCommon('email'), href: "mailto:hello@idir.ai" },
     ],
   };
 
@@ -36,7 +38,7 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         className="absolute top-4 right-4 sm:top-8 sm:right-8 p-3 bg-[#10b981] text-black font-black rounded hover:bg-[#059669] transition-colors"
-        aria-label="Back to top"
+        aria-label={tAria('backToTop')}
       >
         ↑
       </button>
@@ -57,13 +59,13 @@ export default function Footer() {
             </p>
             <div className="flex gap-3">
               <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
-                AI Expert
+                {tCommon('badges.aiExpert')}
               </div>
               <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
-                Speaker
+                {tCommon('badges.speaker')}
               </div>
               <div className="px-3 py-1 border border-[#10b981] text-[#10b981] text-xs font-bold uppercase rounded">
-                Podcaster
+                {tCommon('badges.podcaster')}
               </div>
             </div>
           </div>

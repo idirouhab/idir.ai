@@ -19,6 +19,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
   const t = await getTranslations({ locale, namespace: 'blog' });
+  const tCommon = await getTranslations({ locale, namespace: 'common' });
 
   const category = resolvedSearchParams.category as BlogCategory | undefined;
   const posts = await getPublishedPosts(locale as 'en' | 'es', undefined, category);
@@ -26,7 +27,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const categories: BlogCategory[] = ['insights', 'learnings', 'opinion'];
 
   const breadcrumbs = [
-    { label: locale === 'es' ? 'Inicio' : 'Home', href: `/${locale}` },
+    { label: tCommon('home'), href: `/${locale}` },
     { label: t('title') },
   ];
 

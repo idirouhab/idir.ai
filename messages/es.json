@@ -186,12 +186,13 @@
     "builtTailwind": "Tailwind"
   },
   "metadata": {
-    "title": "Idir Ouhab Meskine | Ingeniero de Soluciones Senior en n8n | Ponente de IA y Automatización",
-    "description": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
-    "ogTitle": "Idir Ouhab Meskine | Ingeniero de Soluciones en n8n",
-    "ogDescription": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español.",
-    "twitterTitle": "Idir Ouhab Meskine | Ingeniero de Soluciones Senior en n8n",
-    "twitterDescription": "Ingeniero de Soluciones Senior en n8n especializado en IA y automatización. Ponente en conferencias tecnológicas y host del podcast Prompt&Play en español."
+    "title": "Idir Ouhab Meskine — Experto en Automatización IA y Creador de Contenido",
+    "description": "Compartiendo insights y flujos de automatización IA. Senior Solutions Engineer @n8n | Enseñando a +10K estudiantes | Ponente en conferencias tech | Host del podcast Prompt&Play 🎙️",
+    "keywords": ["Idir Ouhab Meskine", "automatización IA", "automatización de flujos", "workflows n8n", "integración IA", "experto automatización", "ponente técnico", "DevOps", "GitLab CI/CD", "agentes IA", "integración LLM", "automatización no-code", "herramientas desarrollo", "educador tech", "consultor automatización", "ingeniería prompts", "creador contenido IA"],
+    "ogTitle": "Idir Ouhab Meskine — Experto en Automatización IA y Creador de Contenido",
+    "ogDescription": "Compartiendo insights, workflows y tutoriales de automatización IA. Enseñando a +10K estudiantes | Ponente en DevOpsCon y WeAreDevelopers | Host del podcast Prompt&Play 🎙️",
+    "twitterTitle": "Idir Ouhab Meskine — Experto en Automatización IA",
+    "twitterDescription": "Compartiendo insights, workflows y tutoriales de automatización IA. Enseñando a +10K estudiantes | Ponente en DevOpsCon y WeAreDevelopers | Host del podcast Prompt&Play 🎙️"
   },
   "structuredData": {
     "jobTitle": "Ingeniero de Soluciones Senior",
@@ -684,6 +685,73 @@
       "title": "¿Aún tienes preguntas?",
       "description": "Ponte en contacto y estaré encantado de ayudarte.",
       "button": "Contáctame"
+    }
+  },
+  "aria": {
+    "skipToMain": "Saltar al contenido principal",
+    "heroSection": "Sección principal",
+    "socialLinkedIn": "LinkedIn",
+    "socialTwitter": "X (Twitter)",
+    "socialYouTube": "YouTube",
+    "socialGitHub": "GitHub",
+    "professionalHeadshot": "Foto profesional",
+    "scrollDown": "Desplazar hacia abajo para más contenido",
+    "backToTop": "Volver arriba",
+    "podcastPlayer": "Reproductor de podcast",
+    "spotifyPlayer": "Reproductor de Spotify",
+    "loadSpotifyPlayer": "Cargar Reproductor de Spotify",
+    "shareTwitter": "Compartir en Twitter",
+    "shareLinkedIn": "Compartir en LinkedIn",
+    "copyLink": "Copiar enlace",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "generateMetadataAI": "Generar metadatos con IA",
+    "breadcrumb": "Migas de pan",
+    "logoHome": "Inicio - Idir Ouhab Meskine",
+    "imageAlt": "Idir Ouhab Meskine, Ingeniero de Soluciones Senior en n8n, hablando en una conferencia tecnológica"
+  },
+  "common": {
+    "home": "Inicio",
+    "backHome": "Volver al Inicio",
+    "legal": "Legal",
+    "email": "Email",
+    "badges": {
+      "aiExpert": "Experto en IA",
+      "speaker": "Ponente",
+      "podcaster": "Podcaster"
+    }
+  },
+  "api": {
+    "errors": {
+      "nameRequired": "El nombre es obligatorio",
+      "emailRequired": "Se requiere un email válido",
+      "emailInvalid": "Se requiere un email válido",
+      "messageMinLength": "El mensaje debe tener al menos 10 caracteres",
+      "invalidInput": "Entrada inválida",
+      "internalError": "Error interno del servidor",
+      "unauthorized": "No autorizado",
+      "postNotFound": "Publicación no encontrada",
+      "invalidPostId": "ID de publicación inválido",
+      "failedToDelete": "Error al eliminar publicación",
+      "missingConfiguration": "Configuración faltante",
+      "errorPrefix": "Error en POST"
+    },
+    "contact": {
+      "emailSent": "Email enviado correctamente",
+      "emailFrom": "Formulario de Contacto <contact@idir.ai>",
+      "emailSubject": "Nuevo mensaje del formulario de contacto de {name}",
+      "emailHeading": "Nueva solicitud de contacto",
+      "labelFrom": "De:",
+      "labelEmail": "Email:",
+      "labelMessage": "Mensaje:",
+      "emailFooter": "Este mensaje fue enviado desde el formulario de contacto en idir.ai"
+    }
+  },
+  "quiz": {
+    "meta": {
+      "title": "Desafío Quiz IA - Pon a Prueba tus Conocimientos de Inteligencia Artificial",
+      "description": "Participa en nuestro quiz interactivo de IA y compite en el ranking global. Pon a prueba tus conocimientos sobre inteligencia artificial, machine learning y tecnología.",
+      "keywords": ["quiz IA", "test inteligencia artificial", "conocimientos IA", "quiz machine learning", "desafío tech", "ranking IA", "quiz interactivo", "evaluar habilidades IA", "competencia IA", "evaluación tecnológica"]
     }
   }
 }

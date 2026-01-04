@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { getSiteUrl } from '@/lib/site-config';
 import QuizGame from './QuizGame';
 
@@ -8,42 +9,13 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'quiz.meta' });
   const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/quiz`;
 
-  const title = locale === 'es'
-    ? 'Desafío Quiz IA - Pon a Prueba tus Conocimientos de Inteligencia Artificial'
-    : 'AI Quiz Challenge - Test Your Artificial Intelligence Knowledge';
-
-  const description = locale === 'es'
-    ? 'Participa en nuestro quiz interactivo de IA y compite en el ranking global. Responde preguntas sobre inteligencia artificial, machine learning, y tecnología. ¡Gana puntos por velocidad y precisión!'
-    : 'Take our interactive AI quiz and compete on the global leaderboard. Answer questions about artificial intelligence, machine learning, and technology. Earn points for speed and accuracy!';
-
-  const keywords = locale === 'es'
-    ? [
-        'quiz de IA',
-        'inteligencia artificial',
-        'test de AI',
-        'machine learning',
-        'quiz interactivo',
-        'tecnología',
-        'ranking IA',
-        'quiz de tecnología',
-        'aprender IA',
-        'desafío IA'
-      ]
-    : [
-        'AI quiz',
-        'artificial intelligence',
-        'AI test',
-        'machine learning',
-        'interactive quiz',
-        'technology',
-        'AI leaderboard',
-        'tech quiz',
-        'learn AI',
-        'AI challenge'
-      ];
+  const title = t('title');
+  const description = t('description');
+  const keywords = t('keywords') as unknown as string[];
 
   return {
     metadataBase: new URL(baseUrl),

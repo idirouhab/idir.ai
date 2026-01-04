@@ -48,9 +48,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     metadataBase: new URL(baseUrl),
-    title: "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
-    description: "Sharing AI automation insights & workflows. Senior Solutions Engineer @n8n | Teaching 10K+ students | Speaking at major tech conferences | Host of Prompt&Play podcast 🎙️",
-    keywords: ["Idir Ouhab Meskine", "AI automation", "workflow automation", "n8n workflows", "AI content creator", "tech speaker", "Prompt&Play podcast", "AI tutorials", "automation tutorials", "DevOpsCon", "WeAreDevelopers", "AI community", "tech content creator"],
+    title: t('title'),
+    description: t('description'),
+    keywords: t('keywords') as unknown as string[],
     authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
     creator: "Idir Ouhab Meskine",
     icons: {
@@ -75,8 +75,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       alternateLocale: [alternateLocale],
       url: canonicalUrl,
       siteName: "Idir Ouhab Meskine",
-      title: "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
-      description: "Sharing AI automation insights, workflows & tutorials. Teaching 10K+ students | Speaking at DevOpsCon & WeAreDevelopers | Host of Prompt&Play podcast 🎙️",
+      title: t('ogTitle'),
+      description: t('ogDescription'),
       images: [
         {
           url: `${baseUrl}/${locale}/opengraph-image?v=2`,
@@ -91,8 +91,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       site: "@idir_ouhab",
       creator: "@idir_ouhab",
-      title: "Idir Ouhab Meskine — AI Automation Expert",
-      description: "Sharing AI automation insights & workflows 🤖 | Senior Solutions Engineer @n8n | Teaching 10K+ students | Tech Speaker | Podcast Host 🎙️",
+      title: t('twitterTitle'),
+      description: t('twitterDescription'),
       images: [`${baseUrl}/${locale}/opengraph-image?v=2`],
     },
     robots: {

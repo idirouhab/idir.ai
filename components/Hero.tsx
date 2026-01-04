@@ -7,12 +7,13 @@ import { trackCTAClick } from "@/lib/analytics";
 
 export default function Hero() {
   const t = useTranslations('hero');
+  const tAria = useTranslations('aria');
 
   return (
     <section
       className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-16 overflow-hidden"
       style={{ background: '#000000' }}
-      aria-label="Hero section"
+      aria-label={tAria('heroSection')}
     >
       {/* Subtle background pattern - decorative only */}
       <div className="absolute inset-0 opacity-5" aria-hidden="true">
@@ -50,7 +51,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#d1d5db] hover:text-[#10b981] transition-colors"
-                aria-label="LinkedIn"
+                aria-label={tAria('socialLinkedIn')}
                 onClick={() => trackCTAClick('LinkedIn', 'hero')}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -62,7 +63,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#d1d5db] hover:text-[#10b981] transition-colors"
-                aria-label="X (Twitter)"
+                aria-label={tAria('socialTwitter')}
                 onClick={() => trackCTAClick('X/Twitter', 'hero')}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -74,7 +75,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#d1d5db] hover:text-[#10b981] transition-colors"
-                aria-label="YouTube"
+                aria-label={tAria('socialYouTube')}
                 onClick={() => trackCTAClick('YouTube', 'hero')}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -86,7 +87,7 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#d1d5db] hover:text-[#10b981] transition-colors"
-                aria-label="GitHub"
+                aria-label={tAria('socialGitHub')}
                 onClick={() => trackCTAClick('GitHub', 'hero')}
               >
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -97,7 +98,7 @@ export default function Hero() {
           </div>
 
           {/* Headshot - Clean border with template styling */}
-          <div className="relative lg:order-last" role="img" aria-label="Professional headshot">
+          <div className="relative lg:order-last" role="img" aria-label={tAria('professionalHeadshot')}>
             <div className="relative">
               {/* Clean emerald border */}
               <div className="relative bg-black rounded-lg aspect-square overflow-hidden border border-[#1f2937]">
@@ -105,7 +106,7 @@ export default function Hero() {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-[#10b981]" aria-hidden="true"></div>
                 <Image
                   src="/headshot.webp"
-                  alt="Idir Ouhab Meskine, Senior Solutions Engineer at n8n, speaking at a tech conference"
+                  alt={tAria('imageAlt')}
                   fill
                   className="object-cover"
                   priority
@@ -119,7 +120,7 @@ export default function Hero() {
       </div>
 
       {/* Scroll indicator - with accessible label */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce" aria-label="Scroll down for more content">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce" aria-label={tAria('scrollDown')}>
         <div className="w-6 h-10 border-2 border-[#10b981] rounded-full flex items-start justify-center p-2">
           <div className="w-1 h-3 bg-[#10b981] rounded-full" aria-hidden="true"></div>
         </div>

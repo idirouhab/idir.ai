@@ -186,12 +186,13 @@
     "builtTailwind": "Tailwind"
   },
   "metadata": {
-    "title": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n | AI & Automation Speaker",
-    "description": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
-    "ogTitle": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n",
-    "ogDescription": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
-    "twitterTitle": "Idir Ouhab Meskine | Senior Solutions Engineer at n8n",
-    "twitterDescription": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish."
+    "title": "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
+    "description": "Sharing AI automation insights & workflows. Senior Solutions Engineer @n8n | Teaching 10K+ students | Speaking at major tech conferences | Host of Prompt&Play podcast 🎙️",
+    "keywords": ["Idir Ouhab Meskine", "AI automation", "workflow automation", "n8n workflows", "AI integration", "automation expert", "technical speaker", "DevOps", "GitLab CI/CD", "AI agents", "LLM integration", "no-code automation", "developer tools", "tech educator", "automation consultant", "prompt engineering", "AI content creator"],
+    "ogTitle": "Idir Ouhab Meskine — AI Automation Expert & Content Creator",
+    "ogDescription": "Sharing AI automation insights, workflows & tutorials. Teaching 10K+ students | Speaking at DevOpsCon & WeAreDevelopers | Host of Prompt&Play podcast 🎙️",
+    "twitterTitle": "Idir Ouhab Meskine — AI Automation Expert",
+    "twitterDescription": "Sharing AI automation insights, workflows & tutorials. Teaching 10K+ students | Speaking at DevOpsCon & WeAreDevelopers | Host of Prompt&Play podcast 🎙️"
   },
   "structuredData": {
     "jobTitle": "Senior Solutions Engineer",
@@ -688,6 +689,73 @@
       "title": "Still have questions?",
       "description": "Get in touch and I'll be happy to help.",
       "button": "Contact Me"
+    }
+  },
+  "aria": {
+    "skipToMain": "Skip to main content",
+    "heroSection": "Hero section",
+    "socialLinkedIn": "LinkedIn",
+    "socialTwitter": "X (Twitter)",
+    "socialYouTube": "YouTube",
+    "socialGitHub": "GitHub",
+    "professionalHeadshot": "Professional headshot",
+    "scrollDown": "Scroll down for more content",
+    "backToTop": "Back to top",
+    "podcastPlayer": "Podcast player",
+    "spotifyPlayer": "Spotify podcast player",
+    "loadSpotifyPlayer": "Load Spotify Player",
+    "shareTwitter": "Share on Twitter",
+    "shareLinkedIn": "Share on LinkedIn",
+    "copyLink": "Copy link",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "generateMetadataAI": "Generate metadata with AI",
+    "breadcrumb": "Breadcrumb",
+    "logoHome": "Home - Idir Ouhab Meskine",
+    "imageAlt": "Idir Ouhab Meskine, Senior Solutions Engineer at n8n, speaking at a tech conference"
+  },
+  "common": {
+    "home": "Home",
+    "backHome": "Back to Home",
+    "legal": "Legal",
+    "email": "Email",
+    "badges": {
+      "aiExpert": "AI Expert",
+      "speaker": "Speaker",
+      "podcaster": "Podcaster"
+    }
+  },
+  "api": {
+    "errors": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Valid email is required",
+      "emailInvalid": "Valid email is required",
+      "messageMinLength": "Message must be at least 10 characters",
+      "invalidInput": "Invalid input",
+      "internalError": "Internal server error",
+      "unauthorized": "Unauthorized",
+      "postNotFound": "Post not found",
+      "invalidPostId": "Invalid post ID",
+      "failedToDelete": "Failed to delete post",
+      "missingConfiguration": "Missing configuration",
+      "errorPrefix": "Error in POST"
+    },
+    "contact": {
+      "emailSent": "Email sent successfully",
+      "emailFrom": "Contact Form <contact@idir.ai>",
+      "emailSubject": "New Contact Form Message from {name}",
+      "emailHeading": "New Contact Form Submission",
+      "labelFrom": "From:",
+      "labelEmail": "Email:",
+      "labelMessage": "Message:",
+      "emailFooter": "This message was sent from the contact form at idir.ai"
+    }
+  },
+  "quiz": {
+    "meta": {
+      "title": "AI Quiz Challenge - Test Your Artificial Intelligence Knowledge",
+      "description": "Take our interactive AI quiz and compete on the global leaderboard. Test your knowledge about artificial intelligence, machine learning, and technology.",
+      "keywords": ["AI quiz", "artificial intelligence test", "AI knowledge", "machine learning quiz", "tech challenge", "AI leaderboard", "interactive quiz", "test AI skills", "AI competition", "technology assessment"]
     }
   }
 }

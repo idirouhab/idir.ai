@@ -48,6 +48,8 @@ type Props = {
 export default async function Home({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'structuredData' });
+  const tAria = await getTranslations({ locale, namespace: 'aria' });
+  const tCommon = await getTranslations({ locale, namespace: 'common' });
 
   // Get structured data arrays
   const knowsAbout = [
@@ -69,7 +71,7 @@ export default async function Home({ params }: Props) {
     <>
       {/* Skip to content link for keyboard navigation */}
       <a href="#main-content" className="skip-to-content">
-        Skip to main content
+        {tAria('skipToMain')}
       </a>
 
       <Navigation />
@@ -101,15 +103,7 @@ export default async function Home({ params }: Props) {
               name: "n8n",
               url: "https://n8n.io",
             },
-            knowsAbout: [
-              ...knowsAbout,
-              "n8n workflow automation",
-              "GitLab CI/CD",
-              "DevOps infrastructure",
-              "AI agent orchestration",
-              "Technical education and speaking",
-              "Low-code/no-code automation",
-            ],
+            knowsAbout: knowsAbout,
             sameAs: [
               "https://www.linkedin.com/in/idirouhab/",
               "https://x.com/idir_ouhab",
@@ -172,7 +166,7 @@ export default async function Home({ params }: Props) {
                 {
                   "@type": "ListItem",
                   position: 1,
-                  name: "Home",
+                  name: tCommon('home'),
                   item: `https://idir.ai/${locale}`,
                 },
               ],
