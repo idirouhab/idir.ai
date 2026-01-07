@@ -15,6 +15,17 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     const checkAuthAndFetch = async () => {
       try {
         const { id } = await params;
+
+        // Check authentication and get user info
+        const authResponse = await fetch('/api/auth/me');
+        if (!authResponse.ok) {
+          router.push('/admin/login');
+          return;
+        }
+
+        const authData = await authResponse.json();
+        const currentUser = authData.user;
+
         // Fetch specific post (including drafts with auth)
         const response = await fetch(`/api/posts/${id}?draft=true`);
 
@@ -29,6 +40,19 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         }
 
         const { data } = await response.json();
+
+        // Check if user has permission to edit this post
+        const canEdit =
+          currentUser.role === 'owner' ||
+          currentUser.role === 'admin' ||
+          (currentUser.role === 'blogger' && data.author_id === currentUser.id);
+
+        if (!canEdit) {
+          alert('You do not have permission to edit this post.');
+          router.push('/admin/blog');
+          return;
+        }
+
         setPost(data);
         setLoading(false);
       } catch (error) {

@@ -15,6 +15,12 @@ type TranslationGroup = {
   es?: BlogPost;
 };
 
+type UserInfo = {
+  id: string;
+  email: string;
+  role: 'owner' | 'admin' | 'blogger';
+};
+
 export default function AdminBlogPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -24,16 +30,24 @@ export default function AdminBlogPage() {
   const [sharingId, setSharingId] = useState<string | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
   const [shareMenuOpen, setShareMenuOpen] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
       try {
-        // Check auth first
+        // Check auth first and get user info
         const authResponse = await fetch('/api/auth/me');
         if (!authResponse.ok) {
           router.push('/admin/login');
           return;
         }
+
+        const authData = await authResponse.json();
+        setCurrentUser({
+          id: authData.user.id,
+          email: authData.user.email,
+          role: authData.user.role,
+        });
 
         // Fetch grouped posts for admin (includes both published and drafts)
         const response = await fetch('/api/blog/grouped-admin?limit=100');
@@ -61,6 +75,29 @@ export default function AdminBlogPage() {
       newExpanded.add(groupId);
     }
     setExpandedGroups(newExpanded);
+  };
+
+  // Check if current user can edit/delete a post
+  const canModifyPost = (post: BlogPost): boolean => {
+    if (!currentUser) return false;
+    // Owners and admins can modify any post
+    if (currentUser.role === 'owner' || currentUser.role === 'admin') return true;
+    // Bloggers can only modify their own posts
+    return post.author_id === currentUser.id;
+  };
+
+  // Check if user can modify any post in a translation group
+  const canModifyGroup = (group: TranslationGroup): boolean => {
+    if (!currentUser) return false;
+    // Owners and admins can modify any group
+    if (currentUser.role === 'owner' || currentUser.role === 'admin') return true;
+    // Bloggers can only see groups with posts they authored
+    return (group.en && canModifyPost(group.en)) || (group.es && canModifyPost(group.es));
+  };
+
+  // Filter groups based on user permissions
+  const getVisibleGroups = (): TranslationGroup[] => {
+    return groups.filter(group => canModifyGroup(group));
   };
 
   const handleDelete = async (postId: string, postTitle: string) => {
@@ -304,6 +341,8 @@ export default function AdminBlogPage() {
     );
   }
 
+  const visibleGroups = getVisibleGroups();
+
   return (
     <AdminPageWrapper showLogout={false}>
       {/* Page Header */}
@@ -311,7 +350,7 @@ export default function AdminBlogPage() {
         <div>
           <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
           <p className="text-gray-400 text-sm">
-            {groups.length} translation {groups.length === 1 ? 'group' : 'groups'}
+            {visibleGroups.length} translation {visibleGroups.length === 1 ? 'group' : 'groups'}
           </p>
         </div>
         <Link
@@ -323,9 +362,9 @@ export default function AdminBlogPage() {
       </div>
 
       {/* Posts List */}
-      {groups.length > 0 ? (
+      {visibleGroups.length > 0 ? (
         <div className="bg-black border border-gray-800">
-          {groups.map((group, groupIndex) => {
+          {visibleGroups.map((group, groupIndex) => {
             const isExpanded = expandedGroups.has(group.translation_group_id);
             const primaryPost = group.en || group.es;
             const hasMultipleLanguages = group.en && group.es;
@@ -338,7 +377,7 @@ export default function AdminBlogPage() {
             return (
               <div
                 key={group.translation_group_id}
-                className={groupIndex !== groups.length - 1 ? 'border-b border-gray-800' : ''}
+                className={groupIndex !== visibleGroups.length - 1 ? 'border-b border-gray-800' : ''}
               >
                 {/* Primary Post (collapsed view) */}
                 <div className="flex items-center">
@@ -376,12 +415,12 @@ export default function AdminBlogPage() {
                 {/* Expanded Translations */}
                 {isExpanded && hasMultipleLanguages && (
                   <div className="border-t border-gray-800 bg-[#050505]">
-                    {group.en && (
+                    {group.en && canModifyPost(group.en) && (
                       <div className="border-b border-gray-800/50">
                         {renderPost(group.en, true)}
                       </div>
                     )}
-                    {group.es && (
+                    {group.es && canModifyPost(group.es) && (
                       <div>
                         {renderPost(group.es, true)}
                       </div>

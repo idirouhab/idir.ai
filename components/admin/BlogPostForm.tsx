@@ -157,6 +157,17 @@ export default function BlogPostForm({ post }: Props) {
   const [isDragging, setIsDragging] = useState(false);
   const [fullScreenMode, setFullScreenMode] = useState<null | 'en' | 'es'>(null);
   const [showMetadataPanel, setShowMetadataPanel] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisFeedback, setAnalysisFeedback] = useState<Array<{
+    category: string;
+    original_snippet: string;
+    issue_identified: string;
+    suggested_improvement: string;
+    improved_example: string;
+    impact_level: string;
+  }> | null>(null);
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [dismissedFeedback, setDismissedFeedback] = useState<Set<number>>(new Set());
 
   const [formData, setFormData] = useState({
     title_en: '',
@@ -562,6 +573,47 @@ export default function BlogPostForm({ post }: Props) {
     }
   };
 
+  // Handle content analysis
+  const handleAnalyzeContent = async () => {
+    if (!formData.content_en) {
+      alert('Please add some content to analyze');
+      return;
+    }
+
+    setAnalyzing(true);
+    setAnalysisFeedback(null);
+
+    try {
+      const response = await fetch('https://idir-test.app.n8n.cloud/webhook/analyze-text', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: formData.content_en,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze content');
+      }
+
+      const result = await response.json();
+      setAnalysisFeedback(result.feedback || []);
+      setDismissedFeedback(new Set()); // Reset dismissed items on new analysis
+      setShowAnalysisModal(true);
+    } catch (err: any) {
+      alert(err.message || 'Failed to analyze content');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  // Handle dismissing feedback items
+  const handleDismissFeedback = (index: number) => {
+    setDismissedFeedback(prev => new Set([...prev, index]));
+  };
+
   // Handle image replacement
   const handleReplaceImage = async (file: File) => {
     const oldImageUrl = formData.cover_image;
@@ -671,13 +723,38 @@ export default function BlogPostForm({ post }: Props) {
             <label className="block text-white font-bold uppercase text-sm">
               Content {post ? '' : '- English'} (Markdown) *
             </label>
-            <button
-              type="button"
-              onClick={() => setFullScreenMode('en')}
-              className="px-4 py-2 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform text-sm"
-            >
-              ✏️ Enter Full-Screen Editor
-            </button>
+            <div className="flex gap-2">
+              {analysisFeedback && analysisFeedback.length > 0 && (() => {
+                const activeFeedbackCount = analysisFeedback.filter((_, index) => !dismissedFeedback.has(index)).length;
+                if (activeFeedbackCount === 0) return null;
+
+                return (
+                  <button
+                    type="button"
+                    onClick={() => setShowAnalysisModal(true)}
+                    className="px-4 py-2 bg-[#ff0055] text-white font-bold uppercase hover:scale-105 transition-transform text-sm flex items-center gap-2"
+                    title="Review AI feedback"
+                  >
+                    📋 Review Feedback ({activeFeedbackCount})
+                  </button>
+                );
+              })()}
+              <button
+                type="button"
+                onClick={handleAnalyzeContent}
+                disabled={analyzing || !formData.content_en}
+                className="px-4 py-2 bg-[#00d1ff] text-black font-bold uppercase hover:scale-105 transition-transform text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {analyzing ? '⏳ Analyzing...' : '🤖 Analyze'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFullScreenMode('en')}
+                className="px-4 py-2 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform text-sm"
+              >
+                ✏️ Enter Full-Screen Editor
+              </button>
+            </div>
           </div>
           <MarkdownEditor
             value={formData.content_en}
@@ -1265,6 +1342,163 @@ Tu contenido va aquí...
           canUserPublish={canUserPublish}
         />
       )}
+
+      {/* Analysis Loading Modal */}
+      {analyzing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0a0a0a] border-4 border-[#00d1ff] p-12 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="mb-6">
+                <div className="inline-block animate-spin text-6xl">🤖</div>
+              </div>
+              <h3 className="text-2xl font-black text-white uppercase mb-4">
+                Analyzing Content...
+              </h3>
+              <p className="text-gray-400 mb-2">
+                AI is reviewing your blog post for improvements.
+              </p>
+              <p className="text-[#00d1ff] font-bold">
+                This may take 20-30 seconds. Please wait...
+              </p>
+              <div className="mt-6 flex justify-center gap-2">
+                <div className="w-3 h-3 bg-[#00d1ff] rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-3 h-3 bg-[#00d1ff] rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-3 h-3 bg-[#00d1ff] rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Analysis Feedback Modal */}
+      {showAnalysisModal && analysisFeedback && analysisFeedback.length > 0 && (() => {
+        // Filter out dismissed items
+        const activeFeedback = analysisFeedback.filter((_, index) => !dismissedFeedback.has(index));
+
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="bg-[#0a0a0a] border-4 border-[#00d1ff] max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="p-4 border-b border-gray-800 flex items-center justify-between bg-black">
+                <h3 className="text-xl font-black text-white uppercase flex items-center gap-2">
+                  <span className="text-2xl">🤖</span>
+                  AI Feedback ({activeFeedback.length})
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowAnalysisModal(false)}
+                  className="text-gray-400 hover:text-white transition-colors text-xl font-bold px-3 py-1 hover:bg-gray-800"
+                  title="Close"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {activeFeedback.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    <div className="text-6xl mb-4">✅</div>
+                    <h4 className="text-xl font-bold text-white mb-2">All Feedback Reviewed!</h4>
+                    <p className="text-gray-400">You've addressed all suggestions.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {analysisFeedback.map((item, index) => {
+                      // Skip dismissed items
+                      if (dismissedFeedback.has(index)) return null;
+
+                      return (
+                        <div
+                          key={index}
+                          className="p-4 bg-black border-2 border-gray-800 hover:border-[#00d1ff] transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0 w-8 h-8 bg-[#00d1ff] text-black rounded-full flex items-center justify-center font-black text-sm">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-3">
+                                <h4 className="text-lg font-bold text-[#00d1ff]">{item.category}</h4>
+                                <span className={`text-xs px-2 py-1 rounded font-bold ${
+                                  item.impact_level === 'High' ? 'bg-[#ff0055] text-white' :
+                                  item.impact_level === 'Medium' ? 'bg-[#ff9500] text-black' :
+                                  'bg-gray-600 text-white'
+                                }`}>
+                                  {item.impact_level} Impact
+                                </span>
+                              </div>
+
+                              <div className="mb-3 p-3 bg-[#0a0a0a] border-l-4 border-gray-600">
+                                <p className="text-xs text-gray-500 uppercase font-bold mb-1">📝 Original Text</p>
+                                <p className="text-gray-400 text-sm italic">&ldquo;{item.original_snippet}&rdquo;</p>
+                              </div>
+
+                              <div className="mb-3">
+                                <p className="text-xs text-gray-500 uppercase font-bold mb-1">⚠️ Issue Identified</p>
+                                <p className="text-white text-sm">{item.issue_identified}</p>
+                              </div>
+
+                              <div className="mb-3">
+                                <p className="text-xs text-gray-500 uppercase font-bold mb-1">💡 Suggested Improvement</p>
+                                <p className="text-[#00ff88] text-sm font-medium">{item.suggested_improvement}</p>
+                              </div>
+
+                              <div className="mb-4 p-3 bg-[#00ff88]/5 border-l-4 border-[#00ff88]">
+                                <p className="text-xs text-gray-500 uppercase font-bold mb-1">✨ Improved Example</p>
+                                <p className="text-[#00ff88] text-sm font-medium italic">&ldquo;{item.improved_example}&rdquo;</p>
+                              </div>
+
+                              {/* Action buttons */}
+                              <div className="flex gap-2 pt-3 border-t border-gray-800">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDismissFeedback(index)}
+                                  className="flex-1 px-3 py-2 bg-[#00ff88]/10 border border-[#00ff88]/50 text-[#00ff88] font-bold text-xs uppercase hover:bg-[#00ff88]/20 transition-colors"
+                                  title="Mark as done"
+                                >
+                                  ✓ Done
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDismissFeedback(index)}
+                                  className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-600 text-gray-400 font-bold text-xs uppercase hover:bg-gray-700/50 transition-colors"
+                                  title="Ignore this suggestion"
+                                >
+                                  ✕ Ignore
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-4 border-t border-gray-800 bg-black flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={handleAnalyzeContent}
+                  disabled={analyzing}
+                  className="px-4 py-2 bg-black border-2 border-[#00d1ff] text-[#00d1ff] font-bold uppercase hover:bg-[#00d1ff] hover:text-black transition-colors text-sm disabled:opacity-50"
+                >
+                  🔄 Re-analyze
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAnalysisModal(false)}
+                  className="px-6 py-2 bg-[#00d1ff] text-black font-bold uppercase hover:scale-105 transition-transform text-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </form>
   );
 }

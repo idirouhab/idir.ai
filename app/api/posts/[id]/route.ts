@@ -87,8 +87,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // Check permissions - user can only edit their own posts unless they're owner
-    if (existingPost.author_id !== user.userId && user.role !== 'owner') {
+    // Check permissions - user can only edit their own posts unless they're owner or admin
+    if (existingPost.author_id !== user.userId && user.role !== 'owner' && user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
@@ -145,7 +145,9 @@ export async function PUT(
 
 /**
  * DELETE /api/posts/{id}
- * Delete a blog post (owner only)
+ * Delete a blog post
+ * - Owners and admins can delete any post
+ * - Bloggers can only delete their own posts
  */
 export async function DELETE(
   request: NextRequest,
@@ -153,11 +155,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    // Use NextAuth - only owners can delete
-    const authResult = await requireRole(['owner']);
+    // Require authentication
+    const authResult = await requireRole(['owner', 'admin', 'blogger']);
     if (!authResult.authorized) {
       return authResult.response;
     }
+
+    const user = authResult.user;
 
     // Validate UUID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -167,15 +171,23 @@ export async function DELETE(
 
     const supabase = getAdminBlogClient();
 
-    // Verify post exists
+    // Verify post exists and get author
     const { data: existingPost, error: fetchError } = await supabase
       .from('blog_posts')
-      .select('id')
+      .select('id, author_id')
       .eq('id', id)
       .single();
 
     if (fetchError || !existingPost) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+    }
+
+    // Check permissions - bloggers can only delete their own posts
+    if (user.role === 'blogger' && existingPost.author_id !== user.userId) {
+      return NextResponse.json(
+        { error: 'Forbidden: You can only delete your own posts' },
+        { status: 403 }
+      );
     }
 
     const { error } = await supabase
