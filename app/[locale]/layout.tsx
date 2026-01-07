@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     metadataBase: new URL(baseUrl),
     title: t('title'),
     description: t('description'),
-    keywords: t('keywords') as unknown as string[],
+    keywords: t('keywords'),
     authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
     creator: "Idir Ouhab Meskine",
     icons: {

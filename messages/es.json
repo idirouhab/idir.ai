@@ -188,7 +188,7 @@
   "metadata": {
     "title": "Idir Ouhab Meskine — Experto en Automatización IA y Creador de Contenido",
     "description": "Compartiendo insights y flujos de automatización IA. Senior Solutions Engineer @n8n | Enseñando a +10K estudiantes | Ponente en conferencias tech | Host del podcast Prompt&Play 🎙️",
-    "keywords": ["Idir Ouhab Meskine", "automatización IA", "automatización de flujos", "workflows n8n", "integración IA", "experto automatización", "ponente técnico", "DevOps", "GitLab CI/CD", "agentes IA", "integración LLM", "automatización no-code", "herramientas desarrollo", "educador tech", "consultor automatización", "ingeniería prompts", "creador contenido IA"],
+    "keywords": "Idir Ouhab Meskine, automatización IA, automatización de flujos, workflows n8n, integración IA, experto automatización, ponente técnico, DevOps, GitLab CI/CD, agentes IA, integración LLM, automatización no-code, herramientas desarrollo, educador tech, consultor automatización, ingeniería prompts, creador contenido IA",
     "ogTitle": "Idir Ouhab Meskine — Experto en Automatización IA y Creador de Contenido",
     "ogDescription": "Compartiendo insights, workflows y tutoriales de automatización IA. Enseñando a +10K estudiantes | Ponente en DevOpsCon y WeAreDevelopers | Host del podcast Prompt&Play 🎙️",
     "twitterTitle": "Idir Ouhab Meskine — Experto en Automatización IA",
@@ -394,28 +394,6 @@
     "goodScore": "👍 ¡Buen trabajo! ¡Sigue aprendiendo!",
     "okScore": "💪 ¡No está mal! ¡La práctica hace al maestro!",
     "poorScore": "📚 ¡Sigue estudiando! ¡Mejorarás!"
-  },
-  "feedbackEmail": {
-    "subject": "Calibra tu señal de contenido",
-    "title": "NOTICIAS IA <span style=\"color: #00ff88;\">DIARIAS</span>",
-    "systemStatusLabel": "ESTADO DEL SISTEMA",
-    "systemStatusOnline": "⬤ EN LÍNEA",
-    "terminalLine1": "> INICIANDO PROTOCOLO DE CALIBRACIÓN...",
-    "terminalLine2": "> ESTADO: REQUIERE INPUT DEL USUARIO",
-    "introText": "Detectamos que has estado recibiendo el feed por un tiempo. <strong>Necesito calibrar la señal</strong> para optimizar el contenido que llega a tu bandeja.",
-    "calibrationModuleLabel": "[ MÓDULO DE CALIBRACIÓN DE SEÑAL ]",
-    "question": "¿Qué intensidad de señal estás recibiendo?",
-    "strongSignalLabel": "Señal Fuerte 😍",
-    "strongSignalSubtext": "Leo casi todo, aprendo cosas nuevas constantemente",
-    "mediumSignalLabel": "Señal Media 👍",
-    "mediumSignalSubtext": "Leo algunos, encuentro valor de vez en cuando",
-    "weakSignalLabel": "Señal Débil 👎",
-    "weakSignalSubtext": "Casi no los leo, poco valor para mí",
-    "footerMessage": "→ Tu input = Mejor contenido",
-    "footerSubtext": "¿Ideas para optimizar? <a href=\"mailto:content@idir.ai?subject=Feedback%20sobre%20newsletter%20de%20IA\" style=\"color: #00cfff; text-decoration: none; font-weight: 700;\">Envía tu feedback aquí</a>",
-    "footerText": "Recibes este correo porque te suscribiste a Noticias IA Diarias.",
-    "websiteText": "Sitio Web",
-    "unsubscribeText": "Cancelar suscripción"
   },
   "courses": {
     "title": "Cursos",
