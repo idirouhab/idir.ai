@@ -7,19 +7,21 @@ type NavItem = {
   href: string;
   label: string;
   icon: string;
+  requiredRoles?: ('owner' | 'admin' | 'blogger')[]; // If undefined, accessible to all
 };
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
   { href: '/admin/blog', label: 'Blog', icon: '📝' },
   { href: '/admin/images', label: 'Images', icon: '🖼️' },
-  { href: '/admin/subscribers', label: 'Subscribers', icon: '📬' },
-  { href: '/admin/users', label: 'Users', icon: '👥' },
+  { href: '/admin/subscribers', label: 'Subscribers', icon: '📬', requiredRoles: ['owner', 'admin'] },
+  { href: '/admin/users', label: 'Users', icon: '👥', requiredRoles: ['owner', 'admin'] },
 ];
 
 type UserInfo = {
   email: string;
   role: 'owner' | 'admin' | 'blogger';
+  name: string;
 };
 
 type AdminSidebarProps = {
@@ -48,6 +50,7 @@ export default function AdminSidebar({
           setUserInfo({
             email: data.user.email,
             role: data.user.role,
+            name: data.user.name,
           });
         }
       } catch (error) {
@@ -76,6 +79,21 @@ export default function AdminSidebar({
         return 'bg-gray-700 text-white border-gray-600';
     }
   };
+
+  // Filter navigation items based on user role
+  const getVisibleNavItems = () => {
+    if (!userInfo) return NAV_ITEMS;
+
+    return NAV_ITEMS.filter(item => {
+      // If no role requirement, show to everyone
+      if (!item.requiredRoles) return true;
+
+      // Check if user's role is in the required roles
+      return item.requiredRoles.includes(userInfo.role);
+    });
+  };
+
+  const visibleNavItems = getVisibleNavItems();
 
   return (
     <>
@@ -122,7 +140,7 @@ export default function AdminSidebar({
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -236,7 +254,7 @@ export default function AdminSidebar({
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -258,7 +276,7 @@ export default function AdminSidebar({
             );
           })}
         </nav>
-
+issue
         {/* User Info */}
         {userInfo && (
           <div className="p-4 border-t border-gray-800">
@@ -268,7 +286,7 @@ export default function AdminSidebar({
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-xs text-white font-medium truncate">
-                  {userInfo.email}
+                    {userInfo.name}
                 </div>
                 <div className={`text-xs px-1.5 py-0.5 rounded border inline-block mt-0.5 ${getRoleBadgeColor(userInfo.role)}`}>
                   {userInfo.role}

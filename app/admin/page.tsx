@@ -9,7 +9,6 @@ import { usePathname } from 'next/navigation';
 type Stats = {
   totalPosts: number;
   totalSubscribers: number;
-  feedbackCount: number;
   postsThisMonth: number;
   subscribersThisMonth: number;
 };
@@ -89,10 +88,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalPosts: 0,
     totalSubscribers: 0,
-    feedbackCount: 0,
     postsThisMonth: 0,
     subscribersThisMonth: 0,
   });
@@ -102,7 +101,9 @@ export default function AdminDashboard() {
       try {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
-          fetchData();
+          const data = await response.json();
+          setUserRole(data.user.role);
+          fetchData(data.user.role);
         } else {
           router.push('/admin/login');
         }
@@ -115,20 +116,12 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (role: 'owner' | 'admin' | 'blogger') => {
     try {
       // Fetch posts for stats only
       const postsResponse = await fetch('/api/posts');
       const postsData = await postsResponse.json();
       const posts = postsData.data || [];
-
-      // Fetch subscribers count (quick stats only)
-      const subscribersResponse = await fetch('/api/newsletter/admin');
-      const subscribersData = await subscribersResponse.json();
-
-      // Fetch feedback count
-      const feedbackResponse = await fetch('/api/admin/feedback');
-      const feedbackData = await feedbackResponse.json();
 
       // Calculate stats
       const now = new Date();
@@ -138,12 +131,23 @@ export default function AdminDashboard() {
         new Date(p.updated_at) >= thisMonthStart
       ).length;
 
+      let subscribersData: any = null;
+
+      // Only fetch subscriber data for owners and admins
+      if (role === 'owner' || role === 'admin') {
+        try {
+          const subscribersResponse = await fetch('/api/newsletter/admin');
+          subscribersData = await subscribersResponse.json();
+        } catch (err) {
+          console.error('Error fetching subscribers:', err);
+        }
+      }
+
       setStats({
         totalPosts: posts.length || 0,
-        totalSubscribers: subscribersData.statistics?.total || 0,
-        feedbackCount: feedbackData.length || 0,
+        totalSubscribers: subscribersData?.statistics?.total || 0,
         postsThisMonth,
-        subscribersThisMonth: subscribersData.statistics?.subscribed || 0,
+        subscribersThisMonth: subscribersData?.statistics?.subscribed || 0,
       });
 
       setLoading(false);
@@ -203,21 +207,16 @@ export default function AdminDashboard() {
               subtitle={`${stats.postsThisMonth} published this month`}
               color="emerald"
             />
-            <StatCard
-              title="Subscribers"
-              value={stats.totalSubscribers}
-              icon="📬"
-              trend={stats.subscribersThisMonth > 0 ? `${stats.subscribersThisMonth} subscribed` : undefined}
-              subtitle="Total newsletter subscribers"
-              color="cyan"
-            />
-            <StatCard
-              title="Feedback"
-              value={stats.feedbackCount}
-              icon="💬"
-              subtitle="Total feedback responses"
-              color="purple"
-            />
+            {(userRole === 'owner' || userRole === 'admin') && (
+              <StatCard
+                title="Subscribers"
+                value={stats.totalSubscribers}
+                icon="📬"
+                trend={stats.subscribersThisMonth > 0 ? `${stats.subscribersThisMonth} subscribed` : undefined}
+                subtitle="Total newsletter subscribers"
+                color="cyan"
+              />
+            )}
           </div>
 
           {/* Quick Actions */}
@@ -241,39 +240,24 @@ export default function AdminDashboard() {
                 </div>
               </Link>
 
-              <Link
-                href="/admin/subscribers"
-                className="group p-6 bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 hover:border-purple-400 rounded-lg transition-all hover:shadow-lg hover:shadow-purple-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-purple-500/20 border border-purple-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    📬
+              {(userRole === 'owner' || userRole === 'admin') && (
+                <Link
+                  href="/admin/subscribers"
+                  className="group p-6 bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 hover:border-purple-400 rounded-lg transition-all hover:shadow-lg hover:shadow-purple-500/10"
+                >
+                  <div className="flex flex-col items-center text-center gap-3">
+                    <div className="w-16 h-16 bg-purple-500/20 border border-purple-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                      📬
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                        Subscribers
+                      </h3>
+                      <p className="text-xs text-gray-400">Manage your audience</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
-                      Subscribers
-                    </h3>
-                    <p className="text-xs text-gray-400">Manage your audience</p>
-                  </div>
-                </div>
-              </Link>
-
-              <Link
-                href="/admin/feedback"
-                className="group p-6 bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30 hover:border-amber-400 rounded-lg transition-all hover:shadow-lg hover:shadow-amber-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-amber-500/20 border border-amber-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    💬
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-amber-400 transition-colors">
-                      Feedback
-                    </h3>
-                    <p className="text-xs text-gray-400">View responses</p>
-                  </div>
-                </div>
-              </Link>
+                </Link>
+              )}
             </div>
           </div>
         </div>

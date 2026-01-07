@@ -12,7 +12,7 @@ export default function NewBlogPostPage() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/blog-admin');
+        const response = await fetch('/api/auth/me');
         if (!response.ok) {
           router.push('/admin/login');
           return;
