@@ -12,6 +12,17 @@ const MarkdownEditor = dynamic(() => import('@/components/admin/MarkdownEditor')
   ssr: false,
 });
 
+// Lazy load FullScreenEditor
+const FullScreenEditor = dynamic(() => import('@/components/admin/FullScreenEditor'), {
+  loading: () => <div className="fixed inset-0 z-50 bg-black flex items-center justify-center"><div className="text-white">Loading editor...</div></div>,
+  ssr: false,
+});
+
+// Lazy load MetadataPanel
+const MetadataPanel = dynamic(() => import('@/components/admin/MetadataPanel'), {
+  ssr: false,
+});
+
 type Props = {
   post?: BlogPost;
 };
@@ -144,6 +155,8 @@ export default function BlogPostForm({ post }: Props) {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageError, setImageError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [fullScreenMode, setFullScreenMode] = useState<null | 'en' | 'es'>(null);
+  const [showMetadataPanel, setShowMetadataPanel] = useState(false);
 
   const [formData, setFormData] = useState({
     title_en: '',
@@ -654,9 +667,18 @@ export default function BlogPostForm({ post }: Props) {
       {/* Content - Show appropriate language based on mode */}
       {(!post || post.language === 'en') && (
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">
-            Content {post ? '' : '- English'} (Markdown) *
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-white font-bold uppercase text-sm">
+              Content {post ? '' : '- English'} (Markdown) *
+            </label>
+            <button
+              type="button"
+              onClick={() => setFullScreenMode('en')}
+              className="px-4 py-2 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform text-sm"
+            >
+              ✏️ Enter Full-Screen Editor
+            </button>
+          </div>
           <MarkdownEditor
             value={formData.content_en}
             onChange={(value) => setFormData({ ...formData, content_en: value })}
@@ -679,9 +701,18 @@ Your content goes here...
 
       {(!post || post.language === 'es') && (
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">
-            {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-white font-bold uppercase text-sm">
+              {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
+            </label>
+            <button
+              type="button"
+              onClick={() => setFullScreenMode('es')}
+              className="px-4 py-2 bg-[#00cfff] text-black font-bold uppercase hover:scale-105 transition-transform text-sm"
+            >
+              ✏️ {post && post.language === 'es' ? 'Abrir Editor Pantalla Completa' : 'Enter Full-Screen Editor'}
+            </button>
+          </div>
           <MarkdownEditor
             value={formData.content_es}
             onChange={(value) => setFormData({ ...formData, content_es: value })}
@@ -1187,6 +1218,53 @@ Tu contenido va aquí...
           Cancel
         </button>
       </div>
+
+      {/* Full-Screen Editor */}
+      {fullScreenMode && (
+        <FullScreenEditor
+          content={fullScreenMode === 'en' ? formData.content_en : formData.content_es}
+          onChange={(value) => {
+            setFormData({
+              ...formData,
+              [fullScreenMode === 'en' ? 'content_en' : 'content_es']: value
+            });
+          }}
+          language={fullScreenMode}
+          title={fullScreenMode === 'en' ? formData.title_en : formData.title_es}
+          onClose={() => setFullScreenMode(null)}
+          onSave={() => {
+            // Auto-save handled by onChange, just close
+            setFullScreenMode(null);
+          }}
+          onMetadataClick={() => setShowMetadataPanel(true)}
+          isEditMode={!!post}
+          onLanguageChange={!post ? (lang, content) => {
+            // Save current language content before switch
+            setFormData(prev => ({
+              ...prev,
+              [`content_${fullScreenMode}`]: content,
+            }));
+            setFullScreenMode(lang);
+          } : undefined}
+          contentEn={formData.content_en}
+          contentEs={formData.content_es}
+        />
+      )}
+
+      {/* Metadata Panel */}
+      {showMetadataPanel && fullScreenMode && (
+        <MetadataPanel
+          isOpen={showMetadataPanel}
+          formData={formData}
+          language={fullScreenMode}
+          isEditMode={!!post}
+          onUpdate={(updates) => {
+            setFormData(prev => ({ ...prev, ...updates }));
+          }}
+          onClose={() => setShowMetadataPanel(false)}
+          canUserPublish={canUserPublish}
+        />
+      )}
     </form>
   );
 }
