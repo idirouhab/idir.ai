@@ -1400,7 +1400,7 @@ Tu contenido va aquí...
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <div className="text-6xl mb-4">✅</div>
                     <h4 className="text-xl font-bold text-white mb-2">All Feedback Reviewed!</h4>
-                    <p className="text-gray-400">You've addressed all suggestions.</p>
+                    <p className="text-gray-400">You&apos;ve addressed all suggestions.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">

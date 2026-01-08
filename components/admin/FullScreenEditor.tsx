@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 
 const MarkdownContent = dynamic(() => import('@/components/MarkdownContent'), {
@@ -59,7 +59,7 @@ export default function FullScreenEditor({
   };
 
   // Handle close with confirmation if unsaved changes
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (hasUnsavedChanges) {
       if (confirm('You have unsaved changes. Are you sure you want to exit?')) {
         onClose();
@@ -67,16 +67,16 @@ export default function FullScreenEditor({
     } else {
       onClose();
     }
-  };
+  }, [hasUnsavedChanges, onClose]);
 
   // Handle save
-  const handleSave = () => {
+   const handleSave = useCallback(() => {
     if (onSave) {
       onSave();
     }
     setHasUnsavedChanges(false);
     onClose();
-  };
+   }, [onSave, onClose]);
 
   // Handle language switch
   const handleLanguageSwitch = (newLang: 'en' | 'es') => {
@@ -94,32 +94,30 @@ export default function FullScreenEditor({
   };
 
   // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // ESC to exit
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        handleClose();
-      }
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                handleClose();
+            }
 
-      // Cmd/Ctrl + S to save
-      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-        e.preventDefault();
-        handleSave();
-      }
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                handleSave();
+            }
 
-      // Cmd/Ctrl + K to toggle metadata panel
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        onMetadataClick();
-      }
-    };
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                onMetadataClick();
+            }
+        };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hasUnsavedChanges, localContent]);
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleClose, handleSave, onMetadataClick]);
 
-  // Markdown toolbar functions
+
+    // Markdown toolbar functions
   const insertMarkdown = (before: string, after: string = '') => {
     const textarea = textareaRef.current;
     if (!textarea) return;

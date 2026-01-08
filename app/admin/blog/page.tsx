@@ -92,7 +92,8 @@ export default function AdminBlogPage() {
     // Owners and admins can modify any group
     if (currentUser.role === 'owner' || currentUser.role === 'admin') return true;
     // Bloggers can only see groups with posts they authored
-    return (group.en && canModifyPost(group.en)) || (group.es && canModifyPost(group.es));
+    return (!!group.en && canModifyPost(group.en)) || (!!group.es && canModifyPost(group.es));
+
   };
 
   // Filter groups based on user permissions
