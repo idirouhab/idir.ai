@@ -106,7 +106,7 @@ export default async function Image() {
         >
           {/* Logo */}
           <img
-            src="https://idir.ai/logo-idirai.png"
+            src="logo-idirai.png"
             alt="idir.ai"
             width="350"
             height="172"

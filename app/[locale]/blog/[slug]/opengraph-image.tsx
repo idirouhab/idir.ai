@@ -151,7 +151,7 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
             }}
           >
             <img
-              src="https://idir.ai/logo-idirai.png"
+              src="logo-idirai.png"
               alt="idir.ai"
               width="120"
               height="59"
