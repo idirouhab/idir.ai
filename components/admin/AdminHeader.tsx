@@ -101,7 +101,14 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
     <div className="border-b border-gray-800 bg-black">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-8">
-          <h1 className="text-xl font-black text-white">ADMIN</h1>
+          <div className="flex items-center gap-3">
+            <img
+              src="/logo-idirai-light-green.png"
+              alt="idir.ai"
+              className="h-6 w-auto"
+            />
+            <h1 className="text-xl font-black text-white">ADMIN</h1>
+          </div>
           <nav className="hidden md:flex gap-6">
             {NAV_ITEMS.map((item) => {
               const isActive = item.isActive(pathname);

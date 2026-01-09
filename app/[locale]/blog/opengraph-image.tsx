@@ -166,22 +166,12 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
               gap: 20,
             }}
           >
-            <div
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #00ff88 0%, #00cfff 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 28,
-                fontWeight: 900,
-                color: '#000',
-              }}
-            >
-              IO
-            </div>
+            <img
+              src="https://idir.ai/logo-idirai-light-green.png"
+              alt="idir.ai"
+              width="120"
+              height="59"
+            />
             <div
               style={{
                 fontSize: 28,

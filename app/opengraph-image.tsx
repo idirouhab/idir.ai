@@ -100,11 +100,22 @@ export default async function Image() {
             justifyContent: 'center',
             textAlign: 'center',
             zIndex: 10,
-            gap: '24px',
+            gap: '32px',
             marginBottom: '40px',
           }}
         >
-          {/* Name */}
+          {/* Logo */}
+          <img
+            src="https://idir.ai/logo-idirai-light-green.png"
+            alt="idir.ai"
+            width="350"
+            height="172"
+            style={{
+              filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.4))',
+            }}
+          />
+
+          {/* Name - Smaller now */}
           <div
             style={{
               display: 'flex',
@@ -113,33 +124,18 @@ export default async function Image() {
               gap: '4px',
             }}
           >
-            {/* IDIR - White Bold */}
-            <div
-              style={{
-                fontSize: 90,
-                fontWeight: 900,
-                color: '#ffffff',
-                letterSpacing: '-3px',
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                textShadow: '0 0 40px rgba(255, 255, 255, 0.15)',
-              }}
-            >
-              IDIR
-            </div>
             {/* OUHAB MESKINE - Neon Green with Glow */}
             <div
               style={{
-                fontSize: 64,
+                fontSize: 48,
                 fontWeight: 300,
-                color: '#00ff88',
+                color: '#d1d5db',
                 letterSpacing: '4px',
                 lineHeight: 1,
                 textTransform: 'uppercase',
-                textShadow: '0 0 30px rgba(0, 255, 136, 0.5), 0 0 50px rgba(0, 255, 136, 0.3)',
               }}
             >
-              OUHAB MESKINE
+              IDIR OUHAB MESKINE
             </div>
           </div>
 

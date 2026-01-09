@@ -3,258 +3,178 @@ import { getTranslations } from 'next-intl/server';
 
 export const runtime = 'edge';
 
-export const alt = 'Idir Ouhab Meskine - Senior Solutions Engineer at n8n';
 export const size = {
-  width: 1200,
-  height: 630,
+    width: 1200,
+    height: 630,
 };
 
 export const contentType = 'image/png';
 
 export default async function Image({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  const t = await getTranslations({ locale});
+    const { locale } = await params;
+    const t = await getTranslations({ locale });
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          background: '#0a0a0a',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '60px',
-          position: 'relative',
-        }}
-      >
-        {/* Automation Grid Background Pattern */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: 0.06,
-            background: `
-              linear-gradient(90deg, #00ff88 1px, transparent 1px),
-              linear-gradient(0deg, #00ff88 1px, transparent 1px),
-              radial-gradient(circle at 10% 20%, #00d1ff 2px, transparent 2px),
-              radial-gradient(circle at 90% 30%, #ff0055 2px, transparent 2px),
-              radial-gradient(circle at 30% 80%, #00d1ff 2px, transparent 2px),
-              radial-gradient(circle at 70% 70%, #00ff88 2px, transparent 2px)
-            `,
-            backgroundSize: '60px 60px, 60px 60px, 100% 100%, 100% 100%, 100% 100%, 100% 100%',
-          }}
-        />
+    const fontData = await fetch(
+        new URL('../../public/fonts/Poppins-SemiBold.ttf', import.meta.url)
+    ).then((res) => res.arrayBuffer());
 
-        {/* Node Connection Lines - Subtle */}
-        <svg
-          width="1200"
-          height="630"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            opacity: 0.05,
-          }}
-        >
-          {/* Connecting lines between nodes */}
-          <line x1="120" y1="130" x2="300" y2="200" stroke="#00ff88" strokeWidth="2" />
-          <line x1="300" y1="200" x2="500" y2="180" stroke="#00d1ff" strokeWidth="2" />
-          <line x1="900" y1="150" x2="1080" y2="200" stroke="#ff0055" strokeWidth="2" />
-          <line x1="350" y1="450" x2="550" y2="480" stroke="#00d1ff" strokeWidth="2" />
-          <line x1="700" y1="400" x2="850" y2="500" stroke="#00ff88" strokeWidth="2" />
-
-          {/* Nodes */}
-          <circle cx="120" cy="130" r="8" fill="#00ff88" />
-          <circle cx="300" cy="200" r="8" fill="#00d1ff" />
-          <circle cx="500" cy="180" r="8" fill="#ff0055" />
-          <circle cx="900" cy="150" r="8" fill="#00ff88" />
-          <circle cx="1080" cy="200" r="8" fill="#00d1ff" />
-          <circle cx="350" cy="450" r="8" fill="#ff0055" />
-          <circle cx="550" cy="480" r="8" fill="#00ff88" />
-          <circle cx="700" cy="400" r="8" fill="#00d1ff" />
-          <circle cx="850" cy="500" r="8" fill="#ff0055" />
-        </svg>
-
-        {/* Central Radial Glow */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '800px',
-            height: '800px',
-            background: 'radial-gradient(circle, rgba(0, 255, 136, 0.08) 0%, transparent 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-
-        {/* Main Content Container - Centered */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-            zIndex: 10,
-            gap: '24px',
-            marginBottom: '40px',
-          }}
-        >
-          {/* Name */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            {/* IDIR - White Bold */}
+    return new ImageResponse(
+        (
             <div
-              style={{
-                fontSize: 90,
-                fontWeight: 900,
-                color: '#ffffff',
-                letterSpacing: '-3px',
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                textShadow: '0 0 40px rgba(255, 255, 255, 0.15)',
-              }}
+                style={{
+                    background: 'radial-gradient(circle at 50% 30%, #111111 0%, #000000 80%)',
+                    backgroundColor: '#000000',
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'space-between', // Distribuye el espacio verticalmente
+                    fontFamily: 'Poppins',
+                    padding: '60px', // Reducido el padding vertical
+                    position: 'relative',
+                    overflow: 'hidden',
+                }}
             >
-              IDIR
-            </div>
-            {/* OUHAB MESKINE - Neon Green with Glow */}
-            <div
-              style={{
-                fontSize: 64,
-                fontWeight: 300,
-                color: '#00ff88',
-                letterSpacing: '4px',
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                textShadow: '0 0 30px rgba(0, 255, 136, 0.5), 0 0 50px rgba(0, 255, 136, 0.3)',
-              }}
-            >
-              OUHAB MESKINE
-            </div>
-          </div>
+                {/* --- CAPA DE TEXTURA DE FONDO --- */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    opacity: 0.1,
+                    backgroundImage: 'radial-gradient(rgba(17, 185, 129, 0.5) 1px, transparent 1px)',
+                    backgroundSize: '40px 40px',
+                    maskImage: 'radial-gradient(circle at center, black 40%, transparent 100%)'
+                }} />
 
-          {/* Role - Monospace Developer Style */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              fontSize: 28,
-              fontWeight: 500,
-              color: '#ffffff',
-              fontFamily: 'monospace',
-              letterSpacing: '0px',
-              marginTop: '16px',
-            }}
-          >
-            <span style={{ color: '#d1d5db' }}>
-              {t('structuredData.jobTitle')}
-            </span>
-            <span style={{ color: '#00d1ff', fontWeight: 700 }}>@</span>
-            <span style={{ color: '#00d1ff', fontWeight: 700 }}>n8n</span>
-          </div>
-        </div>
+                {/* --- ACENTO DE LUZ INFERIOR --- */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '-100px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '800px',
+                    height: '300px',
+                    background: 'radial-gradient(ellipse at center, rgba(17, 185, 129, 0.15) 0%, transparent 70%)',
+                    filter: 'blur(80px)',
+                }} />
 
-        {/* Bottom Section - Ghost Chips + URL */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 80,
-            left: 0,
-            right: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '20px',
-            zIndex: 10,
-          }}
-        >
-          {/* Ghost Chip Tags - Larger & Vibrant */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '16px',
-              alignItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                padding: '12px 32px',
-                fontSize: 22,
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                color: '#ff0055',
-                border: '2px solid #ff0055',
-                borderRadius: '8px',
-                background: 'transparent',
-              }}
-            >
-              {t('hero.badge1')}
-            </div>
-            <div
-              style={{
-                padding: '12px 32px',
-                fontSize: 22,
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                color: '#00ff88',
-                border: '2px solid #00ff88',
-                borderRadius: '8px',
-                background: 'transparent',
-              }}
-            >
-              {t('hero.badge2')}
-            </div>
-            <div
-              style={{
-                padding: '12px 32px',
-                fontSize: 22,
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                color: '#00d1ff',
-                border: '2px solid #00d1ff',
-                borderRadius: '8px',
-                background: 'transparent',
-              }}
-            >
-              {t('hero.badge3')}
-            </div>
-          </div>
+                {/* --- MARCO TÉCNICO LATERAL --- */}
+                <div style={{ position: 'absolute', top: 0, left: '70px', bottom: 0, width: '1px', background: 'linear-gradient(to bottom, transparent, rgba(17, 185, 129, 0.2), transparent)', display: 'flex' }} />
+                <div style={{ position: 'absolute', top: 0, right: '70px', bottom: 0, width: '1px', background: 'linear-gradient(to bottom, transparent, rgba(17, 185, 129, 0.2), transparent)', display: 'flex' }} />
 
-          {/* Website URL - High Contrast for Visibility */}
-          <div
-            style={{
-              fontSize: 24,
-              fontWeight: 600,
-              color: '#d1d5db',
-              letterSpacing: '2px',
-              fontFamily: 'monospace',
-            }}
-          >
-            idir.ai
-          </div>
-        </div>
-      </div>
-    ),
-    {
-      ...size,
-    }
-  );
+                {/* --- HEADER CENTRADO --- */}
+                <div style={{ display: 'flex', zIndex: 10, width: '100%', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', fontSize: 34, fontWeight: 700, color: '#fff', letterSpacing: '-1px' }}>
+                        idir<span style={{ color: '#11b981' }}>.ai</span>
+                    </div>
+                </div>
+
+                {/* --- CONTENIDO PRINCIPAL CENTRADO --- */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    zIndex: 10,
+                    marginTop: '-20px' // Sube ligeramente el bloque central
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        fontSize: 100, // Reducido ligeramente el tamaño del nombre
+                        fontWeight: 800,
+                        color: '#ffffff',
+                        letterSpacing: '-5px',
+                        lineHeight: 0.9,
+                        textShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                    }}>
+                        <span style={{ display: 'flex' }}>Idir Ouhab</span>
+                        <span style={{ display: 'flex' }}>Meskine</span>
+                    </div>
+
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        marginTop: '30px',
+                        paddingTop: '25px',
+                        background: 'linear-gradient(90deg, transparent, rgba(17, 185, 129, 0.5), transparent)',
+                        height: '1px',
+                        width: '600px'
+                    }} />
+
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        marginTop: '25px',
+                        width: 'auto',
+                        minWidth: '600px'
+                    }}>
+                        <div style={{ display: 'flex', fontSize: 26, color: '#e5e5e5', fontWeight: 400, lineHeight: 1.4 }}>
+                            {t('structuredData.jobTitle')} <span style={{ color: '#11b981', fontWeight: 600, margin: '0 8px' }}>@ n8n</span>
+                        </div>
+                        <div style={{ display: 'flex', fontSize: 15, color: '#888', marginTop: '10px', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                            {t('hero.offering')}
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- FOOTER CENTRADO --- */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '100%',
+                    zIndex: 10,
+                    marginBottom: '10px' // Añade un pequeño margen inferior
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        gap: '100px',
+                        justifyContent: 'center',
+                        alignItems: 'flex-start',
+                        width: '100%'
+                    }}>
+                        {[
+                            { id: '01', val: t('hero.badge1') },
+                            { id: '02', val: t('hero.badge2') },
+                            { id: '03', val: t('hero.badge3') }
+                        ].map((item, i) => (
+                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', fontSize: 11, color: '#11b981', fontWeight: 700, marginBottom: '8px', letterSpacing: '2px' }}>{item.id}</div>
+                                <div style={{ display: 'flex', fontSize: 20, color: '#fff', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>{item.val}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Firma de diseño */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0.6, marginTop: '35px' }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                            <div style={{ width: '3px', height: '3px', background: '#11b981', borderRadius: '50%' }} />
+                            <div style={{ width: '3px', height: '3px', background: '#11b981', borderRadius: '50%' }} />
+                            <div style={{ width: '3px', height: '3px', background: '#333', borderRadius: '50%' }} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ),
+        {
+            ...size,
+            fonts: [
+                {
+                    name: 'Poppins',
+                    data: fontData,
+                    style: 'normal',
+                    weight: 600,
+                },
+            ],
+        }
+    );
 }

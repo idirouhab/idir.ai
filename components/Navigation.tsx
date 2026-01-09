@@ -125,10 +125,14 @@ export default function Navigation() {
             <div className="flex-shrink-0">
               <a
                 href={`/${locale}`}
-                className="text-2xl font-black text-white hover:text-[#10b981] transition-colors uppercase tracking-tight"
+                className="flex items-center hover:opacity-80 transition-opacity"
                 aria-label={tAria('logoHome')}
               >
-                IO
+                <img
+                  src="/logo-idirai-light-green.png"
+                  alt="idir.ai"
+                  className="h-8 w-auto"
+                />
               </a>
             </div>
 

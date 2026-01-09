@@ -107,9 +107,11 @@ export default function AdminSidebar({
         {/* Logo and Toggle */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
-            <div className="w-8 h-8 bg-[#10b981] flex items-center justify-center text-black font-black text-sm flex-shrink-0">
-              ID
-            </div>
+            <img
+              src="/logo-idirai-light-green.png"
+              alt="idir.ai"
+              className="h-6 w-auto flex-shrink-0"
+            />
             {!isCollapsed && <span className="text-lg font-black text-white">ADMIN</span>}
           </Link>
           {!isCollapsed && (
@@ -236,9 +238,11 @@ export default function AdminSidebar({
         {/* Logo and Close */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3" onClick={onCloseMobile}>
-            <div className="w-8 h-8 bg-[#10b981] flex items-center justify-center text-black font-black text-sm">
-              ID
-            </div>
+            <img
+              src="/logo-idirai-light-green.png"
+              alt="idir.ai"
+              className="h-6 w-auto"
+            />
             <span className="text-lg font-black text-white">ADMIN</span>
           </Link>
           <button
