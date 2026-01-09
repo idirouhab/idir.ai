@@ -108,7 +108,7 @@ export default function AdminSidebar({
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
             <img
-              src="/logo-idirai-light-green.png"
+              src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto flex-shrink-0"
             />
@@ -239,7 +239,7 @@ export default function AdminSidebar({
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3" onClick={onCloseMobile}>
             <img
-              src="/logo-idirai-light-green.png"
+              src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto"
             />

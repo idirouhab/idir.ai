@@ -103,7 +103,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3">
             <img
-              src="/logo-idirai-light-green.png"
+              src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto"
             />

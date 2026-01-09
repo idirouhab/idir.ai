@@ -129,7 +129,7 @@ export default function Navigation() {
                 aria-label={tAria('logoHome')}
               >
                 <img
-                  src="/logo-idirai-light-green.png"
+                  src="/logo-idirai.png"
                   alt="idir.ai"
                   className="h-8 w-auto"
                 />
