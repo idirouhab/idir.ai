@@ -269,13 +269,9 @@ export default async function BlogPostPage({ params }: Props) {
                 <Zap className="w-6 h-6" strokeWidth={2.5} />
                 {t('tldr')}
               </h2>
-              <ul className="space-y-3">
-                {post.tldr.split('\n').filter(line => line.trim()).map((point, i) => (
-                  <li key={i} className="flex items-start gap-3 text-[#d1d5db] text-base leading-relaxed">
-                    <span className="font-medium">{point}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="prose prose-invert max-w-none prose-ul:my-0 prose-li:my-2">
+                <MarkdownContent content={post.tldr} />
+              </div>
             </div>
           )}
 
