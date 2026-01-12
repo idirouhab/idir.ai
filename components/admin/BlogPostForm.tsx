@@ -34,6 +34,7 @@ type BilingualData = {
     tags: string;
     metaDescription: string;
     metaKeywords: string;
+    tldr?: string;
   };
   es: {
     title: string;
@@ -41,6 +42,7 @@ type BilingualData = {
     tags: string;
     metaDescription: string;
     metaKeywords: string;
+    tldr?: string;
   };
 };
 
@@ -421,12 +423,12 @@ export default function BlogPostForm({ post }: Props) {
       }
 
       // Sanitize strings to prevent XSS
-      const sanitize = (str: string) => {
+      const sanitize = (str: string, maxLength = 1000) => {
         if (typeof str !== 'string') return '';
         return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
                   .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
                   .trim()
-                  .slice(0, 1000); // Max 1000 chars
+                  .slice(0, maxLength);
       };
 
       // Update form with generated data - now editable
@@ -441,6 +443,8 @@ export default function BlogPostForm({ post }: Props) {
         meta_description_es: sanitize(data.languages.es.metaDescription),
         meta_keywords_en: sanitize(data.languages.en.metaKeywords),
         meta_keywords_es: sanitize(data.languages.es.metaKeywords),
+        tldr_en: data.languages.en.tldr ? sanitize(data.languages.en.tldr, 3000) : '',
+        tldr_es: data.languages.es.tldr ? sanitize(data.languages.es.tldr, 3000) : '',
       }));
 
       // Also store in generatedData for reference
@@ -451,6 +455,7 @@ export default function BlogPostForm({ post }: Props) {
           tags: data.languages.en.tags,
           metaDescription: data.languages.en.metaDescription,
           metaKeywords: data.languages.en.metaKeywords,
+          tldr: data.languages.en.tldr || undefined,
         },
         es: {
           title: data.languages.es.title,
@@ -458,6 +463,7 @@ export default function BlogPostForm({ post }: Props) {
           tags: data.languages.es.tags,
           metaDescription: data.languages.es.metaDescription,
           metaKeywords: data.languages.es.metaKeywords,
+          tldr: data.languages.es.tldr || undefined,
         },
       });
 
