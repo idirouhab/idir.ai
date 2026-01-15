@@ -26,13 +26,13 @@ const CodeBlock = memo(function CodeBlock({ language, children }: { language: st
   if (!Highlighter || !style) {
     // Show fallback while loading
     return (
-      <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-700">
-        <div className="bg-gray-900 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">
+      <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
+          <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
             {language}
           </span>
         </div>
-        <pre className="p-6 bg-black text-gray-300 overflow-x-auto text-sm font-mono">
+        <pre className="p-6 bg-white dark:bg-black text-gray-800 dark:text-gray-300 overflow-x-auto text-sm font-mono">
           <code>{children}</code>
         </pre>
       </div>
@@ -40,12 +40,12 @@ const CodeBlock = memo(function CodeBlock({ language, children }: { language: st
   }
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-700">
-      <div className="bg-gray-900 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-        <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">
+    <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-700">
+      <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
+        <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
           {language}
         </span>
-        <span className="text-xs text-gray-600">Code</span>
+        <span className="text-xs text-gray-500 dark:text-gray-600">Code</span>
       </div>
       <Highlighter
         style={style}
@@ -54,9 +54,10 @@ const CodeBlock = memo(function CodeBlock({ language, children }: { language: st
         customStyle={{
           margin: 0,
           padding: '1.5rem',
-          background: '#000',
+          background: 'var(--code-bg, #000)',
           fontSize: '0.875rem',
         }}
+        className="dark:bg-black bg-white"
       >
         {children}
       </Highlighter>
@@ -88,7 +89,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
               </CodeBlock>
             ) : (
               <code
-                className="px-2 py-1 bg-gray-900 text-[#00ff88] rounded text-sm font-mono border border-gray-700"
+                className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-[#10b981] dark:text-[#00ff88] rounded text-base font-mono border border-gray-300 dark:border-gray-700"
                 {...props}
               >
                 {children}
@@ -99,7 +100,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             const text = String(children);
             const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
             return (
-              <h1 id={id} className="text-4xl font-black text-white mb-6 mt-12 leading-tight scroll-mt-24">
+              <h1 id={id} className="text-4xl font-black text-gray-900 dark:text-white mb-6 mt-12 leading-tight scroll-mt-24">
                 {children}
               </h1>
             );
@@ -108,7 +109,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             const text = String(children);
             const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
             return (
-              <h2 id={id} className="text-3xl font-black text-white mb-5 mt-10 leading-tight scroll-mt-24">
+              <h2 id={id} className="text-3xl font-black text-gray-900 dark:text-white mb-5 mt-10 leading-tight scroll-mt-24">
                 {children}
               </h2>
             );
@@ -117,25 +118,25 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             const text = String(children);
             const id = text.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
             return (
-              <h3 id={id} className="text-2xl font-bold text-white mb-4 mt-8 leading-tight scroll-mt-24">
+              <h3 id={id} className="text-2xl font-bold text-gray-900 dark:text-white mb-4 mt-8 leading-tight scroll-mt-24">
                 {children}
               </h3>
             );
           },
           h4: ({ children }) => (
-            <h4 className="text-xl font-bold text-white mb-3 mt-6">
+            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3 mt-6">
               {children}
             </h4>
           ),
           p: ({ children }) => (
-            <p className="text-base text-gray-300 leading-relaxed mb-6">
+            <p className="text-lg text-gray-700 dark:text-gray-300 mb-7" style={{ lineHeight: '1.8' }}>
               {children}
             </p>
           ),
           a: ({ href, children }) => (
             <a
               href={href}
-              className="text-[#00ff88] hover:text-[#00cfff] underline transition-colors"
+              className="text-[#10b981] dark:text-[#00ff88] hover:text-[#059669] dark:hover:text-[#00cfff] underline transition-colors"
               target={href?.startsWith('http') ? '_blank' : undefined}
               rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
             >
@@ -148,36 +149,36 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-inside space-y-2 mb-6 text-gray-300">
+            <ol className="list-decimal list-inside space-y-3 mb-6 text-lg text-gray-700 dark:text-gray-300" style={{ lineHeight: '1.8' }}>
               {children}
             </ol>
           ),
           li: ({ children }) => (
-            <li className="text-gray-300 leading-relaxed flex items-start gap-3">
-              <span className="text-[#00ff88] mt-1">→</span>
+            <li className="text-lg text-gray-700 dark:text-gray-300 flex items-start gap-3" style={{ lineHeight: '1.8' }}>
+              <span className="text-[#10b981] dark:text-[#00ff88] mt-1.5">→</span>
               <span className="flex-1">{children}</span>
             </li>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-[#00ff88] bg-[#00ff8810] pl-6 py-4 my-6 italic text-gray-300">
+            <blockquote className="border-l-4 border-[#10b981] dark:border-[#00ff88] bg-[#10b98110] dark:bg-[#00ff8810] pl-6 py-4 my-6 italic text-lg text-gray-700 dark:text-gray-300" style={{ lineHeight: '1.8' }}>
               {children}
             </blockquote>
           ),
           strong: ({ children }) => (
-            <strong className="font-bold text-white">
+            <strong className="font-bold text-gray-900 dark:text-white">
               {children}
             </strong>
           ),
           em: ({ children }) => (
-            <em className="italic text-gray-200">
+            <em className="italic text-gray-800 dark:text-gray-200">
               {children}
             </em>
           ),
           hr: () => (
-            <hr className="border-t-2 border-gray-800 my-12" />
+            <hr className="border-t-2 border-gray-300 dark:border-gray-800 my-12" />
           ),
           img: ({ src, alt }) => (
-            <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#00ff88]">
+            <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#10b981] dark:border-[#00ff88]">
               <Image
                 src={typeof src === 'string' ? src : ''}
                 alt={typeof alt === 'string' ? alt : ''}
@@ -190,33 +191,33 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           ),
           table: ({ children }) => (
             <div className="my-8 overflow-x-auto">
-              <table className="min-w-full border-2 border-gray-700">
+              <table className="min-w-full border-2 border-gray-300 dark:border-gray-700">
                 {children}
               </table>
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-[#1a1a1a]">
+            <thead className="bg-gray-100 dark:bg-[#1a1a1a]">
               {children}
             </thead>
           ),
           tbody: ({ children }) => (
-            <tbody className="bg-black">
+            <tbody className="bg-white dark:bg-black">
               {children}
             </tbody>
           ),
           tr: ({ children }) => (
-            <tr className="border-b border-gray-700">
+            <tr className="border-b border-gray-300 dark:border-gray-700">
               {children}
             </tr>
           ),
           th: ({ children }) => (
-            <th className="px-6 py-3 text-left text-xs font-bold text-[#00ff88] uppercase tracking-wider border-r border-gray-700 last:border-r-0">
+            <th className="px-6 py-3 text-left text-xs font-bold text-[#10b981] dark:text-[#00ff88] uppercase tracking-wider border-r border-gray-300 dark:border-gray-700 last:border-r-0">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-6 py-4 text-sm text-gray-300 border-r border-gray-700 last:border-r-0">
+            <td className="px-6 py-4 text-base text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-700 last:border-r-0" style={{ lineHeight: '1.6' }}>
               {children}
             </td>
           ),

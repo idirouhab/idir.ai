@@ -28,16 +28,16 @@ export default function Breadcrumbs({ items }: Props) {
                 <>
                   <Link
                     href={item.href}
-                    className="text-gray-300 hover:text-[#00ff88] transition-colors uppercase font-bold tracking-wide"
+                    className="text-gray-600 dark:text-gray-300 hover:text-[#10b981] dark:hover:text-[#00ff88] transition-colors uppercase font-bold tracking-wide"
                     itemProp="item"
                   >
                     <span itemProp="name">{item.label}</span>
                   </Link>
-                  <span className="text-gray-600">/</span>
+                  <span className="text-gray-400 dark:text-gray-600">/</span>
                 </>
               ) : (
                 <span
-                  className="text-white uppercase font-bold tracking-wide"
+                  className="text-gray-900 dark:text-white uppercase font-bold tracking-wide"
                   itemProp="name"
                   aria-current={isLast ? 'page' : undefined}
                 >

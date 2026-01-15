@@ -104,9 +104,9 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
   const t = labels[locale];
 
   return (
-    <div className="py-8 border-y-2 border-gray-800 space-y-6">
+    <div className="py-8 border-y-2 border-gray-200 dark:border-gray-800 space-y-6">
       <div>
-        <p className="text-sm text-gray-500 uppercase tracking-wider font-bold mb-4">
+        <p className="text-sm text-gray-500 dark:text-gray-500 uppercase tracking-wider font-bold mb-4">
           {t.share}
         </p>
 
@@ -116,7 +116,7 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
             href={shareLinks.twitter}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase text-sm hover:border-[#00cfff] hover:text-[#00cfff] transition-colors flex items-center gap-2"
+            className="px-6 py-3 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white font-bold uppercase text-sm hover:border-[#10b981] hover:text-[#10b981] dark:hover:border-[#00cfff] dark:hover:text-[#00cfff] transition-colors flex items-center gap-2"
             aria-label="Share on Twitter"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -130,7 +130,7 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
             href={shareLinks.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase text-sm hover:border-[#00ff88] hover:text-[#00ff88] transition-colors flex items-center gap-2"
+            className="px-6 py-3 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white font-bold uppercase text-sm hover:border-[#10b981] hover:text-[#10b981] dark:hover:border-[#00ff88] dark:hover:text-[#00ff88] transition-colors flex items-center gap-2"
             aria-label="Share on LinkedIn"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ export default function ShareButtons({ url, title, locale, excerpt, tags }: Prop
           {/* Copy Link */}
           <button
             onClick={handleCopyLink}
-            className="px-6 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase text-sm hover:border-white transition-colors flex items-center gap-2"
+            className="px-6 py-3 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white font-bold uppercase text-sm hover:border-[#10b981] dark:hover:border-white transition-colors flex items-center gap-2"
             aria-label="Copy link"
           >
             {copied ? (

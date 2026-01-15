@@ -48,6 +48,8 @@ import {
 import { BlogTranslationProvider } from '@/components/BlogTranslationContext';
 import { getSiteUrl } from '@/lib/site-config';
 import {ChevronDown, ScrollText} from "lucide-react";
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -183,27 +185,29 @@ export default async function BlogPostPage({ params }: Props) {
   ];
 
   return (
-    <BlogTranslationProvider translatedSlug={translatedSlug}>
-      <ViewTracker postId={post.id} />
-      <Navigation />
-      <main className="relative min-h-screen pt-28 pb-20" style={{ background: '#000000' }}>
-        {/* Subtle background pattern - decorative only */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
-          }}></div>
-        </div>
+    <ThemeProvider>
+      <BlogTranslationProvider translatedSlug={translatedSlug}>
+        <ViewTracker postId={post.id} />
+        <Navigation />
+        <ThemeToggle />
+        <main className="relative min-h-screen pt-28 pb-20 bg-white dark:bg-black transition-colors duration-200">
+          {/* Subtle background pattern - decorative only */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+              backgroundSize: '30px 30px'
+            }}></div>
+          </div>
 
         {/* Article Header */}
-        <article className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbs} />
 
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center gap-2 text-sm text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide uppercase"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 dark:text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide uppercase"
           >
             ← {t('backToBlog')}
           </Link>
@@ -220,25 +224,25 @@ export default async function BlogPostPage({ params }: Props) {
             >
               {categoryName}
             </span>
-            <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-[#111827] border border-[#1f2937] text-[#9ca3af]">
+            <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg bg-gray-100 dark:bg-[#111827] border border-gray-300 dark:border-[#1f2937] text-gray-600 dark:text-[#9ca3af]">
               {t('readTime', { minutes: readTime })}
             </span>
           </div>
 
           {/* Title - Hero style */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-8 leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 dark:text-white mb-8 leading-tight tracking-tight">
             {post.title}
           </h1>
 
           {/* Meta Info */}
-          <div className="flex items-center gap-6 mb-12 pb-12 border-b border-[#1f2937]">
+          <div className="flex items-center gap-6 mb-12 pb-12 border-b border-gray-200 dark:border-[#1f2937]">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-r from-[#10b981] to-[#14b8a6] rounded-lg flex items-center justify-center font-black text-black text-lg">
                 {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
               </div>
               <div>
-                <p className="text-base font-bold text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
-                <p className="text-sm text-[#9ca3af] font-medium">{formattedDate}</p>
+                <p className="text-base font-bold text-gray-900 dark:text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
+                <p className="text-sm text-gray-500 dark:text-[#9ca3af] font-medium">{formattedDate}</p>
               </div>
             </div>
           </div>
@@ -248,7 +252,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Cover Image */}
           {post.cover_image && (
-            <div className="relative w-full aspect-video mb-16 overflow-hidden rounded-xl border border-[#1f2937]">
+            <div className="relative w-full aspect-video mb-16 overflow-hidden rounded-xl border border-gray-200 dark:border-[#1f2937]">
               {/* Top accent border */}
               <div className="absolute top-0 left-0 right-0 h-1 z-10" style={{ background: categoryColor }}></div>
               <Image
@@ -269,14 +273,14 @@ export default async function BlogPostPage({ params }: Props) {
                 <Zap className="w-6 h-6" strokeWidth={2.5} />
                 {t('tldr')}
               </h2>
-              <div className="prose prose-invert max-w-none prose-ul:my-0 prose-li:my-2">
+              <div className="prose dark:prose-invert prose-gray max-w-none prose-ul:my-0 prose-li:my-3 text-lg">
                 <MarkdownContent content={post.tldr} />
               </div>
             </div>
           )}
 
           {/* Content */}
-          <div className="prose prose-invert max-w-none">
+          <div className="prose dark:prose-invert prose-gray max-w-none">
             <MarkdownContent content={post.content} />
           </div>
 
@@ -293,15 +297,15 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (
-            <div className="mt-16 pt-12 border-t border-[#1f2937]">
-              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-6">
+            <div className="mt-16 pt-12 border-t border-gray-200 dark:border-[#1f2937]">
+              <p className="text-sm text-gray-500 dark:text-[#9ca3af] uppercase tracking-wider font-bold mb-6">
                 {t('tags')}
               </p>
               <div className="flex flex-wrap gap-3">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-5 py-3 bg-[#111827] border border-[#1f2937] text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-all hover:scale-105"
+                    className="px-5 py-3 bg-gray-100 dark:bg-[#111827] border border-gray-300 dark:border-[#1f2937] text-gray-700 dark:text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-all hover:scale-105"
                   >
                     #{tag}
                   </span>
@@ -316,12 +320,12 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 pt-16 border-t border-[#1f2937]">
+          <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 pt-16 border-t border-gray-200 dark:border-[#1f2937]">
             <div className="mb-12">
               <p className="text-base sm:text-lg font-bold text-[#10b981] mb-4 uppercase tracking-wide">
                 {t('relatedPosts')}
               </p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight">
                 {t('relatedPosts')}
               </h2>
             </div>
@@ -335,7 +339,7 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Newsletter CTA - After Related Posts */}
-        <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
+        <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
           <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_bottom" />
         </section>
       </main>
@@ -386,7 +390,8 @@ export default async function BlogPostPage({ params }: Props) {
         }}
       />
 
-      <Footer />
-    </BlogTranslationProvider>
+        <Footer />
+      </BlogTranslationProvider>
+    </ThemeProvider>
   );
 }

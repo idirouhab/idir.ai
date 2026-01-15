@@ -71,9 +71,9 @@ export default function TableOfContents({ content, locale }: Props) {
   };
 
   return (
-    <nav className="mb-12 p-6 bg-black border-2 border-gray-800">
-      <h2 className="text-lg font-black text-white uppercase mb-4 flex items-center gap-2">
-        <span className="text-[#00cfff]">📚</span>
+    <nav className="mb-12 p-6 bg-gray-50 dark:bg-black border-2 border-gray-200 dark:border-gray-800">
+      <h2 className="text-lg font-black text-gray-900 dark:text-white uppercase mb-4 flex items-center gap-2">
+        <span className="text-[#10b981] dark:text-[#00cfff]">📚</span>
         {locale === 'es' ? 'Tabla de Contenidos' : 'Table of Contents'}
       </h2>
 
@@ -88,8 +88,8 @@ export default function TableOfContents({ content, locale }: Props) {
               onClick={(e) => handleClick(e, heading.id)}
               className={`text-sm transition-colors block py-1 ${
                 activeId === heading.id
-                  ? 'text-[#00ff88] font-bold'
-                  : 'text-gray-300 hover:text-[#00cfff]'
+                  ? 'text-[#10b981] dark:text-[#00ff88] font-bold'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-[#059669] dark:hover:text-[#00cfff]'
               }`}
             >
               {heading.text}
