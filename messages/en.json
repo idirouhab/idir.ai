@@ -566,6 +566,16 @@
       },
       "footer": {
         "tagline": "Autonomous Education Systems"
+      },
+      "units": {
+        "weeks": "weeks",
+        "week": "week",
+        "days": "days",
+        "day": "day",
+        "hours": "hours",
+        "hour": "hour",
+        "months": "months",
+        "month": "month"
       }
     }
   },

@@ -562,6 +562,16 @@
       },
       "footer": {
         "tagline": "Sistemas de Educación Autónoma"
+      },
+      "units": {
+        "weeks": "semanas",
+        "week": "semana",
+        "days": "días",
+        "day": "día",
+        "hours": "horas",
+        "hour": "hora",
+        "months": "meses",
+        "month": "mes"
       }
     }
   },

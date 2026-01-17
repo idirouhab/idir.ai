@@ -166,6 +166,29 @@ export default function DynamicCoursePage({ course, locale }: Props) {
     const t = useTranslations('courses.dynamic');
     const formRef = useRef<HTMLDivElement>(null);
 
+    // Helper function to translate duration units
+    const translateUnit = (unit: string, value: number): string => {
+        const unitLower = unit.toLowerCase();
+        // If value is 1, use singular form; otherwise plural
+        const key = value === 1 ? unitLower.replace(/s$/, '') : unitLower;
+        return t(`units.${key}`) || unit;
+    };
+
+    // Helper function to format dates according to locale
+    const formatDate = (dateString: string): string => {
+        try {
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }).format(date);
+        } catch {
+            return dateString;
+        }
+    };
+
     // Form state - initialize dynamically based on form fields
     // Safely destructure with defaults for optional fields
     const {
@@ -496,31 +519,25 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                         {logistics.startDate && (
                                             <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
                                                 <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{logistics.startDate}</span>
+                                                <span className="truncate">{formatDate(logistics.startDate)}</span>
                                             </div>
                                         )}
                                         {logistics.schedule && (
                                             <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
                                                 <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{logistics.schedule}</span>
-                                            </div>
-                                        )}
-                                        {logistics.scheduleDetail && (
-                                            <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
-                                                <Globe className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{logistics.scheduleDetail}</span>
+                                                <span className="truncate">
+                                                    {typeof logistics.schedule === 'string'
+                                                        ? logistics.schedule
+                                                        : logistics.schedule.time_display}
+                                                </span>
                                             </div>
                                         )}
                                         {logistics.duration && (
                                             <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
                                                 <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{logistics.duration}</span>
-                                            </div>
-                                        )}
-                                        {logistics.hours && (
-                                            <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
-                                                <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{logistics.hours}</span>
+                                                <span className="truncate">
+                                                    {logistics.duration.value} {translateUnit(logistics.duration.unit, logistics.duration.value)}
+                                                </span>
                                             </div>
                                         )}
                                         {logistics.modality && (
@@ -836,7 +853,9 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                             }
                         }),
                         ...(logistics && {
-                            ...(logistics.duration && { timeRequired: logistics.duration }),
+                            ...(logistics.duration && {
+                                timeRequired: `PT${logistics.duration.value}${logistics.duration.unit.charAt(0).toUpperCase()}`
+                            }),
                             ...(logistics.startDate && {
                                 startDate: logistics.startDate,
                                 eventStatus: "https://schema.org/EventScheduled",

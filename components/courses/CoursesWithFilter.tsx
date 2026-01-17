@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, Clock, Users, ArrowRight } from 'lucide-react';
 import { Course } from '@/lib/courses';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   courses: Course[];
@@ -21,6 +22,33 @@ type Props = {
 
 export default function CoursesWithFilter({ courses, locale, translations }: Props) {
   const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'en' | 'es'>('all');
+  const tUnits = useTranslations('courses.dynamic.units');
+
+  // Helper function to translate duration units
+  const translateUnit = (unit: string, value: number): string => {
+    const unitLower = unit.toLowerCase();
+    // If value is 1, use singular form; otherwise plural
+    const key = value === 1 ? unitLower.replace(/s$/, '') : unitLower;
+    try {
+      return tUnits(key);
+    } catch {
+      return unit;
+    }
+  };
+
+  // Helper function to format dates according to locale
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+    } catch {
+      return dateString;
+    }
+  };
 
   // Show all courses regardless of locale
   // Filter courses based on selected language
@@ -142,13 +170,17 @@ export default function CoursesWithFilter({ courses, locale, translations }: Pro
                   {logistics?.duration && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
                       <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-                      <span className="truncate">{logistics.duration}</span>
+                      <span className="truncate">
+                        {typeof logistics.duration === 'object'
+                          ? `${logistics.duration.value} ${translateUnit(logistics.duration.unit, logistics.duration.value)}`
+                          : logistics.duration}
+                      </span>
                     </div>
                   )}
                   {logistics?.startDate && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
                       <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-                      <span className="truncate">{logistics.startDate}</span>
+                      <span className="truncate">{formatDate(logistics.startDate)}</span>
                     </div>
                   )}
                   {instructors.length > 0 && (

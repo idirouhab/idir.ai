@@ -38,11 +38,17 @@ export type CapacityConfig = {
 
 export type Logistics = {
     startDate: string;
-    schedule: string;
-    scheduleDetail: string;
-    duration: string;
+    schedule?: {
+        days_of_week: number[];
+        time_display: string;
+    };
+    duration: {
+        unit: string;
+        value: number;
+    };
     modality: string;
-    hours: number;
+    session_duration_hours?: number;
+    tools?: string;
     capacity?: CapacityConfig;
 };
 

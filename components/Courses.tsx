@@ -11,6 +11,33 @@ type CoursesProps = {
 export default async function Courses({ locale }: CoursesProps) {
   const allCourses = await getAllPublishedCourses();
   const t = await getTranslations({ locale, namespace: 'courses' });
+  const tUnits = await getTranslations({ locale, namespace: 'courses.dynamic.units' });
+
+  // Helper function to translate duration units
+  const translateUnit = (unit: string, value: number): string => {
+    const unitLower = unit.toLowerCase();
+    // If value is 1, use singular form; otherwise plural
+    const key = value === 1 ? unitLower.replace(/s$/, '') : unitLower;
+    try {
+      return tUnits(key);
+    } catch {
+      return unit;
+    }
+  };
+
+  // Helper function to format dates according to locale
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(date);
+    } catch {
+      return dateString;
+    }
+  };
 
   // Smart filtering: English speakers see only English, Spanish speakers see both
   const courses = locale === 'en'
@@ -110,13 +137,17 @@ export default async function Courses({ locale }: CoursesProps) {
                   {logistics?.duration && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
                       <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-                      <span className="truncate">{logistics.duration}</span>
+                      <span className="truncate">
+                        {typeof logistics.duration === 'object'
+                          ? `${logistics.duration.value} ${translateUnit(logistics.duration.unit, logistics.duration.value)}`
+                          : logistics.duration}
+                      </span>
                     </div>
                   )}
                   {logistics?.startDate && (
                     <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500">
                       <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0" />
-                      <span className="truncate">{logistics.startDate}</span>
+                      <span className="truncate">{formatDate(logistics.startDate)}</span>
                     </div>
                   )}
                   {instructors.length > 0 && (
