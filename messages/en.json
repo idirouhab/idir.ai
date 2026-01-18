@@ -95,17 +95,29 @@
       "ai": {
         "title": "AI & Workflow Automation",
         "description": "How to leverage AI to transform business processes",
-        "tags": ["AI", "Automation", "Integration"]
+        "tags": [
+          "AI",
+          "Automation",
+          "Integration"
+        ]
       },
       "llm": {
         "title": "LLM Integration",
         "description": "Best practices for production LLM implementations",
-        "tags": ["LLMs", "API Design", "Scalability"]
+        "tags": [
+          "LLMs",
+          "API Design",
+          "Scalability"
+        ]
       },
       "dx": {
         "title": "Developer Experience",
         "description": "Building tools developers love to use",
-        "tags": ["DX", "Tooling", "Productivity"]
+        "tags": [
+          "DX",
+          "Tooling",
+          "Productivity"
+        ]
       }
     },
     "cta": {
@@ -136,7 +148,12 @@
     "title": "Prompt&Play",
     "description": "A Spanish-language podcast exploring AI, automation, and the future of technology. Weekly episodes featuring insights, practical tips, and conversations about emerging tech.",
     "topicsLabel": "Topics Covered:",
-    "topics": ["AI & Machine Learning", "Workflow Automation", "LLMs & Prompt Engineering", "Tech Trends"],
+    "topics": [
+      "AI & Machine Learning",
+      "Workflow Automation",
+      "LLMs & Prompt Engineering",
+      "Tech Trends"
+    ],
     "platforms": {
       "spotify": "Spotify",
       "youtube": "YouTube",
@@ -199,9 +216,20 @@
   "structuredData": {
     "jobTitle": "Senior Solutions Engineer",
     "description": "Senior Solutions Engineer at n8n specializing in AI and automation. Speaker at tech conferences and host of Prompt&Play podcast in Spanish.",
-    "knowsAbout": ["Artificial Intelligence", "Automation", "Workflow Automation", "Machine Learning", "Software Engineering", "Developer Tools"],
+    "knowsAbout": [
+      "Artificial Intelligence",
+      "Automation",
+      "Workflow Automation",
+      "Machine Learning",
+      "Software Engineering",
+      "Developer Tools"
+    ],
     "podcastDescription": "A Spanish-language podcast exploring the intersection of AI, automation, and technology.",
-    "podcastGenre": ["Technology", "Artificial Intelligence", "Automation"]
+    "podcastGenre": [
+      "Technology",
+      "Artificial Intelligence",
+      "Automation"
+    ]
   },
   "subscribe": {
     "label": "Newsletter",
@@ -318,7 +346,6 @@
       "title": "The Blog | AI and Automation Insights",
       "description": "Explore expert analysis on Artificial Intelligence, automation workflows, and software engineering. Learn how to build the future of work."
     },
-
     "filterByCategory": "Filter by category",
     "allCategories": "All Categories",
     "newsletterCTA": {
@@ -685,66 +712,44 @@
     }
   },
   "quiz": {
-    "title": "AI Quiz Challenge",
-    "description": "Test your AI knowledge and compete on the leaderboard!",
-    "v2Badge": "V2",
-    "newRules": "🆕 New Rules: 8 Questions | Leaderboard Reset",
-    "backToHome": "Back to Home",
-    "startQuiz": "🎮 Start Quiz",
-    "yourName": "Your Name",
+    "title": "QUIZ",
+    "v2Badge": "ENGINE V2",
+    "loadingQuestions": "FETCHING DATA...",
+    "startQuiz": "START CHALLENGE",
+    "yourName": "OPERATOR NAME",
     "enterName": "Enter your name...",
-    "enterValidName": "Please enter a valid name (minimum 2 characters)",
-    "startGame": "Start Game",
-    "loadingQuestions": "Loading Questions...",
-    "scoringSystem": "⚡ Scoring System",
-    "questionsToWin": "8 questions to win",
-    "basePoints": "Correct answer: 1,000 base points",
-    "speedBonus": "Speed bonus: 0-500 points",
-    "speedRanges": "<3s: +500pts | 3-8s: +350-100pts | 8-15s: +100-30pts",
-    "maxPoints": "Max: 12,000 pts | Every millisecond counts!",
-    "leaderboard": "🏆 Top 5 Leaderboard",
-    "showingBestScore": "Showing best score per unique player",
-    "beFirstToPlay": "Be the first to play!",
-    "challengeFriends": "🚀 Challenge your friends",
-    "shareChallenge": "Share the challenge and compete for the top spot!",
-    "shareOnX": "Share on X",
-    "shareOnLinkedIn": "Share on LinkedIn",
+    "enterValidName": "Enter a valid name (min 2 chars)",
+    "difficulty": "DIFFICULTY LEVEL",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "startGame": "INITIATE SYSTEM",
+    "scoringSystem": "SCORING ALGORITHM",
+    "base": "Base",
+    "bonus": "Bonus",
+    "leaderboard": "TOP OPERATORS",
+    "score": "SCORE",
+    "submitAnswer": "SUBMIT DATA",
+    "nextQuestion": "NEXT PROTOCOL",
+    "viewLeaderboard": "VIEW RESULTS",
+    "correctStatus": "PERFECT IMPACT",
+    "incorrectStatus": "KNOWLEDGE GAP",
+    "correctChoice": "Correct Choice",
+    "incorrectChoice": "Incorrect Choice",
+    "quizComplete": "MISSION ACCOMPLISHED",
+    "correct": "CORRECT",
+    "timeStat": "TOTAL TIME",
+    "streakStat": "MAX STREAK",
+    "playAgain": "RESTART SYSTEM",
+    "shareQuiz": "SHARE LINK",
+    "copied": "COPIED",
+    "backToHome": "EXIT TO HOME",
+    "levelUp": "LEVEL UP",
+    "finalStretch": "LAST STRETCH",
+    "errorLoading": "SYSTEM ERROR: FAILED TO LOAD",
+    "linkedin": "LinkedIn",
+    "xcom": "X.com",
     "copyLink": "Copy Link",
-    "copied": "Copied!",
-    "exit": "Exit",
-    "player": "Player",
-    "question": "Question",
-    "of": "of",
-    "score": "Score",
-    "points": "Points",
-    "submitAnswer": "✓ Submit Answer",
-    "nextQuestion": "Next Question →",
-    "explanation": "Explanation",
-    "time": "Time",
-    "pointsEarned": "Points Earned",
-    "bonus": "bonus",
-    "quizComplete": "Quiz Complete!",
-    "wellDone": "Well done",
-    "newPersonalBest": "NEW PERSONAL BEST!",
-    "previous": "Previous",
-    "totalScore": "Total Score",
-    "correct": "correct",
-    "yourRank": "Your Leaderboard Rank",
-    "bestStreak": "Best Streak",
-    "avgTime": "Avg Time",
-    "savingScore": "Saving score...",
-    "shareYourScore": "🎉 Share your score",
-    "youreInTop5": "🌟 You're in the Top 5!",
-    "shareAchievement": "Share your achievement and challenge your friends!",
-    "playAgain": "🔄 Play Again",
-    "viewLeaderboard": "📊 View Leaderboard",
-    "errorLoading": "Oops! Something went wrong",
-    "tryAgain": "Try Again",
-    "perfectScore": "🏆 PERFECT! You're an AI master!",
-    "excellentScore": "🌟 Excellent! You really know your AI!",
-    "goodScore": "👍 Good job! Keep learning!",
-    "okScore": "💪 Not bad! Practice makes perfect!",
-    "poorScore": "📚 Keep studying! You'll get better!",
     "meta": {
       "title": "AI Quiz Challenge - Test Your Artificial Intelligence Knowledge",
       "description": "Take our interactive AI quiz and compete on the global leaderboard. Test your knowledge about artificial intelligence, machine learning, and technology.",

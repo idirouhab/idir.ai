@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Image from "next/image";
 
 type NavItem = {
   href: string;
@@ -107,7 +108,7 @@ export default function AdminSidebar({
         {/* Logo and Toggle */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className={`flex items-center gap-3 ${isCollapsed ? 'justify-center w-full' : ''}`}>
-            <img
+            <Image
               src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto flex-shrink-0"
@@ -238,7 +239,7 @@ export default function AdminSidebar({
         {/* Logo and Close */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-3" onClick={onCloseMobile}>
-            <img
+            <Image
               src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto"

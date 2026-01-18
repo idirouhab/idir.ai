@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import Image from "next/image";
+
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -128,7 +130,7 @@ export default function Navigation() {
                 className="flex items-center hover:opacity-80 transition-opacity"
                 aria-label={tAria('logoHome')}
               >
-                <img
+                <Image
                   src="/logo-idirai.png"
                   alt="idir.ai"
                   className="h-8 w-auto"

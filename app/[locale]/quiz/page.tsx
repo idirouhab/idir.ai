@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = t('title');
   const description = t('description');
-  const keywords = t('keywords') as unknown as string[];
+  const keywords = t.raw('keywords') as string[];
 
   return {
     metadataBase: new URL(baseUrl),

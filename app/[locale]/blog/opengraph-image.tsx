@@ -33,7 +33,6 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
         },
     };
 
-    // Default to English if locale isn't 'es'
     const lang = locale === 'es' ? 'es' : 'en';
     const t = content[lang];
 
@@ -46,12 +45,14 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                     width: '100%',
                     height: '100%',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
                     backgroundColor: '#000000',
                     backgroundImage: 'radial-gradient(circle at 50% 0%, #111 0%, #000 70%)',
+                    padding: '80px', // Increased padding for full-screen
                     position: 'relative',
                     fontFamily: 'Poppins',
+                    overflow: 'hidden',
                 }}
             >
                 {/* --- BACKGROUND GRID --- */}
@@ -60,101 +61,94 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                         position: 'absolute',
                         inset: 0,
                         backgroundImage: `linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px)`,
-                        backgroundSize: '50px 50px',
+                        backgroundSize: '60px 60px',
                         opacity: 0.2,
                     }}
                 />
 
                 {/* --- BACKGROUND GLOWS --- */}
-                <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '600px', height: '600px', background: `${accent}20`, filter: 'blur(100px)', borderRadius: '50%' }} />
-                <div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '600px', height: '600px', background: '#0055ff20', filter: 'blur(100px)', borderRadius: '50%' }} />
+                <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '700px', height: '700px', background: `${accent}15`, filter: 'blur(120px)', borderRadius: '50%' }} />
+                <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '700px', height: '700px', background: '#0055ff15', filter: 'blur(120px)', borderRadius: '50%' }} />
 
-                {/* --- THE CARD --- */}
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        width: '1080px',
-                        height: '510px',
-                        border: '1px solid #333',
-                        borderRadius: '24px',
-                        background: 'rgba(20, 20, 20, 0.6)',
-                        padding: '60px',
-                        position: 'relative',
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                        overflow: 'hidden',
-                    }}
-                >
-                    {/* Top Row: Brand & Tag */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', fontSize: 32, fontWeight: 700, color: '#fff', letterSpacing: '-1px' }}>
-                            idir<span style={{ color: accent }}>.ai</span>
-                        </div>
+                {/* --- TOP ROW: Brand & Tag --- */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', zIndex: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: 32, fontWeight: 700, color: '#fff', letterSpacing: '-1px' }}>
+                        idir<span style={{ color: accent }}>.ai</span>
+                    </div>
 
+                    <div style={{
+                        padding: '10px 24px',
+                        borderRadius: '50px',
+                        border: `1px solid ${accent}40`,
+                        background: `${accent}10`,
+                        color: accent,
+                        fontSize: 16,
+                        fontWeight: 600,
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase'
+                    }}>
+                        {t.tag}
+                    </div>
+                </div>
+
+                {/* --- CENTER: Main Title & Subtitle --- */}
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', zIndex: 10 }}>
+                    <div style={{
+                        fontSize: 150, // Scaled up for full screen
+                        fontWeight: 800,
+                        lineHeight: 0.9,
+                        letterSpacing: '-8px',
+                        marginBottom: '20px',
+                        color: 'transparent',
+                        backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #888888 100%)',
+                        backgroundClip: 'text',
+                    }}>
+                        {t.title}
+                    </div>
+                    <div style={{
+                        fontSize: 36, // Scaled up
+                        color: '#a3a3a3',
+                        maxWidth: '800px',
+                        lineHeight: 1.4
+                    }}>
+                        {t.subtitle}
+                    </div>
+                </div>
+
+                {/* --- BOTTOM ROW: Author & Tech Graphic --- */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%', zIndex: 10 }}>
+                    {/* Author Info */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <div style={{
-                            padding: '8px 20px',
-                            borderRadius: '50px',
-                            border: `1px solid ${accent}40`,
-                            background: `${accent}10`,
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '50%',
+                            background: '#1a1a1a',
+                            border: `2px solid ${accent}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             color: accent,
-                            fontSize: 16,
-                            fontWeight: 600,
-                            letterSpacing: '1px',
-                            textTransform: 'uppercase'
-                        }}>
-                            {t.tag}
+                            fontWeight: 700,
+                            fontSize: 22
+                        }}>IO</div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ color: '#fff', fontWeight: 600, fontSize: 22 }}>Idir Ouhab Meskine</span>
+                            <span style={{ color: '#666', fontSize: 16 }}>{t.role}</span>
                         </div>
                     </div>
 
-                    {/* Center: Main Title */}
-                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-                        <div style={{
-                            fontSize: 130,
-                            fontWeight: 800,
-                            lineHeight: 0.9,
-                            letterSpacing: '-6px',
-                            marginBottom: '20px',
-                            color: 'transparent',
-                            backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #888888 100%)',
-                            backgroundClip: 'text',
-                        }}>
-                            {t.title}
-                        </div>
-                        <div style={{
-                            fontSize: 32,
-                            color: '#a3a3a3',
-                            maxWidth: '600px',
-                            lineHeight: 1.4
-                        }}>
-                            {t.subtitle}
-                        </div>
+                    {/* Tech Graphic */}
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+                        {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                            <div key={i} style={{
+                                width: '10px',
+                                height: `${30 + Math.random() * 40}px`,
+                                background: i === 5 ? accent : '#333',
+                                borderRadius: '5px'
+                            }} />
+                        ))}
                     </div>
-
-                    {/* Bottom Row */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                        {/* Author Info */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', border: `2px solid ${accent}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: accent, fontWeight: 700, fontSize: 18 }}>IO</div>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>Idir Ouhab Meskine</span>
-                                <span style={{ color: '#666', fontSize: 14 }}>{t.role}</span>
-                            </div>
-                        </div>
-
-                        {/* Tech Graphic */}
-                        <div style={{ display: 'flex', gap: '5px', alignItems: 'flex-end' }}>
-                            {[1,2,3,4,5].map((_, i) => (
-                                <div key={i} style={{
-                                    width: '8px',
-                                    height: `${20 + Math.random() * 30}px`,
-                                    background: i === 4 ? accent : '#333',
-                                    borderRadius: '4px'
-                                }} />
-                            ))}
-                        </div>
-                    </div>
-
                 </div>
             </div>
         ),

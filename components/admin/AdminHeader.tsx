@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from "next/image";
+
 
 type NavItem = {
   href: string;
@@ -102,7 +104,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/logo-idirai.png"
               alt="idir.ai"
               className="h-6 w-auto"
