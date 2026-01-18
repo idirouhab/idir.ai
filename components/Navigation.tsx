@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import Image from "next/image";
-
+import logo from "../public/logo-idirai.png"; // Adjust path to your public folder
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -131,9 +131,10 @@ export default function Navigation() {
                 aria-label={tAria('logoHome')}
               >
                 <Image
-                  src="/logo-idirai.png"
+                  src={logo}
                   alt="idir.ai"
                   className="h-8 w-auto"
+                  priority
                 />
               </a>
             </div>
