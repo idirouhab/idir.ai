@@ -8,54 +8,51 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+
+    // Load translations from the 'blog' namespace
   const t = await getTranslations({ locale, namespace: 'blog' });
 
   const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/blog`;
 
-  const metadata = {
-    en: {
-      title: 'Blog | Idir Ouhab Meskine - Insights on AI, Automation & Tech',
-      description: 'Thoughts on AI, automation, and the future of work. Exploring insights, learnings, and opinions on technology and innovation.',
-      keywords: ['AI', 'artificial intelligence', 'automation', 'technology', 'machine learning', 'innovation', 'future of work', 'tech blog'],
-    },
-    es: {
-      title: 'Blog | Idir Ouhab Meskine - Perspectivas sobre IA, Automatización y Tecnología',
-      description: 'Pensamientos sobre IA, automatización y el futuro del trabajo. Explorando perspectivas, aprendizajes y opiniones sobre tecnología e innovación.',
-      keywords: ['IA', 'inteligencia artificial', 'automatización', 'tecnología', 'aprendizaje automático', 'innovación', 'futuro del trabajo', 'blog tecnológico'],
-    },
-  };
+    const metaTitle = t('meta.title');
+    const metaDescription = t('meta.description');
 
-  const lang = locale === 'es' ? 'es' : 'en';
-  const content = metadata[lang];
+    // Optional: You can put keywords in JSON too, or keep them here if they rarely change
+    const keywords = locale === 'es'
+        ? ['IA', 'inteligencia artificial', 'automatización', 'tecnología', 'aprendizaje automático', 'innovación', 'futuro del trabajo']
+        : ['AI', 'artificial intelligence', 'automation', 'technology', 'machine learning', 'innovation', 'future of work'];
 
   return {
     metadataBase: new URL(baseUrl),
-    title: content.title,
-    description: content.description,
-    keywords: content.keywords,
+      title: {
+        default: metaTitle,
+          template: `%s | Idir Ouhab Meskine`
+      },
+      description: metaDescription,
+      keywords,
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en': `${baseUrl}/en/blog`,
-        'es': `${baseUrl}/es/blog`,
+          'en': `${baseUrl}/en/blog`,
+          'es': `${baseUrl}/es/blog`,
       },
       types: {
-        'application/rss+xml': `${baseUrl}/${locale}/blog/rss.xml`,
+          'application/rss+xml': `${baseUrl}/${locale}/blog/rss.xml`,
       },
     },
     openGraph: {
-      title: content.title,
-      description: content.description,
+      title: metaTitle,
+      description: metaDescription,
       type: 'website',
       url: canonicalUrl,
-      locale: lang === 'es' ? 'es_ES' : 'en_US',
+      locale: locale === 'es' ? 'es_ES' : 'en_US',
       siteName: 'Idir Ouhab Meskine',
     },
     twitter: {
       card: 'summary_large_image',
-      title: content.title,
-      description: content.description,
+      title: metaTitle,
+      description: metaDescription,
     },
   };
 }

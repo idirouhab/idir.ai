@@ -36,79 +36,70 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'metadata' });
+    const { locale } = await params;
+    const t = await getTranslations({ locale, namespace: 'metadata' });
 
-  const baseUrl = getSiteUrl();
-  const canonicalUrl = `${baseUrl}/${locale}`;
+    const baseUrl = getSiteUrl();
+    const canonicalUrl = `${baseUrl}/${locale}`;
 
-  // Map locale to Open Graph locale format
-  const ogLocale = locale === 'es' ? 'es_ES' : 'en_US';
-  const alternateLocale = locale === 'es' ? 'en_US' : 'es_ES';
+    // Map locale to Open Graph locale format
+    const ogLocale = locale === 'es' ? 'es_ES' : 'en_US';
+    const alternateLocale = locale === 'es' ? 'en_US' : 'es_ES';
 
-  return {
-    metadataBase: new URL(baseUrl),
-    title: t('title'),
-    description: t('description'),
-    keywords: t('keywords'),
-    authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
-    creator: "Idir Ouhab Meskine",
-    icons: {
-      icon: [
-        { url: '/favicon.ico', sizes: '32x32' },
-        { url: '/icon.png', type: 'image/png', sizes: '192x192' },
-      ],
-      apple: [
-        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-      ],
-    },
-    alternates: {
-      canonical: canonicalUrl,
-      languages: {
-        'en': `${baseUrl}/en`,
-        'es': `${baseUrl}/es`,
-      },
-    },
-    openGraph: {
-      type: "profile",
-      locale: ogLocale,
-      alternateLocale: [alternateLocale],
-      url: canonicalUrl,
-      siteName: "Idir Ouhab Meskine",
-      title: t('ogTitle'),
-      description: t('ogDescription'),
-      images: [
-        {
-          url: `${baseUrl}/${locale}/opengraph-image?v=2`,
-          width: 1200,
-          height: 630,
-          alt: "Idir Ouhab Meskine - AI Automation Expert & Content Creator",
-          type: "image/png",
+    return {
+        metadataBase: new URL(baseUrl),
+        title: t('title'),
+        description: t('description'),
+        keywords: t('keywords'),
+        authors: [{ name: "Idir Ouhab Meskine", url: baseUrl }],
+        creator: "Idir Ouhab Meskine",
+        icons: {
+            icon: [
+                { url: '/favicon.ico', sizes: '32x32' },
+                { url: '/icon.png', type: 'image/png', sizes: '192x192' },
+            ],
+            apple: [
+                { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+            ],
         },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      site: "@idir_ouhab",
-      creator: "@idir_ouhab",
-      title: t('twitterTitle'),
-      description: t('twitterDescription'),
-      images: [`${baseUrl}/${locale}/opengraph-image?v=2`],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-  };
+        alternates: {
+            canonical: canonicalUrl,
+            languages: {
+                'en': `${baseUrl}/en`,
+                'es': `${baseUrl}/es`,
+            },
+        },
+        openGraph: {
+            type: "profile",
+            locale: ogLocale,
+            alternateLocale: [alternateLocale],
+            url: canonicalUrl,
+            siteName: "Idir Ouhab Meskine",
+            title: t('ogTitle'),
+            description: t('ogDescription'),
+            // ❌ REMOVED: images: [...]
+            // Next.js will automatically find app/[locale]/opengraph-image.tsx
+        },
+        twitter: {
+            card: "summary_large_image",
+            site: "@idir_ouhab",
+            creator: "@idir_ouhab",
+            title: t('twitterTitle'),
+            description: t('twitterDescription'),
+        },
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+                'max-video-preview': -1,
+                'max-image-preview': 'large',
+                'max-snippet': -1,
+            },
+        },
+    };
 }
-
 export default async function RootLayout({
   children,
   params

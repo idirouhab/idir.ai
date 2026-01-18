@@ -34,7 +34,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   return (
     <>
       <Navigation />
-      <main className="relative min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#000000' }}>
+      <main id="#main-content" className="relative min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: '#000000' }}>
         {/* Subtle background pattern - decorative only */}
         <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
           <div className="absolute inset-0" style={{

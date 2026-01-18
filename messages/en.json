@@ -16,6 +16,7 @@
     "badge2": "AUTOMATION",
     "badge3": "SPEAKER",
     "offering": "AI Strategy and Implementation for Businesses",
+    "offeringShort": "AI & Ops Strategy",
     "headline": "I Turn Chaos Into Workflows",
     "subheadline": "Helping teams automate the boring stuff so they can focus on building what actually matters",
     "cta": "LET'S TALK",
@@ -313,6 +314,11 @@
       "learnings": "Learnings",
       "opinion": "Opinion"
     },
+    "meta": {
+      "title": "The Blog | AI and Automation Insights",
+      "description": "Explore expert analysis on Artificial Intelligence, automation workflows, and software engineering. Learn how to build the future of work."
+    },
+
     "filterByCategory": "Filter by category",
     "allCategories": "All Categories",
     "newsletterCTA": {
@@ -336,6 +342,7 @@
   },
   "courses": {
     "title": "Courses",
+    "metaTitle": "AI and Automation Courses",
     "subtitle": "Learn automation, AI, and technology with practical courses designed to take you from concept to implementation.",
     "officialInstructor": "Official n8n Course Instructor at Platzi",
     "free": "Free",

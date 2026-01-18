@@ -17,18 +17,18 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
         new URL('../../../public/fonts/Poppins-SemiBold.ttf', import.meta.url)
     ).then((res) => res.arrayBuffer());
 
-    // --- LOCALIZATION CONFIGURATION ---
+    // --- LOCALIZATION CONFIGURATION (UPDATED FOR COURSES) ---
     const content = {
         en: {
-            tag: 'AI and Automation Blog',
-            title: 'THE BLOG',
-            subtitle: 'Thoughts on AI & Automation',
+            tag: 'Premium AI & Automation', // Updated Tag
+            title: 'COURSES', // Updated Title
+            subtitle: 'Master practical AI, workflows, and engineering.', // Updated Subtitle
             role: 'Solutions Engineer',
         },
         es: {
-            tag: 'Blog de IA y Automatización',
-            title: 'EL BLOG',
-            subtitle: 'Pensamientos sobre IA y Automatización',
+            tag: 'IA y Automatización Premium', // Updated Tag
+            title: 'CURSOS', // Updated Title
+            subtitle: 'Domina la IA práctica, flujos de trabajo e ingeniería.', // Updated Subtitle
             role: 'Ingeniero de Soluciones',
         },
     };
@@ -67,7 +67,8 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
 
                 {/* --- BACKGROUND GLOWS --- */}
                 <div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '600px', height: '600px', background: `${accent}20`, filter: 'blur(100px)', borderRadius: '50%' }} />
-                <div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '600px', height: '600px', background: '#0055ff20', filter: 'blur(100px)', borderRadius: '50%' }} />
+                {/* Changed bottom glow to a slightly warmer purple/blue for courses vibe, optional */}
+                <div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '600px', height: '600px', background: '#5500ff20', filter: 'blur(100px)', borderRadius: '50%' }} />
 
                 {/* --- THE CARD --- */}
                 <div
@@ -110,10 +111,10 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                     {/* Center: Main Title */}
                     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
                         <div style={{
-                            fontSize: 130,
+                            fontSize: 130, // Slightly larger font for shorter word "COURSES"
                             fontWeight: 800,
                             lineHeight: 0.9,
-                            letterSpacing: '-6px',
+                            letterSpacing: '-4px',
                             marginBottom: '20px',
                             color: 'transparent',
                             backgroundImage: 'linear-gradient(180deg, #ffffff 0%, #888888 100%)',
@@ -124,7 +125,7 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                         <div style={{
                             fontSize: 32,
                             color: '#a3a3a3',
-                            maxWidth: '600px',
+                            maxWidth: '700px', // Widen slightly for longer subtitle
                             lineHeight: 1.4
                         }}>
                             {t.subtitle}
@@ -142,7 +143,7 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                             </div>
                         </div>
 
-                        {/* Tech Graphic */}
+                        {/* Tech Graphic (Kept the same bars for consistency as "progress bars") */}
                         <div style={{ display: 'flex', gap: '5px', alignItems: 'flex-end' }}>
                             {[1,2,3,4,5].map((_, i) => (
                                 <div key={i} style={{

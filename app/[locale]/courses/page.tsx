@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'courses' });
 
-  const title = t('title');
+  const title = t('metaTitle');
   const description = t('subtitle');
   const url = `https://idir.ai/${locale}/courses`;
 
@@ -40,20 +40,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Idir Ouhab Meskine',
       locale: locale === 'es' ? 'es_ES' : 'en_US',
       type: 'website',
-      images: [
-        {
-          url: 'https://idir.ai/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${title} | Idir Ouhab Meskine`,
       description,
-      images: ['https://idir.ai/og-image.png'],
     },
     robots: {
       index: true,
@@ -68,7 +59,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
-
 export default async function CoursesPage({ params }: Props) {
   const { locale } = await params;
   const courses = await getAllPublishedCourses();

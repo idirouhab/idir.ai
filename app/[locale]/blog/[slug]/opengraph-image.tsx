@@ -9,8 +9,29 @@ export const size = {
 };
 export const contentType = 'image/png';
 
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return btoa(binary);
+}
+
 export default async function Image({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
+
+  // Fetch and convert logo to base64
+  const logoRes = await fetch(
+    new URL('../../../../public/logo-idirai.png', import.meta.url)
+  );
+  const logoBuffer = await logoRes.arrayBuffer();
+  const logoBase64 = arrayBufferToBase64(logoBuffer);
+  const logoDataUrl = `data:image/png;base64,${logoBase64}`;
+
   const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
 
   if (!post) {
@@ -151,7 +172,7 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
             }}
           >
             <img
-              src="logo-idirai.png"
+              src={logoDataUrl}
               alt="idir.ai"
               width="120"
               height="59"

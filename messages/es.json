@@ -16,6 +16,7 @@
     "badge2": "AUTOMATIZACIÓN",
     "badge3": "SPEAKER",
     "offering": "Estrategia de IA e Implementación para Empresas",
+    "offeringShort": "Estrategia de IA",
     "headline": "Convierto el caos en flujos de trabajo",
     "subheadline": "Ayudando a equipos a automatizar lo aburrido para que se enfoquen en construir lo que realmente importa",
     "cta": "HABLEMOS",
@@ -313,6 +314,10 @@
       "learnings": "Aprendizajes",
       "opinion": "Opinión"
     },
+    "meta": {
+      "title": "El Blog | Perspectivas de IA y Automatización",
+      "description": "Explora análisis expertos sobre Inteligencia Artificial, flujos de trabajo de automatización e ingeniería de software. Aprende a construir el futuro del trabajo."
+    },
     "filterByCategory": "Filtrar por categoría",
     "allCategories": "Todas las Categorías",
     "newsletterCTA": {
@@ -336,6 +341,7 @@
   },
   "courses": {
     "title": "Cursos",
+    "metaTitle": "Cursos de IA y Automatización",
     "subtitle": "Aprende automatización, IA y tecnología con cursos prácticos diseñados para llevarte del concepto a la implementación.",
     "officialInstructor": "Instructor del curso oficial de n8n en Platzi",
     "free": "Gratis",
