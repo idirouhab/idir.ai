@@ -1,0 +1,5 @@
+student_name,student_email,course_title,completed_at,course_id
+John Doe,john.doe@example.com,Automation 101,2026-01-20,
+Jane Smith,jane.smith@example.com,Automation 101,2026-01-19,
+Carlos Rodriguez,carlos@example.com,Advanced Automation,2026-01-18,f47ac10b-58cc-4372-a567-0e02b2c3d479
+Maria Garcia,maria.garcia@example.com,Automation 101,2026-01-15,
