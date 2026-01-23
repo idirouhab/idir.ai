@@ -110,7 +110,7 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
             <Navigation />
 
             <main id="main-content" role="main" className="min-h-screen bg-black">
-                <section className="py-12 md:py-24 px-4 md:px-6">
+                <section className="pt-32 pb-12 md:pt-24 md:pb-24 px-4 md:px-6">
                     <div className="max-w-3xl mx-auto">
 
                         {/* Page Header - mismo estilo que cursos */}
