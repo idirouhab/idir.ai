@@ -37,6 +37,8 @@ interface ManualCertificateInput {
     issued_at?: Date | string; // Optional: defaults to now
     actor_email?: string; // Who issued this certificate
     segments?: string[]; // Optional segments for certificate ID generation
+    pdf_url?: string; // Optional: URL to PDF certificate in Cloudflare R2
+    jpg_url?: string; // Optional: URL to JPG certificate in Cloudflare R2
 }
 
 interface ManualCertificateResult {
@@ -92,8 +94,10 @@ export async function issueManualCertificate(
                                           status,
                                           hash_algorithm,
                                           payload_hash,
-                                          snapshot_payload)
-                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
+                                          snapshot_payload,
+                                          pdf_url,
+                                          jpg_url)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
             `,
             [
                 certificate_id,
@@ -103,6 +107,8 @@ export async function issueManualCertificate(
                 'sha256',
                 payload_hash,
                 JSON.stringify(snapshot),
+                input.pdf_url || null,
+                input.jpg_url || null,
             ]
         );
 

@@ -679,7 +679,6 @@
       "emailFooter": "Este mensaje fue enviado desde el formulario de contacto en idir.ai"
     }
   },
-
   "quiz": {
     "title": "QUIZ",
     "v2Badge": "MOTOR V2",
@@ -781,6 +780,9 @@
       "revokedLabel": "Revocado el",
       "reasonLabel": "Razón",
       "shareInfo": "✓ Este certificado puede ser verificado públicamente en cualquier momento usando este enlace.",
+      "downloadPDF": "Descargar PDF",
+      "downloadJPG": "Descargar JPG",
+      "downloadTitle": "Descargar Certificado",
       "verifyAnotherButton": "Verificar Otro Certificado",
       "howItWorksTitle": "¿Cómo funciona?",
       "howItWorksPoint1": "Cada certificado tiene un ID único: IDIR-TEXT-YYYY-HASH",
@@ -796,6 +798,13 @@
       "revoked": "Este certificado ha sido revocado.",
       "reissued": "Este certificado ha sido reemitido. Se generó un nuevo certificado.",
       "errorInternal": "Ocurrió un error al verificar el certificado. Por favor intenta nuevamente."
+    },
+    "updateFiles": {
+      "success": "Archivos de certificado actualizados exitosamente",
+      "errorNotFound": "Certificado no encontrado",
+      "errorInvalidFormat": "Formato de ID de certificado inválido",
+      "errorInvalidBody": "Cuerpo de solicitud inválido",
+      "errorInternal": "Error interno del servidor"
     }
   }
 }

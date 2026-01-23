@@ -53,6 +53,8 @@ export interface CertificateVerificationResult {
   completed_at: Date;
   revoked_at?: Date | null;
   revoked_reason?: string | null;
+  pdf_url?: string | null;
+  jpg_url?: string | null;
 }
 
 export interface IssueResult {
@@ -632,6 +634,8 @@ export async function verifyCertificate(
       completed_at: new Date(completed_at),
       revoked_at: cert.revoked_at ? new Date(cert.revoked_at) : null,
       revoked_reason: cert.revoked_reason,
+      pdf_url: cert.pdf_url,
+      jpg_url: cert.jpg_url,
     };
   } catch (error) {
     await client.query('ROLLBACK');

@@ -106,6 +106,8 @@ export async function GET(
         revoked_at: result.revoked_at,
         revoked_reason: result.revoked_reason,
       }),
+      pdf_url: result.pdf_url,
+      jpg_url: result.jpg_url,
       message: statusMessage,
     });
   } catch (error) {

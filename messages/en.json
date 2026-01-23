@@ -812,6 +812,9 @@
       "revokedLabel": "Revoked on",
       "reasonLabel": "Reason",
       "shareInfo": "✓ This certificate can be publicly verified at any time using this link.",
+      "downloadPDF": "Download PDF",
+      "downloadJPG": "Download JPG",
+      "downloadTitle": "Download Certificate",
       "verifyAnotherButton": "Verify Another Certificate",
       "howItWorksTitle": "How it works",
       "howItWorksPoint1": "Each certificate has a unique ID: IDIR-TEXT-YYYY-HASH",
@@ -827,6 +830,13 @@
       "revoked": "This certificate has been revoked.",
       "reissued": "This certificate has been reissued. A new certificate was generated.",
       "errorInternal": "An error occurred while verifying the certificate. Please try again later."
+    },
+    "updateFiles": {
+      "success": "Archivos de certificado actualizados exitosamente",
+      "errorNotFound": "Certificado no encontrado",
+      "errorInvalidFormat": "Formato de ID de certificado inválido",
+      "errorInvalidBody": "Cuerpo de solicitud inválido",
+      "errorInternal": "Error interno del servidor"
     }
   }
 }
