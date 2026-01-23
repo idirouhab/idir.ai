@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Check, X, AlertCircle, Search, FileText, Image as ImageIcon, ArrowLeft } from 'lucide-react';
+import { Check, X, AlertCircle, Search, FileText, Image as ImageIcon, ArrowLeft, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo-idirai-dark.png';
@@ -42,6 +42,7 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
     const [status, setStatus] = useState<VerificationStatus>('idle');
     const [result, setResult] = useState<VerificationResult | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [showCopiedMessage, setShowCopiedMessage] = useState(false);
 
     const handleLanguageChange = (newLocale: string) => {
         const pathWithoutLocale = pathname.replace(`/${locale}`, '');
@@ -122,6 +123,28 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
         setResult(null);
         setErrorMessage('');
         window.history.pushState({}, '', `/${locale}/certificates/verify`);
+    };
+
+    const handleShareLinkedIn = async () => {
+        if (!result) return;
+
+        const certificateUrl = typeof window !== 'undefined' ? window.location.href : '';
+        const message = t('shareLinkedInMessage', { courseTitle: result.course_title });
+        const fullText = `${message}\n\n${certificateUrl}`;
+
+        // Copy suggested text to clipboard
+        try {
+            await navigator.clipboard.writeText(fullText);
+            setShowCopiedMessage(true);
+            setTimeout(() => setShowCopiedMessage(false), 3000);
+        } catch (err) {
+            console.error('Failed to copy text:', err);
+        }
+
+        // Open LinkedIn share dialog
+// Añadimos el mensaje Y la URL al parámetro 'text'
+        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(fullText)}`;
+        window.open(linkedInUrl, '_blank', 'width=600,height=600');
     };
 
     return (
@@ -370,6 +393,24 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
                                             </div>
                                         </div>
                                     )}
+
+                                    {/* Share on LinkedIn */}
+                                    <div className="mt-6 pt-6 border-t border-green-200">
+                                        <button
+                                            onClick={handleShareLinkedIn}
+                                            className="font-[family-name:var(--font-space-grotesk)] w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#0077B5] text-white font-bold rounded-lg hover:bg-[#006399] transition-colors shadow-md"
+                                        >
+                                            <Linkedin className="w-5 h-5" />
+                                            <span>{t('shareLinkedIn')}</span>
+                                        </button>
+                                        {showCopiedMessage && (
+                                            <div className="mt-3 bg-[#0077B5]/10 border border-[#0077B5]/30 rounded-lg p-3 text-center">
+                                                <p className="font-[family-name:var(--font-inter)] text-sm text-[#0077B5] font-medium">
+                                                    ✓ {t('shareLinkedInTooltip')}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     {/* Compartir */}
                                     <div className="mt-6 bg-white/90 border border-gray-200 rounded-lg p-4">
