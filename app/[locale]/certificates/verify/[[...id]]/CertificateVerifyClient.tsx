@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useState, useEffect, useCallback } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Check, X, AlertCircle, Search, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,61 +20,63 @@ interface VerificationResult {
   message?: string;
 }
 
-export default function CertificateVerifyPage() {
+interface CertificateVerifyClientProps {
+  initialCertificateId?: string;
+}
+
+export default function CertificateVerifyClient({ initialCertificateId }: CertificateVerifyClientProps) {
   const locale = useLocale();
-  const [certificateId, setCertificateId] = useState('');
+  const t = useTranslations('certificates.verify');
+  const [certificateId, setCertificateId] = useState(initialCertificateId || '');
   const [status, setStatus] = useState<VerificationStatus>('idle');
   const [result, setResult] = useState<VerificationResult | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const isSpanish = locale === 'es';
+    const verifyInternal = useCallback(async (certId: string) => {
+        setStatus('loading');
+        setErrorMessage('');
+        setResult(null);
+
+        try {
+            const response = await fetch(`/api/certificates/verify/${certId}?lang=${locale}`);
+            const data = await response.json();
+
+            if (response.ok && data.found) {
+                setResult(data);
+                if (data.status === 'valid') {
+                    setStatus('valid');
+                } else if (data.status === 'revoked') {
+                    setStatus('revoked');
+                } else if (data.status === 'reissued') {
+                    setStatus('reissued');
+                }
+            } else {
+                setStatus('not-found');
+                setErrorMessage(data.message || t('notFoundMessage'));
+            }
+        } catch (error) {
+            setStatus('error');
+            setErrorMessage(t('errorMessage'));
+            console.error('[Certificate Verify] Error:', error);
+        }
+    }, [locale, t]);
+
+    useEffect(() => {
+        if (initialCertificateId && initialCertificateId.trim()) {
+            verifyInternal(initialCertificateId.trim());
+        }
+    }, [initialCertificateId, verifyInternal]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!certificateId.trim()) {
       setStatus('error');
-      setErrorMessage(isSpanish
-        ? 'Por favor, ingresa un ID de certificado'
-        : 'Please enter a certificate ID'
-      );
+      setErrorMessage(t('errorEnterID'));
       return;
     }
 
-    setStatus('loading');
-    setErrorMessage('');
-    setResult(null);
-
-    try {
-      const response = await fetch(`/api/certificates/verify/${certificateId.trim()}`);
-      const data = await response.json();
-
-      if (response.ok && data.found) {
-        setResult(data);
-
-        // Set status based on certificate status
-        if (data.status === 'valid') {
-          setStatus('valid');
-        } else if (data.status === 'revoked') {
-          setStatus('revoked');
-        } else if (data.status === 'reissued') {
-          setStatus('reissued');
-        }
-      } else {
-        setStatus('not-found');
-        setErrorMessage(data.message || (isSpanish
-          ? 'Certificado no encontrado. Verifica que el ID sea correcto.'
-          : 'Certificate not found. Please verify the ID is correct.'
-        ));
-      }
-    } catch (error) {
-      setStatus('error');
-      setErrorMessage(isSpanish
-        ? 'Error al verificar el certificado. Por favor, intenta nuevamente.'
-        : 'Error verifying certificate. Please try again.'
-      );
-      console.error('[Certificate Verify] Error:', error);
-    }
+    verifyInternal(certificateId.trim());
   };
 
   const formatDate = (dateString: string) => {
@@ -91,6 +93,8 @@ export default function CertificateVerifyPage() {
     setStatus('idle');
     setResult(null);
     setErrorMessage('');
+    // Update URL to remove certificate ID
+    window.history.pushState({}, '', `/${locale}/certificates/verify`);
   };
 
   return (
@@ -112,31 +116,30 @@ export default function CertificateVerifyPage() {
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-1 w-12 bg-[#10b981]"></div>
                 <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">
-                  {isSpanish ? 'Verificación' : 'Verification'}
+                  {t('badge')}
                 </span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
-                {isSpanish ? 'Verifica tu' : 'Verify Your'}
+                {t('title')}
                 <br />
                 <span className="text-[#10b981]">
-                  {isSpanish ? 'Certificado' : 'Certificate'}
+                  {t('titleHighlight')}
                 </span>
               </h1>
+                <p className="text-base text-[#d1d5db] leading-relaxed max-w-2xl">
+                  {t('description')}
+                  <br />
+                  {t('format')}
+                </p>
 
-              <p className="text-base text-[#d1d5db] leading-relaxed max-w-2xl">
-                {isSpanish
-                  ? 'Ingresa el ID del certificado para verificar su autenticidad y validez. El ID tiene el formato: CERT-2026-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
-                  : 'Enter the certificate ID to verify its authenticity and validity. The ID format is: CERT-2026-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
-                }
-              </p>
             </div>
 
             {/* Verification Form */}
             <form onSubmit={handleVerify} className="space-y-6 mb-8">
               <div>
                 <label htmlFor="certificateId" className="block text-white font-bold mb-2 uppercase text-sm">
-                  {isSpanish ? 'ID del Certificado' : 'Certificate ID'}
+                  {t('certificateIdLabel')}
                 </label>
                 <div className="flex gap-3">
                   <input
@@ -144,7 +147,7 @@ export default function CertificateVerifyPage() {
                     type="text"
                     value={certificateId}
                     onChange={(e) => setCertificateId(e.target.value.toUpperCase())}
-                    placeholder="CERT-2026-..."
+                    placeholder={t('certificateIdPlaceholder')}
                     className="flex-1 px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#10b981] focus:outline-none transition-colors font-mono text-sm"
                     disabled={status === 'loading'}
                   />
@@ -155,10 +158,7 @@ export default function CertificateVerifyPage() {
                   >
                     <Search className="w-5 h-5" />
                     <span className="hidden sm:inline">
-                      {status === 'loading'
-                        ? (isSpanish ? 'Verificando...' : 'Verifying...')
-                        : (isSpanish ? 'Verificar' : 'Verify')
-                      }
+                      {status === 'loading' ? t('verifyingButton') : t('verifyButton')}
                     </span>
                   </button>
                 </div>
@@ -170,7 +170,7 @@ export default function CertificateVerifyPage() {
               <div className="p-8 border border-[#1f2937] rounded bg-[#0a0a0a] text-center">
                 <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#10b981] mb-4"></div>
                 <p className="text-[#d1d5db]">
-                  {isSpanish ? 'Verificando certificado...' : 'Verifying certificate...'}
+                  {t('loading')}
                 </p>
               </div>
             )}
@@ -186,13 +186,10 @@ export default function CertificateVerifyPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-black text-[#10b981] mb-2 uppercase">
-                        {isSpanish ? 'Certificado Válido' : 'Valid Certificate'}
+                        {t('validTitle')}
                       </h2>
                       <p className="text-[#10b981] text-sm">
-                        {result.message || (isSpanish
-                          ? 'Este certificado es válido y auténtico.'
-                          : 'This certificate is valid and authentic.'
-                        )}
+                        {result.message || t('validMessage')}
                       </p>
                     </div>
                   </div>
@@ -202,14 +199,14 @@ export default function CertificateVerifyPage() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Estudiante' : 'Student'}
+                          {t('studentLabel')}
                         </p>
                         <p className="text-white font-bold text-lg">{result.student_name}</p>
                       </div>
 
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Curso' : 'Course'}
+                          {t('courseLabel')}
                         </p>
                         <p className="text-white font-bold text-lg">{result.course_title}</p>
                       </div>
@@ -218,14 +215,14 @@ export default function CertificateVerifyPage() {
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Completado el' : 'Completed on'}
+                          {t('completedLabel')}
                         </p>
                         <p className="text-white font-semibold">{formatDate(result.completed_at)}</p>
                       </div>
 
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Emitido el' : 'Issued on'}
+                          {t('issuedLabel')}
                         </p>
                         <p className="text-white font-semibold">{formatDate(result.issued_at)}</p>
                       </div>
@@ -233,7 +230,7 @@ export default function CertificateVerifyPage() {
 
                     <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                       <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                        {isSpanish ? 'ID del Certificado' : 'Certificate ID'}
+                        {t('certificateIdLabel')}
                       </p>
                       <p className="text-white font-mono text-sm break-all">{result.certificate_id}</p>
                     </div>
@@ -242,10 +239,10 @@ export default function CertificateVerifyPage() {
                   {/* Share Info */}
                   <div className="mt-6 p-4 bg-[#0a0a0a] rounded border border-[#1f2937]">
                     <p className="text-xs text-[#9ca3af] mb-2">
-                      {isSpanish
-                        ? '✓ Este certificado puede ser verificado públicamente en cualquier momento usando este ID.'
-                        : '✓ This certificate can be publicly verified at any time using this ID.'
-                      }
+                      {t('shareInfo')}
+                    </p>
+                    <p className="text-[#10b981] font-mono text-xs break-all">
+                      {typeof window !== 'undefined' ? window.location.href : ''}
                     </p>
                   </div>
                 </div>
@@ -262,13 +259,10 @@ export default function CertificateVerifyPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-black text-[#ef4444] mb-2 uppercase">
-                        {isSpanish ? 'Certificado Revocado' : 'Certificate Revoked'}
+                        {t('revokedTitle')}
                       </h2>
                       <p className="text-[#ef4444] text-sm">
-                        {result.message || (isSpanish
-                          ? 'Este certificado ha sido revocado y ya no es válido.'
-                          : 'This certificate has been revoked and is no longer valid.'
-                        )}
+                        {result.message || t('revokedMessage')}
                       </p>
                     </div>
                   </div>
@@ -276,7 +270,7 @@ export default function CertificateVerifyPage() {
                   <div className="space-y-4">
                     <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                       <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                        {isSpanish ? 'Estudiante' : 'Student'}
+                        {t('studentLabel')}
                       </p>
                       <p className="text-white font-bold">{result.student_name}</p>
                     </div>
@@ -284,7 +278,7 @@ export default function CertificateVerifyPage() {
                     {result.revoked_at && (
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Revocado el' : 'Revoked on'}
+                          {t('revokedLabel')}
                         </p>
                         <p className="text-white font-semibold">{formatDate(result.revoked_at)}</p>
                       </div>
@@ -293,7 +287,7 @@ export default function CertificateVerifyPage() {
                     {result.revoked_reason && (
                       <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                         <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                          {isSpanish ? 'Razón' : 'Reason'}
+                          {t('reasonLabel')}
                         </p>
                         <p className="text-[#ef4444] font-semibold">{result.revoked_reason}</p>
                       </div>
@@ -313,13 +307,10 @@ export default function CertificateVerifyPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-black text-[#f59e0b] mb-2 uppercase">
-                        {isSpanish ? 'Certificado Reemitido' : 'Certificate Reissued'}
+                        {t('reissuedTitle')}
                       </h2>
                       <p className="text-[#f59e0b] text-sm">
-                        {result.message || (isSpanish
-                          ? 'Este certificado ha sido reemitido. Se generó un nuevo certificado.'
-                          : 'This certificate has been reissued. A new certificate was generated.'
-                        )}
+                        {result.message || t('reissuedMessage')}
                       </p>
                     </div>
                   </div>
@@ -327,17 +318,14 @@ export default function CertificateVerifyPage() {
                   <div className="space-y-4">
                     <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                       <p className="text-xs text-[#9ca3af] uppercase tracking-wider mb-1">
-                        {isSpanish ? 'Estudiante' : 'Student'}
+                        {t('studentLabel')}
                       </p>
                       <p className="text-white font-bold">{result.student_name}</p>
                     </div>
 
                     <div className="bg-[#0a0a0a] p-4 rounded border border-[#1f2937]">
                       <p className="text-[#f59e0b] text-sm">
-                        {isSpanish
-                          ? '⚠️ Por favor, contacta al emisor del certificado para obtener el nuevo ID de certificado.'
-                          : '⚠️ Please contact the certificate issuer to obtain the new certificate ID.'
-                        }
+                        {t('reissuedContact')}
                       </p>
                     </div>
                   </div>
@@ -354,7 +342,7 @@ export default function CertificateVerifyPage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-xl font-black text-[#6b7280] mb-2 uppercase">
-                      {isSpanish ? 'Certificado No Encontrado' : 'Certificate Not Found'}
+                      {t('notFoundTitle')}
                     </h2>
                     <p className="text-[#9ca3af] text-sm">
                       {errorMessage}
@@ -373,7 +361,7 @@ export default function CertificateVerifyPage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-xl font-black text-[#ef4444] mb-2 uppercase">
-                      {isSpanish ? 'Error' : 'Error'}
+                      {t('errorTitle')}
                     </h2>
                     <p className="text-[#ef4444] text-sm">
                       {errorMessage}
@@ -390,7 +378,7 @@ export default function CertificateVerifyPage() {
                   onClick={handleReset}
                   className="px-6 py-3 border border-[#1f2937] text-[#d1d5db] font-bold uppercase tracking-wide rounded hover:border-[#10b981] hover:text-[#10b981] transition-colors"
                 >
-                  {isSpanish ? 'Verificar Otro Certificado' : 'Verify Another Certificate'}
+                  {t('verifyAnotherButton')}
                 </button>
               </div>
             )}
@@ -398,35 +386,20 @@ export default function CertificateVerifyPage() {
             {/* Info Section */}
             <div className="border-t border-[#1f2937] pt-8 mt-10">
               <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">
-                {isSpanish ? '¿Cómo funciona?' : 'How it works'}
+                {t('howItWorksTitle')}
               </p>
               <ul className="space-y-3 text-[#d1d5db] text-sm">
                 <li className="flex items-start gap-3">
                   <span className="text-[#10b981] mt-1">→</span>
-                  <span>
-                    {isSpanish
-                      ? 'Cada certificado tiene un ID único que comienza con CERT-YYYY-'
-                      : 'Each certificate has a unique ID that starts with CERT-YYYY-'
-                    }
-                  </span>
+                  <span>{t('howItWorksPoint1')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[#10b981] mt-1">→</span>
-                  <span>
-                    {isSpanish
-                      ? 'La verificación es pública y puede realizarse en cualquier momento'
-                      : 'Verification is public and can be performed at any time'
-                    }
-                  </span>
+                  <span>{t('howItWorksPoint2')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[#10b981] mt-1">→</span>
-                  <span>
-                    {isSpanish
-                      ? 'Cada verificación queda registrada para auditoría'
-                      : 'Each verification is logged for audit purposes'
-                    }
-                  </span>
+                  <span>{t('howItWorksPoint3')}</span>
                 </li>
               </ul>
             </div>
@@ -439,7 +412,7 @@ export default function CertificateVerifyPage() {
             href={`/${locale}`}
             className="text-sm text-[#9ca3af] hover:text-[#10b981] transition-colors uppercase tracking-wide font-bold inline-flex items-center gap-2"
           >
-            {isSpanish ? 'Volver al inicio' : 'Back to home'}
+            {t('backToHome')}
             <ExternalLink className="w-4 h-4" />
           </Link>
         </div>

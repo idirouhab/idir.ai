@@ -9,8 +9,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getTranslations } from 'next-intl/server';
 import { revokeCertificate } from '@/lib/certificates';
-import { createTranslator } from '@/lib/certificate-i18n';
+import { isValidCertificateId } from '@/lib/certificate-id';
 import { z } from 'zod';
 
 const RevokeRequestSchema = z.object({
@@ -18,22 +19,32 @@ const RevokeRequestSchema = z.object({
   actor_id: z.string().uuid().optional(),
 });
 
+function detectLocale(request: NextRequest): 'en' | 'es' {
+  const url = new URL(request.url);
+  const langParam = url.searchParams.get('lang') || url.searchParams.get('locale');
+  if (langParam === 'es' || langParam === 'español' || langParam === 'spanish') return 'es';
+  if (langParam === 'en' || langParam === 'english' || langParam === 'inglés') return 'en';
+  const acceptLanguage = request.headers.get('accept-language') || '';
+  if (acceptLanguage.toLowerCase().includes('es')) return 'es';
+  return 'en';
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ certificateId: string }> }
 ) {
-  const { t } = createTranslator(request);
+  const locale = detectLocale(request);
+  const t = await getTranslations({ locale, namespace: 'certificates.revoke' });
 
   try {
     const { certificateId } = await params;
 
-    // Validate certificate_id format
-    const certIdPattern = /^CERT-\d{4}-[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/;
-    if (!certIdPattern.test(certificateId)) {
+    // Validate certificate_id format (supports both legacy and new formats)
+    if (!isValidCertificateId(certificateId)) {
       return NextResponse.json(
         {
           success: false,
-          error: t('revoke.error.invalidFormat'),
+          error: t('errorInvalidFormat'),
         },
         { status: 400 }
       );
@@ -47,7 +58,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: t('revoke.error.invalidBody'),
+          error: t('errorInvalidBody'),
           details: validationResult.error.issues,
         },
         { status: 400 }
@@ -61,11 +72,11 @@ export async function POST(
 
     if (!result.success) {
       // Map error messages to translations
-      let errorKey = 'revoke.error.internal';
+      let errorKey = 'errorInternal';
       if (result.error?.includes('not found')) {
-        errorKey = 'revoke.error.notFound';
+        errorKey = 'errorNotFound';
       } else if (result.error?.includes('already revoked')) {
-        errorKey = 'revoke.error.alreadyRevoked';
+        errorKey = 'errorAlreadyRevoked';
       }
 
       return NextResponse.json(
@@ -79,7 +90,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: t('revoke.success'),
+      message: t('success'),
       certificate_id: certificateId,
     });
   } catch (error) {
@@ -87,7 +98,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: false,
-        error: t('revoke.error.internal'),
+        error: t('errorInternal'),
       },
       { status: 500 }
     );

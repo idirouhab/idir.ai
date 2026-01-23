@@ -10,8 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getTranslations } from 'next-intl/server';
 import { issueCertificate } from '@/lib/certificates';
-import { createTranslator } from '@/lib/certificate-i18n';
 import { z } from 'zod';
 
 const IssueRequestSchema = z.object({
@@ -19,8 +19,19 @@ const IssueRequestSchema = z.object({
   actor_id: z.string().uuid().optional(),
 });
 
+function detectLocale(request: NextRequest): 'en' | 'es' {
+  const url = new URL(request.url);
+  const langParam = url.searchParams.get('lang') || url.searchParams.get('locale');
+  if (langParam === 'es' || langParam === 'español' || langParam === 'spanish') return 'es';
+  if (langParam === 'en' || langParam === 'english' || langParam === 'inglés') return 'en';
+  const acceptLanguage = request.headers.get('accept-language') || '';
+  if (acceptLanguage.toLowerCase().includes('es')) return 'es';
+  return 'en';
+}
+
 export async function POST(request: NextRequest) {
-  const { t } = createTranslator(request);
+  const locale = detectLocale(request);
+  const t = await getTranslations({ locale, namespace: 'certificates.issue' });
 
   try {
     // Parse and validate request body
@@ -31,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: t('issue.error.invalidBody'),
+          error: t('errorInvalidBody'),
           details: validationResult.error.issues,
         },
         { status: 400 }
@@ -45,11 +56,11 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
       // Map error messages to translations
-      let errorKey = 'issue.error.internal';
+      let errorKey = 'errorInternal';
       if (result.error?.includes('not found')) {
-        errorKey = 'issue.error.notFound';
+        errorKey = 'errorNotFound';
       } else if (result.error?.includes('not completed')) {
-        errorKey = 'issue.error.notCompleted';
+        errorKey = 'errorNotCompleted';
       }
 
       return NextResponse.json(
@@ -65,7 +76,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: t('issue.success'),
+        message: t('success'),
         certificate_id: result.certificate?.certificate_id,
         status: result.certificate?.status,
         issued_at: result.certificate?.issued_at,
@@ -79,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: t('issue.error.internal'),
+        error: t('errorInternal'),
       },
       { status: 500 }
     );

@@ -11,26 +11,53 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getTranslations } from 'next-intl/server';
 import { verifyCertificate } from '@/lib/certificates';
-import { createTranslator } from '@/lib/certificate-i18n';
+import { isValidCertificateId } from '@/lib/certificate-id';
+
+/**
+ * Detect locale from request
+ */
+function detectLocale(request: NextRequest): 'en' | 'es' {
+  // 1. Check query parameter (?lang=es or ?locale=es)
+  const url = new URL(request.url);
+  const langParam = url.searchParams.get('lang') || url.searchParams.get('locale');
+
+  if (langParam === 'es' || langParam === 'español' || langParam === 'spanish') {
+    return 'es';
+  }
+
+  if (langParam === 'en' || langParam === 'english' || langParam === 'inglés') {
+    return 'en';
+  }
+
+  // 2. Check Accept-Language header
+  const acceptLanguage = request.headers.get('accept-language') || '';
+  if (acceptLanguage.toLowerCase().includes('es')) {
+    return 'es';
+  }
+
+  // 3. Default to English
+  return 'en';
+}
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ certificateId: string }> }
 ) {
-  const { t } = createTranslator(request);
+  const locale = detectLocale(request);
+  const t = await getTranslations({ locale, namespace: 'certificates.verify' });
 
   try {
     const { certificateId } = await params;
 
-    // Validate certificate_id format
-    const certIdPattern = /^CERT-\d{4}-[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/;
-    if (!certIdPattern.test(certificateId)) {
+    // Validate certificate_id format (supports both legacy and new formats)
+    if (!isValidCertificateId(certificateId)) {
       return NextResponse.json(
         {
           found: false,
-          error: t('verify.invalidFormat'),
-          message: t('verify.formatHint'),
+          error: t('invalidFormat'),
+          message: t('formatHint'),
         },
         { status: 400 }
       );
@@ -50,7 +77,7 @@ export async function GET(
         {
           found: false,
           certificate_id: certificateId,
-          message: t('verify.notFound'),
+          message: t('notFound'),
         },
         { status: 404 }
       );
@@ -59,11 +86,11 @@ export async function GET(
     // Determine message based on status
     let statusMessage: string;
     if (result.status === 'valid') {
-      statusMessage = t('verify.valid');
+      statusMessage = t('valid');
     } else if (result.status === 'revoked') {
-      statusMessage = t('verify.revoked');
+      statusMessage = t('revoked');
     } else {
-      statusMessage = t('verify.reissued');
+      statusMessage = t('reissued');
     }
 
     // Return public verification data
@@ -86,8 +113,8 @@ export async function GET(
     return NextResponse.json(
       {
         found: false,
-        error: t('verify.error.internal'),
-        message: t('verify.error.internal'),
+        error: t('errorInternal'),
+        message: t('errorInternal'),
       },
       { status: 500 }
     );

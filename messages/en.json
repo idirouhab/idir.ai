@@ -755,5 +755,78 @@
       "description": "oin our interactive AI quiz and compete in the global ranking. Test your knowledge of machine learning and the latest AI technologies today.",
       "keywords": "AI quiz, artificial intelligence test, AI knowledge, machine learning quiz, tech challenge, AI leaderboard, interactive quiz, test AI skills, AI competition, technology assessment"
     }
+  },
+  "certificates": {
+    "issue": {
+      "success": "Certificate issued successfully",
+      "errorNotFound": "Course signup not found",
+      "errorNotCompleted": "Course signup is not completed. Cannot issue certificate.",
+      "errorInvalidBody": "Invalid request body",
+      "errorInvalidSignupId": "Invalid course_signup_id format",
+      "errorInternal": "Internal server error"
+    },
+    "revoke": {
+      "success": "Certificate revoked successfully",
+      "errorNotFound": "Certificate not found",
+      "errorAlreadyRevoked": "Certificate is already revoked",
+      "errorInvalidFormat": "Invalid certificate ID format",
+      "errorInvalidReason": "Reason must be at least 10 characters",
+      "errorInvalidBody": "Invalid request body",
+      "errorInternal": "Internal server error"
+    },
+    "reissue": {
+      "success": "Certificate reissued successfully",
+      "errorNotFound": "Certificate not found",
+      "errorInvalidFormat": "Invalid certificate ID format",
+      "errorInvalidBody": "Invalid request body",
+      "errorInternal": "Internal server error"
+    },
+    "verify": {
+      "badge": "Verification",
+      "title": "Verify Your",
+      "titleHighlight": "Certificate",
+      "description": "Enter the certificate ID to verify its authenticity and validity.",
+      "format": "Format: IDIR-TEXT-YYYY-CODE",
+      "certificateIdLabel": "Certificate ID",
+      "certificateIdPlaceholder": "IDIR-AUTO-2026-A3F9B2",
+      "verifyButton": "Verify",
+      "verifyingButton": "Verifying...",
+      "loading": "Verifying certificate...",
+      "validTitle": "Valid Certificate",
+      "validMessage": "This certificate is valid and authentic.",
+      "revokedTitle": "Certificate Revoked",
+      "revokedMessage": "This certificate has been revoked and is no longer valid.",
+      "reissuedTitle": "Certificate Reissued",
+      "reissuedMessage": "This certificate has been reissued. A new certificate was generated.",
+      "reissuedContact": "⚠️ Please contact the certificate issuer to obtain the new certificate ID.",
+      "notFoundTitle": "Certificate Not Found",
+      "notFoundMessage": "Certificate not found. Please verify the ID is correct.",
+      "errorTitle": "Error",
+      "errorMessage": "Error verifying certificate. Please try again.",
+      "errorEnterID": "Please enter a certificate ID",
+      "studentLabel": "Student",
+      "courseLabel": "Course",
+      "completedLabel": "Completed on",
+      "issuedLabel": "Issued on",
+      "certificateIdLabel": "Certificate ID",
+      "revokedLabel": "Revoked on",
+      "reasonLabel": "Reason",
+      "shareInfo": "✓ This certificate can be publicly verified at any time using this link.",
+      "verifyAnotherButton": "Verify Another Certificate",
+      "howItWorksTitle": "How it works",
+      "howItWorksPoint1": "Each certificate has a unique ID: IDIR-TEXT-YYYY-HASH",
+      "howItWorksPoint2": "Verification is public and can be performed at any time",
+      "howItWorksPoint3": "Each verification is logged for audit purposes",
+      "backToHome": "Back to home",
+      "metaTitle": "Verify Your Certificate - idir.ai",
+      "metaDescription": "Verify the authenticity of your idir.ai certificate. Enter your certificate ID to confirm validity and view details.",
+      "invalidFormat": "Invalid certificate ID format",
+      "formatHint": "The certificate ID should be in the format: IDIR-COURSECODE-YYYY-XXXXXXXXXX",
+      "notFound": "Certificate not found. Please verify the certificate ID is correct.",
+      "valid": "This certificate is valid and authentic.",
+      "revoked": "This certificate has been revoked.",
+      "reissued": "This certificate has been reissued. A new certificate was generated.",
+      "errorInternal": "An error occurred while verifying the certificate. Please try again later."
+    }
   }
 }

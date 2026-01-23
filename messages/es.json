@@ -724,5 +724,78 @@
       "description": "Participa en nuestro quiz de IA y compite en el ranking global. Pon a prueba tus conocimientos sobre machine learning y tecnología de vanguardia hoy mismo.",
       "keywords": ["quiz IA", "test inteligencia artificial", "conocimientos IA", "quiz machine learning", "desafío tech", "ranking IA", "quiz interactivo", "evaluar habilidades IA", "competencia IA", "evaluación tecnológica"]
     }
+  },
+  "certificates": {
+    "issue": {
+      "success": "Certificado emitido exitosamente",
+      "errorNotFound": "Inscripción al curso no encontrada",
+      "errorNotCompleted": "La inscripción al curso no está completada. No se puede emitir el certificado.",
+      "errorInvalidBody": "Cuerpo de solicitud inválido",
+      "errorInvalidSignupId": "Formato de course_signup_id inválido",
+      "errorInternal": "Error interno del servidor"
+    },
+    "revoke": {
+      "success": "Certificado revocado exitosamente",
+      "errorNotFound": "Certificado no encontrado",
+      "errorAlreadyRevoked": "El certificado ya está revocado",
+      "errorInvalidFormat": "Formato de ID de certificado inválido",
+      "errorInvalidReason": "La razón debe tener al menos 10 caracteres",
+      "errorInvalidBody": "Cuerpo de solicitud inválido",
+      "errorInternal": "Error interno del servidor"
+    },
+    "reissue": {
+      "success": "Certificado reemitido exitosamente",
+      "errorNotFound": "Certificado no encontrado",
+      "errorInvalidFormat": "Formato de ID de certificado inválido",
+      "errorInvalidBody": "Cuerpo de solicitud inválido",
+      "errorInternal": "Error interno del servidor"
+    },
+    "verify": {
+      "badge": "Verificación",
+      "title": "Verifica tu",
+      "titleHighlight": "Certificado",
+      "description": "Ingresa el ID del certificado para verificar su autenticidad y validez.",
+      "format": "Formato: IDIR-TEXTO-YYYY-CÓDIGO",
+      "certificateIdLabel": "ID del Certificado",
+      "certificateIdPlaceholder": "IDIR-AUTO-2026-A3F9B2",
+      "verifyButton": "Verificar",
+      "verifyingButton": "Verificando...",
+      "loading": "Verificando certificado...",
+      "validTitle": "Certificado Válido",
+      "validMessage": "Este certificado es válido y auténtico.",
+      "revokedTitle": "Certificado Revocado",
+      "revokedMessage": "Este certificado ha sido revocado y ya no es válido.",
+      "reissuedTitle": "Certificado Reemitido",
+      "reissuedMessage": "Este certificado ha sido reemitido. Se generó un nuevo certificado.",
+      "reissuedContact": "⚠️ Por favor, contacta al emisor del certificado para obtener el nuevo ID de certificado.",
+      "notFoundTitle": "Certificado No Encontrado",
+      "notFoundMessage": "Certificado no encontrado. Por favor verifica que el ID sea correcto.",
+      "errorTitle": "Error",
+      "errorMessage": "Error al verificar el certificado. Por favor, intenta nuevamente.",
+      "errorEnterID": "Por favor, ingresa un ID de certificado",
+      "studentLabel": "Estudiante",
+      "courseLabel": "Curso",
+      "completedLabel": "Completado el",
+      "issuedLabel": "Emitido el",
+      "certificateIdLabel": "ID del Certificado",
+      "revokedLabel": "Revocado el",
+      "reasonLabel": "Razón",
+      "shareInfo": "✓ Este certificado puede ser verificado públicamente en cualquier momento usando este enlace.",
+      "verifyAnotherButton": "Verificar Otro Certificado",
+      "howItWorksTitle": "¿Cómo funciona?",
+      "howItWorksPoint1": "Cada certificado tiene un ID único: IDIR-TEXT-YYYY-HASH",
+      "howItWorksPoint2": "La verificación es pública y puede realizarse en cualquier momento",
+      "howItWorksPoint3": "Cada verificación queda registrada para auditoría",
+      "backToHome": "Volver al inicio",
+      "metaTitle": "Verifica tu Certificado - idir.ai",
+      "metaDescription": "Verifica la autenticidad de tu certificado idir.ai. Ingresa tu ID de certificado para confirmar validez y ver detalles.",
+      "invalidFormat": "Formato de ID de certificado inválido",
+      "formatHint": "El ID del certificado debe tener el formato: IDIR-CODIGODELCURSO-YYYY-XXXXXXXXXX",
+      "notFound": "Certificado no encontrado. Por favor verifica que el ID sea correcto.",
+      "valid": "Este certificado es válido y auténtico.",
+      "revoked": "Este certificado ha sido revocado.",
+      "reissued": "Este certificado ha sido reemitido. Se generó un nuevo certificado.",
+      "errorInternal": "Ocurrió un error al verificar el certificado. Por favor intenta nuevamente."
+    }
   }
 }

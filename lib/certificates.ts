@@ -15,13 +15,15 @@ import {
   generateCertificateHash,
   type CertificateSnapshot,
 } from './certificate-hash';
+import {
+    generateCertificateId,
+} from './certificate-id';
 
 // ============================================================================
 // Types
 // ============================================================================
 
 export type CertificateStatus = 'valid' | 'revoked' | 'reissued';
-export type CertificateEventType = 'issued' | 'verified' | 'revoked' | 'reissued';
 
 export interface Certificate {
   id: string;
@@ -63,17 +65,6 @@ export interface IssueResult {
 // ============================================================================
 // Certificate ID Generation
 // ============================================================================
-
-/**
- * Generates a unique public certificate ID
- * Format: CERT-{YEAR}-{UUID}
- * Example: CERT-2026-3F9A2C1E-8B74-4E9A-B5D2-91F8F1C3A0E4
- */
-export function generateCertificateId(): string {
-  const year = new Date().getFullYear();
-  const uuid = crypto.randomUUID().toUpperCase();
-  return `CERT-${year}-${uuid}`;
-}
 
 // ============================================================================
 // Certificate Issuance
@@ -161,7 +152,7 @@ export async function issueCertificate(
     }
 
     // Step 4: Generate certificate ID and timestamps
-    const certificate_id = generateCertificateId();
+    const certificate_id = generateCertificateId(signup.course_title);
     const issued_at = new Date();
 
     // Step 5: Create deterministic snapshot
@@ -451,7 +442,7 @@ export async function reissueCertificate(
     const signup = signupResult.rows[0];
 
     // Step 4: Generate new certificate
-    const new_certificate_id = generateCertificateId();
+    const new_certificate_id = generateCertificateId(signup.course_title);
     const issued_at = new Date();
 
     const snapshot = createCertificateSnapshot({
