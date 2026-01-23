@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         siteName: 'idir.ai',
         images: [
           {
-            url: 'https://idir.ai/og-image.png',
+            url: `https://idir.ai/certificates/og-verify-${locale}.png`,
             width: 1200,
             height: 630,
             alt: 'idir.ai Certificate Verification',
@@ -73,7 +73,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         card: 'summary_large_image',
         title,
         description,
-        images: ['https://idir.ai/og-image.png'],
+        images: [`https://idir.ai/certificates/og-verify-${locale}.png`],
       },
     };
   }
@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         siteName: 'idir.ai',
         images: [
           {
-            url: 'https://idir.ai/og-image.png',
+            url: `https://idir.ai/certificates/og-verify-${locale}.png`,
             width: 1200,
             height: 630,
             alt: `Certificate ${certificateId}`,
@@ -114,7 +114,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         card: 'summary_large_image',
         title,
         description,
-        images: ['https://idir.ai/og-image.png'],
+        images: [`https://idir.ai/certificates/og-verify-${locale}.png`],
       },
     };
   }
@@ -136,6 +136,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? `${studentName} completó exitosamente el curso "${courseTitle}". Certificado ${certificateId} emitido el ${issuedDate}. Verificado y autenticado por idir.ai`
     : `${studentName} successfully completed the "${courseTitle}" course. Certificate ${certificateId} issued on ${issuedDate}. Verified and authenticated by idir.ai`;
 
+  // Use dynamic OG image with certificate data
+  const ogImageUrl = `https://idir.ai/api/og/certificate/${certificateId}?locale=${locale}`;
+
   return {
     title,
     description,
@@ -148,7 +151,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: 'idir.ai',
       images: [
         {
-          url: 'https://idir.ai/og-image.png', // TODO: Generate dynamic certificate OG image
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: `${studentName} - ${courseTitle}`,
@@ -159,7 +162,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: 'summary_large_image',
       title,
       description,
-      images: ['https://idir.ai/og-image.png'],
+      images: [ogImageUrl],
       creator: '@idir_ai',
     },
     alternates: {

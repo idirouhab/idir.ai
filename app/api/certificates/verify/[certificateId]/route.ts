@@ -71,7 +71,6 @@ export async function GET(
 
     // Verify certificate
     const result = await verifyCertificate(certificateId, ip_address, user_agent);
-
     if (!result) {
       return NextResponse.json(
         {
