@@ -7,6 +7,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/public/logo-idirai-dark.png';
 import { usePathname } from 'next/navigation';
+import {
+  trackCertificateView,
+  trackCertificateDownload,
+  trackCertificateShareLinkedIn
+} from '@/lib/analytics';
 
 type VerificationStatus = 'idle' | 'loading' | 'valid' | 'revoked' | 'reissued' | 'not-found' | 'error';
 
@@ -71,6 +76,20 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
 
             if (response.ok && data.found) {
                 setResult(data);
+
+                // Track certificate view with first-visit detection
+                const viewKey = `cert_viewed_${certId}`;
+                const hasViewedBefore = localStorage.getItem(viewKey);
+                const isFirstVisit = !hasViewedBefore;
+
+                // Mark as viewed
+                if (isFirstVisit) {
+                    localStorage.setItem(viewKey, new Date().toISOString());
+                }
+
+                // Track in Google Analytics
+                trackCertificateView(certId, data.course_title, isFirstVisit);
+
                 if (data.status === 'valid') {
                     setStatus('valid');
                 } else if (data.status === 'revoked') {
@@ -94,6 +113,35 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
             verifyInternal(initialCertificateId.trim());
         }
     }, [initialCertificateId, verifyInternal]);
+
+    // Detect LinkedIn share completion
+    useEffect(() => {
+        if (!result) return;
+
+        // Check if user came from LinkedIn (UTM parameters)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('utm_source') === 'linkedin' && params.get('shared_cert')) {
+            trackCertificateShareLinkedIn(result.certificate_id, result.course_title, 'completed');
+        }
+
+        // Detect when user returns to tab after opening LinkedIn
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                const linkedInOpened = sessionStorage.getItem('linkedin_share_opened');
+                if (linkedInOpened) {
+                    const timeSinceOpened = Date.now() - parseInt(linkedInOpened);
+                    // If they return after 5+ seconds, likely they shared
+                    if (timeSinceOpened > 5000) {
+                        trackCertificateShareLinkedIn(result.certificate_id, result.course_title, 'completed');
+                        sessionStorage.removeItem('linkedin_share_opened');
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, [result]);
 
     const handleVerify = () => {
         if (!certificateId.trim()) {
@@ -125,12 +173,35 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
         window.history.pushState({}, '', `/${locale}/certificates/verify`);
     };
 
+    const handleDownload = (format: 'pdf' | 'jpg') => {
+        if (!result) return;
+
+        // Track download in Google Analytics
+        trackCertificateDownload(result.certificate_id, result.course_title, format);
+
+        // Open download URL
+        const url = format === 'pdf' ? result.pdf_url : result.jpg_url;
+        if (url) {
+            window.open(url, '_blank');
+        }
+    };
+
     const handleShareLinkedIn = async () => {
         if (!result) return;
 
-        const certificateUrl = typeof window !== 'undefined' ? window.location.href : '';
+        const baseUrl = typeof window !== 'undefined' ? window.location.href.split('?')[0] : '';
+
+        // Add UTM parameters to track completed shares
+        const certificateUrl = `${baseUrl}?utm_source=linkedin&utm_medium=social&utm_campaign=certificate_share&shared_cert=${result.certificate_id}`;
+
         const message = t('shareLinkedInMessage', { courseTitle: result.course_title });
         const fullText = `${message}\n\n${certificateUrl}`;
+
+        // Track LinkedIn share click in Google Analytics
+        trackCertificateShareLinkedIn(result.certificate_id, result.course_title, 'click');
+
+        // Mark that LinkedIn was opened (for return detection)
+        sessionStorage.setItem('linkedin_share_opened', Date.now().toString());
 
         // Copy suggested text to clipboard
         try {
@@ -142,8 +213,7 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
         }
 
         // Open LinkedIn share dialog
-// Añadimos el mensaje Y la URL al parámetro 'text'
-        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(fullText)}`;
+        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`;
         window.open(linkedInUrl, '_blank', 'width=600,height=600');
     };
 
@@ -367,28 +437,22 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
                                             <p className="font-[family-name:var(--font-inter)] text-xs text-gray-700 font-semibold mb-3">{t('downloadTitle')}</p>
                                             <div className="grid sm:grid-cols-2 gap-3">
                                                 {result.pdf_url && (
-                                                    <a
-                                                        href={result.pdf_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        download
+                                                    <button
+                                                        onClick={() => handleDownload('pdf')}
                                                         className="font-[family-name:var(--font-space-grotesk)] flex items-center justify-center gap-2 px-4 py-3 bg-[#11B981] text-white font-bold rounded-lg hover:bg-[#0ea472] transition-colors"
                                                     >
                                                         <FileText className="w-4 h-4" />
                                                         <span>{t('downloadPDF')}</span>
-                                                    </a>
+                                                    </button>
                                                 )}
                                                 {result.jpg_url && (
-                                                    <a
-                                                        href={result.jpg_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        download
+                                                    <button
+                                                        onClick={() => handleDownload('jpg')}
                                                         className="font-[family-name:var(--font-space-grotesk)] flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-600 transition-colors"
                                                     >
                                                         <ImageIcon className="w-4 h-4" />
                                                         <span>{t('downloadJPG')}</span>
-                                                    </a>
+                                                    </button>
                                                 )}
                                             </div>
                                         </div>

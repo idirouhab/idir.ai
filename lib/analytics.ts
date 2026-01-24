@@ -33,6 +33,14 @@ export const GA_EVENTS = {
 
   // Speaking events
   SPEAKING_CTA_CLICK: 'speaking_cta_click',
+
+  // Certificate events
+  CERTIFICATE_VIEW: 'certificate_view',
+  CERTIFICATE_VIEW_FIRST: 'certificate_view_first',
+  CERTIFICATE_DOWNLOAD_PDF: 'certificate_download_pdf',
+  CERTIFICATE_DOWNLOAD_JPG: 'certificate_download_jpg',
+  CERTIFICATE_SHARE_LINKEDIN_CLICK: 'certificate_share_linkedin_click',
+  CERTIFICATE_SHARE_LINKEDIN_COMPLETED: 'certificate_share_linkedin_completed',
 } as const;
 
 type EventName = typeof GA_EVENTS[keyof typeof GA_EVENTS];
@@ -161,4 +169,65 @@ export function trackSpeakingCTA(action: string): void {
     event_category: 'engagement',
     event_label: action,
   });
+}
+
+/**
+ * Track certificate verification views
+ */
+export function trackCertificateView(
+  certificateId: string,
+  courseTitle: string,
+  isFirstVisit: boolean
+): void {
+  trackEvent(
+    isFirstVisit ? GA_EVENTS.CERTIFICATE_VIEW_FIRST : GA_EVENTS.CERTIFICATE_VIEW,
+    {
+      event_category: 'certificate',
+      certificate_id: certificateId,
+      course_title: courseTitle,
+      is_first_visit: isFirstVisit,
+    }
+  );
+}
+
+/**
+ * Track certificate downloads
+ */
+export function trackCertificateDownload(
+  certificateId: string,
+  courseTitle: string,
+  format: 'pdf' | 'jpg'
+): void {
+  trackEvent(
+    format === 'pdf'
+      ? GA_EVENTS.CERTIFICATE_DOWNLOAD_PDF
+      : GA_EVENTS.CERTIFICATE_DOWNLOAD_JPG,
+    {
+      event_category: 'certificate',
+      certificate_id: certificateId,
+      course_title: courseTitle,
+      format: format,
+    }
+  );
+}
+
+/**
+ * Track LinkedIn share actions for certificates
+ */
+export function trackCertificateShareLinkedIn(
+  certificateId: string,
+  courseTitle: string,
+  action: 'click' | 'completed'
+): void {
+  trackEvent(
+    action === 'click'
+      ? GA_EVENTS.CERTIFICATE_SHARE_LINKEDIN_CLICK
+      : GA_EVENTS.CERTIFICATE_SHARE_LINKEDIN_COMPLETED,
+    {
+      event_category: 'certificate',
+      certificate_id: certificateId,
+      course_title: courseTitle,
+      action: action,
+    }
+  );
 }
