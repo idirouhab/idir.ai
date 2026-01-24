@@ -213,7 +213,7 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
         }
 
         // Open LinkedIn share dialog
-        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`;
+        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(fullText)}`;
         window.open(linkedInUrl, '_blank', 'width=600,height=600');
     };
 
