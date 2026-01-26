@@ -44,7 +44,9 @@ export default function CertificateVerifyClient({ initialCertificateId }: Certif
     const tCommon = useTranslations('common');
     const tAria = useTranslations('aria');
     const [certificateId, setCertificateId] = useState(initialCertificateId || '');
-    const [status, setStatus] = useState<VerificationStatus>('idle');
+    const [status, setStatus] = useState<VerificationStatus>(
+        initialCertificateId && initialCertificateId.trim() ? 'loading' : 'idle'
+    );
     const [result, setResult] = useState<VerificationResult | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [showCopiedMessage, setShowCopiedMessage] = useState(false);

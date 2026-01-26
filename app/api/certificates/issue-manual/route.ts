@@ -26,6 +26,16 @@ import { getTranslations } from 'next-intl/server';
 import { issueManualCertificate } from '@/scripts/issue-manual-certificate';
 import { z } from 'zod';
 
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept-Language',
+};
+
+export async function OPTIONS() {
+    return NextResponse.json({}, { headers: corsHeaders });
+}
+
 const ManualCertificateSchema = z.object({
   student_full_name: z.string().min(2, 'Name must be at least 2 characters').max(255),
   student_email: z.string().email('Invalid email format'),
@@ -61,7 +71,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log(body)
     const validationResult = ManualCertificateSchema.safeParse(body);
-      console.log(validationResult)
     if (!validationResult.success) {
       return NextResponse.json(
         {
@@ -69,7 +78,7 @@ export async function POST(request: NextRequest) {
           error: t('errorInvalidBody'),
           details: validationResult.error.issues,
         },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -95,7 +104,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: result.error || t('errorInternal'),
         },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -108,7 +117,7 @@ export async function POST(request: NextRequest) {
         payload_hash: result.payload_hash,
         verification_url: `${process.env.NEXT_PUBLIC_SITE_URL || ''}${result.verification_url}`,
       },
-      { status: 201 }
+      { status: 201, headers: corsHeaders }
     );
   } catch (error) {
     console.error('[API] Manual certificate issue error:', error);
@@ -117,7 +126,7 @@ export async function POST(request: NextRequest) {
         success: false,
         error: t('errorInternal'),
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

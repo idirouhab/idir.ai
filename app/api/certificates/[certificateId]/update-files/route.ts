@@ -128,8 +128,6 @@ export async function PATCH(
         values
       );
 
-
-      console.log(cert)
       // Log audit event
       await client.query(
         `

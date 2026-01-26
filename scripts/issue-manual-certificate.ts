@@ -21,7 +21,6 @@ import {getClient} from './lib/db-direct';
 import {
     createCertificateSnapshot,
     generateCertificateHash,
-    type CertificateSnapshot,
 } from './lib/certificate-hash-direct';
 import {
     generateCertificateId,
