@@ -809,5 +809,70 @@
       "errorInvalidBody": "Cuerpo de solicitud inválido",
       "errorInternal": "Error interno del servidor"
     }
+  },
+  "automationTest": {
+    "title": "DIAGNÓSTICO DE AUTOMATIZACIÓN",
+    "meta": {
+      "title": "Diagnóstico de Habilidades en Automatización | Determina tu Nivel Técnico",
+      "description": "Evaluación diagnóstica profesional para determinar tu nivel desde Descubrimiento Digital hasta Arquitecto de IA/Agentes. Encuentra el camino de aprendizaje adecuado.",
+      "keywords": ["diagnóstico de automatización", "automatización de flujos", "n8n", "evaluación técnica", "automatización con IA", "MCP", "test de nivel", "nivel de habilidad"]
+    },
+    "registration": {
+      "title": "ANTES DE COMENZAR",
+      "subtitle": "Por favor proporciona tu información para recibir tus resultados del diagnóstico",
+      "nameLabel": "Nombre Completo",
+      "namePlaceholder": "Juan Pérez",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "juan@ejemplo.com",
+      "gdprConsentPart1": "Consiento el procesamiento de mis datos personales. Lee nuestra",
+      "privacyPolicy": "Política de Privacidad",
+      "gdprConsentPart2": "y los",
+      "termsConditions": "Términos y Condiciones",
+      "continueButton": "CONTINUAR AL RESUMEN",
+      "securityNote": "Tus datos están encriptados y manejados de forma segura",
+      "errors": {
+        "nameRequired": "El nombre es requerido",
+        "emailRequired": "El correo electrónico es requerido",
+        "emailInvalid": "Por favor ingresa un correo electrónico válido",
+        "gdprRequired": "Debes consentir el procesamiento de datos para continuar"
+      }
+    },
+    "welcome": {
+      "greeting": "¡Bienvenido, {name}!",
+      "subtitle": "Determina tu nivel técnico y encuentra el camino de aprendizaje adecuado",
+      "estimatedTime": "Tiempo estimado",
+      "totalPoints": "Puntos totales",
+      "startButton": "COMENZAR DIAGNÓSTICO",
+      "howItWorksTitle": "RESUMEN DE LA EVALUACIÓN",
+      "step1": "Responde preguntas en 5 áreas progresivas desde fundamentos hasta orquestación de IA",
+      "step2": "Salta preguntas que no conozcas - esto nos ayuda a evaluar con precisión tu nivel actual",
+      "step3": "Recibe retroalimentación inmediata para entender dónde te encuentras en cada tema",
+      "step4": "Obtén tu nivel de ubicación personalizado y el camino de aprendizaje recomendado"
+    },
+    "test": {
+      "question": "Pregunta",
+      "section": "SECCIÓN",
+      "difficulty": "DIFICULTAD",
+      "submitAnswer": "ENVIAR RESPUESTA",
+      "skipQuestion": "SALTAR PREGUNTA (NO LO SÉ)",
+      "nextQuestion": "SIGUIENTE PREGUNTA",
+      "loadingQuestions": "CARGANDO TEST...",
+      "errorLoading": "Error al cargar las preguntas del test. Por favor, inténtalo de nuevo más tarde."
+    },
+    "feedback": {
+      "correct": "CORRECTO",
+      "incorrect": "INCORRECTO",
+      "pointsEarned": "puntos",
+      "explanation": "Explicación:"
+    },
+    "results": {
+      "title": "DIAGNÓSTICO COMPLETADO",
+      "yourScore": "TU PUNTUACIÓN",
+      "placementLevel": "NIVEL DE UBICACIÓN",
+      "recommendedPath": "RUTA DE CURSO RECOMENDADA",
+      "sectionBreakdown": "RENDIMIENTO POR SECCIÓN",
+      "restartTest": "REPETIR DIAGNÓSTICO",
+      "backToHome": "Volver al Inicio"
+    }
   }
 }

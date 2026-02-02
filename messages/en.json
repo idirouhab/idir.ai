@@ -841,5 +841,70 @@
       "errorInvalidBody": "Cuerpo de solicitud inválido",
       "errorInternal": "Error interno del servidor"
     }
+  },
+  "automationTest": {
+    "title": "AUTOMATION DIAGNOSTIC",
+    "meta": {
+      "title": "Automation Skills Diagnostic | Determine Your Technical Level",
+      "description": "Professional diagnostic assessment to determine your placement from Digital Discovery to AI/Agent Architect. Find the right learning path for your automation journey.",
+      "keywords": ["automation diagnostic", "workflow automation", "n8n", "technical assessment", "AI automation", "MCP", "placement test", "skill level"]
+    },
+    "registration": {
+      "title": "BEFORE WE BEGIN",
+      "subtitle": "Please provide your information to receive your diagnostic results",
+      "nameLabel": "Full Name",
+      "namePlaceholder": "John Doe",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "gdprConsentPart1": "I consent to the processing of my personal data. Read our",
+      "privacyPolicy": "Privacy Policy",
+      "gdprConsentPart2": "and",
+      "termsConditions": "Terms & Conditions",
+      "continueButton": "CONTINUE TO OVERVIEW",
+      "securityNote": "Your data is encrypted and handled securely",
+      "errors": {
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "gdprRequired": "You must consent to data processing to continue"
+      }
+    },
+    "welcome": {
+      "greeting": "Welcome, {name}!",
+      "subtitle": "Determine your technical level and find the right learning path",
+      "estimatedTime": "Estimated time",
+      "totalPoints": "Total points",
+      "startButton": "BEGIN DIAGNOSTIC",
+      "howItWorksTitle": "ASSESSMENT OVERVIEW",
+      "step1": "Answer questions across 5 progressive skill areas from foundations to AI orchestration",
+      "step2": "Skip questions you don't know - this helps us accurately assess your current level",
+      "step3": "Receive immediate feedback to understand where you stand on each topic",
+      "step4": "Get your personalized placement level and recommended learning path"
+    },
+    "test": {
+      "question": "Question",
+      "section": "SECTION",
+      "difficulty": "DIFFICULTY",
+      "submitAnswer": "SUBMIT ANSWER",
+      "skipQuestion": "SKIP QUESTION (I DON'T KNOW)",
+      "nextQuestion": "NEXT QUESTION",
+      "loadingQuestions": "LOADING TEST...",
+      "errorLoading": "Failed to load test questions. Please try again later."
+    },
+    "feedback": {
+      "correct": "CORRECT",
+      "incorrect": "INCORRECT",
+      "pointsEarned": "points",
+      "explanation": "Explanation:"
+    },
+    "results": {
+      "title": "DIAGNOSTIC COMPLETE",
+      "yourScore": "YOUR SCORE",
+      "placementLevel": "PLACEMENT LEVEL",
+      "recommendedPath": "RECOMMENDED COURSE PATH",
+      "sectionBreakdown": "PERFORMANCE BY SECTION",
+      "restartTest": "RETAKE DIAGNOSTIC",
+      "backToHome": "Back to Home"
+    }
   }
 }
