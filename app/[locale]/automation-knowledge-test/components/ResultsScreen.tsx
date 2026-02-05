@@ -22,6 +22,47 @@ export default function ResultsScreen({ results, sections, onRestart, locale, t 
     return '#ef4444';
   };
 
+  // Generate share text
+  const getShareText = () => {
+    const url = typeof window !== 'undefined' ? window.location.origin + `/${locale}/automation-knowledge-test` : '';
+
+    if (locale === 'es') {
+      let text = `🎯 ¡He completado el Diagnóstico de Automatización!\n\n`;
+      text += `📊 Puntuación: ${results.score}/${results.maxScore} (${percentage}%)\n`;
+      text += `🏆 Nivel: ${results.level.label}\n`;
+      text += `📚 Ruta recomendada: ${results.level.coursePath}\n\n`;
+      text += `¿Cuál es tu nivel de automatización? Descúbrelo aquí: ${url}`;
+      return text;
+    }
+
+    let text = `🎯 I just completed the Automation Skills Diagnostic!\n\n`;
+    text += `📊 Score: ${results.score}/${results.maxScore} (${percentage}%)\n`;
+    text += `🏆 Level: ${results.level.label}\n`;
+    text += `📚 Recommended path: ${results.level.coursePath}\n\n`;
+    text += `What's your automation level? Find out here: ${url}`;
+    return text;
+  };
+
+  // Share on LinkedIn
+  const shareOnLinkedIn = () => {
+    const text = getShareText();
+    window.open(
+      `https://www.linkedin.com/feed/?shareActive&mini=true&text=${encodeURIComponent(text)}`,
+      '_blank',
+      'width=600,height=600'
+    );
+  };
+
+  // Share on X.com
+  const shareOnX = () => {
+    const url = typeof window !== 'undefined' ? window.location.origin + `/${locale}/automation-knowledge-test` : '';
+    const text = getShareText();
+    window.open(
+      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`,
+      '_blank'
+    );
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center py-12">
       {/* Header */}
@@ -127,6 +168,33 @@ export default function ResultsScreen({ results, sections, onRestart, locale, t 
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Share Results */}
+      <div className="w-full max-w-2xl mb-6">
+        <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3 text-center">
+          {t('results.shareResults')}
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={shareOnLinkedIn}
+            className="py-4 bg-[#0a66c210] border border-[#0a66c230] text-[#0a66c2] rounded-xl flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-[#0a66c220] transition-all"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </button>
+          <button
+            onClick={shareOnX}
+            className="py-4 bg-white/5 border border-white/10 text-white rounded-xl flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X.com
+          </button>
         </div>
       </div>
 

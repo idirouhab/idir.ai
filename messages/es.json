@@ -781,7 +781,7 @@
       "reasonLabel": "Razón",
       "shareInfo": "✓ Este certificado puede ser verificado públicamente en cualquier momento usando este enlace.",
       "shareLinkedIn": "Compartir en LinkedIn",
-      "shareLinkedInMessage": "¡Me complace compartir que he completado exitosamente la formación \"{courseTitle}\" impartida por idir.ai y DigitalCube.AI! 🎓\n\nVerifica mi certificado:",
+      "shareLinkedInMessage": "¡Me complace compartir que he completado exitosamente la formación \"{courseTitle}\" impartida por idir.ai! 🎓\n\nVerifica mi certificado:",
       "shareLinkedInTooltip": "¡Se ha copiado un mensaje sugerido en tu portapapeles! Pégalo en tu publicación de LinkedIn.",
       "downloadPDF": "Descargar PDF",
       "downloadJPG": "Descargar JPG",
@@ -871,6 +871,7 @@
       "placementLevel": "NIVEL DE UBICACIÓN",
       "recommendedPath": "RUTA DE CURSO RECOMENDADA",
       "sectionBreakdown": "RENDIMIENTO POR SECCIÓN",
+      "shareResults": "COMPARTE TUS RESULTADOS",
       "restartTest": "REPETIR DIAGNÓSTICO",
       "backToHome": "Volver al Inicio"
     }
