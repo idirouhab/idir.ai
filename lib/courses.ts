@@ -159,6 +159,7 @@ export type Course = {
     meta_description: string | null;
     cover_image: string | null;
     status: 'draft' | 'published';
+    is_private: boolean;
     published_at: string | null;
     course_signups: Array<{ count: number }>;
     view_count: number;
@@ -227,7 +228,7 @@ export const getPublishedCourses = cache(async (language: 'en' | 'es') => {
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
              LEFT JOIN users u ON ci.instructor_id = u.id
              LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
-             WHERE c.status = 'published' AND c.language = $1
+             WHERE c.status = 'published' AND c.language = $1 AND c.is_private = false
              GROUP BY c.id
              ORDER BY c.published_at DESC`,
             [language]
@@ -273,7 +274,7 @@ export const getAllPublishedCourses = cache(async () => {
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
              LEFT JOIN users u ON ci.instructor_id = u.id
              LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
-             WHERE c.status = 'published'
+             WHERE c.status = 'published' AND c.is_private = false
              GROUP BY c.id
              ORDER BY c.published_at DESC`
         );
@@ -321,7 +322,7 @@ export const getPublishedCourseBySlugOnly = cache(async (slug: string) => {
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
              LEFT JOIN users u ON ci.instructor_id = u.id
              LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
-             WHERE c.slug = $1 AND c.status = 'published'
+             WHERE c.slug = $1 AND c.status = 'published' AND c.is_private = false
              GROUP BY c.id`,
             [slug]
         );
@@ -380,7 +381,7 @@ export const getPublishedCourseBySlug = cache(async (slug: string, language: 'en
              LEFT JOIN course_instructors ci ON c.id = ci.course_id
              LEFT JOIN users u ON ci.instructor_id = u.id
              LEFT JOIN instructor_profiles ip ON u.id = ip.user_id
-             WHERE c.slug = $1 AND c.language = $2 AND c.status = 'published'
+             WHERE c.slug = $1 AND c.language = $2 AND c.status = 'published' AND c.is_private = false
              GROUP BY c.id`,
             [slug, language]
         );
