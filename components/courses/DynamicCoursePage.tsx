@@ -189,6 +189,20 @@ export default function DynamicCoursePage({ course, locale }: Props) {
         }
     };
 
+    const getStartDateFromSessions = (): string | null => {
+        const sessions = logistics?.sessions ?? [];
+        if (sessions.length === 0) return null;
+        const sorted = [...sessions].sort((a, b) => {
+            const aParts = (a.date || '').split('/').map((v) => parseInt(v, 10));
+            const bParts = (b.date || '').split('/').map((v) => parseInt(v, 10));
+            if (aParts.length !== 3 || bParts.length !== 3) return 0;
+            const aDate = new Date(aParts[2], (aParts[1] || 1) - 1, aParts[0] || 1);
+            const bDate = new Date(bParts[2], (bParts[1] || 1) - 1, bParts[0] || 1);
+            return aDate.getTime() - bDate.getTime();
+        });
+        return sorted[0]?.date || null;
+    };
+
     // Form state - initialize dynamically based on form fields
     // Safely destructure with defaults for optional fields
     const {
@@ -202,6 +216,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
         commitment,
         form
     } = course.course_data || {};
+    const sessions = logistics?.sessions ?? [];
 
     // Use relational instructors from course_instructors table
     const instructors = course.instructors && course.instructors.length > 0
@@ -226,6 +241,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [donationCommitment, setDonationCommitment] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showFullSchedule, setShowFullSchedule] = useState(false);
     const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -516,13 +532,18 @@ export default function DynamicCoursePage({ course, locale }: Props) {
 
                                 {logistics && (
                                     <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
-                                        {logistics.startDate && (
-                                            <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
-                                                <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
-                                                <span className="truncate">{formatDate(logistics.startDate)}</span>
-                                            </div>
-                                        )}
-                                        {logistics.schedule && (
+                                        {(() => {
+                                            const sessionStart = getStartDateFromSessions();
+                                            const start = sessionStart || logistics.startDate;
+                                            if (!start) return null;
+                                            return (
+                                                <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
+                                                    <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
+                                                    <span className="truncate">{formatDate(start)}</span>
+                                                </div>
+                                            );
+                                        })()}
+                                        {logistics.schedule && sessions.length === 0 && (
                                             <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
                                                 <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
                                                 <span className="truncate">
@@ -532,7 +553,25 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                                 </span>
                                             </div>
                                         )}
-                                        {logistics.duration && (
+                                        {logistics.total_hours && (
+                                            <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
+                                                <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
+                                                <span className="truncate">
+                                                    {logistics.session_duration_hours || 0}h/session • {sessions.length} days • {sessions.length} sessions
+                                                </span>
+                                            </div>
+                                        )}
+                                        {sessions.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowFullSchedule(true)}
+                                                className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-[#00ff88] font-bold uppercase tracking-wider md:tracking-widest hover:text-[#7dffbd] transition-colors"
+                                            >
+                                                <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
+                                                <span>View full schedule</span>
+                                            </button>
+                                        )}
+                                        {logistics.duration && !logistics.total_hours && (
                                             <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-300">
                                                 <CheckCircle className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#00ff88] flex-shrink-0" />
                                                 <span className="truncate">
@@ -925,6 +964,57 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                     idir.ai / {t('footer.tagline')}
                 </p>
             </footer>
+
+            {showFullSchedule && sessions.length > 0 && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Full schedule"
+                    onClick={() => setShowFullSchedule(false)}
+                >
+                    <div
+                        className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 max-w-xl w-full shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <div>
+                                <h3 className="text-xl font-bold text-white">Full Schedule</h3>
+                                <p className="text-xs text-slate-400">
+                                    {sessions.length} sessions • {logistics.session_duration_hours || 0}h per session
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowFullSchedule(false)}
+                                className="text-slate-400 hover:text-white text-lg leading-none px-2 py-1"
+                                aria-label="Close"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className="mt-4 divide-y divide-white/10">
+                            {sessions.map((s, idx) => (
+                                <div key={`${s.date}-${s.start_time}-${idx}`} className="py-3 flex items-center justify-between gap-4">
+                                    <div className="text-base text-white/90">{s.date}</div>
+                                    <div className="text-sm text-slate-300 font-mono">
+                                        {s.start_time}–{s.end_time}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setShowFullSchedule(false)}
+                                className="px-4 py-2 text-xs font-bold rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
