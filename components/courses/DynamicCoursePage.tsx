@@ -217,6 +217,7 @@ export default function DynamicCoursePage({ course, locale }: Props) {
         form
     } = course.course_data || {};
     const sessions = logistics?.sessions ?? [];
+    const timezoneLabel = logistics?.timezone || 'UTC';
 
     // Use relational instructors from course_instructors table
     const instructors = course.instructors && course.instructors.length > 0
@@ -269,15 +270,18 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                 throw new Error('Form endpoint not configured');
             }
 
-            const response = await fetch(form.endpoint, {
+            const response = await fetch('/api/course-signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ...formData,
-                    courseId: course.id,
-                    language: locale,
-                    termsAccepted,
-                    donationCommitment,
+                    endpoint: form.endpoint,
+                    payload: {
+                        ...formData,
+                        courseId: course.id,
+                        language: locale,
+                        termsAccepted,
+                        donationCommitment,
+                    },
                 }),
             });
 
@@ -982,6 +986,9 @@ export default function DynamicCoursePage({ course, locale }: Props) {
                                 <h3 className="text-xl font-bold text-white">Full Schedule</h3>
                                 <p className="text-xs text-slate-400">
                                     {sessions.length} sessions • {logistics.session_duration_hours || 0}h per session
+                                </p>
+                                <p className="text-[11px] text-slate-500 mt-1">
+                                    Timezone: {timezoneLabel}
                                 </p>
                             </div>
                             <button
