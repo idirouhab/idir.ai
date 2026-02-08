@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { createClient } from '@supabase/supabase-js';
 import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
+import { primaryAdminRole } from '@/lib/app-roles';
 
 /**
  * Admin-only API endpoint to get newsletter subscribers
@@ -15,7 +16,7 @@ import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 export async function GET(request: Request) {
   try {
     // Check authentication and role using NextAuth
-    const authResult = await requireRole(['owner', 'admin']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -123,7 +124,7 @@ export async function GET(request: Request) {
     await logAuditEvent({
       userId: authResult.user?.userId || '',
       userEmail: authResult.user?.email || '',
-      userRole: (authResult.user?.role || 'viewer') as any,
+      userRole: (primaryAdminRole(authResult.user?.roles) || 'viewer') as any,
       action: 'view_subscribers',
       resource: 'newsletter_subscribers',
       ipAddress: getClientIP(request),

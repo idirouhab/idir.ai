@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, canPublish } from '@/lib/auth';
+import { isSuperAdmin } from '@/lib/app-roles';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Update a blog post
@@ -30,7 +31,7 @@ export async function PUT(
     }
 
     // SECURITY: Only the author or owner role can update the post
-    if (existingPost.author_id !== user.userId && user.role !== 'owner') {
+    if (existingPost.author_id !== user.userId && !isSuperAdmin(user.roles)) {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
@@ -40,7 +41,7 @@ export async function PUT(
     // ROLE-BASED PERMISSION: Only owners and admins can publish
     if (!canPublish(user) && body.status === 'published') {
       return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can publish posts. Your changes have been saved as draft.' },
+        { error: 'Forbidden: Only super admins and billing admins can publish posts. Your changes have been saved as draft.' },
         { status: 403 }
       );
     }
@@ -96,9 +97,9 @@ export async function DELETE(
     const user = await requireAuth(request);
 
     // ROLE-BASED PERMISSION: Only owners can delete posts
-    if (user.role !== 'owner') {
+    if (!isSuperAdmin(user.roles)) {
       return NextResponse.json(
-        { error: 'Forbidden: Only owners can delete posts' },
+        { error: 'Forbidden: Only super admins can delete posts' },
         { status: 403 }
       );
     }

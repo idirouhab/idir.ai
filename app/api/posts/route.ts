@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireRole } from '@/lib/auth-helpers';
+import { isAdmin } from '@/lib/app-roles';
 import { getBlogClient, getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
 
 /**
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Check auth if filtering by drafts
     if (status === 'draft') {
-      const authResult = await requireRole(['owner', 'admin', 'blogger']);
+      const authResult = await requireRole(['super_admin', 'billing_admin']);
       if (!authResult.authorized) {
         return authResult.response;
       }
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     // Standard list view
     let query = supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, translation_group_id, author_id, admin_users!blog_posts_author_id_fkey(name)')
+      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, translation_group_id, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
       .order('published_at', { ascending: false });
 
     // Apply filters
@@ -86,8 +87,8 @@ export async function GET(request: NextRequest) {
     // Map to include author name
     const posts = (data || []).map((post: any) => ({
       ...post,
-      author_name: post.admin_users?.name || null,
-      admin_users: undefined,
+      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
+      users: undefined,
     }));
 
     return NextResponse.json({
@@ -211,7 +212,7 @@ async function getGroupedPosts(
 export async function POST(request: NextRequest) {
   try {
     // Use NextAuth for authentication
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -249,7 +250,7 @@ async function createSinglePost(user: any, body: any) {
   }
 
   // Handle permissions
-  if (!(user.role === 'owner' || user.role === 'admin')) {
+  if (!isAdmin(user.roles)) {
     body.status = 'draft';
     body.published_at = null;
   } else if (body.status === 'published' && !body.published_at) {
@@ -317,7 +318,7 @@ async function createBilingualPost(user: any, body: any) {
   const data = validation.data;
   let finalStatus = data.status;
 
-  if (!(user.role === 'owner' || user.role === 'admin')) {
+  if (!isAdmin(user.roles)) {
     finalStatus = 'draft';
   }
 

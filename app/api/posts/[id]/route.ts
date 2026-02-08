@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
+import { isAdmin } from '@/lib/app-roles';
 import { getAdminBlogClient, getBlogClient, calculateReadTime } from '@/lib/blog';
 
 /**
@@ -19,19 +20,19 @@ export async function GET(
     let supabase = getBlogClient();
     let query = supabase
       .from('blog_posts')
-      .select('*, admin_users!blog_posts_author_id_fkey(name)')
+      .select('*, users!blog_posts_author_id_fkey(first_name,last_name)')
       .eq('id', id);
 
     // If requesting drafts, require auth
     if (includeDraft) {
-      const authResult = await requireRole(['owner', 'admin', 'blogger']);
+      const authResult = await requireRole(['super_admin', 'billing_admin']);
       if (!authResult.authorized) {
         return authResult.response;
       }
       supabase = getAdminBlogClient();
       query = supabase
         .from('blog_posts')
-        .select('*, admin_users!blog_posts_author_id_fkey(name)')
+        .select('*, users!blog_posts_author_id_fkey(first_name,last_name)')
         .eq('id', id);
     } else {
       query = query.eq('status', 'published');
@@ -45,8 +46,10 @@ export async function GET(
 
     const post = {
       ...data,
-      author_name: (data as any).admin_users?.name || null,
-      admin_users: undefined,
+      author_name: (data as any).users
+        ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
+        : null,
+      users: undefined,
     };
 
     return NextResponse.json({ data: post });
@@ -67,7 +70,7 @@ export async function PUT(
   try {
     const { id } = await params;
     // Use NextAuth for authentication
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -88,7 +91,7 @@ export async function PUT(
     }
 
     // Check permissions - user can only edit their own posts unless they're owner or admin
-    if (existingPost.author_id !== user.userId && user.role !== 'owner' && user.role !== 'admin') {
+    if (existingPost.author_id !== user.userId && !isAdmin(user.roles)) {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
@@ -96,10 +99,10 @@ export async function PUT(
     }
 
     // Handle publish permissions - only owner and admin can publish
-    const canUserPublish = user.role === 'owner' || user.role === 'admin';
+    const canUserPublish = isAdmin(user.roles);
     if (!canUserPublish && body.status === 'published') {
       return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can publish posts' },
+        { error: 'Forbidden: Only super admins and billing admins can publish posts' },
         { status: 403 }
       );
     }
@@ -156,7 +159,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     // Require authentication
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -182,8 +185,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
 
-    // Check permissions - bloggers can only delete their own posts
-    if (user.role === 'blogger' && existingPost.author_id !== user.userId) {
+    // Non-admins can only delete their own posts
+    if (!isAdmin(user.roles) && existingPost.author_id !== user.userId) {
       return NextResponse.json(
         { error: 'Forbidden: You can only delete your own posts' },
         { status: 403 }

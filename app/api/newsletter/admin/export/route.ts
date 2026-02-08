@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
+import { isAdmin, primaryAdminRole } from '@/lib/app-roles';
 import { createClient } from '@supabase/supabase-js';
 import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 
@@ -28,9 +29,9 @@ export async function GET(request: Request) {
     }
 
     // Only owners and admins can export subscribers
-    if (payload.role !== 'owner' && payload.role !== 'admin') {
+    if (!isAdmin(payload.roles)) {
       return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can export subscribers' },
+        { error: 'Forbidden: Only super admins and billing admins can export subscribers' },
         { status: 403 }
       );
     }
@@ -121,7 +122,7 @@ export async function GET(request: Request) {
     await logAuditEvent({
       userId: payload.userId,
       userEmail: payload.email,
-      userRole: payload.role,
+      userRole: (primaryAdminRole(payload.roles) || 'viewer') as any,
       action: 'export_subscribers',
       resource: 'newsletter_subscribers',
       ipAddress: getClientIP(request),

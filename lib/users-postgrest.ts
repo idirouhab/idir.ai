@@ -4,13 +4,15 @@
  */
 
 import bcrypt from 'bcryptjs';
-import { UserRole } from './jwt';
+import type { AppRole } from './app-roles';
+import { isAdmin } from './app-roles';
 
 export type User = {
   id: string;
   email: string;
-  name: string;
-  role: UserRole;
+  first_name: string;
+  last_name: string;
+  roles: AppRole[];
   is_active: boolean;
   linkedin_url?: string;
   twitter_url?: string;
@@ -49,7 +51,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
   try {
     const response = await fetch(
-      `${config.baseURL}/admin_users?email=eq.${encodeURIComponent(email.toLowerCase().trim())}&select=*`,
+      `${config.baseURL}/users?email=eq.${encodeURIComponent(email.toLowerCase().trim())}&select=id,email,first_name,last_name,is_active,created_at,updated_at,user_roles(role)`,
       {
         method: 'GET',
         headers: config.headers,
@@ -67,7 +69,17 @@ export async function getUserByEmail(email: string): Promise<User | null> {
       return null;
     }
 
-    return data[0] as User;
+    const row = data[0];
+    return {
+      id: row.id,
+      email: row.email,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      roles: (row.user_roles || []).map((r: any) => r.role),
+      is_active: row.is_active,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    } as User;
   } catch (error) {
     console.error('Error in getUserByEmail:', error);
     return null;
@@ -80,7 +92,7 @@ async function getPasswordHash(userId: string): Promise<string | null> {
 
   try {
     const response = await fetch(
-      `${config.baseURL}/admin_users?id=eq.${userId}&select=password_hash`,
+      `${config.baseURL}/users?id=eq.${userId}&select=password_hash`,
       {
         method: 'GET',
         headers: config.headers,
@@ -112,6 +124,9 @@ export async function authenticateUser(
   const user = await getUserByEmail(email);
 
   if (!user || !user.is_active) {
+    return null;
+  }
+  if (!isAdmin(user.roles)) {
     return null;
   }
 

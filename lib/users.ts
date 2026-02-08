@@ -1,13 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
-import { UserRole } from './jwt';
+import { AppRole } from './app-roles';
+import { isAdmin } from './app-roles';
 
 // User type definition
 export type User = {
   id: string;
   email: string;
-  name: string;
-  role: UserRole;
+  first_name: string;
+  last_name: string;
+  roles: AppRole[];
   is_active: boolean;
   linkedin_url?: string;
   twitter_url?: string;
@@ -19,7 +21,7 @@ export type UserInput = {
   email: string;
   password: string;
   name: string;
-  role: UserRole;
+  role: AppRole;
 };
 
 // Get Supabase admin client (bypasses RLS)
@@ -57,18 +59,23 @@ export async function createUser(input: UserInput, isActive: boolean = true): Pr
   // Hash password
   const passwordHash = await hashPassword(input.password);
 
+  const trimmedName = input.name.trim();
+  const [firstName, ...lastParts] = trimmedName.split(' ').filter(Boolean);
+  const lastName = lastParts.join(' ');
+
   const { data, error } = await supabase
-    .from('admin_users')
+    .from('users')
     .insert([
       {
         email: input.email.toLowerCase().trim(),
         password_hash: passwordHash,
-        name: input.name,
-        role: input.role,
+        first_name: firstName || 'Admin',
+        last_name: lastName || 'User',
         is_active: isActive,
+        email_verified: true,
       },
     ])
-    .select()
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at')
     .single();
 
   if (error) {
@@ -76,7 +83,20 @@ export async function createUser(input: UserInput, isActive: boolean = true): Pr
     throw new Error(error.message);
   }
 
-  return data as User;
+  // Assign admin role
+  const { error: roleError } = await supabase
+    .from('user_roles')
+    .insert([{ user_id: data.id, role: input.role }]);
+
+  if (roleError) {
+    console.error('Error assigning role:', roleError);
+    throw new Error(roleError.message);
+  }
+
+  return {
+    ...(data as Omit<User, 'roles'>),
+    roles: [input.role],
+  } as User;
 }
 
 // Get user by email
@@ -84,8 +104,8 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('admin_users')
-    .select('*')
+    .from('users')
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .eq('email', email.toLowerCase().trim())
     .single();
 
@@ -98,7 +118,17 @@ export async function getUserByEmail(email: string): Promise<User | null> {
     throw new Error(error.message);
   }
 
-  return data as User;
+  const roles = (data.user_roles || []).map((r: any) => r.role) as AppRole[];
+  return {
+    id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    roles,
+    is_active: data.is_active,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  } as User;
 }
 
 // Get user by ID
@@ -106,8 +136,8 @@ export async function getUserById(id: string): Promise<User | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('admin_users')
-    .select('*')
+    .from('users')
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .eq('id', id)
     .single();
 
@@ -119,7 +149,17 @@ export async function getUserById(id: string): Promise<User | null> {
     throw new Error(error.message);
   }
 
-  return data as User;
+  const roles = (data.user_roles || []).map((r: any) => r.role) as AppRole[];
+  return {
+    id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    roles,
+    is_active: data.is_active,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  } as User;
 }
 
 // Authenticate user (login)
@@ -130,6 +170,9 @@ export async function authenticateUser(
   const user = await getUserByEmail(email);
 
   if (!user || !user.is_active) {
+    return null;
+  }
+  if (!isAdmin(user.roles)) {
     return null;
   }
 
@@ -151,7 +194,7 @@ async function getPasswordHash(userId: string): Promise<string | null> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('admin_users')
+    .from('users')
     .select('password_hash')
     .eq('id', userId)
     .single();
@@ -168,8 +211,8 @@ export async function listUsers(): Promise<User[]> {
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('admin_users')
-    .select('id, email, name, role, is_active, created_at, updated_at')
+    .from('users')
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -177,7 +220,16 @@ export async function listUsers(): Promise<User[]> {
     throw new Error(error.message);
   }
 
-  return data as User[];
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    email: row.email,
+    first_name: row.first_name,
+    last_name: row.last_name,
+    roles: (row.user_roles || []).map((r: any) => r.role),
+    is_active: row.is_active,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  })) as User[];
 }
 
 // Update user status (owner only)
@@ -185,10 +237,10 @@ export async function updateUserStatus(userId: string, isActive: boolean): Promi
   const supabase = getAdminClient();
 
   const { data, error } = await supabase
-    .from('admin_users')
+    .from('users')
     .update({ is_active: isActive })
     .eq('id', userId)
-    .select()
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .single();
 
   if (error) {
@@ -196,14 +248,23 @@ export async function updateUserStatus(userId: string, isActive: boolean): Promi
     throw new Error(error.message);
   }
 
-  return data as User;
+  return {
+    id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    roles: (data.user_roles || []).map((r: any) => r.role),
+    is_active: data.is_active,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  } as User;
 }
 
 // Delete user (owner only)
 export async function deleteUser(userId: string): Promise<void> {
   const supabase = getAdminClient();
 
-  const { error } = await supabase.from('admin_users').delete().eq('id', userId);
+  const { error } = await supabase.from('users').delete().eq('id', userId);
 
   if (error) {
     console.error('Error deleting user:', error);
@@ -217,7 +278,7 @@ export async function updateUserPassword(userId: string, newPassword: string): P
   const passwordHash = await hashPassword(newPassword);
 
   const { error } = await supabase
-    .from('admin_users')
+    .from('users')
     .update({ password_hash: passwordHash })
     .eq('id', userId);
 
@@ -228,14 +289,34 @@ export async function updateUserPassword(userId: string, newPassword: string): P
 }
 
 // Update user role (owner only)
-export async function updateUserRole(userId: string, newRole: UserRole): Promise<User> {
+export async function updateUserRole(userId: string, newRole: AppRole): Promise<User> {
   const supabase = getAdminClient();
 
+  // Replace admin roles (super_admin/billing_admin) while preserving other roles
+  const { error: deleteError } = await supabase
+    .from('user_roles')
+    .delete()
+    .eq('user_id', userId)
+    .in('role', ['super_admin', 'billing_admin']);
+
+  if (deleteError) {
+    console.error('Error removing existing admin roles:', deleteError);
+    throw new Error(deleteError.message);
+  }
+
+  const { error: insertError } = await supabase
+    .from('user_roles')
+    .insert([{ user_id: userId, role: newRole }]);
+
+  if (insertError) {
+    console.error('Error updating user role:', insertError);
+    throw new Error(insertError.message);
+  }
+
   const { data, error } = await supabase
-    .from('admin_users')
-    .update({ role: newRole })
+    .from('users')
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .eq('id', userId)
-    .select()
     .single();
 
   if (error) {
@@ -243,7 +324,16 @@ export async function updateUserRole(userId: string, newRole: UserRole): Promise
     throw new Error(error.message);
   }
 
-  return data as User;
+  return {
+    id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    roles: (data.user_roles || []).map((r: any) => r.role),
+    is_active: data.is_active,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  } as User;
 }
 
 // Update user details (name, email, social profiles)
@@ -254,16 +344,21 @@ export async function updateUserDetails(
   const supabase = getAdminClient();
 
   const updateData: any = {};
-  if (updates.name) updateData.name = updates.name;
+  if (updates.name) {
+    const trimmedName = updates.name.trim();
+    const [firstName, ...lastParts] = trimmedName.split(' ').filter(Boolean);
+    updateData.first_name = firstName || 'Admin';
+    updateData.last_name = lastParts.join(' ') || 'User';
+  }
   if (updates.email) updateData.email = updates.email.toLowerCase().trim();
   if (updates.linkedin_url !== undefined) updateData.linkedin_url = updates.linkedin_url || null;
   if (updates.twitter_url !== undefined) updateData.twitter_url = updates.twitter_url || null;
 
   const { data, error } = await supabase
-    .from('admin_users')
+    .from('users')
     .update(updateData)
     .eq('id', userId)
-    .select()
+    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
     .single();
 
   if (error) {
@@ -271,5 +366,14 @@ export async function updateUserDetails(
     throw new Error(error.message);
   }
 
-  return data as User;
+  return {
+    id: data.id,
+    email: data.email,
+    first_name: data.first_name,
+    last_name: data.last_name,
+    roles: (data.user_roles || []).map((r: any) => r.role),
+    is_active: data.is_active,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  } as User;
 }

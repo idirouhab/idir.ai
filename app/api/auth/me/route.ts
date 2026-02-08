@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
       user: {
         id: payload.userId,
         email: payload.email,
-        role: payload.role,
+        roles: payload.roles || [],
+        name: payload.email,
       },
     });
   } catch (error) {

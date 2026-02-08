@@ -51,7 +51,7 @@ type AdminHeaderProps = {
 
 type UserInfo = {
   email: string;
-  role: 'owner' | 'admin' | 'blogger';
+  role: 'super_admin' | 'billing_admin' | null;
 };
 
 export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
@@ -65,9 +65,15 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
+          const roles = data.user.roles || [];
+          const derivedRole = roles.includes('super_admin')
+            ? 'super_admin'
+            : roles.includes('billing_admin')
+              ? 'billing_admin'
+              : null;
           setUserInfo({
             email: data.user.email,
-            role: data.user.role,
+            role: derivedRole,
           });
         }
       } catch (error) {
@@ -86,14 +92,12 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
-      case 'owner':
+      case 'super_admin':
         return 'bg-[#10b981] text-black';
-      case 'admin':
+      case 'billing_admin':
         return 'bg-[#10b981]/80 text-black';
-      case 'blogger':
-        return 'bg-[#10b981]/60 text-black';
       default:
         return 'bg-gray-700 text-white';
     }

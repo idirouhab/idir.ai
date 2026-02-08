@@ -25,7 +25,7 @@ function getPostgRESTConfig() {
 export async function GET() {
   try {
     // Check authentication and role using NextAuth
-    const authResult = await requireRole(['owner', 'admin']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }

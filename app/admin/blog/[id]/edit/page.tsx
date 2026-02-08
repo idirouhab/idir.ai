@@ -25,6 +25,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 
         const authData = await authResponse.json();
         const currentUser = authData.user;
+        const roles = currentUser.roles || [];
+        const isAdmin = roles.includes('super_admin') || roles.includes('billing_admin');
 
         // Fetch specific post (including drafts with auth)
         const response = await fetch(`/api/posts/${id}?draft=true`);
@@ -43,9 +45,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 
         // Check if user has permission to edit this post
         const canEdit =
-          currentUser.role === 'owner' ||
-          currentUser.role === 'admin' ||
-          (currentUser.role === 'blogger' && data.author_id === currentUser.id);
+          isAdmin ||
+          data.author_id === currentUser.id;
 
         if (!canEdit) {
           alert('You do not have permission to edit this post.');

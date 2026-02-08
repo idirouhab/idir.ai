@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
-import { verifyToken, JWTPayload, UserRole } from './jwt';
+import { verifyToken, JWTPayload } from './jwt';
+import { isAdmin, isSuperAdmin } from './app-roles';
 import { isTokenBlacklisted } from './session-blacklist';
 
 export async function checkAuth(request: NextRequest): Promise<JWTPayload | null> {
@@ -56,19 +57,20 @@ export async function requireAuth(request: NextRequest): Promise<JWTPayload> {
   return user;
 }
 
-export async function requireRole(request: NextRequest, allowedRoles: UserRole[]): Promise<JWTPayload> {
+export async function requireRole(request: NextRequest, allowedRoles: string[]): Promise<JWTPayload> {
   const user = await requireAuth(request);
 
-  if (!allowedRoles.includes(user.role)) {
+  const roles = user.roles || [];
+  if (!roles.some(role => allowedRoles.includes(role))) {
     throw new Error('Forbidden: insufficient permissions');
   }
   return user;
 }
 
 export function isOwner(user: JWTPayload | null): boolean {
-  return user?.role === 'owner';
+  return isSuperAdmin(user?.roles);
 }
 
 export function canPublish(user: JWTPayload | null): boolean {
-  return user?.role === 'owner' || user?.role === 'admin';
+  return isAdmin(user?.roles);
 }

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { UserRole } from './jwt';
+import type { AppRole } from './app-roles';
 
 export type AuditAction =
   | 'view_subscribers'
@@ -11,7 +11,7 @@ export type AuditAction =
 export type AuditLogEntry = {
   userId: string;
   userEmail: string;
-  userRole: UserRole;
+  userRole: AppRole | null;
   action: AuditAction;
   resource: string;
   resourceId?: string;

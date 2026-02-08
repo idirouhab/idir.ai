@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth, requireRole } from '@/lib/auth';
 import { listUsers, updateUserStatus, updateUserRole, updateUserDetails, getUserById } from '@/lib/users';
-import { UserRole } from '@/lib/jwt';
+import { isSuperAdmin } from '@/lib/app-roles';
 
 // List all users (owner only)
 export async function GET(request: NextRequest) {
   try {
     // Only owners can list users
-    await requireRole(request, ['owner']);
+    await requireRole(request, ['super_admin']);
 
     const users = await listUsers();
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (error.message.startsWith('Forbidden')) {
-      return NextResponse.json({ error: 'Forbidden: Owner access required' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 });
     }
 
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     // Only owners can update users
-    await requireRole(request, ['owner']);
+    await requireRole(request, ['super_admin']);
 
     const { userId, isActive } = await request.json();
 
@@ -53,7 +53,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (error.message.startsWith('Forbidden')) {
-      return NextResponse.json({ error: 'Forbidden: Owner access required' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 });
     }
 
     return NextResponse.json(
@@ -70,9 +70,9 @@ export async function PUT(request: NextRequest) {
     const currentUser = await requireAuth(request);
 
     // Only owners can change roles or details
-    if (currentUser.role !== 'owner') {
+    if (!isSuperAdmin(currentUser.roles)) {
       return NextResponse.json(
-        { error: 'Forbidden: Owner access required' },
+        { error: 'Forbidden: Super admin access required' },
         { status: 403 }
       );
     }
@@ -105,9 +105,10 @@ export async function PUT(request: NextRequest) {
     }
 
     // SECURITY: Prevent demoting the last owner
-    if (targetUser.role === 'owner' && role && role !== 'owner') {
+    const targetRoles = targetUser.roles || [];
+    if (targetRoles.includes('super_admin') && role && role !== 'super_admin') {
       return NextResponse.json(
-        { error: 'Cannot demote the owner role' },
+        { error: 'Cannot demote the super admin role' },
         { status: 403 }
       );
     }
@@ -115,8 +116,8 @@ export async function PUT(request: NextRequest) {
     let user = targetUser;
 
     // Update role if provided
-    if (role && ['owner', 'admin', 'blogger'].includes(role)) {
-      user = await updateUserRole(userId, role as UserRole);
+    if (role && ['super_admin', 'billing_admin'].includes(role)) {
+      user = await updateUserRole(userId, role as any);
     }
 
     // Update details if provided
@@ -138,7 +139,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (error.message.startsWith('Forbidden')) {
-      return NextResponse.json({ error: 'Forbidden: Owner access required' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden: Super admin access required' }, { status: 403 });
     }
 
     // Handle duplicate email error

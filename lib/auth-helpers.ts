@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { verifyToken, JWTPayload } from '@/lib/jwt';
+import { isAdmin, isSuperAdmin } from '@/lib/app-roles';
 import { isTokenBlacklisted } from './session-blacklist';
 
 type AuthResult =
@@ -69,7 +70,8 @@ export async function requireRole(allowedRoles: string[]): Promise<AuthResult> {
     return authResult;
   }
 
-  if (!authResult.user?.role || !allowedRoles.includes(authResult.user.role)) {
+  const roles = authResult.user?.roles || [];
+  if (!roles.some(role => allowedRoles.includes(role))) {
     return {
       authorized: false,
       user: null,

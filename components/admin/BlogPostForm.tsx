@@ -152,7 +152,7 @@ export default function BlogPostForm({ post }: Props) {
   const [generatingSEO, setGeneratingSEO] = useState(false);
   const [seoSuccess, setSeoSuccess] = useState(false);
   const [generatedData, setGeneratedData] = useState<BilingualData | null>(null);
-  const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
+  const [userRole, setUserRole] = useState<'super_admin' | 'billing_admin' | null>(null);
   const [canUserPublish, setCanUserPublish] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageError, setImageError] = useState('');
@@ -200,9 +200,15 @@ export default function BlogPostForm({ post }: Props) {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
-          setUserRole(data.user.role);
-          // Check if user can publish (owner or admin)
-          setCanUserPublish(data.user.role === 'owner' || data.user.role === 'admin');
+          const roles = data.user.roles || [];
+          const derivedRole = roles.includes('super_admin')
+            ? 'super_admin'
+            : roles.includes('billing_admin')
+              ? 'billing_admin'
+              : null;
+          setUserRole(derivedRole);
+          // Check if user can publish (super_admin or billing_admin)
+          setCanUserPublish(derivedRole === 'super_admin' || derivedRole === 'billing_admin');
         }
       } catch (error) {
         console.error('Error fetching user role:', error);
@@ -685,7 +691,7 @@ export default function BlogPostForm({ post }: Props) {
         <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
           <p className="text-[#00cfff] font-bold mb-1">📝 {userRole.charAt(0).toUpperCase() + userRole.slice(1)} Role</p>
           <p className="text-gray-300 text-sm">
-            You can create and edit posts, but only owners and admins can publish them. Your posts will be saved as drafts for review.
+            You can create and edit posts, but only super admins and billing admins can publish them. Your posts will be saved as drafts for review.
           </p>
         </div>
       )}
@@ -1065,7 +1071,7 @@ Tu contenido va aquí...
             {canUserPublish && <option value="published">Published</option>}
           </select>
           {!canUserPublish && (
-            <p className="text-xs text-[#00cfff] mt-1">Only owners and admins can publish posts</p>
+            <p className="text-xs text-[#00cfff] mt-1">Only super admins and billing admins can publish posts</p>
           )}
         </div>
       </div>

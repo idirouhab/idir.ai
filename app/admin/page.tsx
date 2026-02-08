@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<'owner' | 'admin' | 'blogger' | null>(null);
+  const [userRole, setUserRole] = useState<'super_admin' | 'billing_admin' | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalPosts: 0,
     totalSubscribers: 0,
@@ -102,8 +102,14 @@ export default function AdminDashboard() {
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
-          setUserRole(data.user.role);
-          fetchData(data.user.role);
+          const roles = data.user.roles || [];
+          const derivedRole = roles.includes('super_admin')
+            ? 'super_admin'
+            : roles.includes('billing_admin')
+              ? 'billing_admin'
+              : null;
+          setUserRole(derivedRole);
+          fetchData(derivedRole);
         } else {
           router.push('/admin/login');
         }
@@ -116,7 +122,7 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchData = async (role: 'owner' | 'admin' | 'blogger') => {
+  const fetchData = async (role: 'super_admin' | 'billing_admin' | null) => {
     try {
       // Fetch posts for stats only
       const postsResponse = await fetch('/api/posts');
@@ -134,7 +140,7 @@ export default function AdminDashboard() {
       let subscribersData: any = null;
 
       // Only fetch subscriber data for owners and admins
-      if (role === 'owner' || role === 'admin') {
+      if (role === 'super_admin' || role === 'billing_admin') {
         try {
           const subscribersResponse = await fetch('/api/newsletter/admin');
           subscribersData = await subscribersResponse.json();
@@ -207,7 +213,7 @@ export default function AdminDashboard() {
               subtitle={`${stats.postsThisMonth} published this month`}
               color="emerald"
             />
-            {(userRole === 'owner' || userRole === 'admin') && (
+            {(userRole === 'super_admin' || userRole === 'billing_admin') && (
               <StatCard
                 title="Subscribers"
                 value={stats.totalSubscribers}
@@ -240,7 +246,7 @@ export default function AdminDashboard() {
                 </div>
               </Link>
 
-              {(userRole === 'owner' || userRole === 'admin') && (
+              {(userRole === 'super_admin' || userRole === 'billing_admin') && (
                 <Link
                   href="/admin/subscribers"
                   className="group p-6 bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 hover:border-purple-400 rounded-lg transition-all hover:shadow-lg hover:shadow-purple-500/10"

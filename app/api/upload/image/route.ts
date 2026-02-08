@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
+import { isAdmin } from '@/lib/app-roles';
 import { getAdminBlogClient } from '@/lib/blog';
 import sharp from 'sharp';
 
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has permission to upload
-    if (!['owner', 'admin', 'blogger'].includes(user.role)) {
+    if (!isAdmin(user.roles)) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }

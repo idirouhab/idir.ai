@@ -90,7 +90,7 @@ async function compressImage(
 export async function POST(request: NextRequest) {
   try {
     // Check authentication using NextAuth
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // Check authentication using NextAuth
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }

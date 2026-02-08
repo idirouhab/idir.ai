@@ -39,13 +39,20 @@ export type CourseInstructor = {
 export async function getAllInstructors(): Promise<Instructor[]> {
     const sql = `
         SELECT
-            u.id, u.email, u.first_name, u.last_name, ip.title,
+            u.id, u.email, u.first_name, u.last_name, u.title,
             NULL as date_of_birth, u.country,
-            ip.description, ip.picture_url, ip.preferred_language, u.is_active, ip.role,
-            ip.linkedin_url, ip.website_url, ip.x_url, ip.youtube_url,
+            u.description,
+            u.picture_url,
+            u.preferred_language,
+            u.is_active,
+            u.role,
+            u.linkedin_url,
+            u.website_url,
+            u.x_url,
+            u.youtube_url,
             u.created_at, u.updated_at
         FROM users u
-        INNER JOIN instructor_profiles ip ON u.id = ip.user_id
+        INNER JOIN user_roles ur ON ur.user_id = u.id AND ur.role = 'instructor'
         WHERE u.is_active = true
         ORDER BY u.last_name, u.first_name
     `;
@@ -60,13 +67,20 @@ export async function getAllInstructors(): Promise<Instructor[]> {
 export async function getInstructorById(id: string): Promise<Instructor | null> {
     const sql = `
         SELECT
-            u.id, u.email, u.first_name, u.last_name, ip.title,
+            u.id, u.email, u.first_name, u.last_name, u.title,
             NULL as date_of_birth, u.country,
-            ip.description, ip.picture_url, ip.preferred_language, u.is_active, ip.role,
-            ip.linkedin_url, ip.website_url, ip.x_url, ip.youtube_url,
+            u.description,
+            u.picture_url,
+            u.preferred_language,
+            u.is_active,
+            u.role,
+            u.linkedin_url,
+            u.website_url,
+            u.x_url,
+            u.youtube_url,
             u.created_at, u.updated_at
         FROM users u
-        INNER JOIN instructor_profiles ip ON u.id = ip.user_id
+        INNER JOIN user_roles ur ON ur.user_id = u.id AND ur.role = 'instructor'
         WHERE u.id = $1
     `;
 
@@ -121,17 +135,17 @@ export async function getCourseInstructors(courseId: string): Promise<CourseInst
             u.email as "instructor.email",
             u.first_name as "instructor.first_name",
             u.last_name as "instructor.last_name",
-            ip.title as "instructor.title",
-            ip.description as "instructor.description",
-            ip.picture_url as "instructor.picture_url",
-            ip.linkedin_url as "instructor.linkedin_url",
-            ip.website_url as "instructor.website_url",
-            ip.x_url as "instructor.x_url",
-            ip.youtube_url as "instructor.youtube_url",
-            ip.role as "instructor.role"
+            u.title as "instructor.title",
+            u.description as "instructor.description",
+            u.picture_url as "instructor.picture_url",
+            u.linkedin_url as "instructor.linkedin_url",
+            u.website_url as "instructor.website_url",
+            u.x_url as "instructor.x_url",
+            u.youtube_url as "instructor.youtube_url",
+            u.role as "instructor.role"
         FROM course_instructors ci
         JOIN users u ON ci.instructor_id = u.id
-        JOIN instructor_profiles ip ON u.id = ip.user_id
+        JOIN user_roles ur ON ur.user_id = u.id AND ur.role = 'instructor'
         WHERE ci.course_id = $1
         ORDER BY ci.display_order
     `;

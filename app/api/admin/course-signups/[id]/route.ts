@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
+import { isAdmin } from '@/lib/app-roles';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 /**
@@ -86,9 +87,9 @@ export async function DELETE(
     }
 
     // SECURITY: Only owners and admins can delete signups
-    if (authResult.user?.role !== 'owner' && authResult.user?.role !== 'admin') {
+    if (!isAdmin(authResult.user?.roles)) {
       return NextResponse.json(
-        { error: 'Forbidden: Only owners and admins can delete signups' },
+        { error: 'Forbidden: Only super admins and billing admins can delete signups' },
         { status: 403 }
       );
     }

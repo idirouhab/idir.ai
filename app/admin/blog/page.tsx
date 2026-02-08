@@ -18,7 +18,7 @@ type TranslationGroup = {
 type UserInfo = {
   id: string;
   email: string;
-  role: 'owner' | 'admin' | 'blogger';
+  role: 'super_admin' | 'billing_admin' | null;
 };
 
 export default function AdminBlogPage() {
@@ -43,10 +43,16 @@ export default function AdminBlogPage() {
         }
 
         const authData = await authResponse.json();
+        const roles = authData.user.roles || [];
+        const derivedRole = roles.includes('super_admin')
+          ? 'super_admin'
+          : roles.includes('billing_admin')
+            ? 'billing_admin'
+            : null;
         setCurrentUser({
           id: authData.user.id,
           email: authData.user.email,
-          role: authData.user.role,
+          role: derivedRole,
         });
 
         // Fetch grouped posts for admin (includes both published and drafts)
@@ -81,7 +87,7 @@ export default function AdminBlogPage() {
   const canModifyPost = (post: BlogPost): boolean => {
     if (!currentUser) return false;
     // Owners and admins can modify any post
-    if (currentUser.role === 'owner' || currentUser.role === 'admin') return true;
+    if (currentUser.role === 'super_admin' || currentUser.role === 'billing_admin') return true;
     // Bloggers can only modify their own posts
     return post.author_id === currentUser.id;
   };
@@ -90,7 +96,7 @@ export default function AdminBlogPage() {
   const canModifyGroup = (group: TranslationGroup): boolean => {
     if (!currentUser) return false;
     // Owners and admins can modify any group
-    if (currentUser.role === 'owner' || currentUser.role === 'admin') return true;
+    if (currentUser.role === 'super_admin' || currentUser.role === 'billing_admin') return true;
     // Bloggers can only see groups with posts they authored
     return (!!group.en && canModifyPost(group.en)) || (!!group.es && canModifyPost(group.es));
 

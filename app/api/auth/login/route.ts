@@ -41,8 +41,6 @@ export async function POST(request: Request) {
 
     // Authenticate user with email/password
     const user = await authenticateUser(email, password);
-      console.log('test')
-      console.log(user, email, password)
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
@@ -60,7 +58,7 @@ export async function POST(request: Request) {
     // Create a signed JWT token
     const sessionToken = await signToken({
       userId: user.id,
-      role: user.role,
+      roles: user.roles,
       email: user.email,
     });
 
@@ -80,8 +78,8 @@ export async function POST(request: Request) {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
-        role: user.role,
+        name: `${user.first_name} ${user.last_name}`.trim(),
+        roles: user.roles,
       },
     });
   } catch (error) {

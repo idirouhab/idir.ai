@@ -89,7 +89,7 @@ export default function SignupPage() {
 
             <h1 className="text-3xl font-black text-white mb-4 uppercase">Account Created!</h1>
             <p className="text-gray-300 mb-6">
-              Your blogger account has been created successfully. Please wait for the site owner to approve your account before you can log in.
+              Your admin account request has been created successfully. Please wait for a super admin to approve your account before you can log in.
             </p>
 
             <div className="space-y-3">
@@ -134,8 +134,8 @@ export default function SignupPage() {
           <div className="absolute bottom-3 right-3 w-4 h-4" style={{ background: '#00cfff' }}></div>
 
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-black text-white mb-2 uppercase">Blogger Signup</h1>
-            <p className="text-gray-300">Create your blogger account</p>
+            <h1 className="text-4xl font-black text-white mb-2 uppercase">Admin Signup</h1>
+            <p className="text-gray-300">Create your admin account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -211,7 +211,7 @@ export default function SignupPage() {
 
             <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
               <p className="text-[#00cfff] text-xs">
-                Note: Your account will need to be approved by the site owner before you can log in.
+                Note: Your account will need to be approved by a super admin before you can log in.
               </p>
             </div>
 

@@ -12,7 +12,7 @@ import { getBlogClient } from '@/lib/blog';
 export async function GET(request: NextRequest) {
   try {
     // Check authentication and role
-    const authResult = await requireRole(['owner', 'admin', 'blogger']);
+    const authResult = await requireRole(['super_admin', 'billing_admin']);
     if (!authResult.authorized) {
       return authResult.response;
     }

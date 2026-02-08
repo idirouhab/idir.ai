@@ -71,7 +71,7 @@ type Props = {
 
 // SECURITY: Sanitize HTML content before rendering
 // Even though content comes from our database, defense in depth is critical
-// Protects against XSS if an attacker gains access to a blogger account
+// Protects against XSS if an attacker gains access to an admin account
 const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
   return (
     <div className="markdown-content">

@@ -10,7 +10,9 @@ type User = {
   id: string;
   email: string;
   name: string;
-  role: 'owner' | 'admin' | 'blogger';
+  first_name: string;
+  last_name: string;
+  roles: Array<'super_admin' | 'billing_admin' | 'instructor' | 'student'>;
   is_active: boolean;
   linkedin_url?: string;
   twitter_url?: string;
@@ -21,7 +23,7 @@ type EditingUser = {
   id: string;
   name: string;
   email: string;
-  role: 'owner' | 'admin' | 'blogger';
+  role: 'super_admin' | 'billing_admin' | null;
 };
 
 export default function UsersManagement() {
@@ -34,6 +36,13 @@ export default function UsersManagement() {
   const [showRoleInfo, setShowRoleInfo] = useState(false);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
 
+  const getPrimaryRole = (roles: User['roles']) =>
+    roles.includes('super_admin')
+      ? 'super_admin'
+      : roles.includes('billing_admin')
+        ? 'billing_admin'
+        : null;
+
   const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch('/api/users');
@@ -44,14 +53,19 @@ export default function UsersManagement() {
       }
 
       if (response.status === 403) {
-        setMessage({ type: 'error', text: 'Access denied. Owner role required.' });
+        setMessage({ type: 'error', text: 'Access denied. Super admin role required.' });
         setLoading(false);
         return;
       }
 
       if (response.ok) {
         const data = await response.json();
-        setUsers(data.users || []);
+        const normalizedUsers = (data.users || []).map((user: any) => ({
+          ...user,
+          name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+          roles: user.roles || [],
+        }));
+        setUsers(normalizedUsers);
       } else {
         setMessage({ type: 'error', text: 'Failed to load users' });
       }
@@ -96,7 +110,7 @@ export default function UsersManagement() {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: 'owner' | 'admin' | 'blogger') => {
+  const handleRoleChange = async (userId: string, newRole: 'super_admin' | 'billing_admin') => {
     if (!confirm(`Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`)) {
       return;
     }
@@ -134,7 +148,7 @@ export default function UsersManagement() {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: getPrimaryRole(user.roles),
     });
   };
 
@@ -185,7 +199,7 @@ export default function UsersManagement() {
     <AdminPageWrapper
       showLogout={false}
       title="User Management"
-      description="Manage blogger accounts and permissions"
+      description="Manage admin accounts and permissions"
     >
 
         {message && (
@@ -215,12 +229,12 @@ export default function UsersManagement() {
 
           {showRoleInfo && (
             <div className="border border-gray-800 border-t-0 p-4 bg-black">
-              <div className="grid md:grid-cols-3 gap-4">
-                {/* Owner Role */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Super Admin Role */}
                 <div className="p-4 border border-[#10b981] bg-[#10b981]/10">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981] text-black">
-                      OWNER
+                      SUPER ADMIN
                     </span>
                   </div>
                   <p className="text-xs text-gray-300 mb-3 font-bold">Full system access</p>
@@ -233,11 +247,11 @@ export default function UsersManagement() {
                   </ul>
                 </div>
 
-                {/* Admin Role */}
+                {/* Billing Admin Role */}
                 <div className="p-4 border border-[#10b981]/70 bg-[#10b981]/5">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981]/80 text-black">
-                      ADMIN
+                      BILLING ADMIN
                     </span>
                   </div>
                   <p className="text-xs text-gray-300 mb-3 font-bold">Content management</p>
@@ -249,30 +263,12 @@ export default function UsersManagement() {
                     <li>✗ Cannot manage users</li>
                   </ul>
                 </div>
-
-                {/* Blogger Role */}
-                <div className="p-4 border border-[#10b981]/50 bg-[#10b981]/5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 text-xs font-bold uppercase bg-[#10b981]/60 text-black">
-                      BLOGGER
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-300 mb-3 font-bold">Content creation only</p>
-                  <ul className="text-xs text-gray-400 space-y-1">
-                    <li>✓ Create draft posts</li>
-                    <li>✓ Edit own posts</li>
-                    <li>✗ Cannot publish</li>
-                    <li>✗ Cannot delete</li>
-                    <li>✗ No admin access</li>
-                    <li>✗ Requires activation</li>
-                  </ul>
-                </div>
               </div>
 
               <div className="mt-4 p-3 bg-gray-900 border border-gray-800">
                 <p className="text-xs text-gray-400">
-                  <span className="font-bold text-gray-300">Note:</span> New signups are automatically assigned the <span className="text-[#10b981]">Blogger</span> role and require owner activation.
-                  Only <span className="text-[#10b981]">Owner</span> can change user roles. You cannot change your own role.
+                  <span className="font-bold text-gray-300">Note:</span> New admin signups are assigned the <span className="text-[#10b981]">Billing Admin</span> role and require super admin activation.
+                  Only <span className="text-[#10b981]">Super Admin</span> can change user roles. You cannot change your own role.
                 </p>
               </div>
             </div>
@@ -293,6 +289,9 @@ export default function UsersManagement() {
                 key={user.id}
                 className={`p-3 hover:bg-[#0a0a0a] transition-colors ${index !== users.length - 1 ? 'border-b border-gray-800' : ''}`}
               >
+                {(() => {
+                  const primaryRole = getPrimaryRole(user.roles);
+                  return (
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   {/* User info */}
                   <div className="flex-1 min-w-0">
@@ -308,12 +307,12 @@ export default function UsersManagement() {
                       <span
                         className="px-1.5 py-0.5 text-xs font-bold uppercase"
                         style={{
-                          backgroundColor: user.role === 'owner' ? 'rgba(16, 185, 129, 0.2)' : user.role === 'admin' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
+                          backgroundColor: primaryRole === 'super_admin' ? 'rgba(16, 185, 129, 0.2)' : primaryRole === 'billing_admin' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(16, 185, 129, 0.1)',
                           color: '#10b981',
-                          border: `1px solid ${user.role === 'owner' ? 'rgba(16, 185, 129, 0.5)' : user.role === 'admin' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
+                          border: `1px solid ${primaryRole === 'super_admin' ? 'rgba(16, 185, 129, 0.5)' : primaryRole === 'billing_admin' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(16, 185, 129, 0.3)'}`
                         }}
                       >
-                        {user.role}
+                        {primaryRole || 'none'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -326,14 +325,13 @@ export default function UsersManagement() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value as 'owner' | 'admin' | 'blogger')}
+                      value={primaryRole || 'billing_admin'}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value as 'super_admin' | 'billing_admin')}
                       className="px-3 py-1 text-xs border border-gray-700 bg-black text-gray-300 font-bold uppercase hover:border-gray-500 focus:border-gray-500 focus:outline-none"
                       title="Change Role"
                     >
-                      <option value="owner">OWNER</option>
-                      <option value="admin">ADMIN</option>
-                      <option value="blogger">BLOGGER</option>
+                      <option value="super_admin">SUPER ADMIN</option>
+                      <option value="billing_admin">BILLING ADMIN</option>
                     </select>
 
                     <div className="relative">
@@ -362,7 +360,7 @@ export default function UsersManagement() {
                               <Pencil size={14} /> Edit
                             </button>
 
-                            {user.role !== 'owner' && (
+                            {primaryRole !== 'super_admin' && (
                               <button
                                 onClick={() => {
                                   setActionMenuOpen(null);
@@ -391,6 +389,8 @@ export default function UsersManagement() {
                     </div>
                   </div>
                 </div>
+                  );
+                })()}
               </div>
             ))}
           </div>

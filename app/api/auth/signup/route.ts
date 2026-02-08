@@ -61,13 +61,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create user with blogger role (inactive by default, needs owner approval)
+    // Create user with billing_admin role (inactive by default, needs super_admin approval)
     const user = await createUser(
       {
         email,
         password,
         name,
-        role: 'blogger',
+        role: 'billing_admin',
       },
       false // inactive by default
     );
@@ -79,8 +79,8 @@ export async function POST(request: NextRequest) {
         user: {
           id: user.id,
           email: user.email,
-          name: user.name,
-          role: user.role,
+          name: `${user.first_name} ${user.last_name}`.trim(),
+          roles: user.roles,
         },
       },
       { status: 201 }

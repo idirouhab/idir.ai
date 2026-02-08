@@ -332,7 +332,7 @@ export default function MetadataPanel({
                 {canUserPublish && <option value="published">Published</option>}
               </select>
               {!canUserPublish && (
-                <p className="text-xs text-[#00cfff] mt-1">Only owners and admins can publish</p>
+                <p className="text-xs text-[#00cfff] mt-1">Only super admins and billing admins can publish</p>
               )}
             </div>
           </div>

@@ -8,20 +8,20 @@ type NavItem = {
   href: string;
   label: string;
   icon: string;
-  requiredRoles?: ('owner' | 'admin' | 'blogger')[]; // If undefined, accessible to all
+  requiredRoles?: ('super_admin' | 'billing_admin')[]; // If undefined, accessible to all
 };
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: '📊' },
   { href: '/admin/blog', label: 'Blog', icon: '📝' },
   { href: '/admin/images', label: 'Images', icon: '🖼️' },
-  { href: '/admin/subscribers', label: 'Subscribers', icon: '📬', requiredRoles: ['owner', 'admin'] },
-  { href: '/admin/users', label: 'Users', icon: '👥', requiredRoles: ['owner', 'admin'] },
+  { href: '/admin/subscribers', label: 'Subscribers', icon: '📬', requiredRoles: ['super_admin', 'billing_admin'] },
+  { href: '/admin/users', label: 'Users', icon: '👥', requiredRoles: ['super_admin'] },
 ];
 
 type UserInfo = {
   email: string;
-  role: 'owner' | 'admin' | 'blogger';
+  role: 'super_admin' | 'billing_admin' | null;
   name: string;
 };
 
@@ -48,10 +48,16 @@ export default function AdminSidebar({
         const response = await fetch('/api/auth/me');
         if (response.ok) {
           const data = await response.json();
+          const roles = data.user.roles || [];
+          const derivedRole = roles.includes('super_admin')
+            ? 'super_admin'
+            : roles.includes('billing_admin')
+              ? 'billing_admin'
+              : null;
           setUserInfo({
             email: data.user.email,
-            role: data.user.role,
-            name: data.user.name,
+            role: derivedRole,
+            name: data.user.name || data.user.email,
           });
         }
       } catch (error) {
@@ -68,14 +74,12 @@ export default function AdminSidebar({
     return currentPath.startsWith(href);
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
-      case 'owner':
+      case 'super_admin':
         return 'bg-[#10b981]/20 text-[#10b981] border-[#10b981]/50';
-      case 'admin':
+      case 'billing_admin':
         return 'bg-[#10b981]/15 text-[#10b981] border-[#10b981]/40';
-      case 'blogger':
-        return 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30';
       default:
         return 'bg-gray-700 text-white border-gray-600';
     }
@@ -90,7 +94,7 @@ export default function AdminSidebar({
       if (!item.requiredRoles) return true;
 
       // Check if user's role is in the required roles
-      return item.requiredRoles.includes(userInfo.role);
+      return userInfo.role ? item.requiredRoles.includes(userInfo.role) : false;
     });
   };
 
