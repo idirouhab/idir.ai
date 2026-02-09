@@ -43,8 +43,7 @@ const nextConfig = {
       // Supabase Storage (for blog post images)
       {
         protocol: 'https',
-        hostname: 'cymypipxhlgjmrzonpdw.supabase.co',
-        pathname: '/storage/v1/object/public/**',
+        hostname: 'blog-images.idir.ai'
       },
       // PostImg (existing blog post images)
       {
