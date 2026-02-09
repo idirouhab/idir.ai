@@ -194,7 +194,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Subtle background pattern - decorative only */}
           <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
             <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+              backgroundImage: 'radial-gradient(circle, #11b981 1px, transparent 1px)',
               backgroundSize: '30px 30px'
             }}></div>
           </div>
@@ -207,7 +207,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Back Link */}
           <Link
             href={`/${locale}/blog`}
-            className="inline-flex items-center gap-2 text-sm text-gray-400 dark:text-[#d1d5db] hover:text-[#10b981] transition-colors mb-8 font-bold tracking-wide uppercase"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 dark:text-[#d1d5db] hover:text-[#11b981] transition-colors mb-8 font-bold tracking-wide uppercase"
           >
             ← {t('backToBlog')}
           </Link>
@@ -237,7 +237,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Meta Info */}
           <div className="flex items-center gap-6 mb-12 pb-12 border-b border-gray-200 dark:border-[#1f2937]">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-r from-[#10b981] to-[#14b8a6] rounded-lg flex items-center justify-center font-black text-black text-lg">
+              <div className="w-14 h-14 bg-gradient-to-r from-[#11b981] to-[#14b8a6] rounded-lg flex items-center justify-center font-black text-black text-lg">
                 {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
               </div>
               <div>
@@ -268,8 +268,8 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* TL;DR / Answer Kit */}
           {post.tldr && (
-            <div className="mb-16 p-8 bg-[#10b981]/10 border border-[#10b981]/20 rounded-xl">
-              <h2 className="text-2xl font-bold text-[#10b981] mb-6 flex items-center gap-3 uppercase tracking-wide">
+            <div className="mb-16 p-8 bg-[#11b981]/10 border border-[#11b981]/20 rounded-xl">
+              <h2 className="text-2xl font-bold text-[#11b981] mb-6 flex items-center gap-3 uppercase tracking-wide">
                 <Zap className="w-6 h-6" strokeWidth={2.5} />
                 {t('tldr')}
               </h2>
@@ -305,7 +305,7 @@ export default async function BlogPostPage({ params }: Props) {
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-5 py-3 bg-gray-100 dark:bg-[#111827] border border-gray-300 dark:border-[#1f2937] text-gray-700 dark:text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#10b981] hover:text-[#10b981] transition-all hover:scale-105"
+                    className="px-5 py-3 bg-gray-100 dark:bg-[#111827] border border-gray-300 dark:border-[#1f2937] text-gray-700 dark:text-[#d1d5db] font-bold text-sm rounded-lg hover:border-[#11b981] hover:text-[#11b981] transition-all hover:scale-105"
                   >
                     #{tag}
                   </span>
@@ -322,7 +322,7 @@ export default async function BlogPostPage({ params }: Props) {
         {relatedPosts.length > 0 && (
           <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 pt-16 border-t border-gray-200 dark:border-[#1f2937]">
             <div className="mb-12">
-              <p className="text-base sm:text-lg font-bold text-[#10b981] mb-4 uppercase tracking-wide">
+              <p className="text-base sm:text-lg font-bold text-[#11b981] mb-4 uppercase tracking-wide">
                 {t('relatedPosts')}
               </p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 dark:text-white tracking-tight">

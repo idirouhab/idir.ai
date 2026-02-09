@@ -36,14 +36,14 @@ export default function PostNavigation({ previous, next, locale }: Props) {
         {previous ? (
           <Link
             href={`/${locale}/blog/${previous.slug}`}
-            className="group block h-full p-6 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 hover:border-[#10b981] dark:hover:border-[#00ff88] transition-all"
+            className="group block h-full p-6 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 hover:border-[#11b981] dark:hover:border-[#00ff88] transition-all"
           >
             <div className="flex items-center gap-2 mb-3">
               <span className="text-sm text-gray-500 dark:text-gray-500 uppercase tracking-wider font-bold">
                 ← {t.previous}
               </span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[#10b981] dark:group-hover:text-[#00ff88] transition-colors line-clamp-2">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[#11b981] dark:group-hover:text-[#00ff88] transition-colors line-clamp-2">
               {previous.title}
             </h3>
             <span
@@ -71,14 +71,14 @@ export default function PostNavigation({ previous, next, locale }: Props) {
         {next ? (
           <Link
             href={`/${locale}/blog/${next.slug}`}
-            className="group block h-full p-6 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 hover:border-[#10b981] dark:hover:border-[#00cfff] transition-all text-right"
+            className="group block h-full p-6 bg-gray-50 dark:bg-black border-2 border-gray-300 dark:border-gray-700 hover:border-[#11b981] dark:hover:border-[#00cfff] transition-all text-right"
           >
             <div className="flex items-center justify-end gap-2 mb-3">
               <span className="text-sm text-gray-500 dark:text-gray-500 uppercase tracking-wider font-bold">
                 {t.next} →
               </span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[#10b981] dark:group-hover:text-[#00cfff] transition-colors line-clamp-2">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[#11b981] dark:group-hover:text-[#00cfff] transition-colors line-clamp-2">
               {next.title}
             </h3>
             <span

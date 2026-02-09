@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAuth } from '@/lib/auth';
 import { isAdmin } from '@/lib/app-roles';
-import { getAdminBlogClient } from '@/lib/blog';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { buildR2PublicUrl, getR2Client, R2_BUCKET } from '@/lib/r2';
 import sharp from 'sharp';
 
-const BUCKET_NAME = 'blog-image';
+const BUCKET_NAME = R2_BUCKET;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB (increased since we'll compress)
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -158,30 +159,19 @@ export async function POST(request: NextRequest) {
     const sanitizedFilename = `${baseFilename}.${extension}`;
     const filePath = `${year}/${month}/${timestamp}-${random}-${sanitizedFilename}`;
 
-    // Use admin client to bypass RLS
-    const supabase = getAdminBlogClient();
+    const r2 = getR2Client();
 
-    // Upload compressed file
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, compressedBuffer, {
-        contentType,
-        cacheControl: '31536000', // 1 year cache
-        upsert: false,
-      });
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: filePath,
+        Body: compressedBuffer,
+        ContentType: contentType,
+        CacheControl: 'public, max-age=31536000, immutable',
+      })
+    );
 
-    if (error) {
-      console.error('Upload error:', error);
-      return NextResponse.json(
-        { error: error.message || 'Failed to upload image' },
-        { status: 500 }
-      );
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(data.path);
+    const publicUrl = buildR2PublicUrl(filePath);
 
     const originalSizeKB = Math.round(originalBuffer.length / 1024);
     const compressedSizeKB = Math.round(compressedBuffer.length / 1024);
@@ -189,16 +179,16 @@ export async function POST(request: NextRequest) {
       (1 - compressedBuffer.length / originalBuffer.length) * 100
     );
 
-    console.log('Uploaded image path:', data.path);
-    console.log('Public URL:', urlData.publicUrl);
+    console.log('Uploaded image path:', filePath);
+    console.log('Public URL:', publicUrl);
     console.log(
       `Compression: ${originalSizeKB}KB → ${compressedSizeKB}KB (${reductionPercent}% reduction)`
     );
 
     return NextResponse.json({
       success: true,
-      url: urlData.publicUrl,
-      path: data.path,
+      url: publicUrl,
+      path: filePath,
       compression: {
         originalSize: originalSizeKB,
         compressedSize: compressedSizeKB,

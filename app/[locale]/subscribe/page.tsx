@@ -69,41 +69,34 @@ export default function Subscribe() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a0a0a' }}>
-      <div className="w-full max-w-3xl">
-        {/* Main Card - Template styling */}
-        <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg p-8 sm:p-12 relative overflow-hidden">
-          {/* Subtle background pattern */}
-          <div className="absolute inset-0 opacity-5" aria-hidden="true">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
-              backgroundSize: '30px 30px'
-            }}></div>
-          </div>
-
-          <div className="relative z-10">
+    <>
+      <div className="min-h-screen bg-[#0a0a0a]">
+        <div className="section-pad">
+        <div className="max-w-3xl mx-auto">
+          {/* Main Card */}
+          <div className="card-surface">
             {/* Header */}
-            <div className="mb-10">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="h-1 w-12 bg-[#10b981]"></div>
-                <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-1 w-8 bg-[#11b981]"></div>
+                <span className="section-kicker">{t('label')}</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-3 tracking-tight">
                 {t('title1')}
                 <br />
-                <span className="text-[#10b981]">{t('title2')}</span>
+                <span className="text-[#11b981]">{t('title2')}</span>
               </h1>
 
-              <p className="text-base text-[#d1d5db] leading-relaxed max-w-2xl">
+              <p className="section-subtitle max-w-2xl">
                 {t('description')}
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6 mb-10">
+            <form onSubmit={handleSubmit} className="space-y-6 mb-8">
               <div>
-                <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
+                <label htmlFor="email" className="block text-white font-semibold mb-2 uppercase text-xs tracking-wider">
                   {t('form.email')}
                 </label>
                 <input
@@ -113,23 +106,23 @@ export default function Subscribe() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder={t('form.emailPlaceholder')}
-                  className="w-full px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#10b981] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 bg-black text-white border border-[#1f2937] rounded focus:border-[#11b981] focus:outline-none transition-colors"
                   disabled={status === 'sending'}
                 />
               </div>
 
               <div>
-                <label className="block text-white font-bold mb-3 uppercase text-sm">
+                <label className="block text-white font-semibold mb-3 uppercase text-xs tracking-wider">
                   {t('form.language')}
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setLanguage('en')}
-                    className={`px-4 py-3 border font-bold uppercase text-sm transition-all rounded ${
+                    className={`px-4 py-3 border font-semibold uppercase text-xs tracking-wider transition-all rounded ${
                       language === 'en'
-                        ? 'bg-[#10b981] text-black border-[#10b981]'
-                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#10b981]'
+                        ? 'bg-[#11b981] text-black border-[#11b981]'
+                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#11b981]'
                     }`}
                   >
                     {t('form.languageEn')}
@@ -137,10 +130,10 @@ export default function Subscribe() {
                   <button
                     type="button"
                     onClick={() => setLanguage('es')}
-                    className={`px-4 py-3 border font-bold uppercase text-sm transition-all rounded ${
+                    className={`px-4 py-3 border font-semibold uppercase text-xs tracking-wider transition-all rounded ${
                       language === 'es'
-                        ? 'bg-[#10b981] text-black border-[#10b981]'
-                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#10b981]'
+                        ? 'bg-[#11b981] text-black border-[#11b981]'
+                        : 'bg-[#0a0a0a] text-[#d1d5db] border-[#1f2937] hover:border-[#11b981]'
                     }`}
                   >
                     {t('form.languageEs')}
@@ -150,17 +143,17 @@ export default function Subscribe() {
 
               {/* Subscription Preferences */}
               <div>
-                <label className="block text-white font-bold mb-3 uppercase text-sm">
+                <label className="block text-white font-semibold mb-3 uppercase text-xs tracking-wider">
                   {language === 'es' ? 'Suscribirme a' : 'Subscribe to'}
                 </label>
-                <div className="space-y-3 border border-[#1f2937] rounded p-4 bg-[#0a0a0a]">
+                <div className="space-y-3 border border-[#1f2937] rounded p-4 bg-black">
                   {/* Newsletter / AI News */}
                   <label className="flex items-start gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={subscribeNewsletter}
                       onChange={(e) => setSubscribeNewsletter(e.target.checked)}
-                      className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
+                      className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#11b981] checked:border-[#11b981] focus:outline-none focus:ring-2 focus:ring-[#11b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                     />
                     <div className="flex-1">
                       <span className="text-white font-semibold text-sm block mb-1">
@@ -181,7 +174,7 @@ export default function Subscribe() {
                         type="checkbox"
                         checked={subscribePodcast}
                         onChange={(e) => setSubscribePodcast(e.target.checked)}
-                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
+                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#11b981] checked:border-[#11b981] focus:outline-none focus:ring-2 focus:ring-[#11b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                       />
                       <div className="flex-1">
                         <span className="text-white font-semibold text-sm block mb-1">
@@ -197,7 +190,7 @@ export default function Subscribe() {
               </div>
 
               {/* Consent Checkbox */}
-              <div className="border border-[#1f2937] rounded p-4 bg-[#0a0a0a]">
+              <div className="border border-[#1f2937] rounded p-4 bg-black">
                 <label className="flex items-start gap-3">
                   <input
                     type="checkbox"
@@ -211,7 +204,7 @@ export default function Subscribe() {
                       }
                     }}
                     required
-                    className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
+                    className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#11b981] checked:border-[#11b981] focus:outline-none focus:ring-2 focus:ring-[#11b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                   />
                   <span className="text-sm text-[#d1d5db] leading-relaxed">
                     {language === 'es' ? 'Acepto la ' : 'I accept the '}
@@ -219,7 +212,7 @@ export default function Subscribe() {
                       href={`/${locale}/privacy`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
+                      className="text-[#11b981] underline hover:text-[#0f9f73] transition-colors"
                     >
                       {language === 'es' ? 'Política de Privacidad' : 'Privacy Policy'}
                     </Link>
@@ -228,7 +221,7 @@ export default function Subscribe() {
                       href={`/${locale}/terms`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
+                      className="text-[#11b981] underline hover:text-[#0f9f73] transition-colors"
                     >
                       {language === 'es' ? 'Términos y Condiciones' : 'Terms and Conditions'}
                     </Link>
@@ -236,7 +229,7 @@ export default function Subscribe() {
                     <button
                       type="button"
                       onClick={() => setShowModal(true)}
-                      className="text-[#10b981] underline hover:text-[#059669] transition-colors"
+                      className="text-[#11b981] underline hover:text-[#0f9f73] transition-colors"
                     >
                       {language === 'es' ? 'Leer más' : 'Read more'}
                     </button>
@@ -246,7 +239,7 @@ export default function Subscribe() {
 
               {/* Status Messages */}
               {status === 'success' && (
-                <div className="p-4 border border-[#10b981] border-l-[3px] border-l-[#10b981] rounded bg-[#10b981]/10 text-[#10b981]">
+                <div className="p-4 border border-[#11b981] border-l-[3px] border-l-[#11b981] rounded bg-[#11b981]/10 text-[#11b981]">
                   {t('form.success')}
                 </div>
               )}
@@ -264,52 +257,52 @@ export default function Subscribe() {
               <button
                 type="submit"
                 disabled={status === 'sending' || !consent}
-                className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                className="w-full px-8 py-4 bg-[#11b981] text-black font-semibold uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 {status === 'sending' ? t('form.sending') : t('form.submit')}
               </button>
             </form>
 
             {/* What you'll get */}
-            <div className="border-t border-[#1f2937] pt-8">
-              <p className="text-sm text-[#9ca3af] uppercase tracking-wider font-bold mb-4">{t('whatYouGet')}</p>
+            <div className="border-t border-[#1f2937] pt-6">
+              <p className="text-xs text-[#9ca3af] uppercase tracking-wider font-semibold mb-3">{t('whatYouGet')}</p>
               <ul className="space-y-3 text-[#d1d5db] text-sm">
                 <li className="flex items-start gap-3">
-                  <span className="text-[#10b981] mt-1">→</span>
+                  <span className="text-[#11b981] mt-1">→</span>
                   <span>{t('benefits.daily')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-[#10b981] mt-1">→</span>
+                  <span className="text-[#11b981] mt-1">→</span>
                   <span>{t('benefits.language')}</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-[#10b981] mt-1">→</span>
+                  <span className="text-[#11b981] mt-1">→</span>
                   <span>{t('benefits.unsubscribe')}</span>
                 </li>
               </ul>
             </div>
+            {/* Back to main site */}
+            <div className="text-center mt-6">
+              <Link
+                href={`/${locale}`}
+                className="text-xs text-[#9ca3af] hover:text-[#11b981] transition-colors uppercase tracking-wider font-semibold"
+              >
+                {t('backLink')}
+              </Link>
+            </div>
           </div>
         </div>
-
-        {/* Back to main site */}
-        <div className="text-center mt-6">
-          <Link
-            href="/"
-            className="text-sm text-[#9ca3af] hover:text-[#10b981] transition-colors uppercase tracking-wide font-bold"
-          >
-            {t('backLink')}
-          </Link>
-        </div>
       </div>
+    </div>
 
       {/* Privacy Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90">
-          <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
+          <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#11b981] rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto relative">
             {/* Subtle background pattern */}
             <div className="absolute inset-0 opacity-5 rounded-lg" aria-hidden="true">
               <div className="absolute inset-0" style={{
-                backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+                backgroundImage: 'radial-gradient(circle, #11b981 1px, transparent 1px)',
                 backgroundSize: '30px 30px'
               }}></div>
             </div>
@@ -326,22 +319,22 @@ export default function Subscribe() {
                   {t('modal.intro')}
                 </p>
 
-                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
-                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#11b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#11b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section1.title')}
                   </h3>
                   <p>{t('modal.section1.content')}</p>
                 </div>
 
-                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
-                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#11b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#11b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section2.title')}
                   </h3>
                   <p>{t('modal.section2.content')}</p>
                 </div>
 
-                <div className="border-l-[3px] border-[#10b981] pl-4 bg-[#0a0a0a] p-4 rounded">
-                  <h3 className="text-[#10b981] font-bold mb-2 uppercase text-xs tracking-wider">
+                <div className="border-l-[3px] border-[#11b981] pl-4 bg-[#0a0a0a] p-4 rounded">
+                  <h3 className="text-[#11b981] font-bold mb-2 uppercase text-xs tracking-wider">
                     {t('modal.section3.title')}
                   </h3>
                   <p>{t('modal.section3.content')}</p>
@@ -356,13 +349,13 @@ export default function Subscribe() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAcceptConsent}
-                  className="flex-1 px-6 py-3 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors"
+                  className="flex-1 px-6 py-3 bg-[#11b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors"
                 >
                   {t('modal.accept')}
                 </button>
                 <button
                   onClick={handleCancelConsent}
-                  className="flex-1 px-6 py-3 border border-[#1f2937] text-[#d1d5db] font-bold uppercase tracking-wide rounded hover:border-[#10b981] hover:text-[#10b981] transition-colors"
+                  className="flex-1 px-6 py-3 border border-[#1f2937] text-[#d1d5db] font-bold uppercase tracking-wide rounded hover:border-[#11b981] hover:text-[#11b981] transition-colors"
                 >
                   {t('modal.cancel')}
                 </button>
@@ -371,6 +364,6 @@ export default function Subscribe() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

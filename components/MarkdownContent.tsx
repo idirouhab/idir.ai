@@ -89,7 +89,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
               </CodeBlock>
             ) : (
               <code
-                className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-[#10b981] dark:text-[#00ff88] rounded text-base font-mono border border-gray-300 dark:border-gray-700"
+                className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-[#11b981] dark:text-[#00ff88] rounded text-base font-mono border border-gray-300 dark:border-gray-700"
                 {...props}
               >
                 {children}
@@ -136,7 +136,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           a: ({ href, children }) => (
             <a
               href={href}
-              className="text-[#10b981] dark:text-[#00ff88] hover:text-[#059669] dark:hover:text-[#00cfff] underline transition-colors"
+              className="text-[#11b981] dark:text-[#00ff88] hover:text-[#0f9f73] dark:hover:text-[#00cfff] underline transition-colors"
               target={href?.startsWith('http') ? '_blank' : undefined}
               rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
             >
@@ -155,12 +155,12 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           ),
           li: ({ children }) => (
             <li className="text-lg text-gray-700 dark:text-gray-300 flex items-start gap-3" style={{ lineHeight: '1.8' }}>
-              <span className="text-[#10b981] dark:text-[#00ff88] mt-1.5">→</span>
+              <span className="text-[#11b981] dark:text-[#00ff88] mt-1.5">→</span>
               <span className="flex-1">{children}</span>
             </li>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border-[#10b981] dark:border-[#00ff88] bg-[#10b98110] dark:bg-[#00ff8810] pl-6 py-4 my-6 italic text-lg text-gray-700 dark:text-gray-300" style={{ lineHeight: '1.8' }}>
+            <blockquote className="border-l-4 border-[#11b981] dark:border-[#00ff88] bg-[#11b98110] dark:bg-[#00ff8810] pl-6 py-4 my-6 italic text-lg text-gray-700 dark:text-gray-300" style={{ lineHeight: '1.8' }}>
               {children}
             </blockquote>
           ),
@@ -178,7 +178,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             <hr className="border-t-2 border-gray-300 dark:border-gray-800 my-12" />
           ),
           img: ({ src, alt }) => (
-            <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#10b981] dark:border-[#00ff88]">
+            <div className="relative w-full my-8 rounded-lg overflow-hidden border-2 border-[#11b981] dark:border-[#00ff88]">
               <Image
                 src={typeof src === 'string' ? src : ''}
                 alt={typeof alt === 'string' ? alt : ''}
@@ -212,7 +212,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
             </tr>
           ),
           th: ({ children }) => (
-            <th className="px-6 py-3 text-left text-xs font-bold text-[#10b981] dark:text-[#00ff88] uppercase tracking-wider border-r border-gray-300 dark:border-gray-700 last:border-r-0">
+            <th className="px-6 py-3 text-left text-xs font-bold text-[#11b981] dark:text-[#00ff88] uppercase tracking-wider border-r border-gray-300 dark:border-gray-700 last:border-r-0">
               {children}
             </th>
           ),

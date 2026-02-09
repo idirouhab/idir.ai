@@ -2,11 +2,53 @@
   "nav": {
     "about": "SOBRE MÍ",
     "services": "SERVICIOS",
+    "speaking": "CHARLAS",
     "podcast": "PODCAST",
     "blog": "BLOG",
     "newsletter": "NEWSLETTER",
     "courses": "CURSOS",
-    "contact": "CONTACTO"
+    "contact": "CONTACTO",
+    "cta": "RESERVAR FORMACIÓN"
+  },
+  "results": {
+    "title": "Resultados que se sostienen",
+    "subtitle": "Impacto que importa.",
+    "stats": [
+      { "value": "70%+", "label": "Reducción de trabajo manual" },
+      { "value": "500+", "label": "Automatizaciones entregadas" },
+      { "value": "10k+", "label": "Personas formadas" }
+    ],
+    "testimonials": [
+      {
+        "quote": "La formación fue excelente. No estaba convencida al inicio, pero ver el primer agente en marcha me voló la cabeza.",
+        "name": "Directora de Ingeniería",
+        "role": "Empresa retail (anónimo)"
+      },
+      {
+        "quote": "Subí un peldaño gracias al curso de Automatización con IA y n8n. Esfuerzo y atención de 10.",
+        "name": "Ingeniero de Software",
+        "role": "Institución pública (anónimo)"
+      }
+    ]
+  },
+  "process": {
+    "title": "Un proceso simple y ejecutivo",
+    "subtitle": "De claridad a entrega.",
+    "stepLabel": "Paso",
+    "steps": [
+      {
+        "title": "Descubrimiento y alineación",
+        "description": "Definimos objetivos, límites y métricas de éxito con los responsables."
+      },
+      {
+        "title": "Construcción y habilitación",
+        "description": "Entregamos automatizaciones, formación y documentación para que el equipo lo adopte."
+      },
+      {
+        "title": "Escalar y acompañar",
+        "description": "Medimos impacto, refinamos flujos y expandimos adopción."
+      }
+    ]
   },
   "hero": {
     "name": "IDIR",
@@ -17,13 +59,14 @@
     "badge3": "SPEAKER",
     "offering": "Estrategia de IA e Implementación para Empresas",
     "offeringShort": "Estrategia de IA",
-    "headline": "Convierto el caos en flujos de trabajo",
-    "subheadline": "Ayudando a equipos a automatizar lo aburrido para que se enfoquen en construir lo que realmente importa",
-    "cta": "HABLEMOS",
-    "ctaSecondary": "VER MIS CHARLAS",
+    "headline": "Automatización e IA, claras y sin humo",
+    "subheadline": "Ayudo a equipos a entender cuándo tiene sentido y cuándo no.",
+    "ctaPrimary": "RESERVAR FORMACIÓN",
+    "ctaSecondary": "SOLICITAR CONSULTORÍA",
     "ctaNewsletter": "NOTICIAS IA DIARIAS"
   },
   "trustedExperience": {
+    "kicker": "Confían en",
     "title": "Experiencia de Confianza",
     "subtitle": "Construyendo soluciones con líderes de la industria"
   },
@@ -38,8 +81,8 @@
     "label": "Sobre mí",
     "title1": "CONSTRUYENDO EL",
     "title2": "FUTURO DEL TRABAJO",
-    "personalIntro": "He ayudado a cientos de equipos a reducir el trabajo manual en más del 70% usando n8n, agentes de IA y flujos de trabajo que realmente tienen sentido.",
-    "intro": "¿Mi trabajo? Sacar lo 'complicado' de la automatización. Ya seas una startup ahogándose en hojas de cálculo o una empresa con 50 herramientas desconectadas, construyo sistemas que simplemente funcionan.",
+    "personalIntro": "Ayudo a equipos a reducir trabajo manual con automatización práctica.",
+    "intro": "De startups a empresas, construyo sistemas que los equipos pueden mantener.",
     "proofTitle": "En Números",
     "proofConferences": "He hablado en más de 5 conferencias tech importantes",
     "proofStudents": "Enseñando a más de 10,000 estudiantes en Platzi",
@@ -75,7 +118,7 @@
     "label": "Charlas",
     "title1": "COMPARTIENDO",
     "title2": "CONOCIMIENTO",
-    "description": "Ponente internacional en las principales conferencias tecnológicas y profesor en Platzi enseñando automatización con n8n. Disponible para keynotes, charlas técnicas y talleres.",
+    "description": "Ponente internacional sobre IA, automatización y sistemas. Profesor en Platzi · 10k+ alumnos.",
     "conferences": {
       "title": "Conferencias Destacadas",
       "events": [
@@ -84,8 +127,14 @@
         "Serverless Architecture Conference",
         "Tech Show Madrid",
         "AI Brazil Experience"
-      ]
+      ],
+      "more": "2 más"
     },
+    "formats": [
+      "Keynotes",
+      "Talleres",
+      "Formación de equipos"
+    ],
     "education": {
       "title": "Educación",
       "platzi": "Profesor en Platzi - Automatización con n8n",
@@ -116,25 +165,33 @@
   },
   "services": {
     "title": "Servicios",
-    "description": "Ayudo a equipos y organizaciones a aprovechar el poder de la automatización e IA a través de capacitación práctica, formación y ponencias.",
+    "description": "Entrega senior para equipos que necesitan resultados, no experimentos.",
     "enablement": {
       "title": "Capacitación de Equipos",
-      "description": "Implementación personalizada de workflows, mejores prácticas y guía de arquitectura continua"
+      "description": "Workflows en producción, guía de arquitectura y patrones escalables."
     },
     "training": {
       "title": "Formación y Talleres",
-      "description": "Sesiones prácticas sobre automatización, IA y n8n adaptadas a las necesidades de tu equipo"
+      "description": "Formación ejecutiva que convierte estrategia en automatización entregada."
     },
     "talks": {
       "title": "Ponencias y Keynotes",
-      "description": "Charlas técnicas sobre integración de IA, LLMs y automatización para conferencias y eventos"
+      "description": "Charlas claras y creíbles para líderes, equipos y universidades."
     },
-    "cta": "Contáctame"
+    "cta": "Contáctame",
+    "trainingHighlights": {
+      "title": "Formaciones recientes (anónimo)",
+      "items": [
+        "90+ asistentes · programa de varios días",
+        "30+ asistentes · sesión de un día",
+        "40+ asistentes · taller avanzado"
+      ]
+    }
   },
   "podcast": {
     "label": "Podcast en Español",
     "title": "Prompt&Play",
-    "description": "Un podcast en español que explora la IA, automatización y el futuro de la tecnología. Episodios semanales con insights, consejos prácticos y conversaciones sobre tecnologías emergentes.",
+    "description": "Un podcast en español sobre IA, automatización y práctica tech.",
     "topicsLabel": "Temas Cubiertos:",
     "topics": ["IA y Machine Learning", "Automatización de Flujos", "LLMs e Ingeniería de Prompts", "Tendencias Tech"],
     "platforms": {
@@ -150,7 +207,7 @@
     "label": "Contacto",
     "title1": "CONECTEMOS",
     "title2": "JUNTOS",
-    "description": "¿Interesado en colaboración, oportunidades para charlas o consultoría?",
+    "description": "Comparte objetivos y plazos.",
     "form": {
       "title": "Enviar Mensaje",
       "name": "Nombre",
@@ -158,7 +215,7 @@
       "email": "Email",
       "emailPlaceholder": "tu@email.com",
       "message": "Mensaje",
-      "messagePlaceholder": "Tu mensaje...",
+      "messagePlaceholder": "Cuéntame sobre tu equipo, objetivos y plazos...",
       "submit": "Enviar Mensaje",
       "sending": "Enviando...",
       "success": "¡Gracias! He recibido tu contacto y te responderé pronto.",
@@ -170,6 +227,18 @@
       "instagram": "Instagram",
       "github": "GitHub"
     }
+  },
+  "topics": {
+    "title": "Temas Destacados",
+    "subtitle": "Charlas y talleres para equipos y universidades.",
+    "items": [
+      "Automatización con IA a escala",
+      "LLM ops: de prototipo a producción",
+      "Estrategia de automatización en operaciones",
+      "Construir con n8n y agentes",
+      "Sistemas human-in-the-loop",
+      "Medir ROI de automatización"
+    ]
   },
   "footer": {
     "descriptionStart": "Ingeniero de Soluciones Senior en ",

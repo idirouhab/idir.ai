@@ -36,31 +36,25 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      {/* Inline SVG instead of lucide-react to save ~50KB */}
-      <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-        <circle cx="12" cy="12" r="10" />
-        <line x1="2" x2="22" y1="12" y2="12" />
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-      </svg>
+    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
       <button
         onClick={() => handleLanguageChange('en')}
-        className={`text-sm font-medium transition-colors ${
+        className={`transition-colors ${
           locale === 'en'
             ? 'text-white'
-            : 'text-gray-300 hover:text-white'
+            : 'text-gray-400 hover:text-white'
         }`}
         aria-label="Switch to English"
       >
         EN
       </button>
-      <span className="text-gray-600">/</span>
+      <span className="text-gray-600">·</span>
       <button
         onClick={() => handleLanguageChange('es')}
-        className={`text-sm font-medium transition-colors ${
+        className={`transition-colors ${
           locale === 'es'
             ? 'text-white'
-            : 'text-gray-300 hover:text-white'
+            : 'text-gray-400 hover:text-white'
         }`}
         aria-label="Cambiar a Español"
       >

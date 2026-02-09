@@ -9,20 +9,20 @@ const TrustedExperience = dynamic(() => import('@/components/TrustedExperience')
   loading: () => <div className="min-h-[200px]" />,
 });
 
-const About = dynamic(() => import('@/components/About'), {
-  loading: () => <div className="min-h-[400px]" />,
-});
-
 const Services = dynamic(() => import('@/components/Services'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
-const Courses = dynamic(() => import('@/components/Courses'), {
+const Speaking = dynamic(() => import('@/components/Speaking'), {
   loading: () => <div className="min-h-[400px]" />,
 });
 
-const Podcast = dynamic(() => import('@/components/Podcast'), {
-  loading: () => <div className="min-h-[400px]" />,
+const Results = dynamic(() => import('@/components/Results'), {
+  loading: () => <div className="min-h-[300px]" />,
+});
+
+const Process = dynamic(() => import('@/components/Process'), {
+  loading: () => <div className="min-h-[300px]" />,
 });
 
 const Contact = dynamic(() => import('@/components/Contact'), {
@@ -78,10 +78,10 @@ export default async function Home({ params }: Props) {
       <main id="main-content" role="main">
         <Hero />
         <TrustedExperience />
-        <About />
         <Services />
-        <Courses locale={locale as 'en' | 'es'} />
-        <Podcast />
+        <Results />
+        <Process />
+        <Speaking />
         <Contact />
       </main>
       <Footer />

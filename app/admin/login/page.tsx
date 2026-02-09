@@ -40,31 +40,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6" style={{ background: '#0a0a0a' }}>
-      {/* Background effects */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#00CFFF' }}></div>
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-10" style={{ background: '#FF6B6B' }}></div>
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="section-pad">
+        <div className="max-w-md mx-auto">
+          <div className="card-surface">
+            <div className="mb-8 text-center">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="h-1 w-8 bg-[#11b981]"></div>
+                <span className="section-kicker">Admin</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-semibold text-white mb-2 tracking-tight">Admin Login</h1>
+              <p className="text-sm text-[#9ca3af]">Sign in to access the admin panel</p>
+            </div>
 
-      <div className="relative z-10 w-full max-w-md">
-        <div className="border-4 p-8 md:p-12" style={{
-          background: '#000',
-          borderColor: '#00ff88',
-          boxShadow: '0 0 50px #00ff8850'
-        }}>
-          {/* Corner markers */}
-          <div className="absolute top-3 left-3 w-4 h-4" style={{ background: '#00ff88' }}></div>
-          <div className="absolute top-3 right-3 w-4 h-4" style={{ background: '#ff0055' }}></div>
-          <div className="absolute bottom-3 left-3 w-4 h-4" style={{ background: '#ff0055' }}></div>
-          <div className="absolute bottom-3 right-3 w-4 h-4" style={{ background: '#00ff88' }}></div>
-
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-black text-white mb-2 uppercase">Admin Login</h1>
-            <p className="text-gray-300">Sign in to access the admin panel</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-white font-bold mb-2 uppercase text-sm">
+              <label htmlFor="email" className="block text-white font-semibold mb-2 uppercase text-xs tracking-wider">
                 Email
               </label>
               <input
@@ -72,7 +63,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none focus:border-[#00cfff] transition-colors"
+                className="w-full px-4 py-3 bg-black text-white border border-[#1f2937] rounded focus:outline-none focus:border-[#11b981] transition-colors"
                 placeholder="your@email.com"
                 required
                 disabled={loading}
@@ -80,7 +71,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-white font-bold mb-2 uppercase text-sm">
+              <label htmlFor="password" className="block text-white font-semibold mb-2 uppercase text-xs tracking-wider">
                 Password
               </label>
               <input
@@ -88,7 +79,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-[#0a0a0a] text-white border-2 border-[#00ff88] focus:outline-none focus:border-[#00cfff] transition-colors"
+                className="w-full px-4 py-3 bg-black text-white border border-[#1f2937] rounded focus:outline-none focus:border-[#11b981] transition-colors"
                 placeholder="Enter your password"
                 required
                 disabled={loading}
@@ -96,7 +87,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-4 border-2 border-[#ff0055] bg-[#ff005520] text-[#ff0055]">
+              <div className="p-4 border border-[#ef4444] bg-[#ef4444]/10 text-[#ef4444] rounded">
                 {error}
               </div>
             )}
@@ -104,10 +95,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-8 py-4 bg-[#00ff88] text-black font-black uppercase tracking-wide hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{
-                boxShadow: '0 0 30px #00ff8850'
-              }}
+              className="w-full px-8 py-4 bg-[#11b981] text-black font-semibold uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
@@ -117,7 +105,7 @@ export default function LoginPage() {
             <div>
               <Link
                 href="/admin/signup"
-                className="text-[#00cfff] hover:text-[#00ff88] transition-colors text-sm font-bold"
+                className="text-[#11b981] hover:text-[#0f9f73] transition-colors text-xs font-semibold uppercase tracking-wider"
               >
                 Don&apos;t have an account? Sign up →
               </Link>
@@ -125,11 +113,12 @@ export default function LoginPage() {
             <div>
               <Link
                 href="/"
-                className="text-gray-300 hover:text-[#00ff88] transition-colors text-sm"
+                className="text-[#9ca3af] hover:text-[#11b981] transition-colors text-xs uppercase tracking-wider"
               >
                 ← Back to site
               </Link>
             </div>
+          </div>
           </div>
         </div>
       </div>

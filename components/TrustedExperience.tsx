@@ -29,58 +29,37 @@ export default function TrustedExperience() {
 
   return (
     <section
-      className="py-16 md:py-20 bg-[#0a0a0a] border-y border-gray-800/50"
-      aria-labelledby="trusted-experience-heading"
+      className="py-10 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a] border-y border-gray-800/50"
+      aria-label={t('title')}
     >
-      <div className="container mx-auto px-4 max-w-6xl">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2
-            id="trusted-experience-heading"
-            className="text-sm md:text-base font-bold text-emerald-400 uppercase tracking-wider mb-2"
-          >
-            {t('title')}
-          </h2>
-          <p className="text-gray-400 text-sm md:text-base">
-            {t('subtitle')}
-          </p>
+      <div className="section-container">
+        <div className="text-center mb-6 flex items-center justify-center gap-3 text-[#9ca3af]">
+          <span className="section-kicker">{t('kicker')}</span>
+          <span className="text-xs">•</span>
         </div>
-
-        {/* Logo Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12 items-center justify-items-center">
+        {/* Slim Logo Row */}
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
           {partners.map((partner) => (
             <a
               key={partner.name}
               href={partner.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex items-center justify-center w-full max-w-[180px] h-16 md:h-20 transition-all duration-300"
+              className="group relative flex items-center justify-center h-10 md:h-12"
               aria-label={`Visit ${partner.name}`}
             >
-              {/* Logo */}
-              <div className="relative w-full h-full">
+              <div className="relative w-28 md:w-32 h-full">
                 <Image
                   src={partner.logo}
                   alt={partner.alt}
                   fill
                   className="object-contain grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
-                  sizes="(max-width: 640px) 180px, 200px"
+                  sizes="(max-width: 640px) 120px, 140px"
                   priority={false}
                 />
               </div>
-
-              {/* Hover Glow Effect */}
-              <div
-                className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/5 rounded-lg transition-all duration-300 -z-10"
-                aria-hidden="true"
-              />
             </a>
           ))}
-        </div>
-
-        {/* Optional: Subtle decoration line */}
-        <div className="mt-12 flex justify-center">
-          <div className="w-24 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />
         </div>
       </div>
     </section>

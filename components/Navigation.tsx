@@ -18,6 +18,8 @@ export default function Navigation() {
 
   // Extract locale from pathname (e.g., /en/blog -> en)
   const locale = pathname?.split('/')[1] || 'en';
+  const isHome = pathname === `/${locale}` || pathname === `/${locale}/`;
+  const forceBackground = pathname?.includes('/blog') || pathname?.includes('/courses');
 
   // Detect if mobile on mount and resize
   useEffect(() => {
@@ -67,7 +69,7 @@ export default function Navigation() {
         setScrolled(window.scrollY > 20);
 
         // Scroll-spy: detect which section is in view
-        const sections = ["about", "services", "podcast", "contact"];
+        const sections = ["services", "results", "process", "speaking", "contact"];
         const scrollPosition = window.scrollY + 100; // offset for navbar
 
         for (const section of sections) {
@@ -96,29 +98,23 @@ export default function Navigation() {
   }, []);
 
   const navItems = [
-    { href: `/${locale}/#about`, label: t('about'), id: "about" },
     { href: `/${locale}/#services`, label: t('services'), id: "services" },
-    { href: `/${locale}/#podcast`, label: t('podcast'), id: "podcast" },
-    { href: `/${locale}/blog`, label: t('blog'), id: "blog", isExternal: true },
-    { href: `/${locale}/subscribe`, label: t('newsletter'), id: "newsletter", isExternal: true },
-    { href: `/${locale}/courses`, label: t('courses'), id: "courses", isExternal: true },
+    { href: `/${locale}/#speaking`, label: t('speaking'), id: "speaking" },
+    { href: `/${locale}/blog`, label: t('blog'), id: "blog", isSecondary: true },
     { href: `/${locale}/#contact`, label: t('contact'), id: "contact" },
   ];
 
   // Always show background on mobile, or when scrolled on desktop
-  const showBackground = isMobile || scrolled;
+  const showBackground = isMobile || scrolled || !isHome || forceBackground;
 
   return (
     <>
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
           showBackground
-            ? "backdrop-blur-xl border-b border-[#10b981]"
+            ? "backdrop-blur-xl border-b border-[#11b981] bg-black/90"
             : "bg-transparent"
         }`}
-        style={{
-          background: showBackground ? 'rgba(0, 0, 0, 0.9)' : 'transparent'
-        }}
         role="navigation"
         aria-label="Main navigation"
       >
@@ -145,11 +141,13 @@ export default function Navigation() {
                 <a
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 text-sm font-bold transition-all uppercase tracking-wide ${
+                  className={`px-4 py-2 text-sm transition-all uppercase tracking-wide ${
                     activeSection === item.id
-                      ? "text-[#10b981] border-b-2 border-[#10b981]"
-                      : "text-gray-300 hover:text-[#10b981]"
-                  }`}
+                      ? "text-[#11b981] border-b-2 border-[#11b981]"
+                      : item.isSecondary
+                        ? "text-gray-500 hover:text-[#11b981]"
+                        : "text-gray-300 hover:text-[#11b981]"
+                  } ${item.isSecondary ? "font-semibold" : "font-bold"}`}
                   role="menuitem"
                   aria-current={activeSection === item.id ? "page" : undefined}
                 >
@@ -159,6 +157,13 @@ export default function Navigation() {
               <div className="ml-6">
                 <LanguageSwitcher />
               </div>
+              <div className="w-6" aria-hidden="true" />
+              <a
+                href={`/${locale}/#contact`}
+                className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold uppercase tracking-wide border border-white/30 text-white rounded-md hover:border-white/60 hover:bg-white/5 transition-colors"
+              >
+                {t('cta')}
+              </a>
             </div>
 
             {/* Mobile menu button */}
@@ -166,7 +171,7 @@ export default function Navigation() {
               <LanguageSwitcher />
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 text-white hover:text-[#10b981] transition-colors"
+                className="p-2 text-white hover:text-[#11b981] transition-colors"
                 aria-label={isOpen ? tAria('closeMenu') : tAria('openMenu')}
               >
                 <svg
@@ -208,7 +213,7 @@ export default function Navigation() {
 
       {/* Mobile menu - off-canvas slide-in */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#10b981] z-[999] md:hidden transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 bottom-0 w-80 bg-black border-l-4 border-[#11b981] z-[999] md:hidden transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{
@@ -221,7 +226,7 @@ export default function Navigation() {
             <span className="text-2xl font-black text-white uppercase">Menu</span>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 text-white hover:text-[#10b981] transition-colors"
+              className="p-2 text-white hover:text-[#11b981] transition-colors"
               aria-label={tAria('closeMenu')}
             >
               <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth={3}>
@@ -239,14 +244,25 @@ export default function Navigation() {
                   href={item.href}
                   className={`block px-4 py-4 text-lg font-bold transition-all uppercase tracking-wide rounded ${
                     activeSection === item.id
-                      ? "text-[#10b981] border-l-4 border-[#10b981] bg-[#10b981]/10"
-                      : "text-white hover:text-[#10b981] border-l-4 border-transparent hover:border-[#10b981]"
+                      ? "text-[#11b981] border-l-4 border-[#11b981] bg-[#11b981]/10"
+                      : item.isSecondary
+                        ? "text-gray-400 hover:text-[#11b981] border-l-4 border-transparent hover:border-[#11b981]"
+                        : "text-white hover:text-[#11b981] border-l-4 border-transparent hover:border-[#11b981]"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
+            </div>
+            <div className="px-4 mt-6">
+              <a
+                href={`/${locale}/#contact`}
+                className="block text-center px-4 py-4 text-lg font-semibold uppercase tracking-wide border border-white/30 text-white rounded-md hover:border-white/60 hover:bg-white/5 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {t('cta')}
+              </a>
             </div>
           </div>
         </div>

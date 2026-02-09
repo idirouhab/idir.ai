@@ -19,7 +19,7 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
   const isSpanish = locale === 'es';
   return (
     <div className="min-h-screen bg-[#050505] py-16 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         <div className="bg-black border-2 border-gray-700 p-8 md:p-12">
           {/* Header */}
           <div className="mb-8">

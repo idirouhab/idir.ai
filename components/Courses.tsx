@@ -49,14 +49,14 @@ export default async function Courses({ locale }: CoursesProps) {
   }
 
   return (
-    <section id="courses" className="py-12 md:py-24 px-4 md:px-6 bg-black">
+    <section id="courses" className="section-pad bg-black">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 md:mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 md:mb-4">
+          <h2 className="section-title mb-3 md:mb-4 text-white">
             {t('title')}
           </h2>
-          <p className="text-base md:text-xl text-gray-400 max-w-3xl mb-4">
+          <p className="section-subtitle max-w-3xl mb-4">
             {t('subtitle')}
           </p>
 
@@ -92,7 +92,7 @@ export default async function Courses({ locale }: CoursesProps) {
               <Link
                 key={course.id}
                 href={`/${course.language}/courses/${course.slug}`}
-                className="group relative bg-gradient-to-br from-gray-900/50 to-gray-950/50 border border-gray-800 rounded-xl md:rounded-2xl p-4 md:p-6 hover:border-emerald-500/50 transition-all duration-300 hover:transform hover:-translate-y-1"
+                className="group relative card-surface card-accent rounded-xl md:rounded-2xl hover:border-[#11b981] transition-all duration-300 hover:transform hover:-translate-y-1 p-4 md:p-6"
               >
                 {/* Course Image/Cover - Desktop only */}
                 {course.cover_image && (

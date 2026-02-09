@@ -5,7 +5,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getMessages, getTranslations} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { getSiteUrl } from '@/lib/site-config';
 import "../globals.css";
 
@@ -13,21 +13,11 @@ import "../globals.css";
 // Inter: Primary font for body text (reduced from 4 to 2 weights: 50% reduction)
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '700'], // Only load normal and bold (removed 500, 900)
+  weight: ['400', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
   preload: true,
 });
-
-// Space Grotesk: Headings (reduced from 4 to 2 weights: 50% reduction)
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['600', '700'], // Only semi-bold and bold (removed 400, 500)
-  variable: '--font-space-grotesk',
-  display: 'swap',
-  preload: true,
-});
-
 // PERFORMANCE: Removed Montserrat font entirely (saved 4 weights)
 // If needed for podcast title, use Space Grotesk instead as fallback
 
@@ -120,7 +110,7 @@ export default async function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang={locale} className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang={locale} className={`${inter.variable}`}>
       <head>
         {/* PERFORMANCE: Preconnect to external domains for faster resource loading */}
         <link rel="preconnect" href="https://consent.cookiebot.com" crossOrigin="anonymous" />

@@ -20,7 +20,7 @@ export default function BlogCard({ post, locale }: Props) {
 
   return (
     <Link href={`/${locale}/blog/${post.slug}`}>
-      <article className="group relative bg-[#111827] border border-[#1f2937] hover:border-[#10b981] hover:scale-[1.02] transition-all duration-300 h-full flex flex-col rounded-lg overflow-hidden">
+      <article className="group relative card-surface card-accent hover:border-[#11b981] hover:scale-[1.02] transition-all duration-300 h-full flex flex-col overflow-hidden">
 
         {/* Top accent bar */}
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: categoryColor }}></div>
@@ -58,7 +58,7 @@ export default function BlogCard({ post, locale }: Props) {
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#10b981] transition-colors">
+          <h3 className="text-xl font-black text-white mb-3 leading-tight group-hover:text-[#11b981] transition-colors">
             {post.title}
           </h3>
 

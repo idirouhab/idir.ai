@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { getAdminBlogClient } from '@/lib/blog';
+import { ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { buildR2PublicUrl, getR2Client, R2_BUCKET } from '@/lib/r2';
 
-const BUCKET_NAME = 'blog-image';
+const BUCKET_NAME = R2_BUCKET;
+
+function guessMimeType(key: string): string {
+  const lower = key.toLowerCase();
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  if (lower.endsWith('.avif')) return 'image/avif';
+  if (lower.endsWith('.gif')) return 'image/gif';
+  return 'unknown';
+}
 
 /**
- * List all images from the blog-image bucket
+ * List all images from the blog-images bucket
  * Returns images with metadata including URL, size, created date
  */
 export async function GET(request: NextRequest) {
@@ -16,64 +27,40 @@ export async function GET(request: NextRequest) {
       return authResult.response;
     }
 
-    const supabase = getAdminBlogClient();
-
-    // List all files in the bucket
-    const { data: files, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .list('', {
-        limit: 1000,
-        sortBy: { column: 'created_at', order: 'desc' },
-      });
-
-    if (error) {
-      console.error('Error listing files:', error);
-      return NextResponse.json(
-        { error: error.message || 'Failed to list images' },
-        { status: 500 }
-      );
-    }
-
-    // Recursively get all images from subdirectories
+    const r2 = getR2Client();
     const allImages: any[] = [];
+    let continuationToken: string | undefined;
 
-    async function listDirectory(path: string = '') {
-      const { data: items, error: listError } = await supabase.storage
-        .from(BUCKET_NAME)
-        .list(path, {
-          limit: 1000,
-          sortBy: { column: 'created_at', order: 'desc' },
+    do {
+      const response = await r2.send(
+        new ListObjectsV2Command({
+          Bucket: BUCKET_NAME,
+          ContinuationToken: continuationToken,
+          MaxKeys: 1000,
+        })
+      );
+
+      for (const item of response.Contents || []) {
+        if (!item.Key) continue;
+        const key = item.Key;
+        const name = key.split('/').pop() || key;
+        const lastModified = item.LastModified?.toISOString() || new Date().toISOString();
+
+        allImages.push({
+          name,
+          path: key,
+          url: buildR2PublicUrl(key),
+          size: item.Size || 0,
+          created_at: lastModified,
+          updated_at: lastModified,
+          mimetype: guessMimeType(key),
         });
-
-      if (listError || !items) return;
-
-      for (const item of items) {
-        const fullPath = path ? `${path}/${item.name}` : item.name;
-
-        // If it's a file (has metadata), add it to our list
-        if (item.metadata) {
-          const { data: urlData } = supabase.storage
-            .from(BUCKET_NAME)
-            .getPublicUrl(fullPath);
-
-          allImages.push({
-            name: item.name,
-            path: fullPath,
-            url: urlData.publicUrl,
-            size: item.metadata.size,
-            created_at: item.created_at,
-            updated_at: item.updated_at,
-            mimetype: item.metadata.mimetype,
-          });
-        } else {
-          // If it's a directory, recursively list its contents
-          await listDirectory(fullPath);
-        }
       }
-    }
 
-    // Start listing from root
-    await listDirectory();
+      continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+    } while (continuationToken);
+
+    allImages.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
 
     return NextResponse.json({
       success: true,

@@ -37,6 +37,7 @@ export type CapacityConfig = {
 };
 
 export type Logistics = {
+    timezone?: string;
     startDate: string;
     schedule?: string | {
         days_of_week: number[];
@@ -47,7 +48,6 @@ export type Logistics = {
         value: number;
     };
     modality: string;
-    timezone?: string;
     total_hours?: number;
     session_duration_hours?: number;
     sessions?: Array<{

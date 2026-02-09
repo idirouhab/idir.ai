@@ -1,11 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-
-const BUCKET_NAME = 'blog-image';
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 10MB
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -89,44 +81,35 @@ export async function uploadBlogImage(
     // Generate unique path
     const filePath = generateImagePath(file.name);
 
-    // Create authenticated client if session token provided
-    const client = sessionToken
-      ? createClient(supabaseUrl, supabaseAnonKey, {
-          global: {
-            headers: {
-              Authorization: `Bearer ${sessionToken}`,
-            },
-          },
-        })
-      : supabaseClient;
+    const formData = new FormData();
+    formData.append('file', file);
 
-    // Upload file
-    const { data, error } = await client.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, file, {
-        cacheControl: '31536000', // 1 year cache
-        upsert: false, // Don't overwrite existing files
-      });
+    const response = await fetch('/api/media', {
+      method: 'POST',
+      body: formData,
+      headers: sessionToken
+        ? {
+            Authorization: `Bearer ${sessionToken}`,
+          }
+        : undefined,
+    });
 
-    if (error) {
-      console.error('Upload error:', error);
+    const result = await response.json();
+
+    if (!response.ok || !result?.success) {
+      const message = result?.error || 'Failed to upload image';
       return {
         success: false,
         error: {
-          message: error.message || 'Failed to upload image',
+          message,
           code: 'UPLOAD_FAILED',
         },
       };
     }
 
-    // Get public URL
-    const { data: urlData } = client.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(data.path);
-
     return {
       success: true,
-      url: urlData.publicUrl,
+      url: result.url,
     };
   } catch (error) {
     console.error('Upload exception:', error);
@@ -148,39 +131,21 @@ export async function deleteBlogImage(
   sessionToken?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Extract file path from URL
-    const url = new URL(imageUrl);
-    const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/blog-images\/(.+)/);
+    const response = await fetch(`/api/media?url=${encodeURIComponent(imageUrl)}`, {
+      method: 'DELETE',
+      headers: sessionToken
+        ? {
+            Authorization: `Bearer ${sessionToken}`,
+          }
+        : undefined,
+    });
 
-    if (!pathMatch) {
+    const result = await response.json();
+
+    if (!response.ok || !result?.success) {
       return {
         success: false,
-        error: 'Invalid image URL format',
-      };
-    }
-
-    const filePath = pathMatch[1];
-
-    // Create authenticated client if session token provided
-    const client = sessionToken
-      ? createClient(supabaseUrl, supabaseAnonKey, {
-          global: {
-            headers: {
-              Authorization: `Bearer ${sessionToken}`,
-            },
-          },
-        })
-      : supabaseClient;
-
-    const { error } = await client.storage
-      .from(BUCKET_NAME)
-      .remove([filePath]);
-
-    if (error) {
-      console.error('Delete error:', error);
-      return {
-        success: false,
-        error: error.message || 'Failed to delete image',
+        error: result?.error || 'Failed to delete image',
       };
     }
 
@@ -206,19 +171,5 @@ export function getOptimizedImageUrl(
     quality?: number; // 0-100
   } = {}
 ): string {
-  const url = new URL(imageUrl);
-
-  if (options.width) {
-    url.searchParams.set('width', options.width.toString());
-  }
-
-  if (options.height) {
-    url.searchParams.set('height', options.height.toString());
-  }
-
-  if (options.quality) {
-    url.searchParams.set('quality', options.quality.toString());
-  }
-
-  return url.toString();
+  return imageUrl;
 }

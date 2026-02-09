@@ -122,7 +122,6 @@ export async function authenticateUser(
   password: string
 ): Promise<User | null> {
   const user = await getUserByEmail(email);
-
   if (!user || !user.is_active) {
     return null;
   }

@@ -8,47 +8,22 @@ import { usePathname } from 'next/navigation';
 
 type Stats = {
   totalPosts: number;
+  publishedPosts: number;
+  draftPosts: number;
   totalSubscribers: number;
-  postsThisMonth: number;
-  subscribersThisMonth: number;
+  totalViews: number;
 };
 
 type StatCardProps = {
   title: string;
   value: number | string;
-  subtitle?: string;
-  icon: string;
-  trend?: string;
-  color: string;
 };
 
-function StatCard({ title, value, subtitle, icon, trend, color }: StatCardProps) {
-  const colorClasses = {
-    emerald: 'bg-emerald-500/10 border-emerald-500/30',
-    cyan: 'bg-cyan-500/10 border-cyan-500/30',
-    purple: 'bg-purple-500/10 border-purple-500/30',
-    amber: 'bg-amber-500/10 border-amber-500/30',
-  };
-
+function StatCard({ title, value }: StatCardProps) {
   return (
-    <div className="bg-[#111] border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-all">
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-lg ${colorClasses[color as keyof typeof colorClasses] || colorClasses.emerald} border flex items-center justify-center text-xl`}>
-          {icon}
-        </div>
-        {trend && (
-          <div className="text-xs text-emerald-400 font-medium">
-            {trend}
-          </div>
-        )}
-      </div>
-      <div className="mb-1">
-        <div className="text-3xl font-bold text-white mb-1">{value}</div>
-        <div className="text-sm font-medium text-gray-400">{title}</div>
-      </div>
-      {subtitle && (
-        <div className="text-xs text-gray-500 mt-2">{subtitle}</div>
-      )}
+    <div className="card-surface">
+      <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">{title}</div>
+      <div className="text-2xl font-semibold text-white">{value}</div>
     </div>
   );
 }
@@ -56,21 +31,17 @@ function StatCard({ title, value, subtitle, icon, trend, color }: StatCardProps)
 type QuickActionProps = {
   href: string;
   label: string;
-  icon: string;
   description: string;
 };
 
-function QuickAction({ href, label, icon, description }: QuickActionProps) {
+function QuickAction({ href, label, description }: QuickActionProps) {
   return (
     <Link
       href={href}
-      className="flex items-start gap-3 p-4 bg-[#111] border border-gray-800 rounded-lg hover:border-gray-700 hover:bg-gray-900/50 transition-all group"
+      className="flex items-start gap-3 p-4 border border-white/10 rounded-lg hover:border-white/30 hover:bg-white/5 transition-all group"
     >
-      <div className="w-8 h-8 flex items-center justify-center text-xl">
-        {icon}
-      </div>
       <div className="flex-1">
-        <div className="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">
+        <div className="text-sm font-semibold text-white group-hover:text-[#11b981] transition-colors">
           {label}
         </div>
         <div className="text-xs text-gray-500 mt-0.5">{description}</div>
@@ -91,10 +62,12 @@ export default function AdminDashboard() {
   const [userRole, setUserRole] = useState<'super_admin' | 'billing_admin' | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalPosts: 0,
+    publishedPosts: 0,
+    draftPosts: 0,
     totalSubscribers: 0,
-    postsThisMonth: 0,
-    subscribersThisMonth: 0,
+    totalViews: 0,
   });
+  const [recentPosts, setRecentPosts] = useState<any[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -129,13 +102,12 @@ export default function AdminDashboard() {
       const postsData = await postsResponse.json();
       const posts = postsData.data || [];
 
-      // Calculate stats
-      const now = new Date();
-      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      const postsThisMonth = posts.filter((p: any) =>
-        new Date(p.updated_at) >= thisMonthStart
-      ).length;
+      const publishedPosts = posts.filter((p: any) => p.status === 'published').length;
+      const draftPosts = posts.filter((p: any) => p.status !== 'published').length;
+      const totalViews = posts.reduce((acc: number, p: any) => acc + (p.view_count || 0), 0);
+      const recent = [...posts]
+        .sort((a: any, b: any) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+        .slice(0, 5);
 
       let subscribersData: any = null;
 
@@ -151,10 +123,12 @@ export default function AdminDashboard() {
 
       setStats({
         totalPosts: posts.length || 0,
+        publishedPosts,
+        draftPosts,
         totalSubscribers: subscribersData?.statistics?.total || 0,
-        postsThisMonth,
-        subscribersThisMonth: subscribersData?.statistics?.subscribed || 0,
+        totalViews,
       });
+      setRecentPosts(recent);
 
       setLoading(false);
     } catch (error) {
@@ -196,74 +170,80 @@ export default function AdminDashboard() {
         {/* Page Header */}
         <div className="border-b border-gray-800 bg-black/50 sticky top-0 z-10 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-8 py-6">
-            <h1 className="text-2xl font-bold text-white mb-1">Dashboard</h1>
-            <p className="text-sm text-gray-400">Overview of your content and audience</p>
+            <h1 className="text-2xl font-semibold text-white mb-1">Dashboard</h1>
+            <p className="text-sm text-gray-400">Quick overview and next actions</p>
           </div>
         </div>
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-8 py-8">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <StatCard
-              title="Blog Posts"
-              value={stats.totalPosts}
-              icon="📝"
-              trend={stats.postsThisMonth > 0 ? `+${stats.postsThisMonth} this month` : undefined}
-              subtitle={`${stats.postsThisMonth} published this month`}
-              color="emerald"
-            />
-            {(userRole === 'super_admin' || userRole === 'billing_admin') && (
-              <StatCard
-                title="Subscribers"
-                value={stats.totalSubscribers}
-                icon="📬"
-                trend={stats.subscribersThisMonth > 0 ? `${stats.subscribersThisMonth} subscribed` : undefined}
-                subtitle="Total newsletter subscribers"
-                color="cyan"
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <StatCard title="Total Posts" value={stats.totalPosts} />
+            <StatCard title="Published" value={stats.publishedPosts} />
+            <StatCard title="Drafts" value={stats.draftPosts} />
+            {(userRole === 'super_admin' || userRole === 'billing_admin') ? (
+              <StatCard title="Subscribers" value={stats.totalSubscribers} />
+            ) : (
+              <StatCard title="Total Views" value={stats.totalViews} />
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Link
-                href="/admin/blog/new"
-                className="group p-6 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30 hover:border-emerald-400 rounded-lg transition-all hover:shadow-lg hover:shadow-emerald-500/10"
-              >
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                    📝
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-                      New Blog Post
-                    </h3>
-                    <p className="text-xs text-gray-400">Write and publish content</p>
-                  </div>
-                </div>
-              </Link>
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              <h2 className="text-base font-semibold text-white mb-3">Next Actions</h2>
+              <div className="space-y-3">
+                <QuickAction
+                  href="/admin/blog/new"
+                  label="New blog post"
+                  description="Draft and publish a post"
+                />
+                <QuickAction
+                  href="/admin/blog"
+                  label="Review drafts"
+                  description="Open draft posts and finish edits"
+                />
+                {(userRole === 'super_admin' || userRole === 'billing_admin') && (
+                  <QuickAction
+                    href="/admin/subscribers"
+                    label="Manage subscribers"
+                    description="View, filter, export newsletter list"
+                  />
+                )}
+              </div>
+            </div>
 
-              {(userRole === 'super_admin' || userRole === 'billing_admin') && (
-                <Link
-                  href="/admin/subscribers"
-                  className="group p-6 bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/30 hover:border-purple-400 rounded-lg transition-all hover:shadow-lg hover:shadow-purple-500/10"
-                >
-                  <div className="flex flex-col items-center text-center gap-3">
-                    <div className="w-16 h-16 bg-purple-500/20 border border-purple-500/40 rounded-full flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-                      📬
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
-                        Subscribers
-                      </h3>
-                      <p className="text-xs text-gray-400">Manage your audience</p>
-                    </div>
-                  </div>
+            <div className="lg:col-span-2">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-white">Recent Posts</h2>
+                <Link href="/admin/blog" className="text-xs text-[#11b981] hover:text-[#0f9f73] transition-colors uppercase tracking-wider font-semibold">
+                  View all
                 </Link>
-              )}
+              </div>
+              <div className="card-surface p-0">
+                {recentPosts.length === 0 ? (
+                  <div className="p-6 text-sm text-gray-400">No posts yet</div>
+                ) : (
+                  <ul className="divide-y divide-white/10">
+                    {recentPosts.map((post) => (
+                      <li key={post.id} className="flex items-center justify-between px-6 py-4">
+                        <div className="min-w-0">
+                          <div className="text-sm text-white font-semibold truncate">{post.title}</div>
+                          <div className="text-xs text-gray-500">
+                            {post.status === 'published' ? 'Published' : 'Draft'} · {post.language?.toUpperCase() || 'EN'}
+                          </div>
+                        </div>
+                        <Link
+                          href={`/admin/blog/${post.id}/edit`}
+                          className="text-xs text-[#11b981] hover:text-[#0f9f73] transition-colors uppercase tracking-wider font-semibold"
+                        >
+                          Edit
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
         </div>

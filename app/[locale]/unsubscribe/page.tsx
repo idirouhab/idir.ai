@@ -143,11 +143,11 @@ export default function Unsubscribe() {
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: '#0a0a0a' }}>
       <div className="w-full max-w-2xl">
         {/* Main Card - Template styling */}
-        <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#10b981] rounded-lg p-8 sm:p-12 relative overflow-hidden">
+        <div className="bg-[#111827] border border-[#1f2937] border-l-[3px] border-l-[#11b981] rounded-lg p-8 sm:p-12 relative overflow-hidden">
           {/* Subtle background pattern */}
           <div className="absolute inset-0 opacity-5" aria-hidden="true">
             <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+              backgroundImage: 'radial-gradient(circle, #11b981 1px, transparent 1px)',
               backgroundSize: '30px 30px'
             }}></div>
           </div>
@@ -157,7 +157,7 @@ export default function Unsubscribe() {
               // Success state
               <div className="text-center">
                 <div className="mb-8">
-                  <div className="w-20 h-20 bg-[#10b981] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-20 h-20 bg-[#11b981] rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg className="w-10 h-10 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
@@ -182,7 +182,7 @@ export default function Unsubscribe() {
                   </p>
                   <Link
                     href="/"
-                    className="inline-block px-8 py-3 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors"
+                    className="inline-block px-8 py-3 bg-[#11b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors"
                   >
                     {t('success.backHome')}
                   </Link>
@@ -194,8 +194,8 @@ export default function Unsubscribe() {
                 {/* Header */}
                 <div className="mb-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-1 w-12 bg-[#10b981]"></div>
-                    <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
+                    <div className="h-1 w-12 bg-[#11b981]"></div>
+                    <span className="text-[#11b981] font-bold uppercase tracking-wider text-sm">{t('label')}</span>
                   </div>
 
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight">
@@ -220,7 +220,7 @@ export default function Unsubscribe() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       placeholder={t('form.emailPlaceholder')}
-                      className="w-full px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#10b981] focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-[#0a0a0a] text-white border border-[#1f2937] rounded focus:border-[#11b981] focus:outline-none transition-colors"
                       disabled={status === 'loading'}
                     />
                   </div>
@@ -235,7 +235,7 @@ export default function Unsubscribe() {
                   <button
                     type="submit"
                     disabled={status === 'loading'}
-                    className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                    className="w-full px-8 py-4 bg-[#11b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
                   >
                     {status === 'loading' ? t('form.loading') : t('form.continue')}
                   </button>
@@ -254,8 +254,8 @@ export default function Unsubscribe() {
                 {/* Header */}
                 <div className="mb-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="h-1 w-12 bg-[#10b981]"></div>
-                    <span className="text-[#10b981] font-bold uppercase tracking-wider text-sm">
+                    <div className="h-1 w-12 bg-[#11b981]"></div>
+                    <span className="text-[#11b981] font-bold uppercase tracking-wider text-sm">
                       {t('preferencesLabel')}
                     </span>
                   </div>
@@ -282,7 +282,7 @@ export default function Unsubscribe() {
                         type="checkbox"
                         checked={subscribeNewsletter}
                         onChange={(e) => setSubscribeNewsletter(e.target.checked)}
-                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
+                        className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#11b981] checked:border-[#11b981] focus:outline-none focus:ring-2 focus:ring-[#11b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                       />
                       <div className="flex-1">
                         <span className="text-white font-semibold text-sm block mb-1">
@@ -301,7 +301,7 @@ export default function Unsubscribe() {
                           type="checkbox"
                           checked={subscribePodcast}
                           onChange={(e) => setSubscribePodcast(e.target.checked)}
-                          className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#10b981] checked:border-[#10b981] focus:outline-none focus:ring-2 focus:ring-[#10b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
+                          className="mt-1 w-5 h-5 bg-black border border-[#1f2937] checked:bg-[#11b981] checked:border-[#11b981] focus:outline-none focus:ring-2 focus:ring-[#11b981] focus:ring-offset-2 focus:ring-offset-black cursor-pointer rounded"
                         />
                         <div className="flex-1">
                           <span className="text-white font-semibold text-sm block mb-1">
@@ -327,7 +327,7 @@ export default function Unsubscribe() {
                     <button
                       onClick={handleUpdatePreferences}
                       disabled={status === 'sending'}
-                      className="w-full px-8 py-4 bg-[#10b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#059669] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
+                      className="w-full px-8 py-4 bg-[#11b981] text-black font-black uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
                     >
                       {status === 'sending' ? t('form.saving') : t('form.saveChanges')}
                     </button>
@@ -357,7 +357,7 @@ export default function Unsubscribe() {
         <div className="text-center mt-6">
           <Link
             href="/"
-            className="text-sm text-[#9ca3af] hover:text-[#10b981] transition-colors uppercase tracking-wide font-bold"
+            className="text-sm text-[#9ca3af] hover:text-[#11b981] transition-colors uppercase tracking-wide font-bold"
           >
             {t('backLink')}
           </Link>

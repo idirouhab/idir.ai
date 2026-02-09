@@ -38,7 +38,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
         {/* Subtle background pattern - decorative only */}
         <div className="absolute inset-0 opacity-5 pointer-events-none" aria-hidden="true">
           <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, #11b981 1px, transparent 1px)',
             backgroundSize: '30px 30px'
           }}></div>
         </div>
@@ -49,7 +49,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
           {/* Header - Hero style */}
           <header className="mb-20">
-            <p className="text-base sm:text-lg md:text-xl font-bold text-[#10b981] mb-6 uppercase tracking-wide">
+            <p className="text-base sm:text-lg md:text-xl font-bold text-[#11b981] mb-6 uppercase tracking-wide">
               {t('title')}
             </p>
 
@@ -72,8 +72,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 href={`/${locale}/blog`}
                 className={`px-6 py-3 font-bold text-sm uppercase tracking-wide transition-all rounded-xl ${
                   !category
-                    ? 'bg-[#10b981] text-black scale-105'
-                    : 'bg-[#111827] text-white border border-[#1f2937] hover:border-[#10b981] hover:scale-105'
+                    ? 'bg-[#11b981] text-black scale-105'
+                    : 'bg-[#111827] text-white border border-[#1f2937] hover:border-[#11b981] hover:scale-105'
                 }`}
               >
                 {t('allCategories')}
@@ -120,7 +120,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
             <div className="text-center py-20">
               <div className="max-w-md mx-auto">
                 <div className="mb-6 flex justify-center">
-                  <FileText className="w-16 h-16 text-[#10b981]" strokeWidth={1.5} />
+                  <FileText className="w-16 h-16 text-[#11b981]" strokeWidth={1.5} />
                 </div>
                 <h2 className="text-2xl font-black text-white mb-4">
                   {t('noPosts')}
@@ -130,7 +130,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
                 </p>
                 <Link
                   href={`/${locale}`}
-                  className="inline-block px-8 py-3 bg-[#10b981] text-black font-bold rounded-lg hover:scale-105 transition-transform"
+                  className="inline-block px-8 py-3 bg-[#11b981] text-black font-bold rounded-lg hover:scale-105 transition-transform"
                 >
                   ← Back to Home
                 </Link>

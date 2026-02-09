@@ -2,11 +2,65 @@
   "nav": {
     "about": "ABOUT",
     "services": "SERVICES",
+    "speaking": "SPEAKING",
     "podcast": "PODCAST",
     "blog": "BLOG",
     "newsletter": "NEWSLETTER",
     "courses": "COURSES",
-    "contact": "CONTACT"
+    "contact": "CONTACT",
+    "cta": "BOOK TRAINING"
+  },
+  "results": {
+    "title": "Results That Travel",
+    "subtitle": "Outcomes that matter.",
+    "stats": [
+      { "value": "70%+", "label": "Manual work reduced" },
+      { "value": "500+", "label": "Automations delivered" },
+      { "value": "10k+", "label": "Learners trained" }
+    ],
+    "testimonials": [
+      {
+        "quote": "The training was excellent. I wasn’t convinced at first, but seeing the first agent running blew my mind.",
+        "name": "Director of Engineering",
+        "role": "Retail company (anonymous)"
+      },
+      {
+        "quote": "I leveled up thanks to the AI + n8n automation course. The effort and attention were top‑tier.",
+        "name": "Software Engineer",
+        "role": "Public institution (anonymous)"
+      }
+    ]
+  },
+  "process": {
+    "title": "A Simple, Executive-Friendly Process",
+    "subtitle": "From clarity to delivery.",
+    "stepLabel": "Step",
+    "steps": [
+      {
+        "title": "Discovery & Alignment",
+        "description": "Define the outcomes, constraints, and success metrics with stakeholders."
+      },
+      {
+        "title": "Build & Enable",
+        "description": "Deliver automations, training, and documentation that teams can own."
+      },
+      {
+        "title": "Scale & Support",
+        "description": "Measure impact, refine workflows, and expand adoption."
+      }
+    ]
+  },
+  "topics": {
+    "title": "Featured Topics",
+    "subtitle": "Talks and workshops for teams and universities.",
+    "items": [
+      "AI workflow automation at scale",
+      "LLM ops: from prototype to production",
+      "Automation strategy for operations",
+      "Building with n8n and agents",
+      "Human-in-the-loop systems",
+      "Measuring automation ROI"
+    ]
   },
   "hero": {
     "name": "IDIR",
@@ -17,13 +71,14 @@
     "badge3": "SPEAKER",
     "offering": "AI Strategy and Implementation for Businesses",
     "offeringShort": "AI & Ops Strategy",
-    "headline": "I Turn Chaos Into Workflows",
-    "subheadline": "Helping teams automate the boring stuff so they can focus on building what actually matters",
-    "cta": "LET'S TALK",
-    "ctaSecondary": "SEE MY TALKS",
+    "headline": "Automation and AI, made clear",
+    "subheadline": "I help teams understand when it makes sense and when it doesn’t.",
+    "ctaPrimary": "BOOK TRAINING",
+    "ctaSecondary": "REQUEST CONSULTING",
     "ctaNewsletter": "AI NEWS DAILY"
   },
   "trustedExperience": {
+    "kicker": "Trusted by",
     "title": "Trusted Experience",
     "subtitle": "Building solutions with industry leaders"
   },
@@ -38,8 +93,8 @@
     "label": "About",
     "title1": "BUILDING THE",
     "title2": "FUTURE OF WORK",
-    "personalIntro": "I've helped hundreds of teams cut manual work by 70%+ using n8n, AI agents, and workflows that actually make sense.",
-    "intro": "My job? Taking the 'it's complicated' out of automation. Whether you're a startup drowning in spreadsheets or an enterprise with 50 disconnected tools, I build systems that just work.",
+    "personalIntro": "I help teams reduce manual work with practical automation.",
+    "intro": "From startups to enterprises, I build systems teams can own.",
     "proofTitle": "By the Numbers",
     "proofConferences": "Spoken at 5+ major tech conferences",
     "proofStudents": "Teaching 10,000+ students on Platzi",
@@ -75,7 +130,7 @@
     "label": "Speaking",
     "title1": "SHARING",
     "title2": "KNOWLEDGE",
-    "description": "International speaker at major tech conferences and educator at Platzi teaching automation with n8n. Available for keynotes, technical talks, and workshops.",
+    "description": "International speaker on AI, automation, and developer systems. Teacher at Platzi · 10k+ learners.",
     "conferences": {
       "title": "Featured Speaking Engagements",
       "events": [
@@ -84,8 +139,14 @@
         "Serverless Architecture Conference",
         "Tech Show Madrid",
         "AI Brazil Experience"
-      ]
+      ],
+      "more": "2 more"
     },
+    "formats": [
+      "Keynotes",
+      "Workshops",
+      "Team Training"
+    ],
     "education": {
       "title": "Education",
       "platzi": "Teacher at Platzi - Automation with n8n",
@@ -128,25 +189,33 @@
   },
   "services": {
     "title": "Services",
-    "description": "I help teams and organizations unlock the power of automation and AI through hands-on enablement, training, and speaking engagements.",
+    "description": "Senior delivery. Real outcomes.",
     "enablement": {
       "title": "Team Enablement",
-      "description": "Custom workflow implementation, best practices for scaling, and ongoing architecture guidance"
+      "description": "Production-grade workflows, architecture guidance, and scalable patterns."
     },
     "training": {
       "title": "Training & Workshops",
-      "description": "Hands-on training sessions on automation, AI, and n8n tailored to your team's needs"
+      "description": "Executive-friendly training that turns strategy into shipped automation."
     },
     "talks": {
       "title": "Speaking & Keynotes",
-      "description": "Technical talks on AI integration, LLMs, and workflow automation for conferences and events"
+      "description": "Clear, credible talks for leaders, teams, and academic programs."
     },
-    "cta": "Get in Touch"
+    "cta": "Get in Touch",
+    "trainingHighlights": {
+      "title": "Recent Trainings (Anonymized)",
+      "items": [
+        "90+ attendees · multi‑day program",
+        "30+ attendees · single‑day session",
+        "40+ attendees · advanced workshop"
+      ]
+    }
   },
   "podcast": {
     "label": "Podcast en Español",
     "title": "Prompt&Play",
-    "description": "A Spanish-language podcast exploring AI, automation, and the future of technology. Weekly episodes featuring insights, practical tips, and conversations about emerging tech.",
+    "description": "A Spanish-language podcast on AI, automation, and practical tech.",
     "topicsLabel": "Topics Covered:",
     "topics": [
       "AI & Machine Learning",
@@ -167,7 +236,7 @@
     "label": "Contact",
     "title1": "LET'S",
     "title2": "CONNECT",
-    "description": "Interested in collaboration, speaking opportunities, or consulting?",
+    "description": "Share your goals and timeline.",
     "form": {
       "title": "Send a Message",
       "name": "Name",
@@ -175,7 +244,7 @@
       "email": "Email",
       "emailPlaceholder": "your@email.com",
       "message": "Message",
-      "messagePlaceholder": "Your message...",
+      "messagePlaceholder": "Tell me about your team, goals, and timeline...",
       "submit": "Send Message",
       "sending": "Sending...",
       "success": "Thanks! I've received your contact and will get back to you soon.",

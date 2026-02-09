@@ -186,12 +186,12 @@ export default function AdminBlogPage() {
     const displayViewCount = totalViewCount !== undefined ? totalViewCount : post.view_count;
 
     return (
-      <div className={`p-3 hover:bg-[#0a0a0a] transition-colors ${isExpanded ? 'bg-[#0a0a0a]/50' : ''}`}>
+      <div className={`p-4 transition-colors ${isExpanded ? 'bg-black/30' : ''}`}>
         <div className="flex gap-3">
           {/* Thumbnail */}
           <div className="flex-shrink-0">
             {post.cover_image ? (
-              <div className="relative w-24 h-16 border border-gray-700 overflow-hidden">
+              <div className="relative w-24 h-16 border border-white/10 overflow-hidden rounded">
                 <Image
                   src={post.cover_image}
                   alt={post.title}
@@ -201,7 +201,7 @@ export default function AdminBlogPage() {
                 />
               </div>
             ) : (
-              <div className="w-24 h-16 border border-gray-700 bg-gray-900 flex items-center justify-center">
+              <div className="w-24 h-16 border border-white/10 bg-black flex items-center justify-center rounded">
                 <ImageIcon size={20} className="text-gray-600" />
               </div>
             )}
@@ -215,19 +215,19 @@ export default function AdminBlogPage() {
                 <Link
                   href={`/${post.language}/blog/${post.slug}`}
                   target="_blank"
-                  className="text-white font-bold text-sm hover:text-[#00ff88] transition-colors"
+                  className="text-white font-semibold text-sm hover:text-[#11b981] transition-colors"
                 >
                   {post.title}
                 </Link>
                 {post.status === 'published' ? (
-                  <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-[#00ff88] text-black">PUB</span>
+                  <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-[#11b981] text-black rounded">PUB</span>
                 ) : (
-                  <span className="px-1.5 py-0.5 text-xs font-bold uppercase bg-gray-800 text-gray-400">DRAFT</span>
+                  <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase bg-gray-800 text-gray-400 rounded">DRAFT</span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <span
-                  className="px-1.5 py-0.5 font-bold uppercase"
+                  className="px-1.5 py-0.5 font-semibold uppercase rounded"
                   style={{
                     background: `${categoryColor}20`,
                     color: categoryColor,
@@ -255,7 +255,7 @@ export default function AdminBlogPage() {
                 <button
                   onClick={() => setActionMenuOpen(actionMenuOpen === post.id ? null : post.id)}
                   disabled={deletingId === post.id}
-                  className="px-2.5 py-1.5 border border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-2.5 py-1.5 border border-white/10 text-gray-300 hover:border-white/30 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded"
                   title="Actions"
                 >
                   {deletingId === post.id ? '...' : <MoreVertical size={16} />}
@@ -267,10 +267,10 @@ export default function AdminBlogPage() {
                       className="fixed inset-0 z-10"
                       onClick={() => setActionMenuOpen(null)}
                     />
-                    <div className="absolute right-0 top-full mt-1 bg-black border border-gray-700 z-20 min-w-[140px]">
+                    <div className="absolute right-0 top-full mt-1 bg-black border border-white/10 z-20 min-w-[140px] rounded">
                       <Link
                         href={`/admin/blog/${post.id}/edit`}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#00cfff] transition-all"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-300 font-semibold uppercase hover:bg-white/5 hover:text-[#11b981] transition-all"
                         onClick={() => setActionMenuOpen(null)}
                       >
                         <Pencil size={14} /> Edit
@@ -280,7 +280,7 @@ export default function AdminBlogPage() {
                           setActionMenuOpen(null);
                           handleDelete(post.id, post.title);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-400 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#ff0055] transition-all border-t border-gray-800"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left text-gray-400 font-semibold uppercase hover:bg-white/5 hover:text-[#ef4444] transition-all border-t border-white/10"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -292,14 +292,14 @@ export default function AdminBlogPage() {
               {/* Share Dropdown (only for published posts) */}
               {post.status === 'published' && (
                 <div className="relative">
-                  <button
-                    onClick={() => setShareMenuOpen(shareMenuOpen === post.id ? null : post.id)}
-                    disabled={sharingId?.startsWith(post.id)}
-                    className="px-2.5 py-1.5 border border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Share"
-                  >
-                    {sharingId?.startsWith(post.id) ? '...' : <Share2 size={16} />}
-                  </button>
+                <button
+                  onClick={() => setShareMenuOpen(shareMenuOpen === post.id ? null : post.id)}
+                  disabled={sharingId?.startsWith(post.id)}
+                  className="px-2.5 py-1.5 border border-white/10 text-gray-300 hover:border-white/30 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                  title="Share"
+                >
+                  {sharingId?.startsWith(post.id) ? '...' : <Share2 size={16} />}
+                </button>
 
                   {shareMenuOpen === post.id && (
                     <>
@@ -307,13 +307,13 @@ export default function AdminBlogPage() {
                         className="fixed inset-0 z-10"
                         onClick={() => setShareMenuOpen(null)}
                       />
-                      <div className="absolute right-0 top-full mt-1 bg-black border border-gray-700 z-20 min-w-[140px]">
+                      <div className="absolute right-0 top-full mt-1 bg-black border border-white/10 z-20 min-w-[140px] rounded">
                         <button
                           onClick={() => {
                             setShareMenuOpen(null);
                             handleShare(post, 'linkedin');
                           }}
-                          className="w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#0077b5] transition-all"
+                          className="w-full px-3 py-2 text-xs text-left text-gray-300 font-semibold uppercase hover:bg-white/5 hover:text-[#0077b5] transition-all"
                         >
                           LinkedIn
                         </button>
@@ -322,7 +322,7 @@ export default function AdminBlogPage() {
                             setShareMenuOpen(null);
                             handleShare(post, 'twitter');
                           }}
-                          className="w-full px-3 py-2 text-xs text-left text-gray-300 font-bold uppercase hover:bg-[#0a0a0a] hover:text-[#1da1f2] transition-all border-t border-gray-800"
+                          className="w-full px-3 py-2 text-xs text-left text-gray-300 font-semibold uppercase hover:bg-white/5 hover:text-[#1da1f2] transition-all border-t border-white/10"
                         >
                           Twitter
                         </button>
@@ -349,28 +349,55 @@ export default function AdminBlogPage() {
   }
 
   const visibleGroups = getVisibleGroups();
+  const totalPosts = visibleGroups.reduce((acc, g) => acc + (g.en ? 1 : 0) + (g.es ? 1 : 0), 0);
+  const publishedPosts = visibleGroups.reduce((acc, g) => {
+    const en = g.en?.status === 'published' ? 1 : 0;
+    const es = g.es?.status === 'published' ? 1 : 0;
+    return acc + en + es;
+  }, 0);
+  const draftPosts = totalPosts - publishedPosts;
+  const totalViews = visibleGroups.reduce((acc, g) => acc + (g.en?.view_count || 0) + (g.es?.view_count || 0), 0);
 
   return (
     <AdminPageWrapper showLogout={false}>
       {/* Page Header */}
-      <div className="mb-8 flex justify-between items-start">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black text-white mb-2">Blog Posts</h2>
+          <h2 className="text-3xl font-semibold text-white mb-1">Blog Posts</h2>
           <p className="text-gray-400 text-sm">
             {visibleGroups.length} translation {visibleGroups.length === 1 ? 'group' : 'groups'}
           </p>
         </div>
         <Link
           href="/admin/blog/new"
-          className="px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
+          className="px-4 py-2 text-xs bg-[#11b981] text-black font-semibold uppercase tracking-wider rounded hover:bg-[#0f9f73] transition-colors"
         >
           + New Post
         </Link>
       </div>
 
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="card-surface">
+          <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">Total Posts</div>
+          <div className="text-2xl font-semibold text-white">{totalPosts}</div>
+        </div>
+        <div className="card-surface">
+          <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">Published</div>
+          <div className="text-2xl font-semibold text-white">{publishedPosts}</div>
+        </div>
+        <div className="card-surface">
+          <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">Drafts</div>
+          <div className="text-2xl font-semibold text-white">{draftPosts}</div>
+        </div>
+        <div className="card-surface">
+          <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">Total Views</div>
+          <div className="text-2xl font-semibold text-white">{totalViews}</div>
+        </div>
+      </div>
+
       {/* Posts List */}
       {visibleGroups.length > 0 ? (
-        <div className="bg-black border border-gray-800">
+        <div className="card-surface p-0">
           {visibleGroups.map((group, groupIndex) => {
             const isExpanded = expandedGroups.has(group.translation_group_id);
             const primaryPost = group.en || group.es;
@@ -384,7 +411,7 @@ export default function AdminBlogPage() {
             return (
               <div
                 key={group.translation_group_id}
-                className={groupIndex !== visibleGroups.length - 1 ? 'border-b border-gray-800' : ''}
+                className={groupIndex !== visibleGroups.length - 1 ? 'border-b border-white/10' : ''}
               >
                 {/* Primary Post (collapsed view) */}
                 <div className="flex items-center">
@@ -392,7 +419,7 @@ export default function AdminBlogPage() {
                   {hasMultipleLanguages && (
                     <button
                       onClick={() => toggleGroup(group.translation_group_id)}
-                      className="p-3 text-gray-500 hover:text-white hover:bg-[#0a0a0a] transition-all"
+                      className="p-3 text-gray-500 hover:text-white hover:bg-white/5 transition-all"
                       title={isExpanded ? 'Collapse translations' : 'Show all translations'}
                     >
                       {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
@@ -411,7 +438,7 @@ export default function AdminBlogPage() {
                   {/* Languages indicator */}
                   {hasMultipleLanguages && (
                     <div className="pr-3 text-gray-500">
-                      <div className="flex items-center gap-1 px-2 py-1 border border-gray-700 rounded text-xs">
+                      <div className="flex items-center gap-1 px-2 py-1 border border-white/10 rounded text-xs">
                         <Languages size={14} />
                         <span>2</span>
                       </div>
@@ -421,9 +448,9 @@ export default function AdminBlogPage() {
 
                 {/* Expanded Translations */}
                 {isExpanded && hasMultipleLanguages && (
-                  <div className="border-t border-gray-800 bg-[#050505]">
+                  <div className="border-t border-white/10 bg-black/40">
                     {group.en && canModifyPost(group.en) && (
-                      <div className="border-b border-gray-800/50">
+                      <div className="border-b border-white/10">
                         {renderPost(group.en, true)}
                       </div>
                     )}
@@ -439,11 +466,11 @@ export default function AdminBlogPage() {
           })}
         </div>
       ) : (
-        <div className="bg-black border border-gray-800 p-12 text-center">
+        <div className="card-surface text-center">
           <p className="text-gray-500 mb-4">No blog posts yet</p>
           <Link
             href="/admin/blog/new"
-            className="inline-block px-4 py-2 text-xs bg-[#00ff88] text-black font-bold uppercase hover:opacity-90 transition-opacity"
+            className="inline-block px-4 py-2 text-xs bg-[#11b981] text-black font-semibold uppercase tracking-wider rounded hover:bg-[#0f9f73] transition-colors"
           >
             Create First Post
           </Link>

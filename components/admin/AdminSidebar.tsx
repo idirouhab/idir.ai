@@ -77,9 +77,9 @@ export default function AdminSidebar({
   const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
       case 'super_admin':
-        return 'bg-[#10b981]/20 text-[#10b981] border-[#10b981]/50';
+        return 'bg-[#11b981]/20 text-[#11b981] border-[#11b981]/50';
       case 'billing_admin':
-        return 'bg-[#10b981]/15 text-[#10b981] border-[#10b981]/40';
+        return 'bg-[#11b981]/15 text-[#11b981] border-[#11b981]/40';
       default:
         return 'bg-gray-700 text-white border-gray-600';
     }
@@ -115,6 +115,8 @@ export default function AdminSidebar({
             <Image
               src="/logo-idirai.png"
               alt="idir.ai"
+              width={96}
+              height={24}
               className="h-6 w-auto flex-shrink-0"
             />
             {!isCollapsed && <span className="text-lg font-black text-white">ADMIN</span>}
@@ -158,7 +160,7 @@ export default function AdminSidebar({
                   ${isCollapsed ? 'px-4 justify-center' : 'px-6'}
                   ${
                     active
-                      ? 'text-white bg-gray-800/50 border-l-2 border-[#10b981]'
+                      ? 'text-white bg-gray-800/50 border-l-2 border-[#11b981]'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800/30 border-l-2 border-transparent'
                   }
                 `}
@@ -216,13 +218,13 @@ export default function AdminSidebar({
                 <div className="flex gap-2">
                   <Link
                     href="/"
-                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
+                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#11b981] hover:text-[#11b981] transition-all rounded"
                   >
                     View Site
                   </Link>
                   <Link
                     href="/admin/login"
-                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
+                    className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#11b981] hover:text-[#11b981] transition-all rounded"
                   >
                     Logout
                   </Link>
@@ -246,6 +248,8 @@ export default function AdminSidebar({
             <Image
               src="/logo-idirai.png"
               alt="idir.ai"
+              width={96}
+              height={24}
               className="h-6 w-auto"
             />
             <span className="text-lg font-black text-white">ADMIN</span>
@@ -274,7 +278,7 @@ export default function AdminSidebar({
                   flex items-center gap-3 px-6 py-3 text-sm font-medium transition-all
                   ${
                     active
-                      ? 'text-white bg-gray-800/50 border-l-2 border-[#10b981]'
+                      ? 'text-white bg-gray-800/50 border-l-2 border-[#11b981]'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800/30 border-l-2 border-transparent'
                   }
                 `}
@@ -306,14 +310,14 @@ issue
               <Link
                 href="/"
                 onClick={onCloseMobile}
-                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
+                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-300 font-medium hover:border-[#11b981] hover:text-[#11b981] transition-all rounded"
               >
                 View Site
               </Link>
               <Link
                 href="/admin/login"
                 onClick={onCloseMobile}
-                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#10b981] hover:text-[#10b981] transition-all rounded"
+                className="flex-1 text-center px-3 py-2 text-xs border border-gray-700 text-gray-400 font-medium hover:border-[#11b981] hover:text-[#11b981] transition-all rounded"
               >
                 Logout
               </Link>

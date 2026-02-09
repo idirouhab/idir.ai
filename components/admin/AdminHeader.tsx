@@ -95,9 +95,9 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
   const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
       case 'super_admin':
-        return 'bg-[#10b981] text-black';
+        return 'bg-[#11b981] text-black';
       case 'billing_admin':
-        return 'bg-[#10b981]/80 text-black';
+        return 'bg-[#11b981]/80 text-black';
       default:
         return 'bg-gray-700 text-white';
     }
@@ -111,6 +111,8 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
             <Image
               src="/logo-idirai.png"
               alt="idir.ai"
+              width={96}
+              height={24}
               className="h-6 w-auto"
             />
             <h1 className="text-xl font-black text-white">ADMIN</h1>
@@ -122,7 +124,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-bold uppercase hover:text-[#10b981] transition-colors ${
+                  className={`text-sm font-bold uppercase hover:text-[#11b981] transition-colors ${
                     isActive ? 'text-white' : 'text-gray-400'
                   }`}
                 >
@@ -150,7 +152,7 @@ export default function AdminHeader({ showLogout = true }: AdminHeaderProps) {
           {showLogout && (
             <button
               onClick={handleLogout}
-              className="px-4 py-2 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#10b981] hover:text-[#10b981] transition-all"
+              className="px-4 py-2 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#11b981] hover:text-[#11b981] transition-all"
             >
               Logout
             </button>
