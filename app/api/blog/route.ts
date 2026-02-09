@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, canPublish } from '@/lib/auth';
+import { requireRole, canPublish } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Create a new blog post
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const user = await requireAuth(request);
+    const user = await requireRole(request, ['super_admin', 'blog_editor']);
 
     const body: BlogPostInput = await request.json();
 
@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
     const postData = {
       ...body,
       author_id: user.userId,
-      author_name: user.email,
     };
 
     const supabase = getAdminBlogClient();

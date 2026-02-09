@@ -41,7 +41,7 @@ export async function GET(
     // Fetch the specific post by ID
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, author_name, meta_description')
+      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
       .eq('status', 'published')
       .eq('id', id)
       .eq('language', languageParam)
@@ -69,6 +69,10 @@ export async function GET(
     // Add URL to post
     const postWithUrl = {
       ...data,
+      author_name: (data as any).users
+        ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
+        : null,
+      users: undefined,
       url: `${baseUrl}/${data.language}/blog/${data.slug}`,
     };
 

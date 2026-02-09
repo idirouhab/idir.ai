@@ -38,11 +38,6 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Feedback',
     isActive: (pathname) => pathname === '/admin/feedback',
   },
-  {
-    href: '/admin/users',
-    label: 'Users',
-    isActive: (pathname) => pathname === '/admin/users',
-  },
 ];
 
 type AdminHeaderProps = {

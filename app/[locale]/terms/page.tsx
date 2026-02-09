@@ -32,7 +32,7 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
               {isSpanish ? 'Términos de Servicio' : 'Terms of Service'}
             </h1>
             <p className="text-gray-400 text-sm">
-              {isSpanish ? 'Última Actualización: 17 de Noviembre de 2025' : 'Last Updated: November 17, 2025'}
+              {isSpanish ? 'Última Actualización: 9 de Febrero de 2026' : 'Last Updated: February 9, 2026'}
             </p>
           </div>
 
@@ -59,7 +59,17 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">2. Use License</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">2. Business Information</h2>
+                <p className="mb-4">
+                  Service provider: Idir Ouhab Meskine.
+                </p>
+                <p className="mb-4">
+                  Contact email: privacy@idir.ai.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">3. Use License</h2>
                 <p className="mb-4">
                   Permission is granted to temporarily access the materials (information or software) on {siteDomain} for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
                 </p>
@@ -73,7 +83,21 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">3. Newsletter Service</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">4. Services</h2>
+                <p className="mb-4">
+                  We provide training, speaking, and consultancy services. The scope, timeline, deliverables, and pricing are defined in the proposal, statement of work, or invoice agreed in writing.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">5. Payments and Cancellations</h2>
+                <p className="mb-4">
+                  Unless otherwise agreed in writing, invoices are due within 14 days. Cancellations or rescheduling must be requested in writing. For late cancellations, we may charge a reasonable fee based on time reserved and work already performed.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-bold text-white mb-4">6. Newsletter Service</h2>
                 <p className="mb-4">
                   By subscribing to our newsletter, you agree to receive periodic emails about AI news, updates, and related content. You can unsubscribe at any time by clicking the unsubscribe link in any email or by visiting the unsubscribe page on our website.
                 </p>
@@ -90,14 +114,14 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">4. User Content</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">7. User Content</h2>
                 <p className="mb-4">
                   Any content you submit through our website (such as comments, feedback, or contact forms) may be used by {siteDomain} for any purpose. You grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, and distribute such content.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">5. Disclaimer</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">8. Disclaimer</h2>
                 <p className="mb-4">
                   The materials on {siteDomain} are provided on an &apos;as is&apos; basis. {siteDomain} makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
                 </p>
@@ -107,42 +131,45 @@ export default async function TermsOfService({ params }: { params: Promise<{ loc
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">6. Limitations</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">9. Limitations of Liability</h2>
                 <p className="mb-4">
                   In no event shall {siteDomain} or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on {siteDomain}, even if {siteDomain} or an authorized representative has been notified orally or in writing of the possibility of such damage.
+                </p>
+                <p className="mb-4">
+                  For paid services, liability is limited to the fees paid for the specific service giving rise to the claim, to the extent permitted by law.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">7. Accuracy of Materials</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">10. Accuracy of Materials</h2>
                 <p className="mb-4">
                   The materials appearing on {siteDomain} could include technical, typographical, or photographic errors. {siteDomain} does not warrant that any of the materials on its website are accurate, complete, or current. {siteDomain} may make changes to the materials contained on its website at any time without notice.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">8. Links</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">11. Links</h2>
                 <p className="mb-4">
                   {siteDomain} has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by {siteDomain} of the site. Use of any such linked website is at the user&apos;s own risk.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">9. Modifications</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">12. Modifications</h2>
                 <p className="mb-4">
                   {siteDomain} may revise these terms of service for its website at any time without notice. By using this website you are agreeing to be bound by the then current version of these terms of service.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">10. Governing Law</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">13. Governing Law</h2>
                 <p className="mb-4">
-                  These terms and conditions are governed by and construed in accordance with the laws of Spain and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
+                  These terms and conditions are governed by and construed in accordance with the laws of Germany and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-white mb-4">11. Contact Information</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">14. Contact Information</h2>
                 <p className="mb-4">
                   If you have any questions about these Terms of Service, please contact us through the contact form on our website or via email at the address provided on the contact page.
                 </p>

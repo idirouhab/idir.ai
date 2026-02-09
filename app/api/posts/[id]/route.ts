@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { isAdmin } from '@/lib/app-roles';
+import {isAdmin, isBlogEditor} from '@/lib/app-roles';
 import { getAdminBlogClient, getBlogClient, calculateReadTime } from '@/lib/blog';
 
 /**
@@ -25,7 +25,7 @@ export async function GET(
 
     // If requesting drafts, require auth
     if (includeDraft) {
-      const authResult = await requireRole(['super_admin', 'billing_admin']);
+      const authResult = await requireRole(['super_admin', 'blog_editor']);
       if (!authResult.authorized) {
         return authResult.response;
       }
@@ -70,7 +70,7 @@ export async function PUT(
   try {
     const { id } = await params;
     // Use NextAuth for authentication
-    const authResult = await requireRole(['super_admin', 'billing_admin']);
+    const authResult = await requireRole(['super_admin', 'blog_editor']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -91,7 +91,7 @@ export async function PUT(
     }
 
     // Check permissions - user can only edit their own posts unless they're owner or admin
-    if (existingPost.author_id !== user.userId && !isAdmin(user.roles)) {
+    if (existingPost.author_id !== user.userId && !isBlogEditor(user.roles)) {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
@@ -99,10 +99,10 @@ export async function PUT(
     }
 
     // Handle publish permissions - only owner and admin can publish
-    const canUserPublish = isAdmin(user.roles);
+    const canUserPublish = isBlogEditor(user.roles);
     if (!canUserPublish && body.status === 'published') {
       return NextResponse.json(
-        { error: 'Forbidden: Only super admins and billing admins can publish posts' },
+        { error: 'Forbidden: Only super admins and blog editors can publish posts' },
         { status: 403 }
       );
     }

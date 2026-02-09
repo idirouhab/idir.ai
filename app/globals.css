@@ -117,6 +117,15 @@ html {
   scroll-behavior: smooth;
 }
 
+.route-loading {
+  cursor: progress;
+}
+
+.route-loading a,
+.route-loading button {
+  cursor: progress;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

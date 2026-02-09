@@ -17,10 +17,11 @@ export default function BlogCard({ post, locale }: Props) {
   const categoryName = t(`categories.${post.category}`);
   const formattedDate = formatDate(post.published_at || post.created_at, locale);
   const readTime = post.read_time_minutes || 5;
+  const authorName = post.author_name || 'Idir Ouhab Meskine';
 
   return (
-    <Link href={`/${locale}/blog/${post.slug}`}>
-      <article className="group relative card-surface card-accent hover:border-[#11b981] hover:scale-[1.02] transition-all duration-300 h-full flex flex-col overflow-hidden">
+    <Link href={`/${locale}/blog/${post.slug}`} className="no-underline">
+      <article className="group relative card-surface card-accent bg-[#0b1220] border-white/15 hover:border-[#11b981] hover:scale-[1.02] transition-all duration-300 h-full flex flex-col overflow-hidden">
 
         {/* Top accent bar */}
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: categoryColor }}></div>
@@ -71,11 +72,9 @@ export default function BlogCard({ post, locale }: Props) {
           <div className="flex items-center justify-between pt-3 border-t border-[#1f2937]">
             <div className="flex flex-col gap-1">
               <span className="text-xs text-[#9ca3af]">{formattedDate}</span>
-              {post.author_name && (
-                <span className="text-xs text-[#6b7280]">
-                  {t('by')} {post.author_name}
-                </span>
-              )}
+              <span className="text-xs text-[#6b7280]">
+                {t('by')} {authorName}
+              </span>
             </div>
             <span className="text-sm font-bold tracking-wide group-hover:translate-x-1 transition-transform"
               style={{ color: categoryColor }}>

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import { verifyToken, JWTPayload } from './jwt';
-import { isAdmin, isSuperAdmin } from './app-roles';
+import { isBlogEditor, isSuperAdmin } from './app-roles';
 import { isTokenBlacklisted } from './session-blacklist';
 
 export async function checkAuth(request: NextRequest): Promise<JWTPayload | null> {
@@ -72,5 +72,5 @@ export function isOwner(user: JWTPayload | null): boolean {
 }
 
 export function canPublish(user: JWTPayload | null): boolean {
-  return isAdmin(user?.roles);
+  return isBlogEditor(user?.roles);
 }

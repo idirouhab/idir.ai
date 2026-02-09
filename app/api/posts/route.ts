@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Check auth if filtering by drafts
     if (status === 'draft') {
-      const authResult = await requireRole(['super_admin', 'billing_admin']);
+      const authResult = await requireRole(['super_admin', 'blog_editor']);
       if (!authResult.authorized) {
         return authResult.response;
       }
@@ -212,7 +212,7 @@ async function getGroupedPosts(
 export async function POST(request: NextRequest) {
   try {
     // Use NextAuth for authentication
-    const authResult = await requireRole(['super_admin', 'billing_admin']);
+    const authResult = await requireRole(['super_admin', 'blog_editor']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -260,7 +260,6 @@ async function createSinglePost(user: any, body: any) {
   const postData = {
     ...body,
     author_id: user.userId,
-    author_name: user.email,
   };
 
   const { data, error } = await supabase
@@ -353,7 +352,6 @@ async function createBilingualPost(user: any, body: any) {
     tldr: data.en.tldr || null,
     translation_group_id,
     author_id: user.userId,
-    author_name: user.email,
   };
 
   const postES = {
@@ -375,7 +373,6 @@ async function createBilingualPost(user: any, body: any) {
     tldr: data.es.tldr || null,
     translation_group_id,
     author_id: user.userId,
-    author_name: user.email,
   };
 
   const supabase = getAdminBlogClient();

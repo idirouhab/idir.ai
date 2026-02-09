@@ -16,7 +16,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/blog', label: 'Blog', icon: '📝' },
   { href: '/admin/images', label: 'Images', icon: '🖼️' },
   { href: '/admin/subscribers', label: 'Subscribers', icon: '📬', requiredRoles: ['super_admin', 'billing_admin'] },
-  { href: '/admin/users', label: 'Users', icon: '👥', requiredRoles: ['super_admin'] },
 ];
 
 type UserInfo = {

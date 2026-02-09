@@ -5,7 +5,7 @@
 
 import bcrypt from 'bcryptjs';
 import type { AppRole } from './app-roles';
-import { isAdmin } from './app-roles';
+import { isBlogEditor } from './app-roles';
 
 export type User = {
   id: string;
@@ -125,7 +125,7 @@ export async function authenticateUser(
   if (!user || !user.is_active) {
     return null;
   }
-  if (!isAdmin(user.roles)) {
+  if (!isBlogEditor(user.roles)) {
     return null;
   }
 

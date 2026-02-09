@@ -71,7 +71,7 @@ export default function Subscribe() {
   return (
     <>
       <div className="min-h-screen bg-[#0a0a0a]">
-        <div className="section-pad">
+        <div className="section-pad pt-32 md:pt-36">
         <div className="max-w-3xl mx-auto">
           {/* Main Card */}
           <div className="card-surface">

@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
+import ThemeToggle from '@/components/ThemeToggle';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -44,5 +48,12 @@ export default function SubscribeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <ThemeProvider>
+      <Navigation />
+      <ThemeToggle />
+      {children}
+      <Footer />
+    </ThemeProvider>
+  );
 }

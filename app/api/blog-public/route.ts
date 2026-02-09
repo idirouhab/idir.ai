@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       console.log(`[blog-public] Fetching posts for language: ${language}, limit: ${limit}`);
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, author_name, meta_description')
+        .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
         .eq('status', 'published')
         .eq('language', language)
         .order('published_at', { ascending })
@@ -57,8 +57,10 @@ export async function GET(request: NextRequest) {
       }
 
       // Add URL to each post
-      const postsWithUrls = (data || []).map(post => ({
+      const postsWithUrls = (data || []).map((post: any) => ({
         ...post,
+        author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
+        users: undefined,
         url: `${baseUrl}/${post.language}/blog/${post.slug}`,
       }));
 
@@ -83,7 +85,7 @@ export async function GET(request: NextRequest) {
     // Fetch posts for both languages
     const { data: enPosts, error: enError } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, author_name, meta_description')
+      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
       .eq('status', 'published')
       .eq('language', 'en')
       .order('published_at', { ascending })
@@ -91,7 +93,7 @@ export async function GET(request: NextRequest) {
 
     const { data: esPosts, error: esError } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, author_name, meta_description')
+      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
       .eq('status', 'published')
       .eq('language', 'es')
       .order('published_at', { ascending })
@@ -106,13 +108,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Add URLs to posts
-    const enPostsWithUrls = (enPosts || []).map(post => ({
+    const enPostsWithUrls = (enPosts || []).map((post: any) => ({
       ...post,
+      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
+      users: undefined,
       url: `${baseUrl}/en/blog/${post.slug}`,
     }));
 
-    const esPostsWithUrls = (esPosts || []).map(post => ({
+    const esPostsWithUrls = (esPosts || []).map((post: any) => ({
       ...post,
+      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
+      users: undefined,
       url: `${baseUrl}/es/blog/${post.slug}`,
     }));
 

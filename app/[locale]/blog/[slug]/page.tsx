@@ -176,6 +176,14 @@ export default async function BlogPostPage({ params }: Props) {
   const categoryName = categoryNames[post.category][locale as 'en' | 'es'];
   const formattedDate = formatDate(post.published_at || post.created_at, locale as 'en' | 'es');
   const readTime = post.read_time_minutes || 5;
+  const authorDisplayName = post.author_name || 'Idir Ouhab Meskine';
+  const authorInitials =
+    authorDisplayName
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('') || 'IO';
 
   const breadcrumbs = [
     { label: locale === 'es' ? 'Inicio' : 'Home', href: `/${locale}` },
@@ -200,7 +208,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
 
         {/* Article Header */}
-        <article className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbs} />
 
@@ -238,10 +246,10 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="flex items-center gap-6 mb-12 pb-12 border-b border-gray-200 dark:border-[#1f2937]">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-gradient-to-r from-[#11b981] to-[#14b8a6] rounded-lg flex items-center justify-center font-black text-black text-lg">
-                {post.author_name ? post.author_name.slice(0, 2).toUpperCase() : 'IO'}
+                {authorInitials}
               </div>
               <div>
-                <p className="text-base font-bold text-gray-900 dark:text-white">{post.author_name || 'Idir Ouhab Meskine'}</p>
+                <p className="text-base font-bold text-gray-900 dark:text-white">{authorDisplayName}</p>
                 <p className="text-sm text-gray-500 dark:text-[#9ca3af] font-medium">{formattedDate}</p>
               </div>
             </div>
@@ -339,7 +347,7 @@ export default async function BlogPostPage({ params }: Props) {
         )}
 
         {/* Newsletter CTA - After Related Posts */}
-        <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
+        <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
           <NewsletterCTA locale={locale as 'en' | 'es'} source="blog_post_bottom" />
         </section>
       </main>
@@ -360,7 +368,7 @@ export default async function BlogPostPage({ params }: Props) {
             author: {
               '@type': 'Person',
               '@id': 'https://idir.ai/#person',
-              name: post.author_name || 'Idir Ouhab Meskine',
+              name: authorDisplayName,
               url: `https://idir.ai/${locale}`,
               jobTitle: 'Senior Solutions Engineer',
               worksFor: {
@@ -373,7 +381,7 @@ export default async function BlogPostPage({ params }: Props) {
             publisher: {
               '@type': 'Person',
               '@id': 'https://idir.ai/#person',
-              name: post.author_name || 'Idir Ouhab Meskine',
+              name: authorDisplayName,
               url: `https://idir.ai/${locale}`,
             },
             mainEntity: {

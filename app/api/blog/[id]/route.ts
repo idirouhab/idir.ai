@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth, canPublish } from '@/lib/auth';
-import { isSuperAdmin } from '@/lib/app-roles';
+import { requireRole, canPublish } from '@/lib/auth';
+import { isBlogEditor, isSuperAdmin } from '@/lib/app-roles';
 import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
 
 // Update a blog post
@@ -11,7 +11,7 @@ export async function PUT(
   try {
     const { id } = await params;
     // Check authentication and get user
-    const user = await requireAuth(request);
+    const user = await requireRole(request, ['super_admin', 'blog_editor']);
 
     const body: Partial<BlogPostInput> = await request.json();
 
@@ -31,7 +31,7 @@ export async function PUT(
     }
 
     // SECURITY: Only the author or owner role can update the post
-    if (existingPost.author_id !== user.userId && !isSuperAdmin(user.roles)) {
+    if (existingPost.author_id !== user.userId && !isBlogEditor(user.roles)) {
       return NextResponse.json(
         { error: 'Forbidden: You can only update your own posts' },
         { status: 403 }
@@ -41,7 +41,7 @@ export async function PUT(
     // ROLE-BASED PERMISSION: Only owners and admins can publish
     if (!canPublish(user) && body.status === 'published') {
       return NextResponse.json(
-        { error: 'Forbidden: Only super admins and billing admins can publish posts. Your changes have been saved as draft.' },
+        { error: 'Forbidden: Only super admins and blog editors can publish posts. Your changes have been saved as draft.' },
         { status: 403 }
       );
     }
@@ -94,7 +94,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     // Check authentication and get user
-    const user = await requireAuth(request);
+    const user = await requireRole(request, ['super_admin', 'blog_editor']);
 
     // ROLE-BASED PERMISSION: Only owners can delete posts
     if (!isSuperAdmin(user.roles)) {

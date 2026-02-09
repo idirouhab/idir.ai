@@ -7,6 +7,7 @@ import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import { Inter } from 'next/font/google';
 import { getSiteUrl } from '@/lib/site-config';
+import RouteLoader from '@/components/RouteLoader';
 import "../globals.css";
 
 // PERFORMANCE: Optimize font loading - reduced to minimum weights needed
@@ -119,6 +120,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body className="antialiased">
+        <RouteLoader />
         {/* GDPR Compliance: Cookiebot loads early to handle consent before tracking scripts
             Uses afterInteractive to ensure consent is obtained before analytics run */}
         <Script

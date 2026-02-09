@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { requireAuth, canPublish } from '@/lib/auth';
+import { requireRole, canPublish } from '@/lib/auth';
 import { getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
 
 // Zod schema for input validation
@@ -31,7 +31,7 @@ type BilingualPostPayload = z.infer<typeof BilingualPostSchema>;
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const user = await requireAuth(request);
+    const user = await requireRole(request, ['super_admin', 'blog_editor']);
 
     // Parse and validate request body
     const rawBody = await request.json();
@@ -92,7 +92,6 @@ export async function POST(request: NextRequest) {
       published_at,
       translation_group_id,
       author_id: user.userId,
-      author_name: user.email,
     };
 
     // Create Spanish post
@@ -112,7 +111,6 @@ export async function POST(request: NextRequest) {
       published_at,
       translation_group_id,
       author_id: user.userId,
-      author_name: user.email,
     };
 
     const supabase = getAdminBlogClient();

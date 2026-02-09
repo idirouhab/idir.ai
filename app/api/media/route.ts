@@ -8,6 +8,8 @@ import {
   R2_BUCKET,
 } from '@/lib/r2';
 import sharp from 'sharp';
+import fs from 'fs/promises';
+import path from 'path';
 
 const BUCKET_NAME = R2_BUCKET;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB (increased since we'll compress)
@@ -23,6 +25,45 @@ const ALLOWED_MIME_TYPES = [
 const IMAGE_QUALITY = 85; // Good balance between quality and size
 const MAX_WIDTH = 1920; // Max width for blog images
 const MAX_HEIGHT = 1080; // Max height for blog images
+const LOCAL_MEDIA_DIR = process.env.LOCAL_MEDIA_DIR || 'public/uploads';
+const STORAGE_MODE =
+  process.env.MEDIA_STORAGE || (process.env.NODE_ENV === 'production' ? 'r2' : 'local');
+
+function getLocalPublicBaseUrl() {
+  const base =
+    process.env.LOCAL_MEDIA_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'http://localhost:3000';
+  return base.replace(/\/+$/, '');
+}
+
+function buildLocalPublicUrl(key: string) {
+  return `${getLocalPublicBaseUrl()}/uploads/${key}`;
+}
+
+function getLocalKeyFromUrl(imageUrl: string): string | null {
+  try {
+    const base = getLocalPublicBaseUrl();
+    if (imageUrl.startsWith(`${base}/uploads/`)) {
+      return imageUrl.slice(`${base}/uploads/`.length);
+    }
+    if (imageUrl.startsWith('/uploads/')) {
+      return imageUrl.slice('/uploads/'.length);
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function getSafeLocalPath(key: string) {
+  const root = path.resolve(process.cwd(), LOCAL_MEDIA_DIR);
+  const target = path.resolve(root, key);
+  if (!target.startsWith(root)) {
+    throw new Error('Invalid file path');
+  }
+  return target;
+}
 
 /**
  * Compress and optimize image using Sharp
@@ -96,7 +137,7 @@ async function compressImage(
 export async function POST(request: NextRequest) {
   try {
     // Check authentication using NextAuth
-    const authResult = await requireRole(['super_admin', 'billing_admin']);
+    const authResult = await requireRole(['super_admin', 'blog_editor']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -154,19 +195,26 @@ export async function POST(request: NextRequest) {
     const sanitizedFilename = `${baseFilename}.${extension}`;
     const filePath = `${year}/${month}/${timestamp}-${random}-${sanitizedFilename}`;
 
-    const r2 = getR2Client();
-
-    await r2.send(
-      new PutObjectCommand({
-        Bucket: BUCKET_NAME,
-        Key: filePath,
-        Body: compressedBuffer,
-        ContentType: contentType,
-        CacheControl: 'public, max-age=31536000, immutable',
-      })
-    );
-
-    const publicUrl = buildR2PublicUrl(filePath);
+    let publicUrl = '';
+    if (STORAGE_MODE === 'local') {
+      const absoluteDir = path.resolve(process.cwd(), LOCAL_MEDIA_DIR, `${year}/${month}`);
+      await fs.mkdir(absoluteDir, { recursive: true });
+      const absolutePath = getSafeLocalPath(filePath);
+      await fs.writeFile(absolutePath, compressedBuffer);
+      publicUrl = buildLocalPublicUrl(filePath);
+    } else {
+      const r2 = getR2Client();
+      await r2.send(
+        new PutObjectCommand({
+          Bucket: BUCKET_NAME,
+          Key: filePath,
+          Body: compressedBuffer,
+          ContentType: contentType,
+          CacheControl: 'public, max-age=31536000, immutable',
+        })
+      );
+      publicUrl = buildR2PublicUrl(filePath);
+    }
 
     const originalSizeKB = Math.round(originalBuffer.length / 1024);
     const compressedSizeKB = Math.round(compressedBuffer.length / 1024);
@@ -207,7 +255,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // Check authentication using NextAuth
-    const authResult = await requireRole(['super_admin', 'billing_admin']);
+    const authResult = await requireRole(['super_admin', 'blog_editor']);
     if (!authResult.authorized) {
       return authResult.response;
     }
@@ -220,7 +268,10 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'No image URL provided' }, { status: 400 });
     }
 
-    const key = getR2KeyFromUrl(imageUrl) || imageUrl;
+    const key =
+      STORAGE_MODE === 'local'
+        ? getLocalKeyFromUrl(imageUrl) || imageUrl
+        : getR2KeyFromUrl(imageUrl) || imageUrl;
 
     if (!key) {
       return NextResponse.json(
@@ -229,13 +280,18 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const r2 = getR2Client();
-    await r2.send(
-      new DeleteObjectCommand({
-        Bucket: BUCKET_NAME,
-        Key: key,
-      })
-    );
+    if (STORAGE_MODE === 'local') {
+      const absolutePath = getSafeLocalPath(key);
+      await fs.unlink(absolutePath);
+    } else {
+      const r2 = getR2Client();
+      await r2.send(
+        new DeleteObjectCommand({
+          Bucket: BUCKET_NAME,
+          Key: key,
+        })
+      );
+    }
 
     console.log('Deleted image:', key);
 
