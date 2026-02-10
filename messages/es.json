@@ -192,6 +192,12 @@
     "label": "Podcast en Español",
     "title": "Prompt&Play",
     "description": "Un podcast en español sobre IA, automatización y práctica tech.",
+    "meta": {
+      "title": "Podcast Prompt&Play | Idir Ouhab Meskine",
+      "description": "Escucha Prompt&Play, un podcast en español sobre IA, automatización y práctica tech."
+    },
+    "aboutTitle": "Sobre el podcast",
+    "subscribeCta": "Recibe alertas de episodios",
     "topicsLabel": "Temas Cubiertos:",
     "topics": ["IA y Machine Learning", "Automatización de Flujos", "LLMs e Ingeniería de Prompts", "Tendencias Tech"],
     "platforms": {

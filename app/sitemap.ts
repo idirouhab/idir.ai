@@ -63,6 +63,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   }))
 
+  // Generate podcast page entries for each locale
+  const podcastEntries: MetadataRoute.Sitemap = locales.map(locale => ({
+    url: `${baseUrl}/${locale}/podcast`,
+    lastModified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/en/podcast`,
+        es: `${baseUrl}/es/podcast`,
+      },
+    },
+  }))
+
   // Generate quiz page entries for each locale
   const quizEntries: MetadataRoute.Sitemap = locales.map(locale => ({
     url: `${baseUrl}/${locale}/quiz`,
@@ -193,6 +207,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     ...homepageEntries,
+    ...podcastEntries,
     ...subscribeEntries,
     ...quizEntries,
     ...coursesIndexEntries,

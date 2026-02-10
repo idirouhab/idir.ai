@@ -36,7 +36,7 @@ export default function Podcast() {
                   }}
                   className="w-full group relative overflow-hidden rounded-lg bg-[#111827] hover:bg-[#1f2937] transition-colors"
                   style={{ height: '352px' }}
-                  aria-label="Load Spotify Player"
+                  aria-label={t('loadPlayer')}
                 >
                   {/* Placeholder */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
@@ -71,7 +71,7 @@ export default function Podcast() {
                       </svg>
                     </div>
                     <p className="text-white font-medium">
-                      Click to load Spotify player
+                      {t('loadPlayer')}
                     </p>
                   </div>
                 </button>
@@ -88,6 +88,9 @@ export default function Podcast() {
                 />
               )}
             </div>
+            <p className="mt-3 text-xs text-gray-500">
+              {t('privacyNotice')}
+            </p>
           </div>
 
           {/* Platform Links - Simple */}

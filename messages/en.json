@@ -216,6 +216,12 @@
     "label": "Podcast en Español",
     "title": "Prompt&Play",
     "description": "A Spanish-language podcast on AI, automation, and practical tech.",
+    "meta": {
+      "title": "Prompt&Play Podcast | Idir Ouhab Meskine",
+      "description": "Listen to Prompt&Play, a Spanish-language podcast on AI, automation, and practical tech."
+    },
+    "aboutTitle": "About the show",
+    "subscribeCta": "Get episode alerts",
     "topicsLabel": "Topics Covered:",
     "topics": [
       "AI & Machine Learning",
