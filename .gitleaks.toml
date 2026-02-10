@@ -10,9 +10,22 @@ useDefault = true
 [allowlist]
 description = "Allowlist for false positives"
 paths = [
-  # Add paths to ignore, e.g.:
-  # '''node_modules/''',
-  # '''\.lock$''',
+  # Build artifacts / caches
+  '''\.next/''',
+  '''node_modules/''',
+  '''dist/''',
+  '''build/''',
+  '''out/''',
+  '''coverage/''',
+  '''\.turbo/''',
+  '''\.cache/''',
+  # VCS/IDE local state
+  '''\.git/''',
+  '''\.idea/''',
+  '''\.vscode/''',
+  '''\.claude/''',
+  # OS files
+  '''\.DS_Store$''',
 ]
 
 regexes = [
