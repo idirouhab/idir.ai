@@ -186,6 +186,11 @@
         "30+ asistentes · sesión de un día",
         "40+ asistentes · taller avanzado"
       ]
+    },
+    "freeTraining": {
+      "title": "Formaciones Gratuitas para Grupos en Exclusión Social",
+      "description": "Ofrezco formaciones gratuitas para organizaciones comunitarias y grupos en situación de exclusión social. Si tu grupo puede beneficiarse de habilidades prácticas en automatización o IA, contáctame y vemos un formato adecuado.",
+      "cta": "Solicitar Formación Gratuita"
     }
   },
   "podcast": {

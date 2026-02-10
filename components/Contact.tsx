@@ -112,7 +112,7 @@ export default function Contact() {
 
             <form onSubmit={handleSubmit} className="space-y-4" aria-describedby="contact-form-heading">
               <div>
-                <label htmlFor="name" className="block text-white font-medium mb-2 text-sm">
+                <label htmlFor="name" className="block text-white font-medium mb-2 text-base">
                   {t('form.name')}
                 </label>
                 <input
@@ -129,7 +129,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-white font-medium mb-2 text-sm">
+                <label htmlFor="email" className="block text-white font-medium mb-2 text-base">
                   {t('form.email')}
                 </label>
                 <input
@@ -146,7 +146,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-white font-medium mb-2 text-sm">
+                <label htmlFor="message" className="block text-white font-medium mb-2 text-base">
                   {t('form.message')}
                 </label>
                 <textarea

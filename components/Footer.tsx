@@ -73,7 +73,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="font-black text-white mb-4 uppercase text-sm tracking-wider">{t('nav')}</h4>
+            <h4 className="font-black text-white mb-4 uppercase text-base tracking-wider">{t('nav')}</h4>
             <ul className="space-y-3">
               {links.navigation.map((link, i) => (
                 <li key={i}>
@@ -90,7 +90,7 @@ export default function Footer() {
 
           {/* Social */}
           <div>
-            <h4 className="font-black text-white mb-4 uppercase text-sm tracking-wider">{t('connect')}</h4>
+            <h4 className="font-black text-white mb-4 uppercase text-base tracking-wider">{t('connect')}</h4>
             <ul className="space-y-3">
               {links.social.map((link, i) => (
                 <li key={i}>
@@ -108,7 +108,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-[#1f2937] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#9ca3af]">
+        <div className="border-t border-[#1f2937] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-base text-[#9ca3af]">
           <div>&copy; {currentYear} Idir Ouhab Meskine. {t('copyright')}</div>
           <div>
             {t('builtStart')}

@@ -32,7 +32,7 @@ export default function Results() {
           {stats.slice(0, 2).map((stat, idx) => (
             <div key={idx} className="card-surface">
               <div className="text-3xl md:text-4xl font-black text-white mb-2">{stat.value}</div>
-              <div className="text-sm text-[#9ca3af] uppercase tracking-wider">{stat.label}</div>
+              <div className="text-base text-[#9ca3af] uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -43,7 +43,7 @@ export default function Results() {
               <blockquote className="text-base md:text-lg text-[#e5e7eb] leading-relaxed mb-4">
                 “{q.quote}”
               </blockquote>
-              <figcaption className="text-sm text-[#9ca3af]">
+              <figcaption className="text-base text-[#9ca3af]">
                 <span className="text-white font-semibold">{q.name}</span> · {q.role}
               </figcaption>
             </figure>

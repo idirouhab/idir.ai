@@ -116,35 +116,40 @@ export const getPublishedPosts = cache(async (
   limit?: number,
   category?: BlogCategory
 ) => {
-  const supabase = getBlogClient();
+  try {
+    const supabase = getBlogClient();
 
-  let query = supabase
-    .from('blog_posts')
-    .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-    .eq('status', 'published')
-    .eq('language', language)
-    .order('published_at', { ascending: false });
+    let query = supabase
+      .from('blog_posts')
+      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
+      .eq('status', 'published')
+      .eq('language', language)
+      .order('published_at', { ascending: false });
 
-  if (category) {
-    query = query.eq('category', category);
-  }
+    if (category) {
+      query = query.eq('category', category);
+    }
 
-  if (limit) {
-    query = query.limit(limit);
-  }
+    if (limit) {
+      query = query.limit(limit);
+    }
 
-  const { data, error } = await query;
+    const { data, error } = await query;
 
-  if (error) {
+    if (error) {
+      console.error('Error fetching blog posts:', error);
+      return [];
+    }
+
+    return (data || []).map((post: any) => ({
+      ...post,
+      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
+      users: undefined, // Remove the nested users object
+    })) as BlogPost[];
+  } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
   }
-
-  return (data || []).map((post: any) => ({
-    ...post,
-    author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-    users: undefined, // Remove the nested users object
-  })) as BlogPost[];
 });
 
 // PERFORMANCE: Cache individual blog posts
@@ -153,29 +158,34 @@ export const getPublishedPostBySlug = cache(async (
   slug: string,
   language: 'en' | 'es'
 ): Promise<BlogPost | null> => {
-  const supabase = getBlogClient();
+  try {
+    const supabase = getBlogClient();
 
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .select('*, users!blog_posts_author_id_fkey(first_name,last_name)')
-    .eq('slug', slug)
-    .eq('language', language)
-    .eq('status', 'published')
-    .single();
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*, users!blog_posts_author_id_fkey(first_name,last_name)')
+      .eq('slug', slug)
+      .eq('language', language)
+      .eq('status', 'published')
+      .single();
 
-  if (error) {
+    if (error) {
+      console.error('Error fetching blog post:', error);
+      return null;
+    }
+
+    // Extract author name from the joined users object
+    return {
+      ...data,
+      author_name: (data as any).users
+        ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
+        : null,
+      users: undefined,
+    } as BlogPost;
+  } catch (error) {
     console.error('Error fetching blog post:', error);
     return null;
   }
-
-  // Extract author name from the joined users object
-  return {
-    ...data,
-    author_name: (data as any).users
-      ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
-      : null,
-    users: undefined,
-  } as BlogPost;
 });
 
 // Get translated post slug for language switching
@@ -188,33 +198,42 @@ export const getTranslatedPostSlug = cache(async (
     return null;
   }
 
-  const supabase = getBlogClient();
-  const targetLanguage = currentLanguage === 'en' ? 'es' : 'en';
+  try {
+    const supabase = getBlogClient();
+    const targetLanguage = currentLanguage === 'en' ? 'es' : 'en';
 
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .select('slug, language')
-    .eq('translation_group_id', translationGroupId)
-    .eq('language', targetLanguage)
-    .eq('status', 'published')
-    .single();
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('slug, language')
+      .eq('translation_group_id', translationGroupId)
+      .eq('language', targetLanguage)
+      .eq('status', 'published')
+      .single();
 
-  if (error || !data) {
+    if (error || !data) {
+      return null;
+    }
+
+    return data as { slug: string; language: 'en' | 'es' };
+  } catch (error) {
+    console.error('Error fetching translated post:', error);
     return null;
   }
-
-  return data as { slug: string; language: 'en' | 'es' };
 });
 
 // Increment view count
 export async function incrementViewCount(postId: string) {
-  const supabase = getBlogClient();
+  try {
+    const supabase = getBlogClient();
 
-  const { error } = await supabase.rpc('increment_post_views', {
-    post_id: postId,
-  });
+    const { error } = await supabase.rpc('increment_post_views', {
+      post_id: postId,
+    });
 
-  if (error) {
+    if (error) {
+      console.error('Error incrementing view count:', error);
+    }
+  } catch (error) {
     console.error('Error incrementing view count:', error);
   }
 }
@@ -227,24 +246,29 @@ export async function getRelatedPosts(
   language: 'en' | 'es',
   limit: number = 3
 ): Promise<BlogPost[]> {
-  const supabase = getBlogClient();
+  try {
+    const supabase = getBlogClient();
 
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .select('*')
-    .eq('status', 'published')
-    .eq('language', language)
-    .neq('id', postId)
-    .or(`category.eq.${category},tags.cs.{${tags.join(',')}}`)
-    .order('published_at', { ascending: false })
-    .limit(limit);
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('status', 'published')
+      .eq('language', language)
+      .neq('id', postId)
+      .or(`category.eq.${category},tags.cs.{${tags.join(',')}}`)
+      .order('published_at', { ascending: false })
+      .limit(limit);
 
-  if (error) {
+    if (error) {
+      console.error('Error fetching related posts:', error);
+      return [];
+    }
+
+    return data as BlogPost[];
+  } catch (error) {
     console.error('Error fetching related posts:', error);
     return [];
   }
-
-  return data as BlogPost[];
 }
 
 // Category display names

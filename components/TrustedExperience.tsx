@@ -35,7 +35,7 @@ export default function TrustedExperience() {
       <div className="section-container">
         <div className="text-center mb-6 flex items-center justify-center gap-3 text-[#9ca3af]">
           <span className="section-kicker">{t('kicker')}</span>
-          <span className="text-xs">•</span>
+          <span className="text-sm">•</span>
         </div>
         {/* Slim Logo Row */}
         <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">

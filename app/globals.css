@@ -28,8 +28,8 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
-  /* Better base font size for readability */
-  font-size: 16px;
+  /* Better base font size for comfortable reading */
+  font-size: 17px;
 }
 
 body {
@@ -85,15 +85,15 @@ h1, h2, h3, h4, h5, h6 {
 @layer components {
   .section-title {
     font-family: var(--font-inter), sans-serif;
-    @apply text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight;
+    @apply text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight;
   }
 
   .section-subtitle {
-    @apply text-base md:text-lg text-[#b7bcc5] leading-relaxed;
+    @apply text-lg md:text-xl text-[#b7bcc5] leading-relaxed;
   }
 
   .section-kicker {
-    @apply text-xs uppercase tracking-[0.3em] text-[#11b981] font-semibold;
+    @apply text-sm uppercase tracking-[0.3em] text-[#11b981] font-semibold;
   }
 
   .section-pad {

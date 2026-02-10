@@ -26,11 +26,11 @@ export default function Process() {
         <div className="grid md:grid-cols-3 gap-6">
           {steps.map((step, idx) => (
             <div key={idx} className="card-surface card-accent">
-              <div className="text-xs font-semibold uppercase tracking-widest text-[#11b981] mb-3">
+              <div className="text-sm font-semibold uppercase tracking-widest text-[#11b981] mb-3">
                 {t('stepLabel')} {idx + 1}
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">{step.title}</h3>
-              <p className="text-sm text-[#9ca3af] leading-relaxed">{step.description}</p>
+              <p className="text-base text-[#9ca3af] leading-relaxed">{step.description}</p>
             </div>
           ))}
         </div>

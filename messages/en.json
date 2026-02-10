@@ -210,6 +210,11 @@
         "30+ attendees · single‑day session",
         "40+ attendees · advanced workshop"
       ]
+    },
+    "freeTraining": {
+      "title": "Free Trainings for Socially Excluded Groups",
+      "description": "I regularly offer no‑cost training for community organizations and groups facing social exclusion. If your group could benefit from practical automation or AI skills, reach out and we can explore a format that fits.",
+      "cta": "Request Free Training"
     }
   },
   "podcast": {

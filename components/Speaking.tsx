@@ -20,28 +20,28 @@ export default function Speaking() {
             <span className="text-[#11b981]">{t('title2')}</span>
           </h2>
 
-          <p className="text-sm text-[#d1d5db] max-w-3xl">
+          <p className="text-base text-[#d1d5db] max-w-3xl">
             {t('description')}
           </p>
         </header>
 
         <div className="flex flex-wrap items-center gap-6 mb-4">
-          <span className="text-xs uppercase tracking-widest text-[#9ca3af]">
+          <span className="text-sm uppercase tracking-widest text-[#9ca3af]">
             {t('conferences.title')}
           </span>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-white font-semibold">
+          <div className="flex flex-wrap items-center gap-4 text-base text-white font-semibold">
             {[0, 1, 2].map((i) => (
               <span key={i} className="text-[#d1d5db]">
                 {t(`conferences.events.${i}`)}
               </span>
             ))}
-            <span className="text-xs text-[#9ca3af]">+{t('conferences.more')}</span>
+            <span className="text-sm text-[#9ca3af]">+{t('conferences.more')}</span>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-3">
           {[0, 1, 2].map((i) => (
-            <span key={i} className="px-3 py-1 text-xs uppercase tracking-wider border border-white/10 text-[#e5e7eb] rounded-full bg-white/[0.02]">
+            <span key={i} className="px-3 py-1 text-sm uppercase tracking-wider border border-white/10 text-[#e5e7eb] rounded-full bg-white/[0.02]">
               {t(`formats.${i}`)}
             </span>
           ))}

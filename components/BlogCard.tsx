@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { BlogPost, categoryColors, formatDate } from '@/lib/blog';
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
 
 export default function BlogCard({ post, locale }: Props) {
   const t = useTranslations('blog');
+  const placeholderImage = '/og-image.png';
+  const [imageSrc, setImageSrc] = useState(post.cover_image || placeholderImage);
 
   const categoryColor = categoryColors[post.category];
   const categoryName = t(`categories.${post.category}`);
@@ -27,17 +30,16 @@ export default function BlogCard({ post, locale }: Props) {
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: categoryColor }}></div>
 
         {/* Cover Image */}
-        {post.cover_image && (
-          <div className="relative w-full h-48 overflow-hidden">
-            <Image
-              src={post.cover_image}
-              alt={`Cover image for blog post: ${post.title}`}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </div>
-        )}
+        <div className="relative w-full h-48 overflow-hidden">
+          <Image
+            src={imageSrc}
+            alt={`Cover image for blog post: ${post.title}`}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => setImageSrc(placeholderImage)}
+          />
+        </div>
 
         {/* Content */}
         <div className="p-6 flex-1 flex flex-col">

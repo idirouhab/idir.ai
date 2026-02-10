@@ -51,7 +51,7 @@ export default function Services() {
                 <h3 className="text-base font-semibold text-white mb-2">
                   {service.title}
                 </h3>
-                <p className="text-sm text-[#9ca3af] leading-relaxed">
+                <p className="text-base text-[#9ca3af] leading-relaxed">
                   {service.description}
                 </p>
               </div>
@@ -70,16 +70,31 @@ export default function Services() {
         </div>
 
         <div className="mt-10">
-          <h3 className="text-sm uppercase tracking-wider text-[#9ca3af] font-semibold mb-3">
+          <h3 className="text-base uppercase tracking-wider text-[#9ca3af] font-semibold mb-3">
             {t('trainingHighlights.title')}
           </h3>
           <ul className="grid md:grid-cols-3 gap-4">
             {[0, 1, 2].map((i) => (
               <li key={i} className="card-surface">
-                <p className="text-sm text-[#e5e7eb]">{t(`trainingHighlights.items.${i}`)}</p>
+                <p className="text-base text-[#e5e7eb]">{t(`trainingHighlights.items.${i}`)}</p>
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="mt-12 card-surface card-accent">
+          <h3 className="text-lg font-semibold text-white mb-3">
+            {t('freeTraining.title')}
+          </h3>
+          <p className="text-base text-[#e5e7eb] leading-relaxed mb-5">
+            {t('freeTraining.description')}
+          </p>
+          <Link
+            href="#contact"
+            className="inline-flex items-center px-5 py-2.5 bg-transparent text-[#11b981] font-semibold border border-[#11b981] rounded hover:bg-[#11b981]/10 transition-colors"
+          >
+            {t('freeTraining.cta')}
+          </Link>
         </div>
       </div>
     </section>

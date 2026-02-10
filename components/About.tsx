@@ -66,7 +66,7 @@ export default function About() {
                   <h3 className="text-lg font-bold text-white mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-[#9ca3af]">
+                  <p className="text-base text-[#9ca3af]">
                     {item.description}
                   </p>
                 </div>

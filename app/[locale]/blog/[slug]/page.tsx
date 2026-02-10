@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Zap, ArrowRight } from 'lucide-react';
 import Navigation from '@/components/Navigation';
@@ -26,6 +25,9 @@ const PostNavigation = dynamic(() => import('@/components/PostNavigation'), {
 
 const TableOfContents = dynamic(() => import('@/components/TableOfContents'), {
   loading: () => <div className="h-24" />,
+});
+const BlogCoverImage = dynamic(() => import('@/components/BlogCoverImage'), {
+  loading: () => <div className="absolute inset-0 bg-gray-900/20" />,
 });
 
 const NewsletterCTA = dynamic(() => import('@/components/NewsletterCTA'), {
@@ -259,20 +261,11 @@ export default async function BlogPostPage({ params }: Props) {
           <TableOfContents content={post.content} locale={locale as 'en' | 'es'} />
 
           {/* Cover Image */}
-          {post.cover_image && (
-            <div className="relative w-full aspect-video mb-16 overflow-hidden rounded-xl border border-gray-200 dark:border-[#1f2937]">
-              {/* Top accent border */}
-              <div className="absolute top-0 left-0 right-0 h-1 z-10" style={{ background: categoryColor }}></div>
-              <Image
-                src={post.cover_image}
-                alt={post.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 1024px"
-                priority
-              />
-            </div>
-          )}
+          <div className="relative w-full aspect-video mb-16 overflow-hidden rounded-xl border border-gray-200 dark:border-[#1f2937]">
+            {/* Top accent border */}
+            <div className="absolute top-0 left-0 right-0 h-1 z-10" style={{ background: categoryColor }}></div>
+            <BlogCoverImage src={post.cover_image} alt={post.title} priority />
+          </div>
 
           {/* TL;DR / Answer Kit */}
           {post.tldr && (
