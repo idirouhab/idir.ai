@@ -38,6 +38,10 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         pathname: '/uploads/**',
+      },      // Local Supabase (for development)
+      {
+        protocol: 'https',
+        hostname: 'course-covers.idir.ai',
       },
       // Supabase Storage (for blog post images)
       {

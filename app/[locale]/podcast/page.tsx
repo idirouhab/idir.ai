@@ -49,65 +49,64 @@ export default async function PodcastPage({ params }: Props) {
     <>
       <Navigation />
       <main className="min-h-screen bg-black text-white">
-        {/* Hero */}
-        <section className="py-20 px-4 md:px-6 border-b border-gray-800">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-1 w-10 bg-[#11b981]" />
-              <span className="section-kicker">{t('label')}</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
-              {t('title')}
-            </h1>
-            <p className="text-lg md:text-xl text-gray-400 max-w-2xl">
-              {t('description')}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
-              <span className="uppercase tracking-wider text-[#11b981] font-semibold">
-                {t('status')}
-              </span>
-              <span className="text-gray-700">•</span>
-              <Link
-                href={`/${locale}/subscribe`}
-                className="text-white hover:text-[#11b981] transition-colors"
-              >
-                {t('subscribeCta')}
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Player */}
-        <Podcast />
-
-        {/* Topics */}
-        <section className="py-16 px-4 md:px-6">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-4">
-                {t('topicsLabel')}
-              </h2>
-              <ul className="space-y-3 text-gray-300">
-                {topics.map((topic) => (
-                  <li key={topic} className="flex items-start gap-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-[#11b981]" />
-                    <span>{topic}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-gray-900/40 border border-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-3">
-                {t('aboutTitle')}
-              </h3>
-              <p className="text-gray-300 text-sm">{t('description')}</p>
-              <div className="mt-6">
+        <section className="section-pad pt-32 md:pt-36">
+          <div className="section-container space-y-10">
+            <div className="card-surface">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-1 w-10 bg-[#11b981]" />
+                <span className="section-kicker">{t('label')}</span>
+              </div>
+              <h1 className="section-title text-white mb-4">
+                {t('title')}
+              </h1>
+              <p className="section-subtitle max-w-2xl">
+                {t('description')}
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                <span className="uppercase tracking-wider text-[#11b981] font-semibold">
+                  {t('status')}
+                </span>
+                <span className="text-gray-700">•</span>
                 <Link
                   href={`/${locale}/subscribe`}
-                  className="inline-flex items-center justify-center px-5 py-3 bg-[#11b981] text-black font-bold rounded hover:bg-[#0f9f73] transition-colors"
+                  className="text-white hover:text-[#11b981] transition-colors"
                 >
                   {t('subscribeCta')}
                 </Link>
+              </div>
+            </div>
+
+            <div className="card-surface">
+              <Podcast showHeader={false} />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-10 items-start">
+              <div className="card-surface">
+                <h2 className="text-xl font-bold text-white mb-4">
+                  {t('topicsLabel')}
+                </h2>
+                <ul className="space-y-3 text-gray-300">
+                  {topics.map((topic) => (
+                    <li key={topic} className="flex items-start gap-3">
+                      <span className="mt-1 h-2 w-2 rounded-full bg-[#11b981]" />
+                      <span>{topic}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="card-surface">
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {t('aboutTitle')}
+                </h3>
+                <p className="text-gray-300 text-sm">{t('description')}</p>
+                <div className="mt-6">
+                  <Link
+                    href={`/${locale}/subscribe`}
+                    className="inline-flex items-center justify-center px-5 py-3 bg-[#11b981] text-black font-bold rounded hover:bg-[#0f9f73] transition-colors"
+                  >
+                    {t('subscribeCta')}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

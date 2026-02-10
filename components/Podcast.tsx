@@ -5,23 +5,34 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { trackPodcastClick } from "@/lib/analytics";
 
-export default function Podcast() {
+type PodcastProps = {
+  showHeader?: boolean;
+};
+
+export default function Podcast({ showHeader = true }: PodcastProps) {
   const t = useTranslations('podcast');
   const [loadSpotify, setLoadSpotify] = useState(false);
 
   return (
-    <section id="podcast" className="section-pad" style={{ background: '#0a0a0a' }} aria-labelledby="podcast-heading">
+    <section
+      id="podcast"
+      className="section-pad"
+      style={{ background: '#0a0a0a' }}
+      aria-labelledby={showHeader ? "podcast-heading" : undefined}
+      aria-label={!showHeader ? t('title') : undefined}
+    >
       <div className="max-w-4xl mx-auto">
-        {/* Simple header */}
-        <header className="mb-8">
-          <h2 id="podcast-heading" className="section-title mb-4 text-white">
-            {t('title')}
-          </h2>
+        {showHeader && (
+          <header className="mb-8">
+            <h2 id="podcast-heading" className="section-title mb-4 text-white">
+              {t('title')}
+            </h2>
 
-          <p className="section-subtitle mb-6">
-            {t('description')}
-          </p>
-        </header>
+            <p className="section-subtitle mb-6">
+              {t('description')}
+            </p>
+          </header>
+        )}
 
         <div className="space-y-6">
           {/* Podcast Player */}
