@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { BlogPost, categoryColors } from '@/lib/blog';
+import { categoryColors } from '@/lib/blog-shared';
+import type { BlogPost } from '@/lib/blog-shared';
 import { MoreVertical, Share2, Pencil, Trash2, ImageIcon, ChevronDown, ChevronRight, Languages } from 'lucide-react';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 

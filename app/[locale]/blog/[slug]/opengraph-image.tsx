@@ -1,7 +1,8 @@
 import { ImageResponse } from 'next/og';
-import { getPublishedPostBySlug, categoryColors } from '@/lib/blog';
+import { getPublishedPostBySlug } from '@/lib/blog';
+import { categoryColors } from '@/lib/blog-shared';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const alt = 'Blog Post';
 export const size = {
   width: 1200,

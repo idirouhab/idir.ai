@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 import { isAdmin, primaryAdminRole } from '@/lib/app-roles';
-import { createClient } from '@supabase/supabase-js';
 import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
+import { query } from '@/lib/db';
 
 /**
  * Admin-only API endpoint to export newsletter subscribers as CSV
@@ -36,58 +36,48 @@ export async function GET(request: Request) {
       );
     }
 
-    // Initialize Supabase
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase credentials');
-      return NextResponse.json(
-        { error: 'Service configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const filterStatus = searchParams.get('filter') || 'all';
     const filterLanguage = searchParams.get('lang') || 'all';
     const filterWelcomed = searchParams.get('welcomed') || 'all';
 
-    // Build query (same as the main admin endpoint)
-    let query = supabase
-      .from('newsletter_subscribers')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false });
+    const where: string[] = [];
+    const params: any[] = [];
 
-    // Apply filters
     if (filterStatus === 'subscribed') {
-      query = query.eq('is_subscribed', true);
+      params.push(true);
+      where.push(`is_subscribed = $${params.length}`);
     } else if (filterStatus === 'unsubscribed') {
-      query = query.eq('is_subscribed', false);
+      params.push(false);
+      where.push(`is_subscribed = $${params.length}`);
     }
 
     if (filterLanguage === 'en' || filterLanguage === 'es') {
-      query = query.eq('lang', filterLanguage);
+      params.push(filterLanguage);
+      where.push(`lang = $${params.length}`);
     }
 
     if (filterWelcomed === 'true') {
-      query = query.eq('welcomed', true);
+      params.push(true);
+      where.push(`welcomed = $${params.length}`);
     } else if (filterWelcomed === 'false') {
-      query = query.eq('welcomed', false);
+      params.push(false);
+      where.push(`welcomed = $${params.length}`);
     }
 
-    const { data, error, count } = await query;
+    const whereClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
 
-    if (error) {
-      console.error('Error fetching subscribers for export:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch subscribers' },
-        { status: 500 }
-      );
-    }
+    const result = await query(
+      `SELECT *, COUNT(*) OVER()::int AS total_count
+       FROM newsletter_subscribers
+       ${whereClause}
+       ORDER BY created_at DESC`,
+      params
+    );
+
+    const data = result.rows;
+    const count = data.length > 0 ? data[0].total_count : 0;
 
     // SECURITY: Sanitize CSV fields to prevent CSV injection
     // Fields starting with =, +, -, @ can execute formulas in Excel/Sheets

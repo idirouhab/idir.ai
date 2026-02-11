@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { isAdmin } from '@/lib/app-roles';
-import { supabase, supabaseAdmin } from '@/lib/supabase';
+import { query } from '@/lib/db';
 
 /**
  * Update course signup status
@@ -41,20 +41,14 @@ export async function PATCH(
     }
 
     // Update the signup
-    const { data, error } = await supabase
-      .from('course_signups')
-      .update({ signup_status })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating course signup:', error);
-      return NextResponse.json(
-        { error: 'Failed to update signup' },
-        { status: 500 }
-      );
-    }
+    const result = await query(
+      `UPDATE course_signups
+       SET signup_status = $1
+       WHERE id = $2
+       RETURNING *`,
+      [signup_status, id]
+    );
+    const data = result.rows[0];
 
     return NextResponse.json({
       success: true,
@@ -93,28 +87,7 @@ export async function DELETE(
         { status: 403 }
       );
     }
-    // Check if admin client is available
-    if (!supabaseAdmin) {
-      console.error('Supabase admin client not configured');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    // Delete the signup using admin client (bypasses RLS)
-    const { error } = await supabaseAdmin
-      .from('course_signups')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting course signup:', error);
-      return NextResponse.json(
-        { error: 'Failed to delete signup' },
-        { status: 500 }
-      );
-    }
+    await query(`DELETE FROM course_signups WHERE id = $1`, [id]);
 
     return NextResponse.json({
       success: true,

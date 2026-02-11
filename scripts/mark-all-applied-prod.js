@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { createClient } = require('@supabase/supabase-js');
+const { Client } = require('pg');
 const readline = require('readline');
 
 // Colors
@@ -53,8 +53,6 @@ function loadProductionEnv() {
 
 loadProductionEnv();
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const MIGRATIONS_DIR = path.join(__dirname, '../migrations');
 
 function calculateChecksum(content) {
@@ -75,6 +73,40 @@ function getMigrationFiles() {
   });
 }
 
+function getDatabaseUrl() {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+  const dbHost = process.env.SUPABASE_DB_HOST;
+  const dbPort = process.env.SUPABASE_DB_PORT || '6543';
+
+  if (!supabaseUrl || !dbPassword || !dbHost) {
+    log('Error: Missing database credentials in .env.production.local', 'red');
+    log('Required variables:', 'yellow');
+    log('  - DATABASE_URL (recommended)', 'yellow');
+    log('  - OR NEXT_PUBLIC_SUPABASE_URL + SUPABASE_DB_PASSWORD + SUPABASE_DB_HOST', 'yellow');
+    process.exit(1);
+  }
+
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
+
+  if (!projectRef) {
+    throw new Error('Could not extract project reference from NEXT_PUBLIC_SUPABASE_URL');
+  }
+
+  return `postgresql://postgres.${projectRef}:${dbPassword}@${dbHost}:${dbPort}/postgres`;
+}
+
+async function getClient() {
+  const connectionString = getDatabaseUrl();
+  const client = new Client({ connectionString });
+  await client.connect();
+  return client;
+}
+
 async function askConfirmation(question) {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -92,58 +124,29 @@ async function askConfirmation(question) {
 async function main() {
   log('\n=== Mark All Migrations as Applied in PRODUCTION ===', 'blue');
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    log('Error: Missing SUPABASE credentials in .env.production.local', 'red');
-    log('Required variables:', 'yellow');
-    log('  - NEXT_PUBLIC_SUPABASE_URL', 'yellow');
-    log('  - SUPABASE_SERVICE_ROLE_KEY', 'yellow');
-    process.exit(1);
-  }
+  const client = await getClient();
 
-  log(`Database: ${SUPABASE_URL}`, 'yellow');
-  log('');
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
-  // Check if migrations_history table exists
-  const { error: tableCheckError } = await supabase
-    .from('migrations_history')
-    .select('count')
-    .limit(0);
-
-  if (tableCheckError) {
-    const isTableNotFoundError =
-      tableCheckError.code === 'PGRST116' ||
-      tableCheckError.code === '42P01' ||
-      tableCheckError.message.includes('not find the table') ||
-      tableCheckError.message.includes('does not exist');
-
-    if (isTableNotFoundError) {
+  try {
+    await client.query('SELECT 1 FROM migrations_history LIMIT 1');
+  } catch (error) {
+    if (error.code === '42P01') {
       log('✗ migrations_history table does not exist', 'red');
       log('');
       log('Run this first to create the table:', 'yellow');
       log('  node scripts/setup-migrations-prod.js', 'yellow');
-    } else {
-      log(`Unexpected error: ${tableCheckError.message}`, 'red');
+      process.exit(1);
     }
+    log(`Unexpected error: ${error.message}`, 'red');
     process.exit(1);
   }
 
-  // Get all migration files
   const migrations = getMigrationFiles();
 
-  // Get already applied migrations
-  const { data: appliedMigrations, error: fetchError } = await supabase
-    .from('migrations_history')
-    .select('migration_name')
-    .order('migration_name');
+  const appliedResult = await client.query(
+    'SELECT migration_name FROM migrations_history ORDER BY migration_name'
+  );
 
-  if (fetchError) {
-    log(`Error fetching applied migrations: ${fetchError.message}`, 'red');
-    process.exit(1);
-  }
-
-  const appliedNames = new Set((appliedMigrations || []).map(m => m.migration_name));
+  const appliedNames = new Set((appliedResult.rows || []).map(m => m.migration_name));
   const pendingMigrations = migrations.filter(m => !appliedNames.has(m.filename));
 
   log('⚠ WARNING: This will mark ALL migrations as applied WITHOUT running them', 'yellow');
@@ -184,21 +187,16 @@ async function main() {
 
   for (const migration of pendingMigrations) {
     try {
-      const { error } = await supabase
-        .from('migrations_history')
-        .insert({
-          migration_name: migration.filename,
-          checksum: migration.checksum,
-          execution_time_ms: 0
-        });
+      const result = await client.query(
+        `INSERT INTO migrations_history (migration_name, checksum, execution_time_ms)
+         VALUES ($1, $2, 0)
+         ON CONFLICT (migration_name) DO NOTHING`,
+        [migration.filename, migration.checksum]
+      );
 
-      if (error) {
-        if (error.code === '23505') { // Duplicate key
-          log(`  ⊘ ${migration.filename} (already exists)`, 'gray');
-          skippedCount++;
-        } else {
-          throw error;
-        }
+      if (result.rowCount === 0) {
+        log(`  ⊘ ${migration.filename} (already exists)`, 'gray');
+        skippedCount++;
       } else {
         log(`  ✓ ${migration.filename}`, 'green');
         markedCount++;
@@ -221,4 +219,7 @@ async function main() {
   log('');
 }
 
-main();
+main().catch(error => {
+  log(`Unexpected error: ${error.message}`, 'red');
+  process.exit(1);
+});

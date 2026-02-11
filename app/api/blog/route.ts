@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole, canPublish } from '@/lib/auth';
-import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
+import { calculateReadTime, BlogPostInput } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 // Create a new blog post
 export async function POST(request: NextRequest) {
@@ -33,19 +34,19 @@ export async function POST(request: NextRequest) {
       author_id: user.userId,
     };
 
-    const supabase = getAdminBlogClient();
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .insert([postData])
-      .select()
-      .single();
+    const fields = Object.keys(postData);
+    const values = fields.map((f) => (postData as any)[f]);
+    const cols = fields.join(', ');
+    const placeholders = fields.map((_, i) => `$${i + 1}`).join(', ');
 
-    if (error) {
-      console.error('Error creating blog post:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const result = await query(
+      `INSERT INTO blog_posts (${cols})
+       VALUES (${placeholders})
+       RETURNING *`,
+      values
+    );
 
-    return NextResponse.json(data, { status: 201 });
+    return NextResponse.json(result.rows[0], { status: 201 });
   } catch (error: any) {
     console.error('Error in POST /api/blog:', error);
 

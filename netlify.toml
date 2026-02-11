@@ -8,6 +8,7 @@
 [build.environment]
   NODE_VERSION = "20"
   SECRETS_SCAN_ENABLED = "false"
+  NEXT_DISABLE_WEBPACK_CACHE = "1"
 
 # Cache static assets for better performance
 [[headers]]

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
-import { supabase } from '@/lib/supabase';
 import { saveCertificateToStorage, deleteCertificate } from '@/lib/certificate-storage';
+import { query } from '@/lib/db';
 
 /**
  * Regenerate certificate (useful if design changes or error occurred)
@@ -21,13 +21,13 @@ export async function POST(
     const { certificateId } = await params;
 
     // Fetch signup by certificate_id
-    const { data: signup, error: fetchError } = await supabase
-      .from('course_signups')
-      .select('*')
-      .eq('certificate_id', certificateId)
-      .single();
+    const signupResult = await query(
+      `SELECT * FROM course_signups WHERE certificate_id = $1 LIMIT 1`,
+      [certificateId]
+    );
+    const signup = signupResult.rows[0];
 
-    if (fetchError || !signup) {
+    if (!signup) {
       return NextResponse.json(
         { error: 'Certificate not found' },
         { status: 404 }
@@ -72,22 +72,14 @@ export async function POST(
     }
 
     // Update certificate_url in database
-    const { data: updatedSignup, error: updateError } = await supabase
-      .from('course_signups')
-      .update({
-        certificate_url: storageResult.url,
-      })
-      .eq('certificate_id', certificateId)
-      .select()
-      .single();
-
-    if (updateError) {
-      console.error('Error updating certificate URL:', updateError);
-      return NextResponse.json(
-        { error: 'Failed to update certificate URL' },
-        { status: 500 }
-      );
-    }
+    const updateResult = await query(
+      `UPDATE course_signups
+       SET certificate_url = $1
+       WHERE certificate_id = $2
+       RETURNING *`,
+      [storageResult.url, certificateId]
+    );
+    const updatedSignup = updateResult.rows[0];
 
     return NextResponse.json({
       success: true,

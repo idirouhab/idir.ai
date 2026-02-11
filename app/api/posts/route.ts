@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireRole } from '@/lib/auth-helpers';
 import { isAdmin } from '@/lib/app-roles';
-import { getBlogClient, getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
+import { calculateReadTime, generateSlug } from '@/lib/blog';
+import { getClient, query } from '@/lib/db';
 
 /**
  * GET /api/posts
@@ -34,32 +35,29 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const supabase = status === 'draft' ? getAdminBlogClient() : getBlogClient();
-
     // Handle grouped view (for newsletters)
     if (grouped) {
-      return await getGroupedPosts(supabase, { date, category, limit });
+      return await getGroupedPosts({ date, category, limit });
     }
 
-    // Standard list view
-    let query = supabase
-      .from('blog_posts')
-      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, translation_group_id, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .order('published_at', { ascending: false });
+    const params: any[] = [];
+    const where: string[] = [];
 
-    // Apply filters
     if (status) {
-      query = query.eq('status', status);
+      params.push(status);
+      where.push(`p.status = $${params.length}`);
     } else {
-      query = query.eq('status', 'published'); // Default to published only
+      where.push(`p.status = 'published'`);
     }
 
     if (language) {
-      query = query.eq('language', language);
+      params.push(language);
+      where.push(`p.language = $${params.length}`);
     }
 
     if (category) {
-      query = query.eq('category', category);
+      params.push(category);
+      where.push(`p.category = $${params.length}`);
     }
 
     if (date) {
@@ -67,28 +65,33 @@ export async function GET(request: NextRequest) {
       startOfDay.setUTCHours(0, 0, 0, 0);
       const endOfDay = new Date(date);
       endOfDay.setUTCHours(23, 59, 59, 999);
-
-      query = query
-        .gte('published_at', startOfDay.toISOString())
-        .lte('published_at', endOfDay.toISOString());
+      params.push(startOfDay.toISOString());
+      where.push(`p.published_at >= $${params.length}`);
+      params.push(endOfDay.toISOString());
+      where.push(`p.published_at <= $${params.length}`);
     }
 
-    if (limit) {
-      query = query.limit(limit);
-    }
+    const whereClause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    params.push(limit);
 
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Error fetching posts:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const result = await query(
+      `SELECT p.id, p.title, p.slug, p.excerpt, p.cover_image, p.category, p.tags,
+              p.language, p.published_at, p.created_at, p.updated_at,
+              p.read_time_minutes, p.view_count, p.translation_group_id, p.author_id,
+              u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       ${whereClause}
+       ORDER BY p.published_at DESC
+       LIMIT $${params.length}`,
+      params
+    );
+    const data = result.rows;
 
     // Map to include author name
     const posts = (data || []).map((post: any) => ({
       ...post,
-      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-      users: undefined,
+      author_name: post.first_name ? `${post.first_name} ${post.last_name || ''}`.trim() : null,
     }));
 
     return NextResponse.json({
@@ -115,15 +118,10 @@ export async function GET(request: NextRequest) {
  * Helper: Get posts grouped by translation_group_id
  */
 async function getGroupedPosts(
-  supabase: any,
   filters: { date?: string | null; category?: string | null; limit: number }
 ) {
-  let query = supabase
-    .from('blog_posts')
-    .select('id, slug, title, excerpt, cover_image, category, tags, language, published_at, read_time_minutes, view_count, translation_group_id')
-    .eq('status', 'published')
-    .not('translation_group_id', 'is', null)
-    .order('published_at', { ascending: false });
+  const params: any[] = [];
+  const where: string[] = [`status = 'published'`, `translation_group_id IS NOT NULL`];
 
   if (filters.date) {
     const startOfDay = new Date(filters.date);
@@ -131,20 +129,26 @@ async function getGroupedPosts(
     const endOfDay = new Date(filters.date);
     endOfDay.setUTCHours(23, 59, 59, 999);
 
-    query = query
-      .gte('published_at', startOfDay.toISOString())
-      .lte('published_at', endOfDay.toISOString());
+    params.push(startOfDay.toISOString());
+    where.push(`published_at >= $${params.length}`);
+    params.push(endOfDay.toISOString());
+    where.push(`published_at <= $${params.length}`);
   }
 
   if (filters.category) {
-    query = query.eq('category', filters.category);
+    params.push(filters.category);
+    where.push(`category = $${params.length}`);
   }
 
-  const { data: posts, error } = await query;
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  const postsResult = await query(
+    `SELECT id, slug, title, excerpt, cover_image, category, tags, language,
+            published_at, read_time_minutes, view_count, translation_group_id
+     FROM blog_posts
+     WHERE ${where.join(' AND ')}
+     ORDER BY published_at DESC`,
+    params
+  );
+  const posts = postsResult.rows;
 
   // Group by translation_group_id
   const groupedMap = new Map<string, { en?: any; es?: any; published_at: string; translation_group_id: string }>();
@@ -237,8 +241,6 @@ export async function POST(request: NextRequest) {
  * Helper: Create single post
  */
 async function createSinglePost(user: any, body: any) {
-  const supabase = getAdminBlogClient();
-
   // Calculate read time
   if (!body.read_time_minutes && body.content) {
     body.read_time_minutes = calculateReadTime(body.content);
@@ -262,18 +264,19 @@ async function createSinglePost(user: any, body: any) {
     author_id: user.userId,
   };
 
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .insert([postData])
-    .select()
-    .single();
+  const fields = Object.keys(postData);
+  const values = fields.map((f) => postData[f]);
+  const cols = fields.join(', ');
+  const placeholders = fields.map((_, i) => `$${i + 1}`).join(', ');
 
-  if (error) {
-    console.error('Error creating post:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  const result = await query(
+    `INSERT INTO blog_posts (${cols})
+     VALUES (${placeholders})
+     RETURNING *`,
+    values
+  );
 
-  return NextResponse.json({ data }, { status: 201 });
+  return NextResponse.json({ data: result.rows[0] }, { status: 201 });
 }
 
 /**
@@ -375,15 +378,30 @@ async function createBilingualPost(user: any, body: any) {
     author_id: user.userId,
   };
 
-  const supabase = getAdminBlogClient();
-  const { data: posts, error } = await supabase
-    .from('blog_posts')
-    .insert([postEN, postES])
-    .select();
+  const client = await getClient();
+  let posts;
+  try {
+    await client.query('BEGIN');
+    const fields = Object.keys(postEN);
+    const cols = fields.join(', ');
+    const values = [...fields.map((f) => (postEN as any)[f]), ...fields.map((f) => (postES as any)[f])];
+    const placeholders1 = fields.map((_, i) => `$${i + 1}`).join(', ');
+    const placeholders2 = fields.map((_, i) => `$${i + 1 + fields.length}`).join(', ');
 
-  if (error) {
+    const insertResult = await client.query(
+      `INSERT INTO blog_posts (${cols})
+       VALUES (${placeholders1}), (${placeholders2})
+       RETURNING *`,
+      values
+    );
+    posts = insertResult.rows;
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error creating bilingual posts:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create posts' }, { status: 500 });
+  } finally {
+    client.release();
   }
 
   return NextResponse.json({

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole, canPublish } from '@/lib/auth';
 import { isBlogEditor, isSuperAdmin } from '@/lib/app-roles';
-import { getAdminBlogClient, calculateReadTime, BlogPostInput } from '@/lib/blog';
+import { calculateReadTime, BlogPostInput } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 // Update a blog post
 export async function PUT(
@@ -16,14 +17,13 @@ export async function PUT(
     const body: Partial<BlogPostInput> = await request.json();
 
     // SECURITY: Verify ownership - first fetch the existing post
-    const supabase = getAdminBlogClient();
-    const { data: existingPost, error: fetchError } = await supabase
-      .from('blog_posts')
-      .select('author_id')
-      .eq('id', id)
-      .single();
+    const existingResult = await query(
+      `SELECT author_id FROM blog_posts WHERE id = $1 LIMIT 1`,
+      [id]
+    );
+    const existingPost = existingResult.rows[0];
 
-    if (fetchError || !existingPost) {
+    if (!existingPost) {
       return NextResponse.json(
         { error: 'Blog post not found' },
         { status: 404 }
@@ -62,19 +62,23 @@ export async function PUT(
       body.published_at = new Date().toISOString();
     }
 
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .update(body)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating blog post:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    const fields = Object.keys(body).filter((key) => (body as any)[key] !== undefined);
+    if (fields.length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
     }
 
-    return NextResponse.json(data);
+    const setClause = fields.map((field, idx) => `${field} = $${idx + 1}`).join(', ');
+    const values = fields.map((f) => (body as any)[f]);
+
+    const updateResult = await query(
+      `UPDATE blog_posts
+       SET ${setClause}
+       WHERE id = $${fields.length + 1}
+       RETURNING *`,
+      [...values, id]
+    );
+
+    return NextResponse.json(updateResult.rows[0]);
   } catch (error: any) {
     console.error('Error in PUT /api/blog/[id]:', error);
 
@@ -112,16 +116,14 @@ export async function DELETE(
 
     // SECURITY: Owners can delete any post (for content moderation)
     // For other roles, verify ownership
-    const supabase = getAdminBlogClient();
-
     // Verify post exists
-    const { data: existingPost, error: fetchError } = await supabase
-      .from('blog_posts')
-      .select('id')
-      .eq('id', id)
-      .single();
+    const existingResult = await query(
+      `SELECT id FROM blog_posts WHERE id = $1 LIMIT 1`,
+      [id]
+    );
+    const existingPost = existingResult.rows[0];
 
-    if (fetchError || !existingPost) {
+    if (!existingPost) {
       return NextResponse.json(
         { error: 'Blog post not found' },
         { status: 404 }
@@ -130,12 +132,7 @@ export async function DELETE(
 
     // NOTE: Owners can delete any post for content moderation
     // This allows you to remove inappropriate content if needed
-    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
-
-    if (error) {
-      console.error('Error deleting blog post:', error);
-      return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
-    }
+    await query(`DELETE FROM blog_posts WHERE id = $1`, [id]);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
-import { supabaseAdmin } from '@/lib/supabase';
 import { saveCertificateToStorage } from '@/lib/certificate-storage';
 import { randomUUID } from 'crypto';
+import { query } from '@/lib/db';
 
 /**
  * Mark course signup as complete and generate certificate
@@ -19,31 +19,20 @@ export async function POST(
       return authResult.response;
     }
 
-    // Check if supabaseAdmin is available
-    if (!supabaseAdmin) {
-      return NextResponse.json(
-        { error: 'Service configuration error' },
-        { status: 500 }
-      );
-    }
-
     const { id } = await params;
 
     // Fetch signup record with student information
-    const { data: signup, error: fetchError } = await supabaseAdmin
-      .from('course_signups')
-      .select(`
-        *,
-        students (
-          email,
-          first_name,
-          last_name
-        )
-      `)
-      .eq('id', id)
-      .single();
+    const signupResult = await query(
+      `SELECT cs.*, s.email, s.first_name, s.last_name
+       FROM course_signups cs
+       LEFT JOIN students s ON s.id = cs.student_id
+       WHERE cs.id = $1
+       LIMIT 1`,
+      [id]
+    );
+    const signup = signupResult.rows[0];
 
-    if (fetchError || !signup) {
+    if (!signup) {
       return NextResponse.json(
         { error: 'Signup not found' },
         { status: 404 }
@@ -64,23 +53,14 @@ export async function POST(
     const certificateId = randomUUID();
 
     // Update database with completion info
-    const { data: updatedSignup, error: updateError } = await supabaseAdmin
-      .from('course_signups')
-      .update({
-        completed_at: new Date().toISOString(),
-        certificate_id: certificateId,
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (updateError) {
-      console.error('Error updating signup:', updateError);
-      return NextResponse.json(
-        { error: 'Failed to mark as complete' },
-        { status: 500 }
-      );
-    }
+    const updatedResult = await query(
+      `UPDATE course_signups
+       SET completed_at = $1, certificate_id = $2
+       WHERE id = $3
+       RETURNING *`,
+      [new Date().toISOString(), certificateId, id]
+    );
+    const updatedSignup = updatedResult.rows[0];
 
     // Generate certificate image by calling internal endpoint
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `http://localhost:3000`;
@@ -111,18 +91,18 @@ export async function POST(
     }
 
     // Update certificate_url in database
-    const { data: finalSignup, error: finalUpdateError } = await supabaseAdmin
-      .from('course_signups')
-      .update({
-        certificate_url: storageResult.url,
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (finalUpdateError) {
+    let finalSignup = updatedSignup;
+    try {
+      const finalResult = await query(
+        `UPDATE course_signups
+         SET certificate_url = $1
+         WHERE id = $2
+         RETURNING *`,
+        [storageResult.url, id]
+      );
+      finalSignup = finalResult.rows[0] || updatedSignup;
+    } catch (finalUpdateError) {
       console.error('Error updating certificate URL:', finalUpdateError);
-      // Not a critical error - certificate is generated but URL not saved
     }
 
     return NextResponse.json({

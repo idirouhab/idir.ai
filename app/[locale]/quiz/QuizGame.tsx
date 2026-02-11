@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { supabase } from '@/lib/supabase';
 import {
     Trophy,
     Flame,
@@ -142,17 +141,13 @@ export default function QuizGame() {
 
     const fetchLeaderboard = useCallback(async () => {
         try {
-            const { data, error } = await supabase
-                .from('quiz_scores')
-                .select('username, score, total_questions, max_streak, completed_at, final_score, total_time_seconds')
-                .eq('language', locale)
-                .order('final_score', { ascending: false })
-                .limit(50);
-
-            if (error) throw error;
+            const response = await fetch(`/api/quiz/scores?lang=${locale}&limit=50`);
+            if (!response.ok) throw new Error('Failed to fetch leaderboard');
+            const payload = await response.json();
+            const data: LeaderboardEntry[] = payload.data || [];
 
             const uniquePlayerScores = new Map<string, LeaderboardEntry>();
-            (data || []).forEach(entry => {
+            data.forEach((entry: LeaderboardEntry) => {
                 const key = entry.username.toLowerCase();
                 if (!uniquePlayerScores.has(key) || entry.final_score > (uniquePlayerScores.get(key)?.final_score || 0)) {
                     uniquePlayerScores.set(key, entry);
@@ -243,7 +238,10 @@ export default function QuizGame() {
         if (!username || savingScore) return;
         setSavingScore(true);
         try {
-            await supabase.from('quiz_scores').insert({
+            await fetch('/api/quiz/scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                 username: username.trim(),
                 score,
                 total_questions: questions.length,
@@ -251,6 +249,7 @@ export default function QuizGame() {
                 language: locale,
                 total_time_seconds: totalTimeSeconds + lastQuestionTime,
                 final_score: finalScore,
+                }),
             });
             await fetchLeaderboard();
         } catch (err) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * Get posts grouped by translation_group_id for newsletters
@@ -17,40 +17,35 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    const supabase = getBlogClient();
+    const params: any[] = [];
+    const where: string[] = [`status = 'published'`, `translation_group_id IS NOT NULL`];
 
-    // Build query
-    let query = supabase
-      .from('blog_posts')
-      .select('id, slug, title, excerpt, cover_image, category, tags, language, published_at, read_time_minutes, view_count, translation_group_id')
-      .eq('status', 'published')
-      .not('translation_group_id', 'is', null)
-      .order('published_at', { ascending: false });
-
-    // Filter by published date if provided
     if (publishedDate) {
       const startOfDay = new Date(publishedDate);
       startOfDay.setUTCHours(0, 0, 0, 0);
-
       const endOfDay = new Date(publishedDate);
       endOfDay.setUTCHours(23, 59, 59, 999);
 
-      query = query
-        .gte('published_at', startOfDay.toISOString())
-        .lte('published_at', endOfDay.toISOString());
+      params.push(startOfDay.toISOString());
+      where.push(`published_at >= $${params.length}`);
+      params.push(endOfDay.toISOString());
+      where.push(`published_at <= $${params.length}`);
     }
 
-    // Filter by category if provided
     if (category) {
-      query = query.eq('category', category);
+      params.push(category);
+      where.push(`category = $${params.length}`);
     }
 
-    const { data: posts, error } = await query;
-
-    if (error) {
-      console.error('Error fetching grouped posts:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const postsResult = await query(
+      `SELECT id, slug, title, excerpt, cover_image, category, tags, language,
+              published_at, read_time_minutes, view_count, translation_group_id
+       FROM blog_posts
+       WHERE ${where.join(' AND ')}
+       ORDER BY published_at DESC`,
+      params
+    );
+    const posts = postsResult.rows;
 
     // Group posts by translation_group_id
     const groupedMap = new Map<string, { en?: any; es?: any; published_at: string; translation_group_id: string }>();

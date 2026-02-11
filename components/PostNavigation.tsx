@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { BlogPost, categoryColors } from '@/lib/blog';
+import { categoryColors } from '@/lib/blog-shared';
+import type { BlogPost } from '@/lib/blog-shared';
 
 type Props = {
   previous: BlogPost | null;

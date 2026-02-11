@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BlogPost } from '@/lib/blog';
+import type { BlogPost } from '@/lib/blog-shared';
 import BlogPostForm from '@/components/admin/BlogPostForm';
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {

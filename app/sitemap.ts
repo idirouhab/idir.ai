@@ -1,18 +1,11 @@
 import { MetadataRoute } from 'next'
-import { getBlogClient } from '@/lib/blog'
+import { getBlogPostsForSitemap } from '@/lib/blog'
 import { getSiteUrl } from '@/lib/site-config'
 import { getPublishedCourses } from '@/lib/courses'
 
 async function getBlogPosts() {
   try {
-    const supabase = getBlogClient()
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('slug, language, updated_at, published_at, translation_group_id')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-
-    return data || []
+    return await getBlogPostsForSitemap()
   } catch (error) {
     console.error('Error fetching blog posts for sitemap:', error)
     return []

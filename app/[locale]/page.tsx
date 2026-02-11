@@ -1,37 +1,13 @@
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import {getTranslations} from 'next-intl/server';
-import dynamic from 'next/dynamic';
-
-// PERFORMANCE: Lazy load below-the-fold components (not visible on initial load)
-// This reduces initial JavaScript bundle and improves Time to Interactive
-const TrustedExperience = dynamic(() => import('@/components/TrustedExperience'), {
-  loading: () => <div className="min-h-[200px]" />,
-});
-
-const Services = dynamic(() => import('@/components/Services'), {
-  loading: () => <div className="min-h-[400px]" />,
-});
-
-const Speaking = dynamic(() => import('@/components/Speaking'), {
-  loading: () => <div className="min-h-[400px]" />,
-});
-
-const Results = dynamic(() => import('@/components/Results'), {
-  loading: () => <div className="min-h-[300px]" />,
-});
-
-const Process = dynamic(() => import('@/components/Process'), {
-  loading: () => <div className="min-h-[300px]" />,
-});
-
-const Contact = dynamic(() => import('@/components/Contact'), {
-  loading: () => <div className="min-h-[400px]" />,
-});
-
-const Footer = dynamic(() => import('@/components/Footer'), {
-  loading: () => <div className="min-h-[200px]" />,
-});
+import TrustedExperience from '@/components/TrustedExperience';
+import Services from '@/components/Services';
+import Speaking from '@/components/Speaking';
+import Results from '@/components/Results';
+import Process from '@/components/Process';
+import Contact from '@/components/Contact';
+import Footer from '@/components/Footer';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];

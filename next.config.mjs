@@ -88,6 +88,16 @@ const nextConfig = {
     ],
   },
 
+  // Prevent serverless traces from including build cache/sourcemaps
+  // which can exceed Netlify's 250 MB function limit.
+  outputFileTracingExcludes: {
+    '/*': [
+      '.next/cache/**',
+      '**/.next/cache/**',
+      '**/*.map',
+    ],
+  },
+
   // Headers for better caching, compression, and security
   async headers() {
     return [

@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { createClient } = require('@supabase/supabase-js');
+const { Client } = require('pg');
 
 // Load environment-specific .env file
 function loadEnv() {
@@ -49,8 +49,6 @@ function loadEnv() {
 loadEnv();
 
 // Configuration
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const MIGRATIONS_DIR = path.join(__dirname, '../migrations');
 
 // Colors for console output
@@ -71,27 +69,63 @@ function calculateChecksum(content) {
   return crypto.createHash('sha256').update(content).digest('hex');
 }
 
-async function getSupabaseClient() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables');
+function getDatabaseUrl() {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
   }
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+  const env = process.env.ENV || 'local';
+  if (env === 'local') {
+    return 'postgresql://postgres:postgres@127.0.0.1:5432/postgres';
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+  const dbHost = process.env.SUPABASE_DB_HOST;
+  const dbPort = process.env.SUPABASE_DB_PORT || '6543';
+
+  if (!supabaseUrl || !dbPassword || !dbHost) {
+    log('\n⚠️  Missing database credentials!', 'yellow');
+    log('\nProvide one of the following:\n', 'yellow');
+    log('Option 1 (Recommended): Set DATABASE_URL', 'blue');
+    log('  DATABASE_URL=postgresql://user:pass@host:port/db\n', 'gray');
+    log('Option 2: Set Supabase database variables', 'blue');
+    log('  NEXT_PUBLIC_SUPABASE_URL, SUPABASE_DB_PASSWORD, SUPABASE_DB_HOST', 'gray');
+    throw new Error('Missing database credentials.');
+  }
+
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
+
+  if (!projectRef) {
+    throw new Error('Could not extract project reference from NEXT_PUBLIC_SUPABASE_URL');
+  }
+
+  const connectionString = `postgresql://postgres.${projectRef}:${dbPassword}@${dbHost}:${dbPort}/postgres`;
+
+  log(`\nConnecting to: postgres.${projectRef}@${dbHost}:${dbPort}`, 'gray');
+
+  return connectionString;
 }
 
-async function ensureMigrationsTable(supabase) {
+async function getClient() {
+  const connectionString = getDatabaseUrl();
+  const client = new Client({ connectionString });
+  await client.connect();
+  return client;
+}
+
+async function ensureMigrationsTable(client) {
   const migrationTableSQL = fs.readFileSync(
     path.join(MIGRATIONS_DIR, '000_migrations_history.sql'),
     'utf8'
   );
 
-  const { error } = await supabase.rpc('exec_sql', { sql: migrationTableSQL });
-
-  if (error && !error.message.includes('already exists')) {
-    // Try direct query if RPC doesn't exist
+  try {
+    await client.query(migrationTableSQL);
+  } catch (error) {
     try {
-      await supabase.from('migrations_history').select('count').limit(0);
-    } catch (e) {
-      // Table doesn't exist, create it manually
+      await client.query('SELECT COUNT(*) FROM migrations_history LIMIT 0');
+    } catch (checkError) {
       log('⚠ Warning: Could not create migrations_history table automatically', 'yellow');
       log('Please run migrations/000_migrations_history.sql manually first', 'yellow');
       throw error;
@@ -99,21 +133,18 @@ async function ensureMigrationsTable(supabase) {
   }
 }
 
-async function getAppliedMigrations(supabase) {
-  const { data, error } = await supabase
-    .from('migrations_history')
-    .select('migration_name, checksum, applied_at')
-    .order('migration_name', { ascending: true });
-
-  if (error) {
-    // If table doesn't exist yet, return empty array
+async function getAppliedMigrations(client) {
+  try {
+    const result = await client.query(
+      'SELECT migration_name, checksum, applied_at FROM migrations_history ORDER BY migration_name ASC'
+    );
+    return result.rows || [];
+  } catch (error) {
     if (error.code === '42P01') {
       return [];
     }
     throw error;
   }
-
-  return data || [];
 }
 
 function getMigrationFiles() {
@@ -131,42 +162,22 @@ function getMigrationFiles() {
   });
 }
 
-async function runMigration(supabase, migration) {
+async function runMigration(client, migration) {
   log(`Running migration: ${migration.filename}`, 'blue');
 
   const startTime = Date.now();
 
   try {
-    // Split migration into individual statements and run them
-    const statements = migration.content
-      .split(';')
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
-
-    for (const statement of statements) {
-      const { error } = await supabase.rpc('exec_sql', {
-        sql: statement + ';'
-      });
-
-      if (error) {
-        // If RPC doesn't work, try alternative method
-        console.error('RPC method failed, attempting direct execution...');
-        throw error;
-      }
-    }
+    await client.query(migration.content);
 
     const executionTime = Date.now() - startTime;
 
-    // Record migration in history
-    const { error: insertError } = await supabase
-      .from('migrations_history')
-      .insert({
-        migration_name: migration.filename,
-        checksum: migration.checksum,
-        execution_time_ms: executionTime
-      });
-
-    if (insertError) throw insertError;
+    await client.query(
+      `INSERT INTO migrations_history (migration_name, checksum, execution_time_ms)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (migration_name) DO NOTHING`,
+      [migration.filename, migration.checksum, executionTime]
+    );
 
     log(`✓ Migration ${migration.filename} completed in ${executionTime}ms`, 'green');
     return true;
@@ -180,11 +191,11 @@ async function status() {
   log('\nMigration Status:', 'blue');
   log('================\n');
 
-  const supabase = await getSupabaseClient();
+  const client = await getClient();
 
   try {
-    await ensureMigrationsTable(supabase);
-    const applied = await getAppliedMigrations(supabase);
+    await ensureMigrationsTable(client);
+    const applied = await getAppliedMigrations(client);
     const allMigrations = getMigrationFiles();
 
     const appliedNames = new Set(applied.map(m => m.migration_name));
@@ -209,6 +220,8 @@ async function status() {
   } catch (error) {
     log(`Error checking status: ${error.message}`, 'red');
     process.exit(1);
+  } finally {
+    await client.end();
   }
 }
 
@@ -217,11 +230,11 @@ async function up(options = {}) {
 
   log('\nRunning migrations...', 'blue');
 
-  const supabase = await getSupabaseClient();
+  const client = await getClient();
 
   try {
-    await ensureMigrationsTable(supabase);
-    const applied = await getAppliedMigrations(supabase);
+    await ensureMigrationsTable(client);
+    const applied = await getAppliedMigrations(client);
     const allMigrations = getMigrationFiles();
 
     const appliedNames = new Set(applied.map(m => m.migration_name));
@@ -237,13 +250,15 @@ async function up(options = {}) {
     log(`Found ${toRun.length} migration(s) to run\n`);
 
     for (const migration of toRun) {
-      await runMigration(supabase, migration);
+      await runMigration(client, migration);
     }
 
     log('\n✓ All migrations completed successfully!', 'green');
   } catch (error) {
     log(`\n✗ Migration failed: ${error.message}`, 'red');
     process.exit(1);
+  } finally {
+    await client.end();
   }
 }
 

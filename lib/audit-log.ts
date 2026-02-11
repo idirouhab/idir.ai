@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
 import type { AppRole } from './app-roles';
+import { query } from '@/lib/db';
 
 export type AuditAction =
   | 'view_subscribers'
@@ -28,33 +28,25 @@ export type AuditLogEntry = {
  */
 export async function logAuditEvent(entry: AuditLogEntry): Promise<void> {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase credentials for audit logging');
-      return;
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { error } = await supabase.from('audit_logs').insert({
-      user_id: entry.userId,
-      user_email: entry.userEmail,
-      user_role: entry.userRole,
-      action: entry.action,
-      resource: entry.resource,
-      resource_id: entry.resourceId,
-      ip_address: entry.ipAddress,
-      user_agent: entry.userAgent,
-      metadata: entry.metadata,
-      success: entry.success ?? true,
-      error_message: entry.errorMessage,
-    });
-
-    if (error) {
-      console.error('Failed to log audit event:', error);
-    }
+    await query(
+      `INSERT INTO audit_logs (
+        user_id, user_email, user_role, action, resource, resource_id,
+        ip_address, user_agent, metadata, success, error_message
+       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+      [
+        entry.userId,
+        entry.userEmail,
+        entry.userRole,
+        entry.action,
+        entry.resource,
+        entry.resourceId || null,
+        entry.ipAddress || null,
+        entry.userAgent || null,
+        entry.metadata || null,
+        entry.success ?? true,
+        entry.errorMessage || null,
+      ]
+    );
   } catch (error) {
     // Don't throw - audit logging failures shouldn't break the main flow
     console.error('Error in audit logging:', error);

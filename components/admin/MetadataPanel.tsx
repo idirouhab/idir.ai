@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BlogCategory } from '@/lib/blog';
+import type { BlogCategory } from '@/lib/blog-shared';
 import Image from 'next/image';
 
 type MetadataPanelProps = {

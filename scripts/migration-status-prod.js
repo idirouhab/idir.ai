@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { createClient } = require('@supabase/supabase-js');
+const { Client } = require('pg');
 
 // Colors
 const colors = {
@@ -51,8 +51,6 @@ function loadProductionEnv() {
 
 loadProductionEnv();
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const MIGRATIONS_DIR = path.join(__dirname, '../migrations');
 
 function calculateChecksum(content) {
@@ -73,140 +71,147 @@ function getMigrationFiles() {
   });
 }
 
-async function main() {
-  log('\n=== PRODUCTION Migration Status ===', 'blue');
+function getDatabaseUrl() {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    log('Error: Missing SUPABASE credentials in .env.production.local', 'red');
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+  const dbHost = process.env.SUPABASE_DB_HOST;
+  const dbPort = process.env.SUPABASE_DB_PORT || '6543';
+
+  if (!supabaseUrl || !dbPassword || !dbHost) {
+    log('Error: Missing database credentials in .env.production.local', 'red');
     log('Required variables:', 'yellow');
-    log('  - NEXT_PUBLIC_SUPABASE_URL', 'yellow');
-    log('  - SUPABASE_SERVICE_ROLE_KEY', 'yellow');
+    log('  - DATABASE_URL (recommended)', 'yellow');
+    log('  - OR NEXT_PUBLIC_SUPABASE_URL + SUPABASE_DB_PASSWORD + SUPABASE_DB_HOST', 'yellow');
     process.exit(1);
   }
 
-  log(`Database: ${SUPABASE_URL}`, 'yellow');
-  log('');
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  if (!projectRef) {
+    throw new Error('Could not extract project reference from NEXT_PUBLIC_SUPABASE_URL');
+  }
 
-  // Check if migrations_history table exists
-  const { error: tableCheckError } = await supabase
-    .from('migrations_history')
-    .select('count')
-    .limit(0);
+  return `postgresql://postgres.${projectRef}:${dbPassword}@${dbHost}:${dbPort}/postgres`;
+}
 
-  if (tableCheckError) {
-    const isTableNotFoundError =
-      tableCheckError.code === 'PGRST116' ||
-      tableCheckError.code === '42P01' ||
-      tableCheckError.message.includes('not find the table') ||
-      tableCheckError.message.includes('does not exist');
+async function getClient() {
+  const connectionString = getDatabaseUrl();
+  const client = new Client({ connectionString });
+  await client.connect();
+  return client;
+}
 
-    if (isTableNotFoundError) {
+async function main() {
+  log('\n=== PRODUCTION Migration Status ===', 'blue');
+
+  const client = await getClient();
+
+  try {
+    log('Checking migrations_history table...', 'blue');
+    await client.query('SELECT 1 FROM migrations_history LIMIT 1');
+    log('✓ migrations_history table exists', 'green');
+    log('');
+
+    log('Scanning migrations folder...', 'blue');
+    const allMigrations = getMigrationFiles();
+
+    const result = await client.query(
+      'SELECT migration_name, checksum, applied_at, execution_time_ms, applied_by FROM migrations_history ORDER BY applied_at DESC'
+    );
+
+    const appliedMigrations = result.rows || [];
+
+    const appliedNames = new Set(appliedMigrations.map(m => m.migration_name));
+    const appliedMap = new Map(
+      appliedMigrations.map(m => [m.migration_name, m])
+    );
+
+    const applied = allMigrations.filter(m => appliedNames.has(m.filename));
+    const pending = allMigrations.filter(m => !appliedNames.has(m.filename));
+
+    log('');
+    log('Summary:', 'blue');
+    log(`  Total migrations:   ${allMigrations.length}`, 'blue');
+    log(`  Applied:            ${applied.length}`, applied.length > 0 ? 'green' : 'gray');
+    log(`  Pending:            ${pending.length}`, pending.length > 0 ? 'yellow' : 'gray');
+    log('');
+
+    if (applied.length > 0) {
+      log('✓ Applied Migrations:', 'green');
+      log('');
+
+      log('         Migration          |     Applied At      | Duration |           User', 'gray');
+      log('----------------------------+--------------------+----------+---------------------------', 'gray');
+
+      applied.forEach(migration => {
+        const info = appliedMap.get(migration.filename);
+        const date = new Date(info.applied_at);
+        const dateStr = date.toISOString().replace('T', ' ').substring(0, 19);
+        const duration = info.execution_time_ms || 0;
+        const user = (info.applied_by || 'unknown').substring(0, 25);
+
+        const name = migration.filename.length > 24
+          ? migration.filename.substring(0, 21) + '...'
+          : migration.filename;
+
+        log(
+          ` ${name.padEnd(26)} | ${dateStr} | ${String(duration).padStart(4)}ms${duration === 0 ? '    ' : ''} | ${user}`,
+          'gray'
+        );
+      });
+      log('');
+    }
+
+    if (pending.length > 0) {
+      log('⏳ Pending Migrations:', 'yellow');
+      log('');
+      pending.forEach(m => {
+        log(`  ○ ${m.filename}`, 'gray');
+      });
+      log('');
+      log('To apply pending migrations:', 'blue');
+      log('  ENV=production node scripts/migrate.js up', 'blue');
+    } else {
+      log('  None - all migrations are applied!', 'green');
+    }
+
+    log('');
+
+    const mismatches = applied.filter(m => {
+      const info = appliedMap.get(m.filename);
+      return info && info.checksum && info.checksum !== m.checksum;
+    });
+
+    if (mismatches.length > 0) {
+      log('⚠ WARNING: Checksum Mismatches Detected!', 'yellow');
+      log('');
+      log('These migrations have been modified after being applied:', 'yellow');
+      mismatches.forEach(m => {
+        log(`  ⚠ ${m.filename}`, 'red');
+      });
+      log('');
+      log('This could indicate:', 'yellow');
+      log('  - The migration file was edited after deployment', 'gray');
+      log('  - Local and production files are out of sync', 'gray');
+      log('');
+    }
+  } catch (error) {
+    if (error.code === '42P01') {
       log('✗ migrations_history table does not exist', 'red');
       log('');
       log('Run this to create the tracking table:', 'yellow');
       log('  node scripts/setup-migrations-prod.js', 'yellow');
-    } else {
-      log(`Unexpected error: ${tableCheckError.message}`, 'red');
+      process.exit(1);
     }
+
+    log(`Unexpected error: ${error.message}`, 'red');
     process.exit(1);
-  }
-
-  log('✓ migrations_history table exists', 'green');
-  log('');
-
-  // Get all migration files
-  log('Scanning migrations folder...', 'blue');
-  const allMigrations = getMigrationFiles();
-
-  // Get applied migrations
-  const { data: appliedMigrations, error: fetchError } = await supabase
-    .from('migrations_history')
-    .select('migration_name, checksum, applied_at, execution_time_ms, applied_by')
-    .order('applied_at', { ascending: false });
-
-  if (fetchError) {
-    log(`Error fetching migrations: ${fetchError.message}`, 'red');
-    process.exit(1);
-  }
-
-  const appliedNames = new Set((appliedMigrations || []).map(m => m.migration_name));
-  const appliedMap = new Map(
-    (appliedMigrations || []).map(m => [m.migration_name, m])
-  );
-
-  const applied = allMigrations.filter(m => appliedNames.has(m.filename));
-  const pending = allMigrations.filter(m => !appliedNames.has(m.filename));
-
-  log('');
-  log('Summary:', 'blue');
-  log(`  Total migrations:   ${allMigrations.length}`, 'blue');
-  log(`  Applied:            ${applied.length}`, applied.length > 0 ? 'green' : 'gray');
-  log(`  Pending:            ${pending.length}`, pending.length > 0 ? 'yellow' : 'gray');
-  log('');
-
-  if (applied.length > 0) {
-    log('✓ Applied Migrations:', 'green');
-    log('');
-
-    // Show table header
-    log('         Migration          |     Applied At      | Duration |           User', 'gray');
-    log('----------------------------+--------------------+----------+---------------------------', 'gray');
-
-    applied.forEach(migration => {
-      const info = appliedMap.get(migration.filename);
-      const date = new Date(info.applied_at);
-      const dateStr = date.toISOString().replace('T', ' ').substring(0, 19);
-      const duration = info.execution_time_ms || 0;
-      const user = (info.applied_by || 'unknown').substring(0, 25);
-
-      // Truncate filename if needed
-      const name = migration.filename.length > 24
-        ? migration.filename.substring(0, 21) + '...'
-        : migration.filename;
-
-      log(
-        ` ${name.padEnd(26)} | ${dateStr} | ${String(duration).padStart(4)}ms${duration === 0 ? '    ' : ''} | ${user}`,
-        'gray'
-      );
-    });
-    log('');
-  }
-
-  if (pending.length > 0) {
-    log('⏳ Pending Migrations:', 'yellow');
-    log('');
-    pending.forEach(m => {
-      log(`  ○ ${m.filename}`, 'gray');
-    });
-    log('');
-    log('To apply pending migrations:', 'blue');
-    log('  ENV=production node scripts/migrate.js up', 'blue');
-  } else {
-    log('  None - all migrations are applied!', 'green');
-  }
-
-  log('');
-
-  // Check for checksum mismatches
-  const mismatches = applied.filter(m => {
-    const info = appliedMap.get(m.filename);
-    return info && info.checksum && info.checksum !== m.checksum;
-  });
-
-  if (mismatches.length > 0) {
-    log('⚠ WARNING: Checksum Mismatches Detected!', 'yellow');
-    log('');
-    log('These migrations have been modified after being applied:', 'yellow');
-    mismatches.forEach(m => {
-      log(`  ⚠ ${m.filename}`, 'red');
-    });
-    log('');
-    log('This could indicate:', 'yellow');
-    log('  - The migration file was edited after deployment', 'gray');
-    log('  - Local and production files are out of sync', 'gray');
-    log('');
+  } finally {
+    await client.end();
   }
 }
 

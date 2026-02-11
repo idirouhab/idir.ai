@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * Public API endpoint to get published blog posts
@@ -34,33 +34,27 @@ export async function GET(request: NextRequest) {
     // Debug logging
     console.log('[blog-public] Query params:', { limitParam, languageParam, sortParam, limit, language });
 
-    const supabase = getBlogClient();
     const baseUrl = 'https://idir.ai';
+    const orderClause = ascending ? 'ASC' : 'DESC';
 
     // If specific language requested, return only that language
     if (language) {
       console.log(`[blog-public] Fetching posts for language: ${language}, limit: ${limit}`);
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-        .eq('status', 'published')
-        .eq('language', language)
-        .order('published_at', { ascending })
-        .limit(limit);
+      const result = await query(
+        `SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.cover_image, p.category,
+                p.tags, p.language, p.read_time_minutes, p.published_at, p.created_at,
+                p.updated_at, p.meta_description, p.author_id, u.first_name, u.last_name
+         FROM blog_posts p
+         LEFT JOIN users u ON u.id = p.author_id
+         WHERE p.status = 'published' AND p.language = $1
+         ORDER BY p.published_at ${orderClause}
+         LIMIT $2`,
+        [language, limit]
+      );
 
-      if (error) {
-        console.error(`Error fetching ${language} posts:`, error);
-        return NextResponse.json(
-          { success: false, error: 'Failed to fetch blog posts' },
-          { status: 500 }
-        );
-      }
-
-      // Add URL to each post
-      const postsWithUrls = (data || []).map((post: any) => ({
+      const postsWithUrls = (result.rows || []).map((post: any) => ({
         ...post,
-        author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-        users: undefined,
+        author_name: post.first_name ? `${post.first_name} ${post.last_name || ''}`.trim() : null,
         url: `${baseUrl}/${post.language}/blog/${post.slug}`,
       }));
 
@@ -83,42 +77,40 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch posts for both languages
-    const { data: enPosts, error: enError } = await supabase
-      .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .eq('status', 'published')
-      .eq('language', 'en')
-      .order('published_at', { ascending })
-      .limit(limit);
+    const enResult = await query(
+      `SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.cover_image, p.category,
+              p.tags, p.language, p.read_time_minutes, p.published_at, p.created_at,
+              p.updated_at, p.meta_description, p.author_id, u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       WHERE p.status = 'published' AND p.language = 'en'
+       ORDER BY p.published_at ${orderClause}
+       LIMIT $1`,
+      [limit]
+    );
 
-    const { data: esPosts, error: esError } = await supabase
-      .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .eq('status', 'published')
-      .eq('language', 'es')
-      .order('published_at', { ascending })
-      .limit(limit);
-
-    if (enError) {
-      console.error('Error fetching English posts:', enError);
-    }
-
-    if (esError) {
-      console.error('Error fetching Spanish posts:', esError);
-    }
+    const esResult = await query(
+      `SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.cover_image, p.category,
+              p.tags, p.language, p.read_time_minutes, p.published_at, p.created_at,
+              p.updated_at, p.meta_description, p.author_id, u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       WHERE p.status = 'published' AND p.language = 'es'
+       ORDER BY p.published_at ${orderClause}
+       LIMIT $1`,
+      [limit]
+    );
 
     // Add URLs to posts
-    const enPostsWithUrls = (enPosts || []).map((post: any) => ({
+    const enPostsWithUrls = (enResult.rows || []).map((post: any) => ({
       ...post,
-      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-      users: undefined,
+      author_name: post.first_name ? `${post.first_name} ${post.last_name || ''}`.trim() : null,
       url: `${baseUrl}/en/blog/${post.slug}`,
     }));
 
-    const esPostsWithUrls = (esPosts || []).map((post: any) => ({
+    const esPostsWithUrls = (esResult.rows || []).map((post: any) => ({
       ...post,
-      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-      users: undefined,
+      author_name: post.first_name ? `${post.first_name} ${post.last_name || ''}`.trim() : null,
       url: `${baseUrl}/es/blog/${post.slug}`,
     }));
 

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { query } from '@/lib/db';
 
 /**
  * Session Blacklist Manager
@@ -7,23 +7,6 @@ import { createClient } from '@supabase/supabase-js';
  * in the database. When a user logs out or a token needs to be invalidated,
  * it's added to the blacklist to prevent further use.
  */
-
-// Create Supabase admin client for blacklist operations
-function getBlacklistClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase environment variables');
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-}
 
 export type RevocationReason = 'logout' | 'security' | 'admin_action';
 
@@ -51,22 +34,18 @@ export async function blacklistToken(
   reason: RevocationReason = 'logout'
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = getBlacklistClient();
-
-    const { error } = await supabase.from('token_blacklist').insert({
-      token_jti: jti,
-      user_id: userId,
-      expires_at: expiresAt.toISOString(),
-      revocation_reason: reason,
-    });
-
-    if (error) {
-      // Ignore duplicate key errors (token already blacklisted)
-      if (error.code === '23505') {
+    try {
+      await query(
+        `INSERT INTO token_blacklist (token_jti, user_id, expires_at, revocation_reason)
+         VALUES ($1, $2, $3, $4)`,
+        [jti, userId, expiresAt.toISOString(), reason]
+      );
+    } catch (err: any) {
+      if (err?.code === '23505') {
         return { success: true };
       }
-      console.error('Error blacklisting token:', error);
-      return { success: false, error: error.message };
+      console.error('Error blacklisting token:', err);
+      return { success: false, error: err?.message || 'Failed to blacklist token' };
     }
 
     return { success: true };
@@ -83,24 +62,11 @@ export async function blacklistToken(
  */
 export async function isTokenBlacklisted(jti: string): Promise<boolean> {
   try {
-    const supabase = getBlacklistClient();
-
-    const { data, error } = await supabase
-      .from('token_blacklist')
-      .select('token_jti')
-      .eq('token_jti', jti)
-      .single();
-
-    if (error) {
-      // If no rows found, token is not blacklisted
-      if (error.code === 'PGRST116') {
-        return false;
-      }
-      console.error('Error checking blacklist:', error);
-      return false;
-    }
-
-    return !!data;
+    const result = await query(
+      `SELECT token_jti FROM token_blacklist WHERE token_jti = $1 LIMIT 1`,
+      [jti]
+    );
+    return result.rows.length > 0;
   } catch (error) {
     console.error('Error in isTokenBlacklisted:', error);
     return false;
@@ -142,19 +108,14 @@ export async function revokeAllUserTokens(
  */
 export async function cleanupExpiredTokens(): Promise<{ success: boolean; count: number; error?: string }> {
   try {
-    const supabase = getBlacklistClient();
+    const result = await query(
+      `DELETE FROM token_blacklist
+       WHERE expires_at < $1
+       RETURNING token_jti`,
+      [new Date().toISOString()]
+    );
 
-    const { error, count } = await supabase
-      .from('token_blacklist')
-      .delete()
-      .lt('expires_at', new Date().toISOString());
-
-    if (error) {
-      console.error('Error cleaning up blacklist:', error);
-      return { success: false, count: 0, error: error.message };
-    }
-
-    return { success: true, count: count || 0 };
+    return { success: true, count: result.rowCount || 0 };
   } catch (error) {
     console.error('Error in cleanupExpiredTokens:', error);
     return { success: false, count: 0, error: 'Failed to cleanup expired tokens' };
@@ -168,20 +129,15 @@ export async function cleanupExpiredTokens(): Promise<{ success: boolean; count:
  */
 export async function getUserBlacklistedTokens(userId: string): Promise<BlacklistEntry[]> {
   try {
-    const supabase = getBlacklistClient();
+    const result = await query(
+      `SELECT *
+       FROM token_blacklist
+       WHERE user_id = $1
+       ORDER BY revoked_at DESC`,
+      [userId]
+    );
 
-    const { data, error } = await supabase
-      .from('token_blacklist')
-      .select('*')
-      .eq('user_id', userId)
-      .order('revoked_at', { ascending: false });
-
-    if (error) {
-      console.error('Error getting user blacklisted tokens:', error);
-      return [];
-    }
-
-    return data as BlacklistEntry[];
+    return result.rows as BlacklistEntry[];
   } catch (error) {
     console.error('Error in getUserBlacklistedTokens:', error);
     return [];

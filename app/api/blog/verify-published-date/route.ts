@@ -1,24 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * Verification endpoint to check if published_at is properly set
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = getAdminBlogClient();
-
     // Get all published posts with their published_at dates
-    const { data: posts, error } = await supabase
-      .from('blog_posts')
-      .select('id, slug, title, status, published_at, created_at, language')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .limit(10);
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const result = await query(
+      `SELECT id, slug, title, status, published_at, created_at, language
+       FROM blog_posts
+       WHERE status = 'published'
+       ORDER BY published_at DESC
+       LIMIT 10`
+    );
+    const posts = result.rows;
 
     // Check for any published posts without published_at
     const missingDates = posts?.filter(p => !p.published_at) || [];

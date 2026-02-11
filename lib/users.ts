@@ -1,7 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 import { AppRole } from './app-roles';
 import { isAdmin } from './app-roles';
+import { getClient, query } from '@/lib/db';
 
 // User type definition
 export type User = {
@@ -24,21 +24,58 @@ export type UserInput = {
   role: AppRole;
 };
 
-// Get Supabase admin client (bypasses RLS)
-function getAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+async function getUserWithRolesById(userId: string): Promise<User | null> {
+  const result = await query(
+    `SELECT
+      u.id, u.email, u.first_name, u.last_name, u.is_active, u.created_at, u.updated_at,
+      COALESCE(array_agg(ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}') AS roles
+     FROM users u
+     LEFT JOIN user_roles ur ON u.id = ur.user_id
+     WHERE u.id = $1
+     GROUP BY u.id
+     LIMIT 1`,
+    [userId]
+  );
 
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase admin environment variables');
-  }
+  if (result.rows.length === 0) return null;
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    email: row.email,
+    first_name: row.first_name,
+    last_name: row.last_name,
+    roles: row.roles as AppRole[],
+    is_active: row.is_active,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  } as User;
+}
 
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
+async function getUserWithRolesByEmail(email: string): Promise<User | null> {
+  const result = await query(
+    `SELECT
+      u.id, u.email, u.first_name, u.last_name, u.is_active, u.created_at, u.updated_at,
+      COALESCE(array_agg(ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}') AS roles
+     FROM users u
+     LEFT JOIN user_roles ur ON u.id = ur.user_id
+     WHERE u.email = $1
+     GROUP BY u.id
+     LIMIT 1`,
+    [email.toLowerCase().trim()]
+  );
+
+  if (result.rows.length === 0) return null;
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    email: row.email,
+    first_name: row.first_name,
+    last_name: row.last_name,
+    roles: row.roles as AppRole[],
+    is_active: row.is_active,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  } as User;
 }
 
 // Hash password using bcrypt
@@ -54,8 +91,6 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 
 // Create a new user
 export async function createUser(input: UserInput, isActive: boolean = true): Promise<User> {
-  const supabase = getAdminClient();
-
   // Hash password
   const passwordHash = await hashPassword(input.password);
 
@@ -63,103 +98,52 @@ export async function createUser(input: UserInput, isActive: boolean = true): Pr
   const [firstName, ...lastParts] = trimmedName.split(' ').filter(Boolean);
   const lastName = lastParts.join(' ');
 
-  const { data, error } = await supabase
-    .from('users')
-    .insert([
-      {
-        email: input.email.toLowerCase().trim(),
-        password_hash: passwordHash,
-        first_name: firstName || 'Admin',
-        last_name: lastName || 'User',
-        is_active: isActive,
-        email_verified: true,
-      },
-    ])
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at')
-    .single();
+  const client = await getClient();
+  try {
+    await client.query('BEGIN');
 
-  if (error) {
+    const userResult = await client.query(
+      `INSERT INTO users (email, password_hash, first_name, last_name, is_active, email_verified)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, email, first_name, last_name, is_active, created_at, updated_at`,
+      [
+        input.email.toLowerCase().trim(),
+        passwordHash,
+        firstName || 'Admin',
+        lastName || 'User',
+        isActive,
+        true,
+      ]
+    );
+
+    const created = userResult.rows[0];
+    await client.query(
+      `INSERT INTO user_roles (user_id, role) VALUES ($1, $2)`,
+      [created.id, input.role]
+    );
+
+    await client.query('COMMIT');
+    return {
+      ...(created as Omit<User, 'roles'>),
+      roles: [input.role],
+    } as User;
+  } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error creating user:', error);
-    throw new Error(error.message);
+    throw error;
+  } finally {
+    client.release();
   }
-
-  // Assign admin role
-  const { error: roleError } = await supabase
-    .from('user_roles')
-    .insert([{ user_id: data.id, role: input.role }]);
-
-  if (roleError) {
-    console.error('Error assigning role:', roleError);
-    throw new Error(roleError.message);
-  }
-
-  return {
-    ...(data as Omit<User, 'roles'>),
-    roles: [input.role],
-  } as User;
 }
 
 // Get user by email
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const supabase = getAdminClient();
-
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .eq('email', email.toLowerCase().trim())
-    .single();
-
-  if (error) {
-    if (error.code === 'PGRST116') {
-      // No rows returned
-      return null;
-    }
-    console.error('Error fetching user:', error);
-    throw new Error(error.message);
-  }
-
-  const roles = (data.user_roles || []).map((r: any) => r.role) as AppRole[];
-  return {
-    id: data.id,
-    email: data.email,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    roles,
-    is_active: data.is_active,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-  } as User;
+  return getUserWithRolesByEmail(email);
 }
 
 // Get user by ID
 export async function getUserById(id: string): Promise<User | null> {
-  const supabase = getAdminClient();
-
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .eq('id', id)
-    .single();
-
-  if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
-    console.error('Error fetching user:', error);
-    throw new Error(error.message);
-  }
-
-  const roles = (data.user_roles || []).map((r: any) => r.role) as AppRole[];
-  return {
-    id: data.id,
-    email: data.email,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    roles,
-    is_active: data.is_active,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-  } as User;
+  return getUserWithRolesById(id);
 }
 
 // Authenticate user (login)
@@ -191,41 +175,33 @@ export async function authenticateUser(
 
 // Get password hash for a user (internal use only)
 async function getPasswordHash(userId: string): Promise<string | null> {
-  const supabase = getAdminClient();
+  const result = await query(
+    `SELECT password_hash FROM users WHERE id = $1 LIMIT 1`,
+    [userId]
+  );
 
-  const { data, error } = await supabase
-    .from('users')
-    .select('password_hash')
-    .eq('id', userId)
-    .single();
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data.password_hash;
+  if (result.rows.length === 0) return null;
+  return result.rows[0].password_hash;
 }
 
 // List all users (owner only)
 export async function listUsers(): Promise<User[]> {
-  const supabase = getAdminClient();
+  const result = await query(
+    `SELECT
+      u.id, u.email, u.first_name, u.last_name, u.is_active, u.created_at, u.updated_at,
+      COALESCE(array_agg(ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}') AS roles
+     FROM users u
+     LEFT JOIN user_roles ur ON u.id = ur.user_id
+     GROUP BY u.id
+     ORDER BY u.created_at DESC`
+  );
 
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error listing users:', error);
-    throw new Error(error.message);
-  }
-
-  return (data || []).map((row: any) => ({
+  return (result.rows || []).map((row: any) => ({
     id: row.id,
     email: row.email,
     first_name: row.first_name,
     last_name: row.last_name,
-    roles: (row.user_roles || []).map((r: any) => r.role),
+    roles: row.roles,
     is_active: row.is_active,
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -234,106 +210,49 @@ export async function listUsers(): Promise<User[]> {
 
 // Update user status (owner only)
 export async function updateUserStatus(userId: string, isActive: boolean): Promise<User> {
-  const supabase = getAdminClient();
-
-  const { data, error } = await supabase
-    .from('users')
-    .update({ is_active: isActive })
-    .eq('id', userId)
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .single();
-
-  if (error) {
-    console.error('Error updating user status:', error);
-    throw new Error(error.message);
-  }
-
-  return {
-    id: data.id,
-    email: data.email,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    roles: (data.user_roles || []).map((r: any) => r.role),
-    is_active: data.is_active,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-  } as User;
+  await query(`UPDATE users SET is_active = $1 WHERE id = $2`, [isActive, userId]);
+  const updated = await getUserWithRolesById(userId);
+  if (!updated) throw new Error('User not found');
+  return updated;
 }
 
 // Delete user (owner only)
 export async function deleteUser(userId: string): Promise<void> {
-  const supabase = getAdminClient();
-
-  const { error } = await supabase.from('users').delete().eq('id', userId);
-
-  if (error) {
-    console.error('Error deleting user:', error);
-    throw new Error(error.message);
-  }
+  await query(`DELETE FROM users WHERE id = $1`, [userId]);
 }
 
 // Update user password
 export async function updateUserPassword(userId: string, newPassword: string): Promise<void> {
-  const supabase = getAdminClient();
   const passwordHash = await hashPassword(newPassword);
-
-  const { error } = await supabase
-    .from('users')
-    .update({ password_hash: passwordHash })
-    .eq('id', userId);
-
-  if (error) {
-    console.error('Error updating password:', error);
-    throw new Error(error.message);
-  }
+  await query(`UPDATE users SET password_hash = $1 WHERE id = $2`, [passwordHash, userId]);
 }
 
 // Update user role (owner only)
 export async function updateUserRole(userId: string, newRole: AppRole): Promise<User> {
-  const supabase = getAdminClient();
-
-  // Replace admin roles (super_admin/billing_admin) while preserving other roles
-  const { error: deleteError } = await supabase
-    .from('user_roles')
-    .delete()
-    .eq('user_id', userId)
-    .in('role', ['super_admin', 'billing_admin']);
-
-  if (deleteError) {
-    console.error('Error removing existing admin roles:', deleteError);
-    throw new Error(deleteError.message);
-  }
-
-  const { error: insertError } = await supabase
-    .from('user_roles')
-    .insert([{ user_id: userId, role: newRole }]);
-
-  if (insertError) {
-    console.error('Error updating user role:', insertError);
-    throw new Error(insertError.message);
-  }
-
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .eq('id', userId)
-    .single();
-
-  if (error) {
+  const client = await getClient();
+  try {
+    await client.query('BEGIN');
+    await client.query(
+      `DELETE FROM user_roles
+       WHERE user_id = $1 AND role IN ('super_admin', 'billing_admin')`,
+      [userId]
+    );
+    await client.query(
+      `INSERT INTO user_roles (user_id, role) VALUES ($1, $2)`,
+      [userId, newRole]
+    );
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error updating user role:', error);
-    throw new Error(error.message);
+    throw error;
+  } finally {
+    client.release();
   }
 
-  return {
-    id: data.id,
-    email: data.email,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    roles: (data.user_roles || []).map((r: any) => r.role),
-    is_active: data.is_active,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-  } as User;
+  const updated = await getUserWithRolesById(userId);
+  if (!updated) throw new Error('User not found');
+  return updated;
 }
 
 // Update user details (name, email, social profiles)
@@ -341,8 +260,6 @@ export async function updateUserDetails(
   userId: string,
   updates: { name?: string; email?: string; linkedin_url?: string; twitter_url?: string }
 ): Promise<User> {
-  const supabase = getAdminClient();
-
   const updateData: any = {};
   if (updates.name) {
     const trimmedName = updates.name.trim();
@@ -354,26 +271,17 @@ export async function updateUserDetails(
   if (updates.linkedin_url !== undefined) updateData.linkedin_url = updates.linkedin_url || null;
   if (updates.twitter_url !== undefined) updateData.twitter_url = updates.twitter_url || null;
 
-  const { data, error } = await supabase
-    .from('users')
-    .update(updateData)
-    .eq('id', userId)
-    .select('id, email, first_name, last_name, is_active, created_at, updated_at, user_roles(role)')
-    .single();
-
-  if (error) {
-    console.error('Error updating user details:', error);
-    throw new Error(error.message);
+  const fields = Object.keys(updateData);
+  if (fields.length > 0) {
+    const sets = fields.map((field, idx) => `${field} = $${idx + 1}`).join(', ');
+    const values = fields.map((f) => updateData[f]);
+    await query(`UPDATE users SET ${sets} WHERE id = $${fields.length + 1}`, [
+      ...values,
+      userId,
+    ]);
   }
 
-  return {
-    id: data.id,
-    email: data.email,
-    first_name: data.first_name,
-    last_name: data.last_name,
-    roles: (data.user_roles || []).map((r: any) => r.role),
-    is_active: data.is_active,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-  } as User;
+  const updated = await getUserWithRolesById(userId);
+  if (!updated) throw new Error('User not found');
+  return updated;
 }

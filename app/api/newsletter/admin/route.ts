@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { createClient } from '@supabase/supabase-js';
 import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 import { primaryAdminRole } from '@/lib/app-roles';
+import { query } from '@/lib/db';
 
 /**
  * Admin-only API endpoint to get newsletter subscribers
@@ -21,65 +21,57 @@ export async function GET(request: Request) {
       return authResult.response;
     }
 
-    // Initialize Supabase
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase credentials');
-      return NextResponse.json(
-        { error: 'Service configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const filterStatus = searchParams.get('filter') || 'all';
     const filterLanguage = searchParams.get('lang') || 'all';
     const filterWelcomed = searchParams.get('welcomed') || 'all';
 
-    // Build query
-    let query = supabase
-      .from('newsletter_subscribers')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false });
+    const where: string[] = [];
+    const params: any[] = [];
 
-    // Apply filters
     if (filterStatus === 'subscribed') {
-      query = query.eq('is_subscribed', true);
+      params.push(true);
+      where.push(`is_subscribed = $${params.length}`);
     } else if (filterStatus === 'unsubscribed') {
-      query = query.eq('is_subscribed', false);
+      params.push(false);
+      where.push(`is_subscribed = $${params.length}`);
     }
 
     if (filterLanguage === 'en' || filterLanguage === 'es') {
-      query = query.eq('lang', filterLanguage);
+      params.push(filterLanguage);
+      where.push(`lang = $${params.length}`);
     }
 
     if (filterWelcomed === 'true') {
-      query = query.eq('welcomed', true);
+      params.push(true);
+      where.push(`welcomed = $${params.length}`);
     } else if (filterWelcomed === 'false') {
-      query = query.eq('welcomed', false);
+      params.push(false);
+      where.push(`welcomed = $${params.length}`);
     }
 
-    const { data, error, count } = await query;
+    const whereClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
 
-    if (error) {
-      console.error('Error fetching subscribers:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch subscribers' },
-        { status: 500 }
-      );
-    }
+    const subscribersResult = await query(
+      `SELECT *, COUNT(*) OVER()::int AS total_count
+       FROM newsletter_subscribers
+       ${whereClause}
+       ORDER BY created_at DESC`,
+      params
+    );
+
+    const data = subscribersResult.rows;
+    const count = data.length > 0 ? data[0].total_count : 0;
 
     // Get feedback email tracking info for all subscribers
-    const { data: feedbackData } = await supabase
-      .from('newsletter_feedback')
-      .select('subscriber_email, sent_at, campaign_date')
-      .not('sent_at', 'is', null)
-      .order('sent_at', { ascending: false });
+    const feedbackResult = await query(
+      `SELECT subscriber_email, sent_at, campaign_date
+       FROM newsletter_feedback
+       WHERE sent_at IS NOT NULL
+       ORDER BY sent_at DESC`
+    );
+    const feedbackData = feedbackResult.rows;
 
     // Create a map of email -> most recent feedback sent date
     const feedbackMap = new Map<string, { sent_at: string; campaign_date: string }>();
@@ -102,22 +94,39 @@ export async function GET(request: Request) {
     }));
 
     // Get statistics
-    const { data: stats } = await supabase
-      .from('newsletter_subscribers')
-      .select('lang, is_subscribed, welcomed, subscribe_newsletter, subscribe_podcast');
+    const statsResult = await query(
+      `SELECT
+         COUNT(*)::int AS total,
+         COUNT(*) FILTER (WHERE is_subscribed) ::int AS subscribed,
+         COUNT(*) FILTER (WHERE NOT is_subscribed) ::int AS unsubscribed,
+         COUNT(*) FILTER (WHERE lang = 'en') ::int AS en,
+         COUNT(*) FILTER (WHERE lang = 'es') ::int AS es,
+         COUNT(*) FILTER (WHERE welcomed) ::int AS welcomed,
+         COUNT(*) FILTER (WHERE NOT welcomed) ::int AS notwelcomed,
+         COUNT(*) FILTER (WHERE subscribe_newsletter) ::int AS newslettersubscribers,
+         COUNT(*) FILTER (WHERE subscribe_podcast) ::int AS podcastsubscribers
+       FROM newsletter_subscribers`
+    );
+    const statsRow = statsResult.rows[0] || {};
+    const feedbackCountResult = await query(
+      `SELECT COUNT(DISTINCT subscriber_email)::int AS feedback_sent
+       FROM newsletter_feedback
+       WHERE sent_at IS NOT NULL`
+    );
+    const feedbackSent = feedbackCountResult.rows[0]?.feedback_sent || 0;
 
     const statistics = {
-      total: count || 0,
-      subscribed: stats?.filter(s => s.is_subscribed).length || 0,
-      unsubscribed: stats?.filter(s => !s.is_subscribed).length || 0,
-      en: stats?.filter(s => s.lang === 'en').length || 0,
-      es: stats?.filter(s => s.lang === 'es').length || 0,
-      welcomed: stats?.filter(s => s.welcomed).length || 0,
-      notWelcomed: stats?.filter(s => !s.welcomed).length || 0,
-      feedbackSent: feedbackMap.size,
-      feedbackNotSent: (count || 0) - feedbackMap.size,
-      newsletterSubscribers: stats?.filter(s => s.subscribe_newsletter).length || 0,
-      podcastSubscribers: stats?.filter(s => s.subscribe_podcast).length || 0,
+      total: statsRow.total || 0,
+      subscribed: statsRow.subscribed || 0,
+      unsubscribed: statsRow.unsubscribed || 0,
+      en: statsRow.en || 0,
+      es: statsRow.es || 0,
+      welcomed: statsRow.welcomed || 0,
+      notWelcomed: statsRow.notwelcomed || 0,
+      feedbackSent,
+      feedbackNotSent: (statsRow.total || 0) - feedbackSent,
+      newsletterSubscribers: statsRow.newslettersubscribers || 0,
+      podcastSubscribers: statsRow.podcastsubscribers || 0,
     };
 
     // Audit log: Track subscriber data access

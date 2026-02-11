@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { getBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * Get ALL posts (published + drafts) grouped by translation_group_id for admin
@@ -20,21 +20,14 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '100');
 
-    const supabase = getBlogClient();
-
-    // Build query - fetch ALL posts (published + drafts)
-    let query = supabase
-      .from('blog_posts')
-      .select('id, slug, title, excerpt, cover_image, category, tags, language, published_at, read_time_minutes, view_count, translation_group_id, status')
-      .not('translation_group_id', 'is', null)
-      .order('created_at', { ascending: false });
-
-    const { data: posts, error } = await query;
-
-    if (error) {
-      console.error('Error fetching grouped posts:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const postsResult = await query(
+      `SELECT id, slug, title, excerpt, cover_image, category, tags, language,
+              published_at, read_time_minutes, view_count, translation_group_id, status
+       FROM blog_posts
+       WHERE translation_group_id IS NOT NULL
+       ORDER BY created_at DESC`
+    );
+    const posts = postsResult.rows;
 
     // Group posts by translation_group_id
     const groupedMap = new Map<string, { en?: any; es?: any; published_at: string | null; translation_group_id: string }>();

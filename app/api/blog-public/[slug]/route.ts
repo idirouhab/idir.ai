@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * Public API endpoint to get a single published blog post by ID
@@ -35,44 +35,37 @@ export async function GET(
       );
     }
 
-    const supabase = getBlogClient();
     const baseUrl = 'https://idir.ai';
 
     // Fetch the specific post by ID
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('id, title, slug, excerpt, content, cover_image, category, tags, language, read_time_minutes, published_at, created_at, updated_at, meta_description, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .eq('status', 'published')
-      .eq('id', id)
-      .eq('language', languageParam)
-      .single();
+    const result = await query(
+      `SELECT p.id, p.title, p.slug, p.excerpt, p.content, p.cover_image, p.category,
+              p.tags, p.language, p.read_time_minutes, p.published_at, p.created_at,
+              p.updated_at, p.meta_description, p.author_id, u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       WHERE p.status = 'published' AND p.id = $1 AND p.language = $2
+       LIMIT 1`,
+      [id, languageParam]
+    );
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // No rows returned
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Blog post not found'
-          },
-          { status: 404 }
-        );
-      }
-
-      console.error(`Error fetching post ${id}:`, error);
+    if (result.rows.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Failed to fetch blog post' },
-        { status: 500 }
+        {
+          success: false,
+          error: 'Blog post not found'
+        },
+        { status: 404 }
       );
     }
+    const data = result.rows[0];
 
     // Add URL to post
     const postWithUrl = {
       ...data,
-      author_name: (data as any).users
-        ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
+      author_name: data.first_name
+        ? `${data.first_name} ${data.last_name || ''}`.trim()
         : null,
-      users: undefined,
       url: `${baseUrl}/${data.language}/blog/${data.slug}`,
     };
 

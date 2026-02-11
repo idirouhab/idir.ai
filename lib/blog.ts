@@ -1,113 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import { cache } from 'react';
+import { query } from '@/lib/db';
+import {
+  calculateReadTime,
+  categoryColors,
+  categoryNames,
+  formatDate,
+  generateSlug,
+} from '@/lib/blog-shared';
+import type { BlogCategory, BlogPost, BlogPostInput } from '@/lib/blog-shared';
 
-export type BlogCategory = 'insights' | 'learnings' | 'opinion';
-
-export type BlogPost = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  cover_image: string | null;
-  meta_description: string | null;
-  meta_keywords: string[] | null;
-  category: BlogCategory;
-  tags: string[];
-  language: 'en' | 'es';
-  status: 'draft' | 'published';
-  published_at: string | null;
-  scheduled_publish_at: string | null;
-  translation_group_id: string | null;
-  view_count: number;
-  read_time_minutes: number | null;
-  tldr: string | null; // TL;DR summary / key takeaways (3-5 bullet points)
-  created_at: string;
-  updated_at: string;
-  author_id: string;
-  author_name?: string | null;
-};
-
-export type BlogPostInput = {
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  cover_image?: string | null;
-  meta_description?: string | null;
-  meta_keywords?: string[] | null;
-  category: BlogCategory;
-  tags?: string[];
-  language: 'en' | 'es';
-  status: 'draft' | 'published';
-  published_at?: string | null;
-  scheduled_publish_at?: string | null;
-  read_time_minutes?: number | null;
-  tldr?: string | null;
-};
-
-// Helper to create Supabase client (for public read operations)
-export function getBlogClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error('Missing Supabase environment variables');
-  }
-
-  // For local PostgREST, use db schema configuration
-  const isLocal = supabaseUrl.includes('localhost');
-
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    db: {
-      schema: 'public',
-    },
-    auth: isLocal ? {
-      autoRefreshToken: false,
-      persistSession: false,
-    } : undefined,
-  });
-}
-
-// Helper to create Supabase admin client (bypasses RLS for admin operations)
-export function getAdminBlogClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error('Missing Supabase admin environment variables');
-  }
-
-  // For local PostgREST, use db schema configuration
-  const isLocal = supabaseUrl.includes('localhost');
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    db: {
-      schema: 'public',
-    },
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-}
-
-// Calculate read time based on word count
-export function calculateReadTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
-  return Math.ceil(wordCount / wordsPerMinute);
-}
-
-// Generate slug from title
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+export type { BlogCategory, BlogPost, BlogPostInput };
+export { calculateReadTime, categoryColors, categoryNames, formatDate, generateSlug };
 
 // PERFORMANCE: Cache blog posts to prevent duplicate queries
 // Fetch published blog posts (public)
@@ -117,34 +20,38 @@ export const getPublishedPosts = cache(async (
   category?: BlogCategory
 ) => {
   try {
-    const supabase = getBlogClient();
-
-    let query = supabase
-      .from('blog_posts')
-      .select('id, title, slug, excerpt, cover_image, category, tags, language, published_at, created_at, updated_at, read_time_minutes, view_count, author_id, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .eq('status', 'published')
-      .eq('language', language)
-      .order('published_at', { ascending: false });
+    const params: any[] = [language];
+    let where = `p.status = 'published' AND p.language = $1`;
+    let limitClause = '';
 
     if (category) {
-      query = query.eq('category', category);
+      params.push(category);
+      where += ` AND p.category = $${params.length}`;
     }
 
     if (limit) {
-      query = query.limit(limit);
+      params.push(limit);
+      limitClause = ` LIMIT $${params.length}`;
     }
 
-    const { data, error } = await query;
+    const result = await query(
+      `SELECT
+        p.id, p.title, p.slug, p.excerpt, p.cover_image, p.category, p.tags,
+        p.language, p.published_at, p.created_at, p.updated_at,
+        p.read_time_minutes, p.view_count, p.author_id,
+        u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       WHERE ${where}
+       ORDER BY p.published_at DESC${limitClause}`,
+      params
+    );
 
-    if (error) {
-      console.error('Error fetching blog posts:', error);
-      return [];
-    }
-
-    return (data || []).map((post: any) => ({
+    return result.rows.map((post: any) => ({
       ...post,
-      author_name: post.users ? `${post.users.first_name} ${post.users.last_name}`.trim() : null,
-      users: undefined, // Remove the nested users object
+      author_name: post.first_name
+        ? `${post.first_name} ${post.last_name || ''}`.trim()
+        : null,
     })) as BlogPost[];
   } catch (error) {
     console.error('Error fetching blog posts:', error);
@@ -159,28 +66,25 @@ export const getPublishedPostBySlug = cache(async (
   language: 'en' | 'es'
 ): Promise<BlogPost | null> => {
   try {
-    const supabase = getBlogClient();
+    const result = await query(
+      `SELECT p.*, u.first_name, u.last_name
+       FROM blog_posts p
+       LEFT JOIN users u ON u.id = p.author_id
+       WHERE p.slug = $1 AND p.language = $2 AND p.status = 'published'
+       LIMIT 1`,
+      [slug, language]
+    );
 
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*, users!blog_posts_author_id_fkey(first_name,last_name)')
-      .eq('slug', slug)
-      .eq('language', language)
-      .eq('status', 'published')
-      .single();
-
-    if (error) {
-      console.error('Error fetching blog post:', error);
+    if (result.rows.length === 0) {
       return null;
     }
 
-    // Extract author name from the joined users object
+    const row = result.rows[0];
     return {
-      ...data,
-      author_name: (data as any).users
-        ? `${(data as any).users.first_name} ${(data as any).users.last_name}`.trim()
+      ...row,
+      author_name: row.first_name
+        ? `${row.first_name} ${row.last_name || ''}`.trim()
         : null,
-      users: undefined,
     } as BlogPost;
   } catch (error) {
     console.error('Error fetching blog post:', error);
@@ -199,22 +103,23 @@ export const getTranslatedPostSlug = cache(async (
   }
 
   try {
-    const supabase = getBlogClient();
     const targetLanguage = currentLanguage === 'en' ? 'es' : 'en';
 
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('slug, language')
-      .eq('translation_group_id', translationGroupId)
-      .eq('language', targetLanguage)
-      .eq('status', 'published')
-      .single();
+    const result = await query(
+      `SELECT slug, language
+       FROM blog_posts
+       WHERE translation_group_id = $1
+         AND language = $2
+         AND status = 'published'
+       LIMIT 1`,
+      [translationGroupId, targetLanguage]
+    );
 
-    if (error || !data) {
+    if (result.rows.length === 0) {
       return null;
     }
 
-    return data as { slug: string; language: 'en' | 'es' };
+    return result.rows[0] as { slug: string; language: 'en' | 'es' };
   } catch (error) {
     console.error('Error fetching translated post:', error);
     return null;
@@ -224,15 +129,12 @@ export const getTranslatedPostSlug = cache(async (
 // Increment view count
 export async function incrementViewCount(postId: string) {
   try {
-    const supabase = getBlogClient();
-
-    const { error } = await supabase.rpc('increment_post_views', {
-      post_id: postId,
-    });
-
-    if (error) {
-      console.error('Error incrementing view count:', error);
-    }
+    await query(
+      `UPDATE blog_posts
+       SET view_count = COALESCE(view_count, 0) + 1
+       WHERE id = $1`,
+      [postId]
+    );
   } catch (error) {
     console.error('Error incrementing view count:', error);
   }
@@ -247,51 +149,29 @@ export async function getRelatedPosts(
   limit: number = 3
 ): Promise<BlogPost[]> {
   try {
-    const supabase = getBlogClient();
+    const params: any[] = [language, postId, category];
+    let where = `status = 'published' AND language = $1 AND id <> $2`;
+    let relatedClause = `category = $3`;
 
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('status', 'published')
-      .eq('language', language)
-      .neq('id', postId)
-      .or(`category.eq.${category},tags.cs.{${tags.join(',')}}`)
-      .order('published_at', { ascending: false })
-      .limit(limit);
-
-    if (error) {
-      console.error('Error fetching related posts:', error);
-      return [];
+    if (tags && tags.length > 0) {
+      params.push(tags);
+      relatedClause = `${relatedClause} OR tags && $${params.length}::text[]`;
     }
 
-    return data as BlogPost[];
+    const result = await query(
+      `SELECT *
+       FROM blog_posts
+       WHERE ${where} AND (${relatedClause})
+       ORDER BY published_at DESC
+       LIMIT $${params.length + 1}`,
+      [...params, limit]
+    );
+
+    return result.rows as BlogPost[];
   } catch (error) {
     console.error('Error fetching related posts:', error);
     return [];
   }
-}
-
-// Category display names
-export const categoryNames: Record<BlogCategory, { en: string; es: string }> = {
-  insights: { en: 'Insights', es: 'Perspectivas' },
-  learnings: { en: 'Learnings', es: 'Aprendizajes' },
-  opinion: { en: 'Opinion', es: 'Opinión' },
-};
-
-// Category colors (matching your design system)
-export const categoryColors: Record<BlogCategory, string> = {
-  insights: '#ff0055', // Pink
-  learnings: '#00ff88', // Green
-  opinion: '#00cfff', // Blue
-};
-
-// Format date
-export function formatDate(date: string, locale: 'en' | 'es'): string {
-  return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(date));
 }
 
 // Get adjacent posts (previous and next)
@@ -300,33 +180,31 @@ export async function getAdjacentPosts(
   currentPublishedAt: string,
   language: 'en' | 'es'
 ): Promise<{ previous: BlogPost | null; next: BlogPost | null }> {
-  const supabase = getBlogClient();
+  const previousResult = await query(
+    `SELECT id, slug, title, category, published_at
+     FROM blog_posts
+     WHERE status = 'published'
+       AND language = $1
+       AND published_at < $2
+     ORDER BY published_at DESC
+     LIMIT 1`,
+    [language, currentPublishedAt]
+  );
 
-  // Get previous post (older)
-  const { data: previousPost } = await supabase
-    .from('blog_posts')
-    .select('id, slug, title, category, published_at')
-    .eq('status', 'published')
-    .eq('language', language)
-    .lt('published_at', currentPublishedAt)
-    .order('published_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  // Get next post (newer)
-  const { data: nextPost } = await supabase
-    .from('blog_posts')
-    .select('id, slug, title, category, published_at')
-    .eq('status', 'published')
-    .eq('language', language)
-    .gt('published_at', currentPublishedAt)
-    .order('published_at', { ascending: true })
-    .limit(1)
-    .single();
+  const nextResult = await query(
+    `SELECT id, slug, title, category, published_at
+     FROM blog_posts
+     WHERE status = 'published'
+       AND language = $1
+       AND published_at > $2
+     ORDER BY published_at ASC
+     LIMIT 1`,
+    [language, currentPublishedAt]
+  );
 
   return {
-    previous: previousPost as BlogPost | null,
-    next: nextPost as BlogPost | null,
+    previous: (previousResult.rows[0] as BlogPost) || null,
+    next: (nextResult.rows[0] as BlogPost) || null,
   };
 }
 
@@ -335,21 +213,38 @@ export async function getAdjacentPosts(
 export async function getAllPublishedPostSlugs(): Promise<
   Array<{ slug: string; locale: 'en' | 'es' }>
 > {
-  const supabase = getBlogClient();
+  try {
+    const result = await query(
+      `SELECT slug, language
+       FROM blog_posts
+       WHERE status = 'published'
+       ORDER BY published_at DESC`
+    );
 
-  const { data, error } = await supabase
-    .from('blog_posts')
-    .select('slug, language')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false });
-
-  if (error) {
+    return (result.rows || []).map((post) => ({
+      slug: post.slug,
+      locale: post.language as 'en' | 'es',
+    }));
+  } catch (error) {
     console.error('Error fetching blog post slugs:', error);
     return [];
   }
+}
 
-  return (data || []).map((post) => ({
-    slug: post.slug,
-    locale: post.language as 'en' | 'es',
-  }));
+export async function getBlogPostsForSitemap(): Promise<
+  Array<{ slug: string; language: 'en' | 'es'; updated_at: string; published_at: string | null; translation_group_id: string | null }>
+> {
+  try {
+    const result = await query(
+      `SELECT slug, language, updated_at, published_at, translation_group_id
+       FROM blog_posts
+       WHERE status = 'published'
+       ORDER BY published_at DESC`
+    );
+
+    return result.rows as any[];
+  } catch (error) {
+    console.error('Error fetching blog posts for sitemap:', error);
+    return [];
+  }
 }

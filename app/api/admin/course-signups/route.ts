@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 
 /**
  * Get all course signups
@@ -25,45 +25,38 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch signups from database with student information
-    const { data, error } = await supabase
-      .from('course_signups')
-      .select(`
-        id,
-        signup_status,
-        language,
-        created_at,
-        updated_at,
-        completed_at,
-        certificate_id,
-        certificate_url,
-        student_id,
-        students (
-          email,
-          first_name,
-          last_name,
-          country,
-          birth_year
-        )
-      `)
-      .eq('course_id', courseId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching course signups:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch signups' },
-        { status: 500 }
-      );
-    }
+    const result = await query(
+      `SELECT
+        cs.id,
+        cs.signup_status,
+        cs.language,
+        cs.created_at,
+        cs.updated_at,
+        cs.completed_at,
+        cs.certificate_id,
+        cs.certificate_url,
+        cs.student_id,
+        s.email,
+        s.first_name,
+        s.last_name,
+        s.country,
+        s.birth_year
+      FROM course_signups cs
+      LEFT JOIN students s ON s.id = cs.student_id
+      WHERE cs.course_id = $1
+      ORDER BY cs.created_at DESC`,
+      [courseId]
+    );
+    const data = result.rows;
 
     // Transform data to include student info at top level
     const signups = (data || []).map((signup: any) => ({
       ...signup,
-      email: signup.students?.email || 'No email',
-      first_name: signup.students?.first_name || 'N/A',
-      last_name: signup.students?.last_name || '',
-      country: signup.students?.country || null,
-      birth_year: signup.students?.birth_year || null,
+      email: signup.email || 'No email',
+      first_name: signup.first_name || 'N/A',
+      last_name: signup.last_name || '',
+      country: signup.country || null,
+      birth_year: signup.birth_year || null,
     }));
 
     // Get summary stats

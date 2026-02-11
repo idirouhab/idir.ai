@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { BlogPost, BlogCategory, generateSlug } from '@/lib/blog';
+import { generateSlug } from '@/lib/blog-shared';
+import type { BlogPost, BlogCategory } from '@/lib/blog-shared';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 

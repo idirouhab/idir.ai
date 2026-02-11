@@ -1,7 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
 import { query } from '@/lib/db';
-import { createClient } from '@supabase/supabase-js';
 
 // --- SUB-TYPES FOR JSON COURSE_DATA ---
 
@@ -174,30 +173,6 @@ export type Course = {
     updated_at: string;
     instructors?: CourseInstructorAssignment[];
 };
-
-// --- SUPABASE CLIENTS ---
-
-export function getCourseClient() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error('Missing Supabase environment variables');
-    }
-    return createClient(supabaseUrl, supabaseAnonKey);
-}
-
-export function getAdminCourseClient() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
-        throw new Error('Missing Supabase admin environment variables');
-    }
-    return createClient(supabaseUrl, supabaseServiceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-    });
-}
 
 // --- DATA FETCHING (CACHED) ---
 

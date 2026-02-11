@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { BlogPost, categoryColors, formatDate } from '@/lib/blog';
+import { categoryColors, formatDate } from '@/lib/blog-shared';
+import type { BlogPost } from '@/lib/blog-shared';
 
 type Props = {
   post: BlogPost;

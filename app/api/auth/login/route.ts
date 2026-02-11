@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { signToken } from '@/lib/jwt';
 import { rateLimit, rateLimitConfigs, getClientIdentifier } from '@/lib/rate-limit';
 // Use direct PostgREST client for local development
-import { authenticateUser } from '@/lib/users-postgrest';
+import { authenticateUser } from '@/lib/users';
 
 export async function POST(request: Request) {
   try {

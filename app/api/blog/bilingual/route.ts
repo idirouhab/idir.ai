@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireRole, canPublish } from '@/lib/auth';
-import { getAdminBlogClient, calculateReadTime, generateSlug } from '@/lib/blog';
+import { calculateReadTime, generateSlug } from '@/lib/blog';
+import { getClient } from '@/lib/db';
 
 // Zod schema for input validation
 const BilingualPostSchema = z.object({
@@ -113,19 +114,32 @@ export async function POST(request: NextRequest) {
       author_id: user.userId,
     };
 
-    const supabase = getAdminBlogClient();
+    const client = await getClient();
+    let data;
+    try {
+      await client.query('BEGIN');
+      const fields = Object.keys(postEN);
+      const cols = fields.join(', ');
+      const values = [...fields.map((f) => (postEN as any)[f]), ...fields.map((f) => (postES as any)[f])];
+      const placeholders1 = fields.map((_, i) => `$${i + 1}`).join(', ');
+      const placeholders2 = fields.map((_, i) => `$${i + 1 + fields.length}`).join(', ');
 
-    // Insert both posts
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .insert([postEN, postES])
-      .select();
-
-    if (error) {
+      const insertResult = await client.query(
+        `INSERT INTO blog_posts (${cols})
+         VALUES (${placeholders1}), (${placeholders2})
+         RETURNING *`,
+        values
+      );
+      await client.query('COMMIT');
+      data = insertResult.rows;
+    } catch (error) {
+      await client.query('ROLLBACK');
       console.error('Error creating bilingual blog posts:', error);
       return NextResponse.json({
         error: 'Failed to create blog posts'
       }, { status: 500 });
+    } finally {
+      client.release();
     }
 
     return NextResponse.json({

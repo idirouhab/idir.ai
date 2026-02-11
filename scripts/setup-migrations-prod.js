@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { createClient } = require('@supabase/supabase-js');
+const { Client } = require('pg');
 const readline = require('readline');
 
 // Colors
@@ -50,9 +50,42 @@ function loadProductionEnv() {
 
 loadProductionEnv();
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const MIGRATIONS_DIR = path.join(__dirname, '../migrations');
+
+function getDatabaseUrl() {
+  if (process.env.DATABASE_URL) {
+    return process.env.DATABASE_URL;
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const dbPassword = process.env.SUPABASE_DB_PASSWORD;
+  const dbHost = process.env.SUPABASE_DB_HOST;
+  const dbPort = process.env.SUPABASE_DB_PORT || '6543';
+
+  if (!supabaseUrl || !dbPassword || !dbHost) {
+    log('Error: Missing database credentials in .env.production.local', 'red');
+    log('Required variables:', 'yellow');
+    log('  - DATABASE_URL (recommended)', 'yellow');
+    log('  - OR NEXT_PUBLIC_SUPABASE_URL + SUPABASE_DB_PASSWORD + SUPABASE_DB_HOST', 'yellow');
+    process.exit(1);
+  }
+
+  const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
+
+  if (!projectRef) {
+    throw new Error('Could not extract project reference from NEXT_PUBLIC_SUPABASE_URL');
+  }
+
+  return `postgresql://postgres.${projectRef}:${dbPassword}@${dbHost}:${dbPort}/postgres`;
+}
+
+async function getClient() {
+  const connectionString = getDatabaseUrl();
+  const client = new Client({ connectionString });
+  await client.connect();
+  return client;
+}
+
 async function askConfirmation(question) {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -70,47 +103,21 @@ async function askConfirmation(question) {
 async function main() {
   log('\n=== Setup Migration Tracking in Production ===', 'blue');
 
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-    log('Error: Missing SUPABASE credentials in .env.production.local', 'red');
-    log('Required variables:', 'yellow');
-    log('  - NEXT_PUBLIC_SUPABASE_URL', 'yellow');
-    log('  - SUPABASE_SERVICE_ROLE_KEY', 'yellow');
-    process.exit(1);
-  }
+  const client = await getClient();
 
-  log(`Database: ${SUPABASE_URL}`, 'yellow');
-  log('');
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
-  // Check if table already exists
-  log('Checking if migrations_history table exists...', 'blue');
-
-  const { data: existingTable, error: checkError } = await supabase
-    .from('migrations_history')
-    .select('count')
-    .limit(0);
-
-  if (!checkError) {
+  try {
+    log('Checking if migrations_history table exists...', 'blue');
+    await client.query('SELECT 1 FROM migrations_history LIMIT 1');
     log('✓ migrations_history table already exists', 'green');
     log('');
     log('Run this to see current status:', 'blue');
     log('  node scripts/migration-status-prod.js', 'blue');
-    process.exit(0);
-  }
-
-  // Check if it's an expected "table not found" error
-  const isTableNotFoundError = checkError && (
-    checkError.code === 'PGRST116' ||
-    checkError.code === '42P01' ||
-    checkError.message.includes('not find the table') ||
-    checkError.message.includes('does not exist')
-  );
-
-  if (checkError && !isTableNotFoundError) {
-    log(`Unexpected error checking table: ${checkError.message}`, 'red');
-    log(`Error code: ${checkError.code}`, 'gray');
-    process.exit(1);
+    return;
+  } catch (error) {
+    if (error.code !== '42P01') {
+      log(`Unexpected error checking table: ${error.message}`, 'red');
+      process.exit(1);
+    }
   }
 
   log('migrations_history table not found', 'yellow');
@@ -125,7 +132,6 @@ async function main() {
     process.exit(0);
   }
 
-  // Read the migration SQL
   const migrationSQL = fs.readFileSync(
     path.join(MIGRATIONS_DIR, '000_migrations_history.sql'),
     'utf8'
@@ -135,45 +141,17 @@ async function main() {
   log('Creating migrations_history table...', 'blue');
   log('');
 
-  log('Please run this SQL in your Supabase Dashboard:', 'yellow');
-  log('');
-  log('1. Go to: https://supabase.com/dashboard/project/cymypipxhlgjmrzonpdw/sql/new', 'blue');
-  log('2. Copy and paste the following SQL:', 'blue');
-  log('');
-  log('─'.repeat(60), 'gray');
-  log(migrationSQL, 'gray');
-  log('─'.repeat(60), 'gray');
-  log('');
-  log('3. Click "Run" to execute', 'blue');
-  log('4. After running, verify with: node scripts/migration-status-prod.js', 'blue');
-  log('');
+  await client.query(migrationSQL);
 
-  const copyToClipboard = await askConfirmation('Would you like to copy the SQL to clipboard? (yes/no): ');
-
-  if (copyToClipboard) {
-    try {
-      // Try to copy to clipboard (macOS)
-      const { exec } = require('child_process');
-      exec('pbcopy', (error, stdin) => {
-        if (error) {
-          log('Could not copy to clipboard automatically', 'yellow');
-          return;
-        }
-      }).stdin.end(migrationSQL);
-
-      log('✓ SQL copied to clipboard!', 'green');
-      log('Now paste it in the Supabase SQL Editor', 'blue');
-    } catch (error) {
-      log('Could not copy to clipboard', 'yellow');
-      log('Please copy the SQL manually from above', 'yellow');
-    }
-  }
-
+  log('✓ migrations_history table created', 'green');
   log('');
-  log('Why manual SQL execution?', 'gray');
-  log('  The Supabase JavaScript client cannot execute DDL statements directly.', 'gray');
-  log('  This is a one-time setup - future migrations can be tracked automatically.', 'gray');
+  log('Next steps:', 'blue');
+  log('  - Check status: node scripts/migration-status-prod.js', 'blue');
   log('');
 }
 
-main();
+main()
+  .catch(error => {
+    log(`Unexpected error: ${error.message}`, 'red');
+    process.exit(1);
+  });

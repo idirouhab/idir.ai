@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminBlogClient } from '@/lib/blog';
+import { query } from '@/lib/db';
 
 /**
  * POST /api/blog/publish-scheduled
@@ -34,24 +34,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getAdminBlogClient();
     const now = new Date().toISOString();
 
     // Find all posts that should be published
-    const { data: scheduledPosts, error: fetchError } = await supabase
-      .from('blog_posts')
-      .select('id, title, slug, language, scheduled_publish_at, scheduled_timezone')
-      .eq('status', 'draft')
-      .not('scheduled_publish_at', 'is', null)
-      .lte('scheduled_publish_at', now);
-
-    if (fetchError) {
-      console.error('Error fetching scheduled posts:', fetchError);
-      return NextResponse.json(
-        { error: 'Failed to fetch scheduled posts' },
-        { status: 500 }
-      );
-    }
+    const scheduledResult = await query(
+      `SELECT id, title, slug, language, scheduled_publish_at, scheduled_timezone
+       FROM blog_posts
+       WHERE status = 'draft'
+         AND scheduled_publish_at IS NOT NULL
+         AND scheduled_publish_at <= $1`,
+      [now]
+    );
+    const scheduledPosts = scheduledResult.rows;
 
     if (!scheduledPosts || scheduledPosts.length === 0) {
       return NextResponse.json({
@@ -65,24 +59,15 @@ export async function POST(request: NextRequest) {
     // Publish each post
     const publishResults = [];
     for (const post of scheduledPosts) {
-      const { error: updateError } = await supabase
-        .from('blog_posts')
-        .update({
-          status: 'published',
-          published_at: now,
-          scheduled_publish_at: null, // Clear the schedule
-        })
-        .eq('id', post.id);
-
-      if (updateError) {
-        console.error(`Error publishing post ${post.id}:`, updateError);
-        publishResults.push({
-          id: post.id,
-          title: post.title,
-          success: false,
-          error: updateError.message,
-        });
-      } else {
+      try {
+        await query(
+          `UPDATE blog_posts
+           SET status = 'published',
+               published_at = $1,
+               scheduled_publish_at = NULL
+           WHERE id = $2`,
+          [now, post.id]
+        );
         console.log(`✅ Published: ${post.title} (${post.language}) - scheduled for ${post.scheduled_publish_at} ${post.scheduled_timezone}`);
         publishResults.push({
           id: post.id,
@@ -92,6 +77,14 @@ export async function POST(request: NextRequest) {
           scheduled_for: post.scheduled_publish_at,
           timezone: post.scheduled_timezone,
           success: true,
+        });
+      } catch (updateError: any) {
+        console.error(`Error publishing post ${post.id}:`, updateError);
+        publishResults.push({
+          id: post.id,
+          title: post.title,
+          success: false,
+          error: updateError?.message || 'Failed to publish',
         });
       }
     }
@@ -137,23 +130,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = getAdminBlogClient();
     const now = new Date().toISOString();
 
     // Count posts that are scheduled
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('id, title, slug, language, scheduled_publish_at, scheduled_timezone')
-      .eq('status', 'draft')
-      .not('scheduled_publish_at', 'is', null)
-      .order('scheduled_publish_at', { ascending: true });
-
-    if (error) {
-      return NextResponse.json(
-        { error: 'Failed to fetch scheduled posts' },
-        { status: 500 }
-      );
-    }
+    const scheduledResult = await query(
+      `SELECT id, title, slug, language, scheduled_publish_at, scheduled_timezone
+       FROM blog_posts
+       WHERE status = 'draft'
+         AND scheduled_publish_at IS NOT NULL
+       ORDER BY scheduled_publish_at ASC`
+    );
+    const data = scheduledResult.rows;
 
     const readyToPublish = data?.filter(p => p.scheduled_publish_at && p.scheduled_publish_at <= now) || [];
     const futureScheduled = data?.filter(p => p.scheduled_publish_at && p.scheduled_publish_at > now) || [];
