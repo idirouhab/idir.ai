@@ -12,6 +12,22 @@ import type { BlogCategory, BlogPost, BlogPostInput } from '@/lib/blog-shared';
 export type { BlogCategory, BlogPost, BlogPostInput };
 export { calculateReadTime, categoryColors, categoryNames, formatDate, generateSlug };
 
+async function queryWithRetry<T>(
+  fn: () => Promise<T>,
+  retries: number = 1,
+  delayMs: number = 150
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (retries <= 0) {
+      throw error;
+    }
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    return queryWithRetry(fn, retries - 1, delayMs * 2);
+  }
+}
+
 // PERFORMANCE: Cache blog posts to prevent duplicate queries
 // Fetch published blog posts (public)
 export const getPublishedPosts = cache(async (
@@ -34,7 +50,7 @@ export const getPublishedPosts = cache(async (
       limitClause = ` LIMIT $${params.length}`;
     }
 
-    const result = await query(
+    const result = await queryWithRetry(() => query(
       `SELECT
         p.id, p.title, p.slug, p.excerpt, p.cover_image, p.category, p.tags,
         p.language, p.published_at, p.created_at, p.updated_at,
@@ -45,7 +61,7 @@ export const getPublishedPosts = cache(async (
        WHERE ${where}
        ORDER BY p.published_at DESC${limitClause}`,
       params
-    );
+    ));
 
     return result.rows.map((post: any) => ({
       ...post,
@@ -66,14 +82,14 @@ export const getPublishedPostBySlug = cache(async (
   language: 'en' | 'es'
 ): Promise<BlogPost | null> => {
   try {
-    const result = await query(
+    const result = await queryWithRetry(() => query(
       `SELECT p.*, u.first_name, u.last_name
        FROM blog_posts p
        LEFT JOIN users u ON u.id = p.author_id
        WHERE p.slug = $1 AND p.language = $2 AND p.status = 'published'
        LIMIT 1`,
       [slug, language]
-    );
+    ));
 
     if (result.rows.length === 0) {
       return null;
@@ -88,7 +104,7 @@ export const getPublishedPostBySlug = cache(async (
     } as BlogPost;
   } catch (error) {
     console.error('Error fetching blog post:', error);
-    return null;
+    throw error;
   }
 });
 
