@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import { verifyToken, JWTPayload } from './jwt';
-import { isBlogEditor, isSuperAdmin } from './app-roles';
+import { isBlogEditor, isSuperAdmin, normalizeRoles } from './app-roles';
 import { isTokenBlacklisted } from './session-blacklist';
 
 export async function checkAuth(request: NextRequest): Promise<JWTPayload | null> {
@@ -60,7 +60,7 @@ export async function requireAuth(request: NextRequest): Promise<JWTPayload> {
 export async function requireRole(request: NextRequest, allowedRoles: string[]): Promise<JWTPayload> {
   const user = await requireAuth(request);
 
-  const roles = user.roles || [];
+  const roles = normalizeRoles(user.roles);
   if (!roles.some(role => allowedRoles.includes(role))) {
     throw new Error('Forbidden: insufficient permissions');
   }

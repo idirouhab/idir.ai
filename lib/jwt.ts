@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from 'jose';
 import { randomBytes } from 'crypto';
-import type { AppRole } from './app-roles';
+import type { RoleInput } from './app-roles';
 
 // Get the secret key from environment variable
 const getSecretKey = () => {
@@ -13,7 +13,7 @@ const getSecretKey = () => {
 
 export type JWTPayload = {
   userId: string;
-  roles?: AppRole[];
+  roles?: RoleInput;
   email: string;
   jti?: string;  // JWT ID - unique identifier for this token
   iat?: number;  // Issued At timestamp

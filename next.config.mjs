@@ -10,6 +10,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Generate minimal runtime files for server deployments (smaller Netlify function bundles).
+  output: 'standalone',
+
   // PERFORMANCE: Enable Gzip/Brotli compression
   // Reduces response sizes by ~70% for text-based content (HTML, CSS, JS, JSON)
   // Next.js uses Brotli if available, falls back to Gzip
@@ -177,6 +180,10 @@ export default withSentryConfig(withBundleAnalyzer(withNextIntl(nextConfig)), {
   // PERFORMANCE: Disable source map upload in development to speed up builds
   // Only upload source maps in production for debugging
   hideSourceMaps: true,
+  sourcemaps: {
+    // Remove emitted source maps after upload to keep deployment artifacts small.
+    deleteSourcemapsAfterUpload: true,
+  },
 
   // PERFORMANCE: Reduce source map uploads for faster builds
   widenClientFileUpload: false,
