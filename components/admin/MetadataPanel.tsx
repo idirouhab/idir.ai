@@ -159,7 +159,7 @@ export default function MetadataPanel({
       />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 h-screen w-[500px] max-w-full bg-black border-l-2 border-gray-700 overflow-y-auto z-[70] transform transition-transform duration-300">
+      <div className="fixed inset-0 h-screen w-screen max-w-none bg-black border-l-2 border-gray-700 overflow-y-auto z-[70] transform transition-transform duration-300">
         {/* Header */}
         <div className="sticky top-0 bg-[#1a1a1a] border-b-2 border-gray-700 p-4 flex items-center justify-between">
           <h3 className="text-white font-bold uppercase text-sm">
@@ -175,7 +175,7 @@ export default function MetadataPanel({
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 lg:p-8 space-y-6">
           {/* Title */}
           <div>
             <label className="block text-white font-bold mb-2 uppercase text-sm">
@@ -450,7 +450,7 @@ export default function MetadataPanel({
             </div>
 
             {/* TL;DR */}
-            <div>
+            <div className="w-[calc(100%+2rem)] -mx-4 border-t border-gray-800 bg-[#050505] px-4 pt-4 lg:w-[calc(100%+4rem)] lg:-mx-8 lg:px-8">
               <label className="block text-white font-bold mb-2 uppercase text-xs">
                 TL;DR - Key Takeaways ⚡
               </label>
@@ -459,8 +459,8 @@ export default function MetadataPanel({
                 onChange={(e) => onUpdate({
                   [language === 'en' ? 'tldr_en' : 'tldr_es']: e.target.value
                 })}
-                rows={4}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
+                rows={10}
+                className="w-full min-h-[320px] px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
                 placeholder="AI agents are transforming automation&#10;No-code tools make AI accessible to everyone&#10;The future of work is human-AI collaboration"
               />
               <p className="text-xs text-gray-500 mt-1">

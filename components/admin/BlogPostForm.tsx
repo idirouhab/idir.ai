@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { generateSlug } from '@/lib/blog-shared';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import type { BlogPost, BlogCategory } from '@/lib/blog-shared';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -147,7 +146,7 @@ function convertFromUTC(utcString: string, timezone: string): string {
 
 export default function BlogPostForm({ post }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const formRef = useRef<HTMLFormElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [generatingSEO, setGeneratingSEO] = useState(false);
@@ -171,6 +170,7 @@ export default function BlogPostForm({ post }: Props) {
   }> | null>(null);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [dismissedFeedback, setDismissedFeedback] = useState<Set<number>>(new Set());
+  const [initialSnapshot, setInitialSnapshot] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title_en: '',
@@ -229,7 +229,7 @@ export default function BlogPostForm({ post }: Props) {
         ? convertFromUTC(post.scheduled_publish_at, storedTimezone)
         : '';
 
-      setFormData({
+      const nextFormData = {
         title_en: isEnglish ? post.title : '',
         content_en: isEnglish ? post.content : '',
         content_es: !isEnglish ? post.content : '',
@@ -249,7 +249,10 @@ export default function BlogPostForm({ post }: Props) {
         meta_keywords_es: !isEnglish && post.meta_keywords ? post.meta_keywords.join(', ') : '',
         tldr_en: isEnglish ? ((post as any).tldr || '') : '',
         tldr_es: !isEnglish ? ((post as any).tldr || '') : '',
-      });
+      };
+
+      setFormData(nextFormData);
+      setInitialSnapshot(JSON.stringify(nextFormData));
 
       // Set generatedData to show metadata fields in edit mode
       setGeneratedData({
@@ -270,6 +273,54 @@ export default function BlogPostForm({ post }: Props) {
       });
     }
   }, [post]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        formRef.current?.requestSubmit();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (!section) return;
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const isEditMode = !!post;
+  const editLanguage = post?.language || 'en';
+  const activeTitle = editLanguage === 'en' ? formData.title_en : formData.title_es;
+  const activeContent = editLanguage === 'en' ? formData.content_en : formData.content_es;
+  const activeExcerpt = editLanguage === 'en' ? formData.excerpt_en : formData.excerpt_es;
+  const activeTags = editLanguage === 'en' ? formData.tags_en : formData.tags_es;
+  const activeMetaDescription =
+    editLanguage === 'en' ? formData.meta_description_en : formData.meta_description_es;
+
+  const wordCount = useMemo(() => {
+    const clean = activeContent.replace(/[#>*`~_\\-]/g, ' ').trim();
+    if (!clean) return 0;
+    return clean.split(/\s+/).filter(Boolean).length;
+  }, [activeContent]);
+
+  const readingMinutes = Math.max(1, Math.ceil(wordCount / 220));
+  const hasUnsavedChanges = isEditMode && !!initialSnapshot && JSON.stringify(formData) !== initialSnapshot;
+  const publishReady = !!activeTitle && !!activeContent && !!activeExcerpt && !!activeTags;
+
+  const checklist = [
+    { label: 'Title', done: !!activeTitle.trim() },
+    { label: 'Main content', done: activeContent.trim().length > 100 },
+    { label: 'Excerpt', done: !!activeExcerpt.trim() },
+    { label: 'Tags', done: !!activeTags.trim() },
+    { label: 'Cover image', done: !!formData.cover_image },
+    { label: 'Meta description', done: !!activeMetaDescription.trim() },
+  ];
+  const checklistDone = checklist.filter((item) => item.done).length;
+  const checklistProgress = Math.round((checklistDone / checklist.length) * 100);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -650,17 +701,65 @@ export default function BlogPostForm({ post }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="p-4 bg-[#ff005520] border-2 border-[#ff0055] text-[#ff0055]">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">
           {error}
         </div>
       )}
 
       {seoSuccess && (
-        <div className="p-4 bg-[#00ff8820] border-2 border-[#00ff88] text-[#00ff88]">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700">
           ✨ Metadata generated successfully for both languages!
         </div>
+      )}
+
+      {isEditMode && (
+        <section className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Edit Assistant</p>
+              <h3 className="mt-1 text-lg font-semibold text-slate-900">
+                {editLanguage === 'en' ? 'English post update' : 'Spanish post update'}
+              </h3>
+              <p className="mt-1 text-xs text-slate-600">
+                {wordCount} words • ~{readingMinutes} min read • {checklistDone}/{checklist.length} checks complete
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${publishReady ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                {publishReady ? 'Ready to update' : 'Needs content'}
+              </span>
+              <span className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${hasUnsavedChanges ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700'}`}>
+                {hasUnsavedChanges ? 'Unsaved changes' : 'All changes saved'}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-200">
+            <div className="h-full rounded-full bg-[#11b981] transition-all" style={{ width: `${checklistProgress}%` }} />
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button type="button" onClick={() => scrollToSection('blog-title')} className="btn-secondary !px-3 !py-1.5 !text-xs">Title</button>
+            <button type="button" onClick={() => scrollToSection('blog-content')} className="btn-secondary !px-3 !py-1.5 !text-xs">Content</button>
+            <button type="button" onClick={() => scrollToSection('blog-metadata')} className="btn-secondary !px-3 !py-1.5 !text-xs">Metadata</button>
+            <button type="button" onClick={() => scrollToSection('blog-publish')} className="btn-secondary !px-3 !py-1.5 !text-xs">Publishing</button>
+            <button type="button" onClick={() => scrollToSection('blog-cover')} className="btn-secondary !px-3 !py-1.5 !text-xs">Cover</button>
+            <button type="button" onClick={() => scrollToSection('blog-actions')} className="btn-secondary !px-3 !py-1.5 !text-xs">Save</button>
+          </div>
+
+          <ul className="mt-4 grid gap-2 text-xs text-slate-600 sm:grid-cols-2 lg:grid-cols-3">
+            {checklist.map((item) => (
+              <li key={item.label} className="rounded-lg border border-slate-200 bg-white px-3 py-2">
+                <span className={`mr-2 inline-block h-2 w-2 rounded-full ${item.done ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                {item.label}
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-3 text-xs text-slate-500">Shortcut: press Cmd/Ctrl + S to save quickly.</p>
+        </section>
       )}
 
       {/* Instructions - Only show for new posts */}
@@ -679,9 +778,9 @@ export default function BlogPostForm({ post }: Props) {
 
       {/* Edit mode notice */}
       {post && (
-        <div className="p-4 bg-[#00ff8820] border-2 border-[#00ff88]">
-          <p className="text-[#00ff88] font-bold mb-1">✏️ Editing {post.language === 'en' ? 'English' : 'Spanish'} Post</p>
-          <p className="text-gray-300 text-sm">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <p className="mb-1 font-semibold text-emerald-700">Editing {post.language === 'en' ? 'English' : 'Spanish'} Post</p>
+          <p className="text-sm text-emerald-800">
             You are editing the {post.language === 'en' ? 'English' : 'Spanish'} version of this post.
           </p>
         </div>
@@ -689,18 +788,19 @@ export default function BlogPostForm({ post }: Props) {
 
       {/* Non-publisher notice */}
       {!canUserPublish && userRole && (
-        <div className="p-4 bg-[#00cfff20] border-2 border-[#00cfff]">
-          <p className="text-[#00cfff] font-bold mb-1">📝 {userRole.charAt(0).toUpperCase() + userRole.slice(1)} Role</p>
-          <p className="text-gray-300 text-sm">
+        <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+          <p className="mb-1 font-semibold text-sky-700">{userRole.charAt(0).toUpperCase() + userRole.slice(1)} Role</p>
+          <p className="text-sm text-sky-800">
             You can create and edit posts, but only super admins and billing admins can publish them. Your posts will be saved as drafts for review.
           </p>
         </div>
       )}
 
+      <div id="blog-title" className="scroll-mt-24" />
       {/* Title - Show appropriate language based on mode */}
       {(!post || post.language === 'en') && (
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">
+          <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">
             Title {post ? '' : '(English)'} *
           </label>
           <input
@@ -708,7 +808,7 @@ export default function BlogPostForm({ post }: Props) {
             required
             value={formData.title_en}
             onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
-            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            className="input-shell"
             placeholder="Why AI Browsers Matter"
           />
           {!post && <p className="text-xs text-gray-500 mt-1">Spanish title will be auto-generated by AI</p>}
@@ -717,23 +817,24 @@ export default function BlogPostForm({ post }: Props) {
 
       {(!post || post.language === 'es') && post && (
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">Título *</label>
+          <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">Título *</label>
           <input
             type="text"
             required
             value={formData.title_es}
             onChange={(e) => setFormData({ ...formData, title_es: e.target.value })}
-            className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none"
+            className="input-shell"
             placeholder="Por Qué Importan los Navegadores de IA"
           />
         </div>
       )}
 
+      <div id="blog-content" className="scroll-mt-24" />
       {/* Content - Show appropriate language based on mode */}
       {(!post || post.language === 'en') && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-white font-bold uppercase text-sm">
+            <label className="block text-slate-700 font-semibold uppercase text-sm">
               Content {post ? '' : '- English'} (Markdown) *
             </label>
             <div className="flex gap-2">
@@ -792,7 +893,7 @@ Your content goes here...
       {(!post || post.language === 'es') && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-white font-bold uppercase text-sm">
+            <label className="block text-slate-700 font-semibold uppercase text-sm">
               {post && post.language === 'es' ? 'Contenido' : 'Content - Spanish'} (Markdown) *
             </label>
             <button
@@ -850,208 +951,208 @@ Tu contenido va aquí...
         </div>
       )}
 
+      <div id="blog-metadata" className="scroll-mt-24" />
       {/* Generated Metadata - Editable Fields */}
       {generatedData && (
-        <div className="space-y-6 p-6 bg-black border-2 border-[#00ff88]">
-          <h3 className="text-[#00ff88] font-bold uppercase text-sm">
+        <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0f9f73]">
             {post ? '✏️ Post Metadata' : '✨ AI-Generated Metadata (Review & Edit)'}
-          </h3>
-
-          {/* English Metadata */}
-          {(!post || post.language === 'en') && (
-          <div className="space-y-4">
-            {!post && (
-              <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
-                <span className="text-[#00ff88]">🇬🇧</span> English Metadata
-              </h4>
-            )}
-
-            {/* English Excerpt */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                Excerpt {post ? '' : '(EN)'} *
-              </label>
-              <textarea
-                required
-                value={formData.excerpt_en}
-                onChange={(e) => setFormData({ ...formData, excerpt_en: e.target.value })}
-                rows={2}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-none text-sm"
-              />
-            </div>
-
-            {/* English Tags */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                Tags {post ? '' : '(EN)'} *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.tags_en}
-                onChange={(e) => setFormData({ ...formData, tags_en: e.target.value })}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none text-sm"
-                placeholder="ai, automation, technology"
-              />
-              <p className="text-xs text-gray-500 mt-1">Comma-separated (important for SEO & filtering)</p>
-            </div>
-
-            {/* English Meta Description */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                Meta Description {post ? '' : '(EN)'}
-              </label>
-              <textarea
-                value={formData.meta_description_en}
-                onChange={(e) => setFormData({ ...formData, meta_description_en: e.target.value })}
-                rows={2}
-                maxLength={160}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-none text-sm"
-              />
-              <p className="text-xs text-gray-500 mt-1">{formData.meta_description_en.length}/160</p>
-            </div>
-
-            {/* English Meta Keywords */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                Meta Keywords {post ? '' : '(EN)'}
-              </label>
-              <input
-                type="text"
-                value={formData.meta_keywords_en}
-                onChange={(e) => setFormData({ ...formData, meta_keywords_en: e.target.value })}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none text-sm"
-              />
-            </div>
-
-            {/* English TL;DR */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                TL;DR - Key Takeaways {post ? '' : '(EN)'} ⚡
-              </label>
-              <textarea
-                value={formData.tldr_en}
-                onChange={(e) => setFormData({ ...formData, tldr_en: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
-                placeholder="AI agents are transforming automation&#10;No-code tools make AI accessible to everyone&#10;The future of work is human-AI collaboration"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Add 3-5 key takeaways (one per line). Displayed at the top of blog post.
-              </p>
-            </div>
+            </h3>
+            <p className="text-xs text-slate-500">Organized for faster updates</p>
           </div>
-          )}
 
-          {/* Spanish Metadata */}
-          {(!post || post.language === 'es') && (
-          <div className={`space-y-4 ${!post ? 'pt-6 border-t-2 border-gray-800' : ''}`}>
-            {!post && (
-              <h4 className="text-white font-bold uppercase text-xs flex items-center gap-2">
-                <span className="text-[#00cfff]">🇪🇸</span> Spanish Metadata
-              </h4>
+          <div className="space-y-5">
+            {/* English Metadata */}
+            {(!post || post.language === 'en') && (
+              <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                {!post && (
+                  <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase text-slate-800">
+                    <span className="text-[#00ff88]">🇬🇧</span> English Metadata
+                  </h4>
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      Excerpt {post ? '' : '(EN)'} *
+                    </label>
+                    <textarea
+                      required
+                      value={formData.excerpt_en}
+                      onChange={(e) => setFormData({ ...formData, excerpt_en: e.target.value })}
+                      rows={2}
+                      className="input-shell resize-none text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      Tags {post ? '' : '(EN)'} *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.tags_en}
+                      onChange={(e) => setFormData({ ...formData, tags_en: e.target.value })}
+                      className="input-shell text-sm"
+                      placeholder="ai, automation, technology"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Comma-separated</p>
+                  </div>
+
+                  <div className="lg:col-span-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      Meta Description {post ? '' : '(EN)'}
+                    </label>
+                    <textarea
+                      value={formData.meta_description_en}
+                      onChange={(e) => setFormData({ ...formData, meta_description_en: e.target.value })}
+                      rows={2}
+                      maxLength={160}
+                      className="input-shell resize-none text-sm"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{formData.meta_description_en.length}/160</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      Meta Keywords {post ? '' : '(EN)'}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.meta_keywords_en}
+                      onChange={(e) => setFormData({ ...formData, meta_keywords_en: e.target.value })}
+                      className="input-shell text-sm"
+                    />
+                  </div>
+                </div>
+
+                  <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                  <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                    TL;DR - Key Takeaways {post ? '' : '(EN)'} ⚡
+                  </label>
+                  <textarea
+                    value={formData.tldr_en}
+                    onChange={(e) => setFormData({ ...formData, tldr_en: e.target.value })}
+                    rows={7}
+                    className="input-shell min-h-[220px] resize-y text-sm font-mono"
+                    placeholder="AI agents are transforming automation&#10;No-code tools make AI accessible to everyone&#10;The future of work is human-AI collaboration"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Add 3-5 key takeaways (one per line). Displayed at the top of blog post.
+                  </p>
+                  </div>
+              </section>
             )}
 
-            {/* Spanish Title - Only show in create mode */}
-            {!post && (
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Título (ES) *</label>
-              <input
-                type="text"
-                required
-                value={formData.title_es}
-                onChange={(e) => setFormData({ ...formData, title_es: e.target.value })}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none text-sm"
-              />
-            </div>
+            {/* Spanish Metadata */}
+            {(!post || post.language === 'es') && (
+              <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                {!post && (
+                  <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase text-slate-800">
+                    <span className="text-[#00cfff]">🇪🇸</span> Spanish Metadata
+                  </h4>
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {!post && (
+                    <div className="md:col-span-2">
+                      <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">Título (ES) *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.title_es}
+                        onChange={(e) => setFormData({ ...formData, title_es: e.target.value })}
+                        className="input-shell text-sm"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      {post && post.language === 'es' ? 'Extracto *' : 'Extracto (ES) *'}
+                    </label>
+                    <textarea
+                      required
+                      value={formData.excerpt_es}
+                      onChange={(e) => setFormData({ ...formData, excerpt_es: e.target.value })}
+                      rows={2}
+                      className="input-shell resize-none text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                      {post && post.language === 'es' ? 'Etiquetas *' : 'Etiquetas (ES) *'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.tags_es}
+                      onChange={(e) => setFormData({ ...formData, tags_es: e.target.value })}
+                      className="input-shell text-sm"
+                      placeholder="ia, automatización, tecnología"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Separadas por comas</p>
+                  </div>
+
+                  <div className="lg:col-span-2">
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">Meta Descripción (ES)</label>
+                    <textarea
+                      value={formData.meta_description_es}
+                      onChange={(e) => setFormData({ ...formData, meta_description_es: e.target.value })}
+                      rows={2}
+                      maxLength={160}
+                      className="input-shell resize-none text-sm"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">{formData.meta_description_es.length}/160</p>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">Meta Keywords (ES)</label>
+                    <input
+                      type="text"
+                      value={formData.meta_keywords_es}
+                      onChange={(e) => setFormData({ ...formData, meta_keywords_es: e.target.value })}
+                      className="input-shell text-sm"
+                    />
+                  </div>
+                </div>
+
+                  <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                  <label className="mb-2 block text-xs font-semibold uppercase text-slate-700">
+                    {post && post.language === 'es' ? 'TL;DR - Puntos Clave ⚡' : 'TL;DR - Puntos Clave (ES) ⚡'}
+                  </label>
+                  <textarea
+                    value={formData.tldr_es}
+                    onChange={(e) => setFormData({ ...formData, tldr_es: e.target.value })}
+                    rows={7}
+                    className="input-shell min-h-[220px] resize-y text-sm font-mono"
+                    placeholder="Los agentes de IA están transformando la automatización&#10;Las herramientas no-code hacen la IA accesible para todos&#10;El futuro del trabajo es la colaboración humano-IA"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {post && post.language === 'es'
+                      ? 'Agrega 3-5 puntos clave (uno por línea). Se muestra al inicio del post.'
+                      : 'Add 3-5 key takeaways (one per line). Displayed at the top of blog post.'}
+                  </p>
+                  </div>
+              </section>
             )}
-
-            {/* Spanish Excerpt */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                {post && post.language === 'es' ? 'Extracto *' : 'Extracto (ES) *'}
-              </label>
-              <textarea
-                required
-                value={formData.excerpt_es}
-                onChange={(e) => setFormData({ ...formData, excerpt_es: e.target.value })}
-                rows={2}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none resize-none text-sm"
-              />
-            </div>
-
-            {/* Spanish Tags */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                {post && post.language === 'es' ? 'Etiquetas *' : 'Etiquetas (ES) *'}
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.tags_es}
-                onChange={(e) => setFormData({ ...formData, tags_es: e.target.value })}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none text-sm"
-                placeholder="ia, automatización, tecnología"
-              />
-              <p className="text-xs text-gray-500 mt-1">Separadas por comas (importante para SEO y filtrado)</p>
-            </div>
-
-            {/* Spanish Meta Description */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Meta Descripción (ES)</label>
-              <textarea
-                value={formData.meta_description_es}
-                onChange={(e) => setFormData({ ...formData, meta_description_es: e.target.value })}
-                rows={2}
-                maxLength={160}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none resize-none text-sm"
-              />
-              <p className="text-xs text-gray-500 mt-1">{formData.meta_description_es.length}/160</p>
-            </div>
-
-            {/* Spanish Meta Keywords */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">Meta Keywords (ES)</label>
-              <input
-                type="text"
-                value={formData.meta_keywords_es}
-                onChange={(e) => setFormData({ ...formData, meta_keywords_es: e.target.value })}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none text-sm"
-              />
-            </div>
-
-            {/* Spanish TL;DR */}
-            <div>
-              <label className="block text-white font-bold mb-2 uppercase text-xs">
-                {post && post.language === 'es' ? 'TL;DR - Puntos Clave ⚡' : 'TL;DR - Puntos Clave (ES) ⚡'}
-              </label>
-              <textarea
-                value={formData.tldr_es}
-                onChange={(e) => setFormData({ ...formData, tldr_es: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-3 bg-black text-white border-2 border-[#00cfff] focus:border-[#00ff88] focus:outline-none resize-vertical text-sm font-mono"
-                placeholder="Los agentes de IA están transformando la automatización&#10;Las herramientas no-code hacen la IA accesible para todos&#10;El futuro del trabajo es la colaboración humano-IA"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {post && post.language === 'es'
-                  ? 'Agrega 3-5 puntos clave (uno por línea). Se muestra al inicio del post.'
-                  : 'Add 3-5 key takeaways (one per line). Displayed at the top of blog post.'}
-              </p>
-            </div>
           </div>
-          )}
         </div>
       )}
 
+      <div id="blog-publish" className="scroll-mt-24" />
       {/* Row: Category, Status */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 rounded-2xl border border-slate-200 bg-white p-6 md:grid-cols-2">
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">Category *</label>
+          <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">Category *</label>
           <select
             required
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value as BlogCategory })}
-            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            className="input-shell"
           >
             <option value="insights">Insights</option>
             <option value="learnings">Learnings</option>
@@ -1060,12 +1161,12 @@ Tu contenido va aquí...
         </div>
 
         <div>
-          <label className="block text-white font-bold mb-2 uppercase text-sm">Status *</label>
+          <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">Status *</label>
           <select
             required
             value={formData.status}
             onChange={(e) => setFormData({ ...formData, status: e.target.value as 'draft' | 'published' })}
-            className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+            className="input-shell"
             disabled={!canUserPublish && formData.status === 'draft'}
           >
             <option value="draft">Draft</option>
@@ -1079,9 +1180,9 @@ Tu contenido va aquí...
 
       {/* Scheduled Publish Date/Time */}
       {formData.status === 'draft' && (
-        <div className="p-4 bg-[#00cfff10] border-2 border-[#00cfff] space-y-4">
+        <div className="space-y-4 rounded-2xl border border-sky-200 bg-sky-50 p-4">
           <div>
-            <label className="block text-white font-bold mb-2 uppercase text-sm">
+            <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">
               📅 Schedule Publication
             </label>
             <p className="text-xs text-[#00cfff] mb-3">
@@ -1091,13 +1192,13 @@ Tu contenido va aquí...
 
           {/* Timezone Selector */}
           <div>
-            <label className="block text-white font-bold mb-2 uppercase text-xs">
+            <label className="block text-slate-700 font-semibold mb-2 uppercase text-xs">
               🌍 Timezone
             </label>
             <select
               value={formData.scheduled_timezone}
               onChange={(e) => setFormData({ ...formData, scheduled_timezone: e.target.value })}
-              className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none text-sm"
+              className="input-shell text-sm"
             >
               {TIMEZONES.map((tz) => (
                 <option key={tz.value} value={tz.value}>
@@ -1112,14 +1213,14 @@ Tu contenido va aquí...
 
           {/* Date/Time Input */}
           <div>
-            <label className="block text-white font-bold mb-2 uppercase text-xs">
+            <label className="block text-slate-700 font-semibold mb-2 uppercase text-xs">
               📆 Date & Time
             </label>
             <input
               type="datetime-local"
               value={formData.scheduled_publish_at}
               onChange={(e) => setFormData({ ...formData, scheduled_publish_at: e.target.value })}
-              className="w-full px-4 py-3 bg-black text-white border-2 border-gray-700 focus:border-[#00ff88] focus:outline-none"
+              className="input-shell"
               min={new Date().toISOString().slice(0, 16)}
             />
             <p className="text-xs text-gray-400 mt-1">
@@ -1147,9 +1248,10 @@ Tu contenido va aquí...
         </div>
       )}
 
+      <div id="blog-cover" className="scroll-mt-24" />
       {/* Cover Image Upload */}
-      <div>
-        <label className="block text-white font-bold mb-2 uppercase text-sm">Cover Image</label>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <label className="block text-slate-700 font-semibold mb-2 uppercase text-sm">Cover Image</label>
 
         {imageError && (
           <div className="mb-3 p-3 bg-[#ff005520] border-2 border-[#ff0055] text-[#ff0055] text-sm">
@@ -1284,12 +1386,13 @@ Tu contenido va aquí...
         </p>
       </div>
 
+      <div id="blog-actions" className="scroll-mt-24" />
       {/* Actions */}
-      <div className="flex gap-4 pt-6">
+      <div className="sticky bottom-3 z-10 flex flex-wrap gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 backdrop-blur">
         <button
           type="submit"
           disabled={loading || (!post && (!formData.title_es || !formData.excerpt_en || !formData.excerpt_es))}
-          className="px-8 py-3 bg-[#00ff88] text-black font-bold uppercase hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary"
         >
           {loading
             ? (post ? 'Saving...' : (!canUserPublish ? 'Saving Draft...' : 'Publishing Both Posts...'))
@@ -1303,7 +1406,7 @@ Tu contenido va aquí...
         <button
           type="button"
           onClick={() => router.push('/admin/blog')}
-          className="px-8 py-3 bg-black border-2 border-gray-700 text-white font-bold uppercase hover:border-white transition-colors"
+          className="btn-secondary"
         >
           Cancel
         </button>

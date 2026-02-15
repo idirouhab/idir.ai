@@ -3,6 +3,64 @@ import { Pool } from 'pg';
 
 let pool: Pool | null = null;
 
+const RETRYABLE_DB_ERROR_CODES = new Set([
+  '57P01', // admin_shutdown
+  '57P02', // crash_shutdown
+  '57P03', // cannot_connect_now
+  '08000', // connection_exception
+  '08003', // connection_does_not_exist
+  '08006', // connection_failure
+  '08001', // sqlclient_unable_to_establish_sqlconnection
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ETIMEDOUT',
+  'EPIPE',
+]);
+
+function getErrorCode(error: unknown): string | undefined {
+  if (!error || typeof error !== 'object') {
+    return undefined;
+  }
+
+  const maybeError = error as { code?: unknown; errno?: unknown };
+  const code = maybeError.code ?? maybeError.errno;
+  return typeof code === 'string' ? code : undefined;
+}
+
+export function isRetryableDbError(error: unknown): boolean {
+  const code = getErrorCode(error);
+  if (code && RETRYABLE_DB_ERROR_CODES.has(code)) {
+    return true;
+  }
+
+  const message = error instanceof Error ? error.message.toLowerCase() : '';
+  return (
+    message.includes('connection terminated') ||
+    message.includes('connection timeout') ||
+    message.includes('timeout') ||
+    message.includes('econnreset') ||
+    message.includes('econnrefused') ||
+    message.includes('server closed the connection unexpectedly')
+  );
+}
+
+async function resetPool() {
+  if (!pool) {
+    return;
+  }
+
+  const currentPool = pool;
+  pool = null;
+
+  try {
+    await currentPool.end();
+  } catch (error) {
+    console.warn('[DB] Failed to close database pool cleanly during reset:', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 export function getDbPool() {
   if (!pool) {
     // Use local postgres connection
@@ -36,12 +94,12 @@ export function getDbPool() {
 
 // Helper function to execute queries
 export async function query(text: string, params?: any[]) {
-  const pool = getDbPool();
+  const activePool = getDbPool();
   const start = Date.now();
   const queryPreview = text.substring(0, 100).replace(/\s+/g, ' ');
 
   try {
-    const res = await pool.query(text, params);
+    const res = await activePool.query(text, params);
     const duration = Date.now() - start;
 
     if (duration > 1000) {
@@ -54,6 +112,8 @@ export async function query(text: string, params?: any[]) {
 
     return res;
   } catch (error) {
+    const retryable = isRetryableDbError(error);
+
     console.error('[DB] Database query error:', {
       queryPreview,
       params,
@@ -61,8 +121,15 @@ export async function query(text: string, params?: any[]) {
       code: (error as any)?.code,
       detail: (error as any)?.detail,
       hint: (error as any)?.hint,
+      retryable,
       stack: error instanceof Error ? error.stack : undefined,
     });
+
+    if (retryable) {
+      // Discard the pool so the next attempt creates fresh connections.
+      await resetPool();
+    }
+
     throw error;
   }
 }

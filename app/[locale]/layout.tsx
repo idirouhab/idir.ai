@@ -8,7 +8,6 @@ import {routing} from '@/i18n/routing';
 import { Inter } from 'next/font/google';
 import { getSiteUrl } from '@/lib/site-config';
 import RouteLoader from '@/components/RouteLoader';
-import "../globals.css";
 
 // PERFORMANCE: Optimize font loading - reduced to minimum weights needed
 // Inter: Primary font for body text (reduced from 4 to 2 weights: 50% reduction)
@@ -111,35 +110,26 @@ export default async function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   return (
-    <html lang={locale} className={`${inter.variable}`}>
-      <head>
-        {/* PERFORMANCE: Preconnect to external domains for faster resource loading */}
-        <link rel="preconnect" href="https://consent.cookiebot.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://consent.cookiebot.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-      </head>
-      <body className="antialiased">
-        <RouteLoader />
-        {/* GDPR Compliance: Cookiebot loads early to handle consent before tracking scripts
-            Uses afterInteractive to ensure consent is obtained before analytics run */}
-        <Script
-          id="Cookiebot"
-          src="https://consent.cookiebot.com/uc.js"
-          data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
-          data-blockingmode="auto"
-          type="text/javascript"
-          strategy="afterInteractive"
-        />
+    <div className={inter.variable}>
+      <RouteLoader />
+      {/* GDPR Compliance: Cookiebot loads early to handle consent before tracking scripts
+          Uses afterInteractive to ensure consent is obtained before analytics run */}
+      <Script
+        id="Cookiebot"
+        src="https://consent.cookiebot.com/uc.js"
+        data-cbid="27c56185-fc2a-4afb-97a6-1058459ca692"
+        data-blockingmode="auto"
+        type="text/javascript"
+        strategy="afterInteractive"
+      />
 
-        {/* PERFORMANCE: Google Analytics with official @next/third-parties component
-            Loads after all other content with worker strategy for optimal performance */}
-        {gaId && <GoogleAnalytics gaId={gaId} />}
+      {/* PERFORMANCE: Google Analytics with official @next/third-parties component
+          Loads after all other content with worker strategy for optimal performance */}
+      {gaId && <GoogleAnalytics gaId={gaId} />}
 
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+      <NextIntlClientProvider messages={messages}>
+        {children}
+      </NextIntlClientProvider>
+    </div>
   );
 }

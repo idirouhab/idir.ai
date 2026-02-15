@@ -170,31 +170,25 @@ export default function AdminImagesPage() {
 
   if (loading) {
     return (
-      <AdminPageWrapper showLogout={false}>
+      <AdminPageWrapper title="Image Gallery" description="Manage all uploaded blog images">
         <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="text-white text-xl">Loading...</div>
+          <div className="text-slate-900 text-xl">Loading...</div>
         </div>
       </AdminPageWrapper>
     );
   }
 
   return (
-    <AdminPageWrapper showLogout={false}>
-      {/* Page Header */}
-      <div className="mb-8 flex justify-between items-start">
-        <div>
-          <h2 className="text-3xl font-black text-white mb-2">Image Gallery</h2>
-          <p className="text-gray-400 text-sm">Manage all uploaded blog images</p>
-        </div>
-        <div className="text-right">
-          <div className="text-xs text-gray-500 mb-2">{images.length} images</div>
-        </div>
-      </div>
+    <AdminPageWrapper
+      title="Image Gallery"
+      description="Manage all uploaded blog images"
+      actions={<div className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">{images.length} images</div>}
+    >
 
       {/* Upload Section */}
       <div className="mb-8">
         {uploadError && (
-          <div className="mb-3 p-3 bg-[#ff005520] border-2 border-[#ff0055] text-[#ff0055] text-sm">
+          <div className="mb-3 p-3 bg-[#ff005520] border-2 border-rose-300 text-rose-600 text-sm">
             {uploadError}
           </div>
         )}
@@ -205,8 +199,8 @@ export default function AdminImagesPage() {
           onDrop={handleDrop}
           className={`relative border-2 border-dashed transition-colors ${
             isDragging
-              ? 'border-[#00ff88] bg-[#00ff8820]'
-              : 'border-gray-700 hover:border-gray-500'
+              ? 'border-[#11b981] bg-emerald-50'
+              : 'border-slate-300 hover:border-slate-400'
           } ${uploadingImage ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           <input
@@ -224,7 +218,7 @@ export default function AdminImagesPage() {
             {uploadingImage ? (
               <>
                 <svg
-                  className="animate-spin h-10 w-10 text-[#00ff88] mb-4"
+                  className="animate-spin h-10 w-10 text-[#0f9f73] mb-4"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -243,15 +237,15 @@ export default function AdminImagesPage() {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                <p className="text-white font-bold">Uploading...</p>
+                <p className="text-slate-900 font-bold">Uploading...</p>
               </>
             ) : (
               <>
-                <Upload className="w-12 h-12 text-gray-500 mb-4" />
-                <p className="text-white font-bold mb-2">
+                <Upload className="w-12 h-12 text-slate-500 mb-4" />
+                <p className="text-slate-900 font-bold mb-2">
                   {isDragging ? 'Drop image here' : 'Click to upload or drag and drop'}
                 </p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-slate-500 text-xs">
                   JPEG, PNG, WebP, AVIF, or GIF (max 10MB)
                 </p>
               </>
@@ -266,7 +260,7 @@ export default function AdminImagesPage() {
           {images.map((image) => (
             <div
               key={image.path}
-              className="bg-black border border-gray-800 hover:border-[#00ff88] transition-all group relative"
+              className="bg-white border border-slate-200 hover:border-[#11b981] transition-all group relative"
             >
               <div
                 className="relative aspect-video w-full cursor-pointer overflow-hidden"
@@ -281,15 +275,15 @@ export default function AdminImagesPage() {
                 />
               </div>
               <div className="p-2">
-                <div className="text-xs text-gray-400 truncate mb-1" title={image.name}>
+                <div className="text-xs text-slate-600 truncate mb-1" title={image.name}>
                   {image.name}
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-600">
+                <div className="flex items-center justify-between text-xs text-slate-400">
                   <span>{formatFileSize(image.size)}</span>
                   <button
                     onClick={() => handleDelete(image)}
                     disabled={deletingId === image.path}
-                    className="text-gray-500 hover:text-[#ff0055] transition-colors disabled:opacity-50"
+                    className="text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50"
                     title="Delete"
                   >
                     {deletingId === image.path ? '...' : <Trash2 size={14} />}
@@ -300,36 +294,36 @@ export default function AdminImagesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-black border border-gray-800">
-          <ImageIcon className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-          <h2 className="text-lg font-black text-white mb-2">No Images Yet</h2>
-          <p className="text-sm text-gray-500 mb-6">Upload your first image to get started</p>
+        <div className="text-center py-20 bg-white border border-slate-200">
+          <ImageIcon className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <h2 className="text-lg font-black text-slate-900 mb-2">No Images Yet</h2>
+          <p className="text-sm text-slate-500 mb-6">Upload your first image to get started</p>
         </div>
       )}
 
       {/* Image Detail Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-slate-900/70 flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedImage(null)}
         >
           <div
-            className="bg-black border-2 border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-auto"
+            className="bg-white border-2 border-slate-300 max-w-4xl w-full max-h-[90vh] overflow-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex justify-between items-center p-4 border-b border-gray-800">
-              <h3 className="text-white font-bold truncate flex-1">{selectedImage.name}</h3>
+            <div className="flex justify-between items-center p-4 border-b border-slate-200">
+              <h3 className="text-slate-900 font-bold truncate flex-1">{selectedImage.name}</h3>
               <button
                 onClick={() => setSelectedImage(null)}
-                className="text-gray-400 hover:text-white transition-colors ml-4"
+                className="text-slate-600 hover:text-slate-900 transition-colors ml-4"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* Image */}
-            <div className="relative aspect-video w-full bg-gray-900">
+            <div className="relative aspect-video w-full bg-slate-100">
               <Image
                 src={selectedImage.url}
                 alt={selectedImage.name}
@@ -343,16 +337,16 @@ export default function AdminImagesPage() {
             <div className="p-4 space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <div className="text-gray-500 text-xs mb-1">File Size</div>
-                  <div className="text-white">{formatFileSize(selectedImage.size)}</div>
+                  <div className="text-slate-500 text-xs mb-1">File Size</div>
+                  <div className="text-slate-900">{formatFileSize(selectedImage.size)}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500 text-xs mb-1">Type</div>
-                  <div className="text-white">{selectedImage.mimetype}</div>
+                  <div className="text-slate-500 text-xs mb-1">Type</div>
+                  <div className="text-slate-900">{selectedImage.mimetype}</div>
                 </div>
                 <div>
-                  <div className="text-gray-500 text-xs mb-1">Uploaded</div>
-                  <div className="text-white">
+                  <div className="text-slate-500 text-xs mb-1">Uploaded</div>
+                  <div className="text-slate-900">
                     {new Date(selectedImage.created_at).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -361,25 +355,25 @@ export default function AdminImagesPage() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-gray-500 text-xs mb-1">Path</div>
-                  <div className="text-white text-xs truncate" title={selectedImage.path}>
+                  <div className="text-slate-500 text-xs mb-1">Path</div>
+                  <div className="text-slate-900 text-xs truncate" title={selectedImage.path}>
                     {selectedImage.path}
                   </div>
                 </div>
               </div>
 
               <div>
-                <div className="text-gray-500 text-xs mb-2">URL</div>
+                <div className="text-slate-500 text-xs mb-2">URL</div>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={selectedImage.url}
                     readOnly
-                    className="flex-1 px-3 py-2 bg-gray-900 text-white text-xs border border-gray-800 focus:border-[#00ff88] focus:outline-none"
+                    className="flex-1 px-3 py-2 bg-slate-100 text-slate-900 text-xs border border-slate-200 focus:border-[#11b981] focus:outline-none"
                   />
                   <button
                     onClick={() => copyToClipboard(selectedImage.url)}
-                    className="px-3 py-2 bg-[#00cfff] text-black font-bold uppercase text-xs hover:bg-[#00e5ff] transition-colors flex items-center gap-2"
+                    className="px-3 py-2 bg-[#11b981] text-black font-bold uppercase text-xs hover:bg-[#0f9f73] transition-colors flex items-center gap-2"
                   >
                     <Copy size={14} />
                     {copiedUrl === selectedImage.url ? 'Copied!' : 'Copy'}
@@ -390,7 +384,7 @@ export default function AdminImagesPage() {
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => downloadImage(selectedImage.url, selectedImage.name)}
-                  className="flex-1 px-4 py-2 bg-gray-800 text-white font-bold uppercase text-xs hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-900 font-bold uppercase text-xs hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
                 >
                   <Download size={14} />
                   Download
@@ -398,7 +392,7 @@ export default function AdminImagesPage() {
                 <button
                   onClick={() => handleDelete(selectedImage)}
                   disabled={deletingId === selectedImage.path}
-                  className="flex-1 px-4 py-2 bg-[#ff0055] text-white font-bold uppercase text-xs hover:bg-[#ff0077] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-rose-500 text-white font-bold uppercase text-xs hover:bg-rose-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Trash2 size={14} />
                   {deletingId === selectedImage.path ? 'Deleting...' : 'Delete'}

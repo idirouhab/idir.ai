@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 type Subscriber = {
@@ -151,7 +150,7 @@ export default function SubscribersPage() {
     return (
       <AdminPageWrapper>
         <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="text-white text-xl">Loading...</div>
+          <div className="text-slate-900 text-xl">Loading...</div>
         </div>
       </AdminPageWrapper>
     );
@@ -166,21 +165,21 @@ export default function SubscribersPage() {
         {/* Statistics Cards */}
         {statistics && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <div className="p-3 sm:p-4 bg-black border border-gray-800">
-              <div className="text-xl sm:text-2xl font-black text-[#00ff88]">{statistics.total}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Total</div>
+            <div className="p-3 sm:p-4 bg-white border border-slate-200">
+              <div className="text-xl sm:text-2xl font-black text-[#0f9f73]">{statistics.total}</div>
+              <div className="text-xs text-slate-500 uppercase font-bold">Total</div>
             </div>
-            <div className="p-3 sm:p-4 bg-black border border-gray-800">
-              <div className="text-xl sm:text-2xl font-black text-[#00cfff]">{statistics.subscribed}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Active</div>
+            <div className="p-3 sm:p-4 bg-white border border-slate-200">
+              <div className="text-xl sm:text-2xl font-black text-[#0f9f73]">{statistics.subscribed}</div>
+              <div className="text-xs text-slate-500 uppercase font-bold">Active</div>
             </div>
-            <div className="p-3 sm:p-4 bg-black border border-[#00ff88]">
-              <div className="text-xl sm:text-2xl font-black text-[#00ff88]">{statistics.newsletterSubscribers}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Newsletter</div>
+            <div className="p-3 sm:p-4 bg-white border border-[#11b981]">
+              <div className="text-xl sm:text-2xl font-black text-[#0f9f73]">{statistics.newsletterSubscribers}</div>
+              <div className="text-xs text-slate-500 uppercase font-bold">Newsletter</div>
             </div>
-            <div className="p-3 sm:p-4 bg-black border border-[#ff6b00]">
-              <div className="text-xl sm:text-2xl font-black text-[#ff6b00]">{statistics.podcastSubscribers}</div>
-              <div className="text-xs text-gray-500 uppercase font-bold">Podcast</div>
+            <div className="p-3 sm:p-4 bg-white border border-amber-200">
+              <div className="text-xl sm:text-2xl font-black text-amber-700">{statistics.podcastSubscribers}</div>
+              <div className="text-xs text-slate-500 uppercase font-bold">Podcast</div>
             </div>
           </div>
         )}
@@ -194,11 +193,11 @@ export default function SubscribersPage() {
               placeholder="Search by email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 px-4 py-3 bg-black border border-gray-800 text-white placeholder-gray-600 focus:border-[#00ff88] focus:outline-none"
+              className="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-900 placeholder-gray-600 focus:border-[#11b981] focus:outline-none"
             />
             <button
               onClick={exportToCSV}
-              className="px-6 py-3 bg-[#00ff88] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="px-6 py-3 bg-[#11b981] text-black text-xs font-bold uppercase hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               Export CSV
             </button>
@@ -209,7 +208,7 @@ export default function SubscribersPage() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-900 text-xs font-bold uppercase focus:border-[#11b981] focus:outline-none"
             >
               <option value="all">All Status</option>
               <option value="subscribed">Subscribed</option>
@@ -219,7 +218,7 @@ export default function SubscribersPage() {
             <select
               value={filterLang}
               onChange={(e) => setFilterLang(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-900 text-xs font-bold uppercase focus:border-[#11b981] focus:outline-none"
             >
               <option value="all">All Languages</option>
               <option value="en">English</option>
@@ -229,7 +228,7 @@ export default function SubscribersPage() {
             <select
               value={filterWelcomed}
               onChange={(e) => setFilterWelcomed(e.target.value as any)}
-              className="px-4 py-2 bg-black border border-gray-800 text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-900 text-xs font-bold uppercase focus:border-[#11b981] focus:outline-none"
             >
               <option value="all">Welcomed Status</option>
               <option value="true">Welcomed</option>
@@ -240,8 +239,8 @@ export default function SubscribersPage() {
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               className={`px-4 py-2 border text-xs font-bold uppercase transition-all ${
                 showAdvancedFilters
-                  ? 'bg-[#00ff88] border-[#00ff88] text-black'
-                  : 'bg-black border-gray-800 text-gray-400 hover:border-gray-600'
+                  ? 'bg-[#11b981] border-[#11b981] text-black'
+                  : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
               }`}
             >
               {showAdvancedFilters ? '▲' : '▼'} More Filters
@@ -250,15 +249,15 @@ export default function SubscribersPage() {
 
           {/* Advanced Filters (Collapsible) */}
           {showAdvancedFilters && (
-            <div className="p-4 bg-black border border-gray-800 space-y-4">
+            <div className="p-4 bg-white border border-slate-200 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Newsletter Filter */}
                 <div>
-                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Newsletter</label>
+                  <label className="block text-xs text-slate-500 font-bold uppercase mb-2">Newsletter</label>
                   <select
                     value={filterNewsletter}
                     onChange={(e) => setFilterNewsletter(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-black border border-[#00ff88] text-white text-xs font-bold uppercase focus:border-[#00ff88] focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-[#11b981] text-slate-900 text-xs font-bold uppercase focus:border-[#11b981] focus:outline-none"
                   >
                     <option value="all">All</option>
                     <option value="yes">Subscribed</option>
@@ -268,11 +267,11 @@ export default function SubscribersPage() {
 
                 {/* Podcast Filter */}
                 <div>
-                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Podcast</label>
+                  <label className="block text-xs text-slate-500 font-bold uppercase mb-2">Podcast</label>
                   <select
                     value={filterPodcast}
                     onChange={(e) => setFilterPodcast(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-black border border-[#ff6b00] text-white text-xs font-bold uppercase focus:border-[#ff6b00] focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-amber-200 text-slate-900 text-xs font-bold uppercase focus:border-[#11b981] focus:outline-none"
                   >
                     <option value="all">All</option>
                     <option value="yes">Subscribed</option>
@@ -282,13 +281,13 @@ export default function SubscribersPage() {
 
                 {/* Min Days Subscribed */}
                 <div>
-                  <label className="block text-xs text-gray-500 font-bold uppercase mb-2">Min Days Subscribed</label>
+                  <label className="block text-xs text-slate-500 font-bold uppercase mb-2">Min Days Subscribed</label>
                   <input
                     type="number"
                     min="0"
                     value={filterMinDays}
                     onChange={(e) => setFilterMinDays(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 bg-black border border-gray-800 text-white text-xs font-bold focus:border-[#00ff88] focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 text-slate-900 text-xs font-bold focus:border-[#11b981] focus:outline-none"
                     placeholder="0"
                   />
                 </div>
@@ -302,7 +301,7 @@ export default function SubscribersPage() {
                     setFilterPodcast('all');
                     setFilterMinDays(0);
                   }}
-                  className="px-4 py-2 text-xs font-bold uppercase text-gray-400 hover:text-white transition-colors"
+                  className="px-4 py-2 text-xs font-bold uppercase text-slate-600 hover:text-slate-900 transition-colors"
                 >
                   Clear Advanced Filters
                 </button>
@@ -313,14 +312,14 @@ export default function SubscribersPage() {
 
         {/* Results Count and Selection Actions */}
         <div className="mb-4 flex justify-between items-center flex-wrap gap-3">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500">
             Showing {filteredSubscribers.length} subscriber{filteredSubscribers.length !== 1 ? 's' : ''}
           </div>
 
           <div className="flex items-center gap-3">
             {/* Selection Info */}
             {selectedSubscribers.size > 0 && (
-              <span className="text-sm font-bold text-[#00ff88]">
+              <span className="text-sm font-bold text-[#0f9f73]">
                 {selectedSubscribers.size} selected
               </span>
             )}
@@ -329,7 +328,7 @@ export default function SubscribersPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => handleSelectAll(true)}
-                className="px-3 py-1.5 text-xs border border-gray-700 text-gray-300 font-bold uppercase hover:border-[#00ff88] hover:text-[#00ff88] transition-all"
+                className="px-3 py-1.5 text-xs border border-slate-300 text-slate-700 font-bold uppercase hover:border-[#11b981] hover:text-[#0f9f73] transition-all"
                 title="Select all visible subscribers"
               >
                 Select All ({filteredSubscribers.length})
@@ -338,7 +337,7 @@ export default function SubscribersPage() {
               {selectedSubscribers.size > 0 && (
                 <button
                   onClick={() => setSelectedSubscribers(new Set())}
-                  className="px-3 py-1.5 text-xs border border-gray-700 text-gray-400 font-bold uppercase hover:border-[#ff0055] hover:text-[#ff0055] transition-all"
+                  className="px-3 py-1.5 text-xs border border-slate-300 text-slate-600 font-bold uppercase hover:border-rose-300 hover:text-rose-600 transition-all"
                 >
                   Clear Selection
                 </button>
@@ -349,33 +348,33 @@ export default function SubscribersPage() {
 
         {/* Subscribers List */}
         {filteredSubscribers.length === 0 ? (
-          <div className="border border-gray-800 bg-black p-8 sm:p-12 text-center">
+          <div className="border border-slate-200 bg-white p-8 sm:p-12 text-center">
             <div className="text-4xl mb-4 opacity-50">📬</div>
-            <p className="text-lg text-gray-300 mb-2">No subscribers found</p>
-            <p className="text-sm text-gray-500">Try adjusting your filters</p>
+            <p className="text-lg text-slate-700 mb-2">No subscribers found</p>
+            <p className="text-sm text-slate-500">Try adjusting your filters</p>
           </div>
         ) : (
           <>
             {/* Desktop Table View */}
-            <div className="hidden lg:block border border-gray-800 bg-black overflow-x-auto">
+            <div className="hidden lg:block border border-slate-200 bg-white overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-800">
+                  <tr className="border-b border-slate-200">
                     <th className="text-left px-4 py-3 w-12">
                       <input
                         type="checkbox"
                         checked={selectedSubscribers.size === filteredSubscribers.length && filteredSubscribers.length > 0}
                         onChange={(e) => handleSelectAll(e.target.checked)}
-                        className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
+                        className="w-4 h-4 bg-white border-2 border-slate-300 checked:bg-[#11b981] checked:border-[#11b981] cursor-pointer"
                         title="Select all"
                       />
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Email</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Lang</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Status</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Subscriptions</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Welcomed</th>
-                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-gray-500">Age</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Email</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Lang</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Status</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Subscriptions</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Welcomed</th>
+                    <th className="text-left px-4 py-3 text-xs font-black uppercase text-slate-500">Age</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -384,10 +383,10 @@ export default function SubscribersPage() {
                     return (
                       <tr
                         key={subscriber.id}
-                        className={`border-b border-gray-800 transition-colors ${
+                        className={`border-b border-slate-200 transition-colors ${
                           isSelected
-                            ? 'bg-[#00ff8808] hover:bg-[#00ff8812]'
-                            : 'hover:bg-gray-900'
+                            ? 'bg-emerald-50 hover:bg-emerald-100'
+                            : 'hover:bg-slate-100'
                         }`}
                       >
                         <td className="px-4 py-3">
@@ -395,22 +394,22 @@ export default function SubscribersPage() {
                             type="checkbox"
                             checked={isSelected}
                             onChange={(e) => handleSelectSubscriber(subscriber.email, e.target.checked)}
-                            className="w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer"
+                            className="w-4 h-4 bg-white border-2 border-slate-300 checked:bg-[#11b981] checked:border-[#11b981] cursor-pointer"
                           />
                         </td>
-                        <td className="px-4 py-3 text-sm text-white font-medium">{subscriber.email}</td>
+                        <td className="px-4 py-3 text-sm text-slate-900 font-medium">{subscriber.email}</td>
                         <td className="px-4 py-3">
-                          <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
+                          <span className="px-2 py-1 text-xs font-bold uppercase bg-slate-100 text-slate-600">
                             {subscriber.lang}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           {subscriber.is_subscribed ? (
-                            <span className="px-2 py-1 text-xs font-bold uppercase bg-[#00ff8820] text-[#00ff88] border border-[#00ff88]">
+                            <span className="px-2 py-1 text-xs font-bold uppercase bg-emerald-50 text-[#0f9f73] border border-[#11b981]">
                               Active
                             </span>
                           ) : (
-                            <span className="px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500">
+                            <span className="px-2 py-1 text-xs font-bold uppercase bg-slate-100 text-slate-500">
                               Inactive
                             </span>
                           )}
@@ -418,28 +417,28 @@ export default function SubscribersPage() {
                         <td className="px-4 py-3">
                           <div className="flex gap-1">
                             {subscriber.subscribe_newsletter && (
-                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]" title="Newsletter">
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-emerald-50 text-[#0f9f73] border border-[#11b981]" title="Newsletter">
                                 N
                               </span>
                             )}
                             {subscriber.subscribe_podcast && (
-                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]" title="Podcast">
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200" title="Podcast">
                                 P
                               </span>
                             )}
                             {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
-                              <span className="text-xs text-gray-600">-</span>
+                              <span className="text-xs text-slate-400">-</span>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3">
                           {subscriber.welcomed ? (
-                            <span className="text-[#00cfff] text-sm">✓</span>
+                            <span className="text-[#0f9f73] text-sm">✓</span>
                           ) : (
-                            <span className="text-gray-600 text-sm">○</span>
+                            <span className="text-slate-400 text-sm">○</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-slate-500">
                           {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))}d
                         </td>
                       </tr>
@@ -458,8 +457,8 @@ export default function SubscribersPage() {
                     key={subscriber.id}
                     className={`border transition-colors ${
                       isSelected
-                        ? 'border-[#00ff88] bg-[#00ff8808]'
-                        : 'border-gray-800 bg-black'
+                        ? 'border-[#11b981] bg-emerald-50'
+                        : 'border-slate-200 bg-white'
                     }`}
                   >
                     <div className="p-4 space-y-3">
@@ -469,69 +468,69 @@ export default function SubscribersPage() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => handleSelectSubscriber(subscriber.email, e.target.checked)}
-                          className="mt-1 w-4 h-4 bg-black border-2 border-gray-700 checked:bg-[#00ff88] checked:border-[#00ff88] cursor-pointer flex-shrink-0"
+                          className="mt-1 w-4 h-4 bg-white border-2 border-slate-300 checked:bg-[#11b981] checked:border-[#11b981] cursor-pointer flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm text-white font-medium break-all">{subscriber.email}</div>
+                          <div className="text-sm text-slate-900 font-medium break-all">{subscriber.email}</div>
                         </div>
                       </div>
 
                       {/* Details Grid */}
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <div className="text-gray-500 uppercase font-bold mb-1">Status</div>
+                          <div className="text-slate-500 uppercase font-bold mb-1">Status</div>
                           {subscriber.is_subscribed ? (
-                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-[#00ff8820] text-[#00ff88] border border-[#00ff88]">
+                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-emerald-50 text-[#0f9f73] border border-[#11b981]">
                               Active
                             </span>
                           ) : (
-                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-500">
+                            <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-slate-100 text-slate-500">
                               Inactive
                             </span>
                           )}
                         </div>
 
                         <div>
-                          <div className="text-gray-500 uppercase font-bold mb-1">Language</div>
-                          <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-gray-800 text-gray-400">
+                          <div className="text-slate-500 uppercase font-bold mb-1">Language</div>
+                          <span className="inline-block px-2 py-1 text-xs font-bold uppercase bg-slate-100 text-slate-600">
                             {subscriber.lang}
                           </span>
                         </div>
 
                         <div>
-                          <div className="text-gray-500 uppercase font-bold mb-1">Subscriptions</div>
+                          <div className="text-slate-500 uppercase font-bold mb-1">Subscriptions</div>
                           <div className="flex gap-1">
                             {subscriber.subscribe_newsletter && (
-                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#00ff8810] text-[#00ff88] border border-[#00ff88]">
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-emerald-50 text-[#0f9f73] border border-[#11b981]">
                                 Newsletter
                               </span>
                             )}
                             {subscriber.subscribe_podcast && (
-                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-[#ff6b0010] text-[#ff6b00] border border-[#ff6b00]">
+                              <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200">
                                 Podcast
                               </span>
                             )}
                             {!subscriber.subscribe_newsletter && !subscriber.subscribe_podcast && (
-                              <span className="text-gray-600">None</span>
+                              <span className="text-slate-400">None</span>
                             )}
                           </div>
                         </div>
 
                         <div>
-                          <div className="text-gray-500 uppercase font-bold mb-1">Age</div>
-                          <div className="text-gray-400">
+                          <div className="text-slate-500 uppercase font-bold mb-1">Age</div>
+                          <div className="text-slate-600">
                             {Math.floor((new Date().getTime() - new Date(subscriber.created_at).getTime()) / (1000 * 60 * 60 * 24))} days
                           </div>
                         </div>
                       </div>
 
                       {/* Footer: Welcomed */}
-                      <div className="pt-2 border-t border-gray-800 text-xs">
-                        <span className="text-gray-500">Welcomed: </span>
+                      <div className="pt-2 border-t border-slate-200 text-xs">
+                        <span className="text-slate-500">Welcomed: </span>
                         {subscriber.welcomed ? (
-                          <span className="text-[#00cfff]">✓ Yes</span>
+                          <span className="text-[#0f9f73]">✓ Yes</span>
                         ) : (
-                          <span className="text-gray-600">○ No</span>
+                          <span className="text-slate-400">○ No</span>
                         )}
                       </div>
                     </div>

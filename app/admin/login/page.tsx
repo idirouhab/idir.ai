@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,103 +20,84 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await response.json();
 
       if (response.ok) {
-        // Redirect to admin panel
         window.location.href = '/admin';
-      } else {
-        setError(data.error || 'Invalid email or password');
-        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error('Login error:', error);
+
+      setError(data.error || 'Invalid email or password');
+    } catch {
       setError('Login failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <div className="section-pad">
-        <div className="max-w-md mx-auto">
-          <div className="card-surface">
-            <div className="mb-8 text-center">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="h-1 w-8 bg-[#11b981]"></div>
-                <span className="section-kicker">Admin</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-semibold text-white mb-2 tracking-tight">Admin Login</h1>
-              <p className="text-sm text-[#9ca3af]">Sign in to access the admin panel</p>
-            </div>
+    <div className="min-h-screen bg-[#e3e9f1] px-4 py-10 sm:px-6 lg:py-16">
+      <div className="mx-auto max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] sm:p-8">
+        <div className="mb-8 text-center">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#11b981]">Admin</p>
+          <h1 className="mt-3 text-3xl font-semibold text-slate-900">Admin Login</h1>
+          <p className="mt-2 text-sm text-slate-600">Sign in to access idir.ai admin</p>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-white font-semibold mb-2 uppercase text-xs tracking-wider">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-black text-white border border-[#1f2937] rounded focus:outline-none focus:border-[#11b981] transition-colors"
-                placeholder="your@email.com"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-white font-semibold mb-2 uppercase text-xs tracking-wider">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-black text-white border border-[#1f2937] rounded focus:outline-none focus:border-[#11b981] transition-colors"
-                placeholder="Enter your password"
-                required
-                disabled={loading}
-              />
-            </div>
-
-            {error && (
-              <div className="p-4 border border-[#ef4444] bg-[#ef4444]/10 text-[#ef4444] rounded">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-shell"
+              placeholder="you@company.com"
+              required
               disabled={loading}
-              className="w-full px-8 py-4 bg-[#11b981] text-black font-semibold uppercase tracking-wide rounded hover:bg-[#0f9f73] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center space-y-3">
-            <div>
-              <Link
-                href="/admin/signup"
-                className="text-[#11b981] hover:text-[#0f9f73] transition-colors text-xs font-semibold uppercase tracking-wider"
-              >
-                Don&apos;t have an account? Sign up →
-              </Link>
-            </div>
-            <div>
-              <Link
-                href="/"
-                className="text-[#9ca3af] hover:text-[#11b981] transition-colors text-xs uppercase tracking-wider"
-              >
-                ← Back to site
-              </Link>
-            </div>
+            />
           </div>
+
+          <div>
+            <label htmlFor="password" className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-shell"
+              placeholder="Enter your password"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          {error ? (
+            <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+              {error}
+            </div>
+          ) : null}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full">
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+
+        <div className="mt-6 space-y-2 text-center text-sm">
+          <div>
+            <Link href="/admin/signup" className="font-medium text-[#0f9f73] hover:text-[#0b7a58]">
+              Don&apos;t have an account? Sign up
+            </Link>
+          </div>
+          <div>
+            <Link href="/" className="text-slate-600 hover:text-slate-900">
+              Back to site
+            </Link>
           </div>
         </div>
       </div>

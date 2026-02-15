@@ -4,6 +4,15 @@ import { logAuditEvent, getClientIP, getUserAgent } from '@/lib/audit-log';
 import { primaryAdminRole } from '@/lib/app-roles';
 import { query } from '@/lib/db';
 
+async function hasFeedbackTable(): Promise<boolean> {
+  try {
+    const result = await query(`SELECT to_regclass('public.newsletter_feedback') AS table_name`);
+    return Boolean(result.rows?.[0]?.table_name);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Admin-only API endpoint to get newsletter subscribers
  * GET /api/newsletter/admin
@@ -64,14 +73,17 @@ export async function GET(request: Request) {
     const data = subscribersResult.rows;
     const count = data.length > 0 ? data[0].total_count : 0;
 
-    // Get feedback email tracking info for all subscribers
-    const feedbackResult = await query(
-      `SELECT subscriber_email, sent_at, campaign_date
-       FROM newsletter_feedback
-       WHERE sent_at IS NOT NULL
-       ORDER BY sent_at DESC`
-    );
-    const feedbackData = feedbackResult.rows;
+    const feedbackTableExists = await hasFeedbackTable();
+    let feedbackData: any[] = [];
+    if (feedbackTableExists) {
+      const feedbackResult = await query(
+        `SELECT subscriber_email, sent_at, campaign_date
+         FROM newsletter_feedback
+         WHERE sent_at IS NOT NULL
+         ORDER BY sent_at DESC`
+      );
+      feedbackData = feedbackResult.rows || [];
+    }
 
     // Create a map of email -> most recent feedback sent date
     const feedbackMap = new Map<string, { sent_at: string; campaign_date: string }>();
@@ -108,12 +120,15 @@ export async function GET(request: Request) {
        FROM newsletter_subscribers`
     );
     const statsRow = statsResult.rows[0] || {};
-    const feedbackCountResult = await query(
-      `SELECT COUNT(DISTINCT subscriber_email)::int AS feedback_sent
-       FROM newsletter_feedback
-       WHERE sent_at IS NOT NULL`
-    );
-    const feedbackSent = feedbackCountResult.rows[0]?.feedback_sent || 0;
+    let feedbackSent = 0;
+    if (feedbackTableExists) {
+      const feedbackCountResult = await query(
+        `SELECT COUNT(DISTINCT subscriber_email)::int AS feedback_sent
+         FROM newsletter_feedback
+         WHERE sent_at IS NOT NULL`
+      );
+      feedbackSent = feedbackCountResult.rows[0]?.feedback_sent || 0;
+    }
 
     const statistics = {
       total: statsRow.total || 0,

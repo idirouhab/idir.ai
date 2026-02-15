@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BlogPostForm from '@/components/admin/BlogPostForm';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function NewBlogPostPage() {
           return;
         }
         setLoading(false);
-      } catch (error) {
+      } catch {
         router.push('/admin/login');
       }
     };
@@ -29,33 +30,25 @@ export default function NewBlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-white text-xl">Loading...</div>
-      </div>
+      <AdminPageWrapper title="Create New Post" description="Write and publish a new blog post">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-600">Loading...</div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ background: '#0a0a0a' }}>
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-12">
-          <Link
-            href="/admin/blog"
-            className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-[#00ff88] transition-colors mb-6 font-bold uppercase tracking-wide"
-          >
-            ← Back to Blog Management
-          </Link>
-
-          <h1 className="text-4xl font-black text-white mb-2">Create New Post</h1>
-          <p className="text-gray-300">Write a new blog post</p>
-        </div>
-
-        {/* Form */}
-        <div className="bg-black border-2 border-gray-800 p-8">
-          <BlogPostForm />
-        </div>
+    <AdminPageWrapper
+      title="Create New Post"
+      description="Write and publish a new blog post"
+      actions={
+        <Link href="/admin/blog" className="btn-secondary">
+          Back to Blog
+        </Link>
+      }
+    >
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
+        <BlogPostForm />
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 }

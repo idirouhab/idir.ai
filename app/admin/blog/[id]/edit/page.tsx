@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { BlogPost } from '@/lib/blog-shared';
 import BlogPostForm from '@/components/admin/BlogPostForm';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -16,7 +17,6 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       try {
         const { id } = await params;
 
-        // Check authentication and get user info
         const authResponse = await fetch('/api/auth/me');
         if (!authResponse.ok) {
           router.push('/admin/login');
@@ -28,7 +28,6 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         const roles = currentUser.roles || [];
         const isAdmin = roles.includes('super_admin') || roles.includes('billing_admin');
 
-        // Fetch specific post (including drafts with auth)
         const response = await fetch(`/api/posts/${id}?draft=true`);
 
         if (response.status === 401) {
@@ -42,11 +41,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         }
 
         const { data } = await response.json();
-
-        // Check if user has permission to edit this post
-        const canEdit =
-          isAdmin ||
-          data.author_id === currentUser.id;
+        const canEdit = isAdmin || data.author_id === currentUser.id;
 
         if (!canEdit) {
           alert('You do not have permission to edit this post.');
@@ -55,10 +50,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         }
 
         setPost(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error:', error);
+      } catch {
         router.push('/admin/login');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -68,41 +63,33 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-white text-xl">Loading...</div>
-      </div>
+      <AdminPageWrapper title="Edit Post" description="Update content and publication settings">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-600">Loading...</div>
+      </AdminPageWrapper>
     );
   }
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="text-white text-xl">Post not found</div>
-      </div>
+      <AdminPageWrapper title="Edit Post" description="Update content and publication settings">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-600">Post not found</div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ background: '#0a0a0a' }}>
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-12">
-          <Link
-            href="/admin/blog"
-            className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-[#00ff88] transition-colors mb-6 font-bold uppercase tracking-wide"
-          >
-            ← Back to Blog Management
-          </Link>
-
-          <h1 className="text-4xl font-black text-white mb-2">Edit Post</h1>
-          <p className="text-gray-300">{post.title}</p>
-        </div>
-
-        {/* Form */}
-        <div className="bg-black border-2 border-gray-800 p-8">
-          <BlogPostForm post={post} />
-        </div>
+    <AdminPageWrapper
+      title="Edit Post"
+      description={post.title}
+      actions={
+        <Link href="/admin/blog" className="btn-secondary">
+          Back to Blog
+        </Link>
+      }
+    >
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
+        <BlogPostForm post={post} />
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 }

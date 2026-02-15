@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AdminSidebar from '@/components/admin/AdminSidebar';
-import { usePathname } from 'next/navigation';
+import AdminPageWrapper from '@/components/admin/AdminPageWrapper';
 
 type Stats = {
   totalPosts: number;
@@ -14,52 +13,36 @@ type Stats = {
   totalViews: number;
 };
 
-type StatCardProps = {
-  title: string;
-  value: number | string;
-};
+type Role = 'super_admin' | 'billing_admin' | null;
 
-function StatCard({ title, value }: StatCardProps) {
+function StatCard({ title, value }: { title: string; value: number | string }) {
   return (
-    <div className="card-surface">
-      <div className="text-xs uppercase tracking-wider text-[#9ca3af] mb-2">{title}</div>
-      <div className="text-2xl font-semibold text-white">{value}</div>
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">{title}</p>
+      <p className="mt-2 text-2xl font-semibold text-slate-900">{value}</p>
     </div>
   );
 }
 
-type QuickActionProps = {
-  href: string;
-  label: string;
-  description: string;
-};
-
-function QuickAction({ href, label, description }: QuickActionProps) {
+function QuickAction({ href, label, description }: { href: string; label: string; description: string }) {
   return (
     <Link
       href={href}
-      className="flex items-start gap-3 p-4 border border-white/10 rounded-lg hover:border-white/30 hover:bg-white/5 transition-all group"
+      className="flex w-full items-start justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:bg-slate-50"
     >
-      <div className="flex-1">
-        <div className="text-sm font-semibold text-white group-hover:text-[#11b981] transition-colors">
-          {label}
-        </div>
-        <div className="text-xs text-gray-500 mt-0.5">{description}</div>
+      <div>
+        <p className="text-sm font-semibold text-slate-900">{label}</p>
+        <p className="mt-1 text-xs text-slate-600">{description}</p>
       </div>
-      <div className="text-gray-600 group-hover:text-gray-400 transition-colors">
-        →
-      </div>
+      <span className="mt-0.5 text-sm text-slate-400" aria-hidden="true">→</span>
     </Link>
   );
 }
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<'super_admin' | 'billing_admin' | null>(null);
+  const [userRole, setUserRole] = useState<Role>(null);
   const [stats, setStats] = useState<Stats>({
     totalPosts: 0,
     publishedPosts: 0,
@@ -73,20 +56,22 @@ export default function AdminDashboard() {
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const data = await response.json();
-          const roles = data.user.roles || [];
-          const derivedRole = roles.includes('super_admin')
-            ? 'super_admin'
-            : roles.includes('billing_admin')
-              ? 'billing_admin'
-              : null;
-          setUserRole(derivedRole);
-          fetchData(derivedRole);
-        } else {
+        if (!response.ok) {
           router.push('/admin/login');
+          return;
         }
-      } catch (error) {
+
+        const data = await response.json();
+        const roles = data.user.roles || [];
+        const role: Role = roles.includes('super_admin')
+          ? 'super_admin'
+          : roles.includes('billing_admin')
+            ? 'billing_admin'
+            : null;
+
+        setUserRole(role);
+        await fetchData(role);
+      } catch {
         router.push('/admin/login');
       }
     };
@@ -95,9 +80,8 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchData = async (role: 'super_admin' | 'billing_admin' | null) => {
+  const fetchData = async (role: Role) => {
     try {
-      // Fetch posts for stats only
       const postsResponse = await fetch('/api/posts');
       const postsData = await postsResponse.json();
       const posts = postsData.data || [];
@@ -109,15 +93,12 @@ export default function AdminDashboard() {
         .sort((a: any, b: any) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
         .slice(0, 5);
 
-      let subscribersData: any = null;
-
-      // Only fetch subscriber data for owners and admins
+      let subscribersTotal = 0;
       if (role === 'super_admin' || role === 'billing_admin') {
-        try {
-          const subscribersResponse = await fetch('/api/newsletter/admin');
-          subscribersData = await subscribersResponse.json();
-        } catch (err) {
-          console.error('Error fetching subscribers:', err);
+        const subscribersResponse = await fetch('/api/newsletter/admin');
+        if (subscribersResponse.ok) {
+          const subscribersData = await subscribersResponse.json();
+          subscribersTotal = subscribersData?.statistics?.total || 0;
         }
       }
 
@@ -125,129 +106,79 @@ export default function AdminDashboard() {
         totalPosts: posts.length || 0,
         publishedPosts,
         draftPosts,
-        totalSubscribers: subscribersData?.statistics?.total || 0,
+        totalSubscribers: subscribersTotal,
         totalViews,
       });
       setRecentPosts(recent);
-
-      setLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching admin dashboard data:', error);
+    } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-[#0a0a0a]">
-        <AdminSidebar
-          currentPath={pathname}
-          isCollapsed={isSidebarCollapsed}
-          isMobileOpen={isMobileMenuOpen}
-          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          onCloseMobile={() => setIsMobileMenuOpen(false)}
-        />
-        <div className="flex-1 ml-64">
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-white text-xl">Loading...</div>
-          </div>
-        </div>
-      </div>
+      <AdminPageWrapper title="Dashboard" description="Quick overview and next actions">
+        <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-slate-600">Loading...</div>
+      </AdminPageWrapper>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
-      <AdminSidebar
-        currentPath={pathname}
-        isCollapsed={isSidebarCollapsed}
-        isMobileOpen={isMobileMenuOpen}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        onCloseMobile={() => setIsMobileMenuOpen(false)}
-      />
+    <AdminPageWrapper title="Dashboard" description="Quick overview and next actions">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="Total Posts" value={stats.totalPosts} />
+        <StatCard title="Published" value={stats.publishedPosts} />
+        <StatCard title="Drafts" value={stats.draftPosts} />
+        {(userRole === 'super_admin' || userRole === 'billing_admin') ? (
+          <StatCard title="Subscribers" value={stats.totalSubscribers} />
+        ) : (
+          <StatCard title="Total Views" value={stats.totalViews} />
+        )}
+      </div>
 
-      <div className="flex-1 ml-64">
-        {/* Page Header */}
-        <div className="border-b border-gray-800 bg-black/50 sticky top-0 z-10 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-8 py-6">
-            <h1 className="text-2xl font-semibold text-white mb-1">Dashboard</h1>
-            <p className="text-sm text-gray-400">Quick overview and next actions</p>
+      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+        <section className="space-y-3 lg:col-span-1">
+          <h2 className="text-base font-semibold text-slate-900">Next Actions</h2>
+          <QuickAction href="/admin/blog/new" label="New blog post" description="Draft and publish a post" />
+          <QuickAction href="/admin/blog" label="Review drafts" description="Open draft posts and finish edits" />
+          {(userRole === 'super_admin' || userRole === 'billing_admin') ? (
+            <QuickAction href="/admin/subscribers" label="Manage subscribers" description="Filter, view, and export newsletter list" />
+          ) : null}
+        </section>
+
+        <section className="lg:col-span-2">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-slate-900">Recent Posts</h2>
+            <Link href="/admin/blog" className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0f9f73]">
+              View all
+            </Link>
           </div>
-        </div>
 
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-8 py-8">
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <StatCard title="Total Posts" value={stats.totalPosts} />
-            <StatCard title="Published" value={stats.publishedPosts} />
-            <StatCard title="Drafts" value={stats.draftPosts} />
-            {(userRole === 'super_admin' || userRole === 'billing_admin') ? (
-              <StatCard title="Subscribers" value={stats.totalSubscribers} />
+          <div className="rounded-2xl border border-slate-200 bg-white">
+            {recentPosts.length === 0 ? (
+              <div className="p-6 text-sm text-slate-600">No posts yet</div>
             ) : (
-              <StatCard title="Total Views" value={stats.totalViews} />
+              <ul className="divide-y divide-slate-200">
+                {recentPosts.map((post) => (
+                  <li key={post.id} className="flex items-center justify-between gap-4 px-5 py-4">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-900">{post.title}</p>
+                      <p className="text-xs text-slate-500">
+                        {post.status === 'published' ? 'Published' : 'Draft'} · {(post.language || 'en').toUpperCase()}
+                      </p>
+                    </div>
+                    <Link href={`/admin/blog/${post.id}/edit`} className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0f9f73]">
+                      Edit
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <h2 className="text-base font-semibold text-white mb-3">Next Actions</h2>
-              <div className="space-y-3">
-                <QuickAction
-                  href="/admin/blog/new"
-                  label="New blog post"
-                  description="Draft and publish a post"
-                />
-                <QuickAction
-                  href="/admin/blog"
-                  label="Review drafts"
-                  description="Open draft posts and finish edits"
-                />
-                {(userRole === 'super_admin' || userRole === 'billing_admin') && (
-                  <QuickAction
-                    href="/admin/subscribers"
-                    label="Manage subscribers"
-                    description="View, filter, export newsletter list"
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="lg:col-span-2">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-semibold text-white">Recent Posts</h2>
-                <Link href="/admin/blog" className="text-xs text-[#11b981] hover:text-[#0f9f73] transition-colors uppercase tracking-wider font-semibold">
-                  View all
-                </Link>
-              </div>
-              <div className="card-surface p-0">
-                {recentPosts.length === 0 ? (
-                  <div className="p-6 text-sm text-gray-400">No posts yet</div>
-                ) : (
-                  <ul className="divide-y divide-white/10">
-                    {recentPosts.map((post) => (
-                      <li key={post.id} className="flex items-center justify-between px-6 py-4">
-                        <div className="min-w-0">
-                          <div className="text-sm text-white font-semibold truncate">{post.title}</div>
-                          <div className="text-xs text-gray-500">
-                            {post.status === 'published' ? 'Published' : 'Draft'} · {post.language?.toUpperCase() || 'EN'}
-                          </div>
-                        </div>
-                        <Link
-                          href={`/admin/blog/${post.id}/edit`}
-                          className="text-xs text-[#11b981] hover:text-[#0f9f73] transition-colors uppercase tracking-wider font-semibold"
-                        >
-                          Edit
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </AdminPageWrapper>
   );
 }
