@@ -8,13 +8,10 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ViewTracker from '@/components/ViewTracker';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import MarkdownContent from '@/components/MarkdownContent';
 
 // PERFORMANCE: Lazy load below-the-fold components to reduce initial bundle
 // These components are not visible on initial page load, so we defer their loading
-const MarkdownContent = dynamic(() => import('@/components/MarkdownContent'), {
-  loading: () => <div className="min-h-[600px] animate-pulse bg-gray-900/20" />,
-});
-
 const ShareButtons = dynamic(() => import('@/components/ShareButtons'), {
   loading: () => <div className="h-16" />,
 });
@@ -75,7 +72,8 @@ export const revalidate = 3600; // 1 hour in seconds
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
-  const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
+  const language = locale as 'en' | 'es';
+  const post = await getPublishedPostBySlug(slug, language);
 
   if (!post) {
     return {
@@ -86,11 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = getSiteUrl();
   const canonicalUrl = `${baseUrl}/${locale}/blog/${slug}`;
 
-  // Fetch translated post slug for proper hreflang tags
-  const translatedSlug = await getTranslatedPostSlug(
-    post.translation_group_id,
-    locale as 'en' | 'es'
-  );
+  const translatedSlug = await getTranslatedPostSlug(post.translation_group_id, language);
 
   // Build language alternates - only include if translation exists
   const languageAlternates: Record<string, string> = {};
@@ -144,39 +138,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { locale, slug } = await params;
-  const post = await getPublishedPostBySlug(slug, locale as 'en' | 'es');
+  const language = locale as 'en' | 'es';
+  const post = await getPublishedPostBySlug(slug, language);
 
   if (!post) {
     notFound();
   }
 
-  const t = await getTranslations({ locale, namespace: 'blog' });
-
-  // Fetch translated post slug for language switching
-  const translatedSlug = await getTranslatedPostSlug(
-    post.translation_group_id,
-    locale as 'en' | 'es'
-  );
-
-  const relatedPosts = await getRelatedPosts(
-    post.id,
-    post.category,
-    post.tags || [],
-    locale as 'en' | 'es'
-  );
-
-  const { previous, next } = await getAdjacentPosts(
-    post.id,
-    post.published_at || post.created_at,
-    locale as 'en' | 'es'
-  );
+  const [t, translatedSlug, relatedPosts, adjacentPosts] = await Promise.all([
+    getTranslations({ locale, namespace: 'blog' }),
+    getTranslatedPostSlug(post.translation_group_id, language),
+    getRelatedPosts(post.id, post.category, post.tags || [], language),
+    getAdjacentPosts(post.id, post.published_at || post.created_at, language),
+  ]);
+  const { previous, next } = adjacentPosts;
 
   const baseUrl = 'https://idir.ai';
   const postUrl = `${baseUrl}/${locale}/blog/${slug}`;
 
   const categoryColor = categoryColors[post.category];
-  const categoryName = categoryNames[post.category][locale as 'en' | 'es'];
-  const formattedDate = formatDate(post.published_at || post.created_at, locale as 'en' | 'es');
+  const categoryName = categoryNames[post.category][language];
+  const formattedDate = formatDate(post.published_at || post.created_at, language);
   const readTime = post.read_time_minutes || 5;
   const authorDisplayName = post.author_name || 'Idir Ouhab Meskine';
   const authorInitials =

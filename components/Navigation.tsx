@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -12,6 +12,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const rafRef = useRef<number | null>(null);
   const pathname = usePathname();
   const t = useTranslations('nav');
   const tAria = useTranslations('aria');
@@ -56,46 +57,51 @@ export default function Navigation() {
   }, [isOpen]);
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout | null = null;
+    const sections = ["services", "results", "process", "speaking", "contact"];
 
-    const handleScroll = () => {
-      // Cancel previous timeout
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+    const updateStateFromScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      // Scroll-spy is only useful on the homepage.
+      if (!isHome) {
+        setActiveSection("");
+        return;
       }
 
-      // Throttle scroll handler to run max every 100ms
-      timeoutId = setTimeout(() => {
-        setScrolled(window.scrollY > 20);
+      const scrollPosition = window.scrollY + 100; // offset for navbar
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (!element) continue;
 
-        // Scroll-spy: detect which section is in view
-        const sections = ["services", "results", "process", "speaking", "contact"];
-        const scrollPosition = window.scrollY + 100; // offset for navbar
-
-        for (const section of sections) {
-          const element = document.getElementById(section);
-          if (element) {
-            const offsetTop = element.offsetTop;
-            const offsetBottom = offsetTop + element.offsetHeight;
-
-            if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-              setActiveSection(section);
-              break;
-            }
-          }
+        const offsetTop = element.offsetTop;
+        const offsetBottom = offsetTop + element.offsetHeight;
+        if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+          setActiveSection(section);
+          return;
         }
-      }, 100);
+      }
+      setActiveSection("");
     };
 
-    handleScroll(); // Initial check
+    const handleScroll = () => {
+      if (rafRef.current !== null) return;
+
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = null;
+        updateStateFromScroll();
+      });
+    };
+
+    updateStateFromScroll(); // Initial check
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
       }
     };
-  }, []);
+  }, [isHome]);
 
   const navItems = [
     { href: `/${locale}/#services`, label: t('services'), id: "services" },

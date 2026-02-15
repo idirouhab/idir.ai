@@ -23,9 +23,11 @@ type Props = {
 
 export default async function Home({ params }: Props) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'structuredData' });
-  const tAria = await getTranslations({ locale, namespace: 'aria' });
-  const tCommon = await getTranslations({ locale, namespace: 'common' });
+  const [t, tAria, tCommon] = await Promise.all([
+    getTranslations({ locale, namespace: 'structuredData' }),
+    getTranslations({ locale, namespace: 'aria' }),
+    getTranslations({ locale, namespace: 'common' }),
+  ]);
 
   // Get structured data arrays
   const knowsAbout = [

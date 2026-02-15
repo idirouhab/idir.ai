@@ -1,92 +1,36 @@
-'use client';
-
-import { memo, useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import Image from 'next/image';
 
-// PERFORMANCE: Lightweight code highlighter that only loads when needed
-// Replaces heavy react-syntax-highlighter (8.7MB) with on-demand loading
-const CodeBlock = memo(function CodeBlock({ language, children }: { language: string; children: string }) {
-  const [Highlighter, setHighlighter] = useState<any>(null);
-  const [style, setStyle] = useState<any>(null);
-
-  useEffect(() => {
-    // Only load syntax highlighter when code blocks are actually present
-    Promise.all([
-      import('react-syntax-highlighter').then(mod => mod.Prism),
-      import('react-syntax-highlighter/dist/esm/styles/prism').then(mod => mod.vscDarkPlus),
-    ]).then(([HighlighterMod, styleMod]) => {
-      setHighlighter(() => HighlighterMod);
-      setStyle(styleMod);
-    });
-  }, []);
-
-  if (!Highlighter || !style) {
-    // Show fallback while loading
-    return (
-      <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-700">
-        <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-            {language}
-          </span>
-        </div>
-        <pre className="p-6 bg-white dark:bg-black text-gray-800 dark:text-gray-300 overflow-x-auto text-sm font-mono">
-          <code>{children}</code>
-        </pre>
-      </div>
-    );
-  }
-
-  return (
-    <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-700">
-      <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
-        <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-          {language}
-        </span>
-        <span className="text-xs text-gray-500 dark:text-gray-600">Code</span>
-      </div>
-      <Highlighter
-        style={style}
-        language={language}
-        PreTag="div"
-        customStyle={{
-          margin: 0,
-          padding: '1.5rem',
-          background: 'var(--code-bg, #000)',
-          fontSize: '0.875rem',
-        }}
-        className="dark:bg-black bg-white"
-      >
-        {children}
-      </Highlighter>
-    </div>
-  );
-});
-
 type Props = {
   content: string;
 };
 
-// SECURITY: Sanitize HTML content before rendering
-// Even though content comes from our database, defense in depth is critical
-// Protects against XSS if an attacker gains access to an admin account
-const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
+// Server-render markdown to avoid sending parser/highlighter code to the client.
+export default function MarkdownContent({ content }: Props) {
   return (
-    <div className="markdown-content">
+    <div className="max-w-full break-words">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeSanitize]}
         components={{
-          code({ node, inline, className, children, ...props }: any) {
+          code({ inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
 
             return !inline && language ? (
-              <CodeBlock language={language}>
-                {String(children).replace(/\n$/, '')}
-              </CodeBlock>
+              <div className="my-6 rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-700">
+                <div className="bg-gray-100 dark:bg-gray-900 px-4 py-2 border-b border-gray-300 dark:border-gray-700 flex items-center justify-between">
+                  <span className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    {language}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-600">Code</span>
+                </div>
+                <pre className="p-6 bg-white dark:bg-black text-gray-800 dark:text-gray-300 overflow-x-auto text-sm font-mono">
+                  <code {...props}>{children}</code>
+                </pre>
+              </div>
             ) : (
               <code
                 className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-[#11b981] dark:text-[#00ff88] rounded text-base font-mono border border-gray-300 dark:border-gray-700"
@@ -155,7 +99,7 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
           ),
           li: ({ children }) => (
             <li className="text-lg text-gray-700 dark:text-gray-300 flex items-start gap-3" style={{ lineHeight: '1.8' }}>
-              <span className="text-[#11b981] dark:text-[#00ff88] mt-1.5">→</span>
+              <span className="text-[#11b981] dark:text-[#00ff88] mt-1.5">-&gt;</span>
               <span className="flex-1">{children}</span>
             </li>
           ),
@@ -225,15 +169,6 @@ const MarkdownContent = memo(function MarkdownContent({ content }: Props) {
       >
         {content}
       </ReactMarkdown>
-
-      <style jsx global>{`
-        .markdown-content {
-          max-width: 100%;
-          word-wrap: break-word;
-        }
-      `}</style>
     </div>
   );
-});
-
-export default MarkdownContent;
+}
