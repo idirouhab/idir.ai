@@ -259,6 +259,8 @@
     "descriptionEnd": " en español.",
     "nav": "Navegación",
     "connect": "Conectar",
+    "privacyPolicy": "Política de Privacidad",
+    "termsConditions": "Términos y Condiciones",
     "copyright": "Todos los derechos reservados.",
     "builtStart": "Construido con ",
     "builtNextjs": "Next.js",

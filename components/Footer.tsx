@@ -1,14 +1,17 @@
 'use client';
 
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
   const t = useTranslations('footer');
   const nav = useTranslations('nav');
   const contact = useTranslations('contact');
   const tCommon = useTranslations('common');
   const tAria = useTranslations('aria');
+  const locale = pathname?.split('/')[1] || 'en';
 
   const links = {
     navigation: [
@@ -110,6 +113,21 @@ export default function Footer() {
 
         <div className="border-t border-[#1f2937] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-base text-[#9ca3af]">
           <div>&copy; {currentYear} Idir Ouhab Meskine. {t('copyright')}</div>
+          <div className="flex items-center gap-4">
+            <a
+              href={`/${locale}/privacy`}
+              className="hover:text-[#11b981] transition-colors"
+            >
+              {t('privacyPolicy')}
+            </a>
+            <span aria-hidden="true">•</span>
+            <a
+              href={`/${locale}/terms`}
+              className="hover:text-[#11b981] transition-colors"
+            >
+              {t('termsConditions')}
+            </a>
+          </div>
           <div>
             {t('builtStart')}
             <span className="text-[#11b981]">{t('builtNextjs')}</span>
